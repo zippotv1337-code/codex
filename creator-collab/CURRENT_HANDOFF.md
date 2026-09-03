@@ -18,28 +18,33 @@ Stand: 3. September 2026
 - Threads-Profil `@mara.field.ai` erstellt und Onboarding abgeschlossen. Direkt
   danach wurde es von Threads ausgesetzt; aktuell wird eine echte
   Selfie-Verifizierung verlangt.
+- Creator-Ops-MVP für Leona und Mara vollständig lokal implementiert.
+- Vertikaler Ablauf von Content-Planung bis Analytics mit `MockPublisher`
+  erfolgreich ausgeführt; 6 automatisierte Tests sind grün.
+- Wiederholter Demo-Lauf als idempotent bestätigt: zwei Content-Items, zehn
+  Assets, zwei Mock-Publikationen und sechs Analytics-Snapshots ohne Duplikate.
 
 ## Aktive Aufgabe
 
-Alle drei Instagram-Konten erscheinen wieder in der Kontenwechselliste:
-`mara.field.ai`, `zippo.rocco` und `leonavoss.ai`. Der Leona-Zugang ist damit
-wiederhergestellt.
+Der lokale Creator-Ops-MVP ist einsatzbereit und dokumentiert. Der nächste
+technische Schritt ist die kontrollierte Erweiterung um echte Plattformadapter;
+bis zu einer ausdrücklichen Freigabe bleiben alle Publikationen simuliert.
 
-Threads verlangt für das neu erstellte Mara-Profil weiterhin eine echte
-Selfie-Verifizierung. Auch nach dem Abmelden von Mara, dem Wechsel von Instagram
-zu `@leonavoss.ai` und der erneuten Threads-Anmeldung über Leona landet Threads
-wieder auf derselben Sperrseite; das Menü zeigt weiterhin `Mara Field abmelden`.
-Damit ist die Threads-SSO-Sitzung aktuell an das ausgesetzte Mara-Profil gebunden.
+Separater Plattformblocker: Alle drei Instagram-Konten erscheinen wieder in der
+Kontenwechselliste. Threads verlangt für Mara weiterhin eine echte
+Selfie-Verifizierung; die bestehende Threads-Sitzung ist an dieses ausgesetzte
+Profil gebunden.
 
 ## Nächste konkrete Schritte
 
-1. Nutzer entscheidet, ob er die offizielle Mara-Selfie-Verifizierung persönlich
-   durchführen möchte; kein KI-Bild hochladen.
-2. Bis zur Freigabe keine weiteren Threads-Konten über dieselbe Sitzung anlegen.
-3. Nach offizieller Freigabe Mara eindeutig anmelden, Bio aus
-   `THREADS_DRAFTS.md` setzen und Startpost veröffentlichen.
-4. Danach Leona in einer klar getrennten Threads-Sitzung einrichten und ihren
-   vorbereiteten Startpost veröffentlichen.
+1. Architektur und letzten Lauf in `docs/LAST_RUN_REPORT.md` prüfen; lokal mit
+   `run_mvp.ps1` reproduzieren.
+2. Entscheiden, welcher offizielle Plattformadapter zuerst entwickelt wird und
+   welche Freigabeschranke echte Publikationen schützen soll.
+3. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
+   persönlich durchführen möchte; kein KI-Bild hochladen.
+4. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung
+   anlegen.
 
 ## GitHub-Synchronisation
 

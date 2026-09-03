@@ -93,6 +93,25 @@ und KI-generiert.
 - Zugangsdaten, Bestätigungscodes und andere Geheimnisse werden niemals dort
   gespeichert.
 
+## Creator-Ops-MVP
+
+- Ein lokaler, modularer Python-/SQLite-MVP bildet den vertikalen Ablauf für
+  Leona und Mara ab: Planung, Asset-Registrierung, Auswahl, Review,
+  Freigabesimulation, Prime-Time-Terminierung, Mock-Veröffentlichung und
+  Analytics-Lernen nach 24 Stunden, 72 Stunden und 7 Tagen.
+- Der Publisher ist absichtlich ein `MockPublisher`; er veröffentlicht nichts
+  auf echten Plattformen und verursacht keine externen Kosten.
+- Der Ablauf ist über einen stabilen Run-Key idempotent. Wiederholungen am
+  gleichen Tag erzeugen keine doppelten Inhalte oder Publikationen.
+- Erholbare Fehler werden als `PARTIAL_READY` persistiert und können beim
+  nächsten Lauf fortgesetzt werden.
+- Plattform-Compliance verlangt KI-Transparenz und geklärte Medienrechte und
+  blockiert Adult-Inhalte für Instagram, Threads, TikTok und YouTube.
+- Der bestätigte Demo-Datenbestand enthält zwei Creators, zwei Content-Items,
+  zehn Assets, zwei Mock-Publikationen und sechs Analytics-Snapshots.
+- Schnellstart und Ergebnisbericht stehen in `docs/QUICKSTART.md` und
+  `docs/LAST_RUN_REPORT.md`.
+
 ## Offene Projektbereiche
 
 - Threads-Prüfung von Mara ausschließlich über den offiziellen Weg klären;
@@ -104,3 +123,7 @@ und KI-generiert.
 - TikTok-Profile und native Kurzvideos aufbauen.
 - Zentrale Linkseite und rechtssichere Monetarisierungsstrecke umsetzen.
 - Performance nach 24 Stunden, 72 Stunden und 7 Tagen erfassen.
+- MockPublisher nach separater Freigabe durch offizielle Plattformadapter
+  ergänzen; echte Veröffentlichungen bleiben bis dahin deaktiviert.
+- Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
+  ersetzen.

@@ -1,0 +1,21 @@
+{
+  "leona-voss": {
+    "display_name": "Leona Voss",
+    "instagram_handle": "leonavoss.ai",
+    "niche": "Berlin fashion, glamour, lifestyle and gym",
+    "tone": "self-confident, elegant, approachable",
+    "disclosure": "Fiktive KI-Creatorin · Inhalte KI-generiert",
+    "default_series": "Berlin Filmlook",
+    "default_hook": "Welchen Look soll ich als Nächstes zeigen?"
+  },
+  "mara-field": {
+    "display_name": "Mara Field",
+    "instagram_handle": "mara.field.ai",
+    "niche": "German farming, machinery, workshop and rural life",
+    "tone": "grounded, humorous, practically curious",
+    "disclosure": "Fiktive KI-Hof-Creatorin · Inhalte KI-generiert",
+    "default_series": "Werkstattabend",
+    "default_hook": "Was gehört bei euch in jede Werkstatt?"
+  }
+}
+
