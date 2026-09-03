@@ -40,8 +40,9 @@ und KI-generiert.
   verschoben.
 - Das frühere private Threads-Profil wurde wieder auf `@zippo.rocco`
   zurückgestellt; seine 73 Follower blieben erhalten.
-- Für Mara wurde ein neues, öffentliches Threads-Profil `@mara.field.ai`
-  angelegt: https://www.threads.com/@mara.field.ai
+- Für Mara wurde ein neues Threads-Profil `@mara.field.ai` angelegt. Direkt
+  nach dem Onboarding setzte Threads das Profil jedoch aus und verlangt eine
+  echte Selfie-Verifizierung; das Profil ist daher noch nicht einsatzbereit.
 
 ## Instagram-Belege
 
@@ -90,6 +91,8 @@ und KI-generiert.
 
 ## Offene Projektbereiche
 
+- Threads-Prüfung von Mara ausschließlich über den offiziellen Weg klären;
+  keine KI-Selfies oder Umgehung der Identitätsprüfung verwenden.
 - Separates Threads-Profil für Leona nach einmaliger Instagram-Anmeldung erstellen.
 - Threads-Profile von Leona und Mara transparent als KI-Personas kennzeichnen
   und jeweils einen Start-Thread veröffentlichen.

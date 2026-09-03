@@ -15,25 +15,28 @@ Stand: 3. September 2026
   `@zippo.rocco` gesetzt; 73 Follower blieben erhalten.
 - `@leonavoss.ai` und `@mara.field.ai` aus der privaten Meta-Kontenübersicht in
   jeweils eigene Creator-Kontenübersichten verschoben.
-- Neues öffentliches Threads-Profil `@mara.field.ai` erstellt und Onboarding
-  abgeschlossen: https://www.threads.com/@mara.field.ai
+- Threads-Profil `@mara.field.ai` erstellt und Onboarding abgeschlossen. Direkt
+  danach wurde es von Threads ausgesetzt; aktuell wird eine echte
+  Selfie-Verifizierung verlangt.
 
 ## Aktive Aufgabe
 
-Das separate Threads-Profil für Leona soll erstellt werden. Instagram zeigt
-dafür aktuell einen Login-Dialog für `@leonavoss.ai`; nach der Kontentrennung
-kann die frühere private Anmeldung nicht mehr verwendet werden. Die Anmeldung
-muss der Nutzer einmalig selbst abschließen, ohne das Passwort im Chat zu teilen.
+Threads verlangt für das neu erstellte Mara-Profil eine echte
+Selfie-Verifizierung. Der einzige sichtbare alternative Menüpunkt ist
+`Mara Field abmelden`; eine normale Einspruchsoption wird auf dieser Seite nicht
+angeboten. Für Leona ist nach der Kontentrennung ebenfalls eine neue, eigene
+Instagram-Anmeldung erforderlich. In der Instagram-Kontenwechselliste erscheinen
+aktuell nur Mara und `zippo.rocco`, nicht Leona.
 
 ## Nächste konkrete Schritte
 
-1. Im geöffneten Instagram-Dialog `@leonavoss.ai` einmalig anmelden.
-2. Eigenes öffentliches Threads-Profil für Leona erstellen und den öffentlichen
-   Profilpfad prüfen.
-3. Bio und Profilbild beider Creator-Threads-Profile konsistent und transparent
-   als KI-Personas einrichten.
+1. Nutzer entscheidet, ob er die offizielle Mara-Selfie-Verifizierung persönlich
+   durchführen möchte; kein KI-Bild hochladen.
+2. `@leonavoss.ai` über `Bei bestehendem Konto anmelden` erneut als eigenes
+   Instagram-Login hinzufügen, ohne das Passwort im Chat zu teilen.
+3. Erst danach entscheiden, ob ein zweites Threads-Onboarding für Leona sinnvoll
+   ist oder bis zur Klärung der Mara-Prüfung pausiert wird.
 4. Im geöffneten GitHub-Tab anmelden und den vorbereiteten Commit auf `main` pushen.
-5. Je einen Start-Thread veröffentlichen und die Beitragslinks dokumentieren.
 
 ## GitHub-Synchronisation
 
