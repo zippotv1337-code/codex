@@ -135,3 +135,39 @@ class ExportBackupService:
         checksum = self._sha256(target)
         self._record("SQLITE_BACKUP", target, checksum, counts)
         return target
+
+    @classmethod
+    def restore_sqlite(cls, backup_path: str | Path, destination: str | Path) -> Path:
+        """Restore a verified backup into a fresh SQLite database atomically."""
+        backup_path = Path(backup_path).resolve()
+        destination = Path(destination).resolve()
+        if not backup_path.is_file():
+            raise FileNotFoundError(backup_path)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        if destination.exists():
+            raise FileExistsError(f"restore_destination_exists: {destination}")
+
+        source = sqlite3.connect(backup_path)
+        try:
+            integrity = source.execute("PRAGMA integrity_check").fetchone()[0]
+            if integrity != "ok":
+                raise RuntimeError(f"backup_integrity_failed: {integrity}")
+            handle, temporary_name = tempfile.mkstemp(
+                prefix="creator-restore-", suffix=".tmp", dir=destination.parent
+            )
+            os.close(handle)
+            restored = sqlite3.connect(temporary_name)
+            try:
+                source.backup(restored)
+                restored.commit()
+                restored_integrity = restored.execute("PRAGMA integrity_check").fetchone()[0]
+            finally:
+                restored.close()
+        finally:
+            source.close()
+
+        if restored_integrity != "ok":
+            Path(temporary_name).unlink(missing_ok=True)
+            raise RuntimeError(f"restored_integrity_failed: {restored_integrity}")
+        os.replace(temporary_name, destination)
+        return destination

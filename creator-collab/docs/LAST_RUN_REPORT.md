@@ -20,6 +20,13 @@ Stand: 3. September 2026
 - Audio-, Asset-Reserve-, Engagement- und Export/Backup-Pfade sind ausführbar.
 - Eine lokale, responsive Morgen-Freigabeoberfläche zeigt Leona und Mara als
   getrennte Review-Karten mit fünf Assets, Top 3, Checklist und Freigabe.
+- Lokale JPG-, PNG- und WebP-Dateien lassen sich mit SFW- und Rechteangabe in
+  vorhandene Review-Slots importieren und erscheinen als echte Previews.
+- Fehlende Bilddateien bleiben ehrliche Mock-Kacheln; der Fallback crasht nicht.
+- Ein verifiziertes SQLite-Backup wurde erfolgreich in eine frische Datenbank
+  zurückgespielt und erneut auf Integrität sowie Kernzahlen geprüft.
+- Die Review-UX ist heller, saisonal und zeigt größere Checks, klare Statusfarben,
+  eine konkrete Owner-Aufgabe sowie getrennte Porträts für Leona und Mara.
 
 ## Größter Fortschritt
 
@@ -45,7 +52,7 @@ lokale `mock://`-Publikationsadressen.
 ## Aktueller MVP-Status
 
 - SQLite + Models: fertig
-- Asset Registry: fertig
+- Asset Registry inklusive lokalem Bildimport: fertig
 - Content-/Series-/Status-Modell: fertig
 - Review Queue: fertig
 - Scheduling/Prime Time: Cold-Start-Grundlage fertig
@@ -62,7 +69,8 @@ lokale `mock://`-Publikationsadressen.
 - Asset-Plan mit Primary, Alternates und Reserves: fertig
 - Engagement Queue ohne automatische Ausführung: fertig
 - JSON-Export und SQLite-Backup: fertig
-- Lokale Review-/Approval-Oberfläche: fertig
+- Lokale Review-/Approval-Oberfläche mit echten Preview-Fallbacks: fertig
+- SQLite-Restore: fertig und verifiziert
 - Live-Publishing: absichtlich nicht implementiert
 
 ## Wichtige Dateien und Module
@@ -74,7 +82,8 @@ lokale `mock://`-Publikationsadressen.
 - `creator_ops/scheduling.py` – Evening Window, History-Scoring und Slot-Abstand
 - `creator_ops/services.py` – Audio-, Asset-Fallback- und Engagement-Dienste
 - `creator_ops/evening.py` – idempotente Evening-Run-Orchestrierung
-- `creator_ops/exporting.py` – JSON-Export und SQLite-Backup
+- `creator_ops/exporting.py` – JSON-Export, SQLite-Backup und Restore
+- `creator_ops/asset_import.py` – lokaler, hashbasierter SFW-Bildimport
 - `creator_ops/review.py` – Morgen-Pakete, Read Model und auditierbare Freigabe
 - `creator_ops/web.py` – lokale HTTP-/JSON-Oberfläche
 - `dashboard/` – responsive Arbeitsfläche ohne externe Abhängigkeiten
@@ -115,7 +124,7 @@ werden nicht gespeichert. JSON-Exporte schließen dieses Feld ausdrücklich aus.
 Ausgeführt mit der gebündelten Python-3.12-Laufzeit:
 
 ```text
-Ran 20 tests
+Ran 22 tests
 OK
 ```
 
@@ -138,6 +147,8 @@ Abgedeckt:
 - idempotente Vorbereitung eines Tages
 - Freigabe erzeugt nur einen Mock-Draft ohne externe ID oder URL
 - HTTP-Lesen, HTTP-Freigabe und Health-Check
+- lokaler Bildimport, sichere Preview-Auslieferung und Mock-Fallback
+- Backup-Restore in eine frische Datenbank mit Integritätsprüfung
 - Python-Kompilierung aller Module und Tests
 
 ## Demo-Laufergebnis
@@ -168,11 +179,11 @@ Tabellenzahlen blieben unverändert.
 ## Bekannte Fehler und Grenzen
 
 - Keine echte Generator-, Publishing- oder Analytics-API angebunden.
-- Asset-Dateien sind Mock-Referenzen, nicht erzeugte Bilddateien.
+- Nicht importierte Asset-Slots bleiben weiterhin Mock-Referenzen.
 - Prime-Time lernt aus simulierten Metriken; echte Plattformdaten fehlen noch.
 - Engagement-Vorschläge beziehen sich im Mock-Betrieb auf `mock://`-Ziele.
-- Die fünf visuellen Plätze sind derzeit ehrliche Mock-Asset-Kacheln; reale
-  Bilddateien werden erst nach einem Rechte- und Importpfad angezeigt.
+- Importierte Dateien werden lokal verwaltet und als echte Thumbnails angezeigt;
+  noch nicht importierte Plätze bleiben klar erkennbare Mock-Kacheln.
 - WebMCP ist im Client feature-detected, konnte in der vorhandenen lokalen
   Browserumgebung aber nicht als Browserstandard verifiziert werden.
 - Threads ist extern durch Metas Selfie-Prüfung für Mara blockiert; auch die
@@ -195,18 +206,18 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 
 ## Fünf sinnvollste nächste Aufgaben
 
-1. Reale, rechtlich nutzbare Bilddateien in die Review-Kacheln importieren
+1. Je Persona fünf finale, rechtlich geklärte Posting-Kandidaten importieren
    - Nutzen: hoch
-   - Aufwand: mittel
-   - Risiko: niedrig bei geklärten Rechten
-   - Größe: M
-2. Restore-Prüfung und dokumentierter Disaster-Recovery-Test
+   - Aufwand: klein
+   - Risiko: niedrig
+   - Größe: S
+2. Engagement Queue als zweite Dashboard-Ansicht ergänzen
    - Nutzen: mittel
    - Aufwand: klein
    - Risiko: niedrig
    - Größe: S
-3. Reale Bilddateien als Asset Registry importieren und per Hash prüfen
-   - Nutzen: hoch
+3. Import-UX später um einen lokalen Dateiauswahldialog ergänzen
+   - Nutzen: mittel
    - Aufwand: mittel
    - Risiko: niedrig
    - Größe: M
@@ -231,23 +242,18 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 
 ## Für Auswertung mit ChatGPT
 
-1. Vertikaler MVP für Leona und Mara ist funktionsfähig.
-2. Beide Läufe enden in `ANALYZED`.
-3. Pro Persona werden fünf Asset-Kandidaten registriert.
-4. Pro Persona werden drei Top Picks gewählt.
-5. QA prüft SFW, KI-Hinweis und Medienrechte.
-6. Adult-Inhalte werden auf öffentlichen SFW-Plattformen blockiert.
-7. Review und Owner-Freigabe sind klar als Simulation markiert.
-8. Prime Time ist konfigurierbar und verwendet `Europe/Berlin`.
-9. `MockPublisher` verhindert versehentliche Live-Veröffentlichung.
-10. Analytics-Snapshots existieren für 24h, 72h und 7d.
-11. Learning nutzt mehrere Qualitätsmetriken statt nur Views.
-12. Gleiche Abend-Läufe sind idempotent.
-13. Provider-Fehler enden in `PARTIAL_READY`.
-14. Retry nach Fehler funktioniert.
-15. Zwanzig Tests sind grün.
-16. Neue Kosten betragen 0 EUR.
-17. Keine Secrets werden gespeichert.
-18. Die lokale Review-Oberfläche ist fertig; nächster Nutzen sind echte Assets.
-19. GitHub-Sync ist auf `main` erfolgt; lokaler und Remote-Stand waren identisch.
-20. Threads bleibt extern durch Metas Identitätsprüfung blockiert.
+1. Bestehender Vertikal-MVP für Leona und Mara blieb unverändert funktionsfähig.
+2. Der Review-Flow zeigt weiterhin fünf Kandidaten und Top 3 pro Persona.
+3. JPG, PNG und WebP können lokal und ohne neue Abhängigkeit importiert werden.
+4. Importdateien werden in verwalteten Projektpfaden abgelegt und gehasht.
+5. Rechteangabe ist auf `AI_GENERATED`, `OWNED` oder `LICENSED` begrenzt.
+6. Der Import akzeptiert für dieses Dashboard ausschließlich SFW-Inhalte.
+7. Echte Bilder erscheinen über sichere asset-id-basierte Preview-URLs.
+8. Fehlende echte Bilder fallen stabil auf Mock-Kacheln zurück.
+9. Das Dashboard ist heller, saisonal und je Persona klar getrennt.
+10. Owner-Aufgabe, Statusbadges und größere Checks sind direkt sichtbar.
+11. Leona und Mara besitzen eigene, fiktive KI-generierte Profilporträts.
+12. Backup und Restore wurden real gegen eine frische SQLite-Datei geprüft.
+13. Die wiederhergestellte DB enthält 2 Creator, 2 Inhalte und 10 Assets.
+14. Alle 22 Tests und die Python-Kompilierung sind grün.
+15. Live-Publishing, neue externe Pakete, Secrets und neue Kosten bleiben bei null.

@@ -20,43 +20,59 @@ function showToast(message) {
 function check(label, ok, detail) {
   return `
     <div class="check">
-      <div class="check-title"><span>${escapeHtml(label)}</span><i aria-label="${ok ? "bereit" : "fehlt"}">${ok ? "✓" : "–"}</i></div>
-      <small title="${escapeHtml(detail)}">${escapeHtml(detail)}</small>
+      <i class="check-icon" aria-label="${ok ? "bereit" : "fehlt"}">${ok ? "✓" : "–"}</i>
+      <div class="check-copy"><span>${escapeHtml(label)}</span>
+        <small title="${escapeHtml(detail)}">${escapeHtml(detail)}</small>
+      </div>
     </div>`;
+}
+
+function statusMeta(card) {
+  if (card.approved || card.status === "OWNER_APPROVED") return { key: "approved", label: "Freigegeben" };
+  if (card.status === "SCHEDULED") return { key: "scheduled", label: "Geplant" };
+  if (card.status === "READY_FOR_REVIEW") return { key: "ready", label: "Review bereit" };
+  return { key: "pending", label: card.status.replaceAll("_", " ") };
 }
 
 function cardTemplate(card) {
   const assets = card.assets.map((asset) => `
-    <div class="asset ${asset.top_pick ? "top" : ""}" aria-label="${escapeHtml(asset.label)}, Qualität ${asset.quality} Prozent${asset.top_pick ? ", Top Pick" : ""}">
+    <div class="asset ${asset.top_pick ? "top" : ""} ${asset.preview_url ? "has-preview" : ""}" ${asset.preview_url ? `style="background-image:url('${escapeHtml(asset.preview_url)}')"` : ""} aria-label="${escapeHtml(asset.label)}, Qualität ${asset.quality} Prozent${asset.top_pick ? ", Top Pick" : ""}">
       <span class="quality">${asset.quality}%</span>
       ${asset.top_pick ? '<span class="asset-badge">TOP</span>' : ""}
       <span>${escapeHtml(asset.label)}</span>
     </div>`).join("");
   const approved = card.approved;
+  const status = statusMeta(card);
   return `
     <article class="creator-card" data-persona="${escapeHtml(card.creator_slug)}">
       <div class="card-head">
-        <div>
-          <p class="card-kicker">${escapeHtml(card.display_name)} · morgen</p>
-          <h2>${escapeHtml(card.display_name)}</h2>
-          <p class="series">${escapeHtml(card.series)}</p>
+        <div class="identity">
+          <img class="avatar" src="/assets/${escapeHtml(card.creator_slug)}-avatar.png" alt="KI-generiertes Profilbild von ${escapeHtml(card.display_name)}" />
+          <div>
+            <p class="card-kicker">Morgen · ${escapeHtml(card.prime_time)} Uhr</p>
+            <h2>${escapeHtml(card.display_name)}</h2>
+            <p class="series">${escapeHtml(card.series)}</p>
+          </div>
         </div>
-        <span class="status-pill ${approved ? "approved" : ""}">${approved ? "Freigegeben" : "Review bereit"}</span>
+        <span class="status-pill status-${status.key}">${escapeHtml(status.label)}</span>
       </div>
       <div class="asset-summary">
-        <span><strong>${card.asset_count}</strong> Bilder vorhanden</span>
-        <span><strong>${card.top_pick_count}</strong> empfohlen</span>
+        <span><strong>${card.asset_count}</strong><small>Bilder vorhanden</small></span>
+        <span><strong>Top ${card.top_pick_count}</strong><small>empfohlen</small></span>
       </div>
       <div class="asset-strip">${assets}</div>
       <div class="checklist">
-        ${check("Carousel", card.checks.carousel, "Instagram · 5 Slides")}
-        ${check("Caption", card.checks.caption, "KI-Hinweis enthalten")}
+        ${check("Carousel", card.checks.carousel, "5 Slides vorbereitet")}
+        ${check("Caption", card.checks.caption, "Text vollständig")}
         ${check("Musik", card.checks.music, card.audio)}
         ${check("Prime Time", card.checks.prime_time, `${card.prime_time} Uhr · Berlin`)}
       </div>
-      <p class="caption-preview">${escapeHtml(card.caption)}</p>
+      <details class="caption-preview">
+        <summary>Caption ansehen</summary>
+        <p>${escapeHtml(card.caption)}</p>
+      </details>
       <button class="approve-button" data-approve="${card.content_id}" ${(!card.ready || approved) ? "disabled" : ""}>
-        ${approved ? `Freigegeben · ${escapeHtml(card.prime_time)} Uhr` : "Freigeben"}
+        ${approved ? `Freigegeben · ${escapeHtml(card.prime_time)} Uhr` : `${escapeHtml(card.display_name)} freigeben`}
       </button>
     </article>`;
 }

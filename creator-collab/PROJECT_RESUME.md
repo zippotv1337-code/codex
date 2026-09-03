@@ -126,6 +126,13 @@ und KI-generiert.
   mit fünf Assets, Top 3, Carousel, Caption, Audio-Fallback und Prime Time.
 - Der Freigabe-Button protokolliert eine echte lokale Betreiberentscheidung,
   erstellt aber ausschließlich einen `mock-draft` ohne externe Veröffentlichung.
+- Rechtegeprüfte lokale JPG-, PNG- und WebP-Dateien lassen sich hashbasiert in
+  bestehende Review-Slots importieren und als sichere Thumbnails anzeigen.
+- Nicht importierte Plätze bleiben stabile Mock-Kacheln.
+- SQLite-Backups lassen sich atomar in eine frische Datenbank wiederherstellen;
+  der reale Prüflauf enthielt danach wieder 2 Creator, 2 Inhalte und 10 Assets.
+- Die helle September-Oberfläche zeigt größere Checks, eine klare Owner-Aufgabe,
+  Statusfarben und getrennte, fiktive KI-Porträts für Leona und Mara.
 
 ## Offene Projektbereiche
 
@@ -142,7 +149,6 @@ und KI-generiert.
   ergänzen; echte Veröffentlichungen bleiben bis dahin deaktiviert.
 - Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
   ersetzen.
-- Reale, rechtlich nutzbare Asset-Dateien in die Review-Kacheln importieren.
 - Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
-- Wiederherstellung aus einem SQLite-Backup als eigenen Disaster-Recovery-Lauf
-  dokumentieren und testen.
+- Je Persona die verbleibenden vier finalen, rechtlich nutzbaren Posting-Bilder
+  über den neuen Importpfad ergänzen.
