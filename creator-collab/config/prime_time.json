@@ -1,0 +1,17 @@
+{
+  "timezone": "Europe/Berlin",
+  "cold_start_windows": {
+    "instagram": {
+      "image": ["19:15", "20:15"],
+      "carousel": ["19:30", "20:30"],
+      "reel": ["18:45", "20:00"]
+    },
+    "threads": {
+      "text": ["18:30", "20:30"]
+    },
+    "tiktok": {
+      "video": ["19:00", "21:00"]
+    }
+  }
+}
+
