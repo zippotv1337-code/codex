@@ -8,6 +8,9 @@ Stand: 3. September 2026
 - KI-Kennzeichnung und deaktiviertes Facebook-Crossposting geprüft.
 - Pro Persona fünf passende Nischenkonten abonniert.
 - Gemeinsames GitHub-Journalformat für ChatGPT und Codex vorbereitet.
+- GitHub-Repository `zippotv1337-code/codex` und Standardbranch `main` bestätigt.
+- Ein sauberer Handoff-Commit auf Basis des vorhandenen GitHub-Initial-Commits
+  wurde vorbereitet; der Push wartet nur noch auf die GitHub-Anmeldung.
 
 ## Aktive Aufgabe
 
@@ -22,11 +25,20 @@ Funktionen beeinträchtigt werden können.
 
 ## Nächste konkrete Schritte
 
-1. Anzeigename, Bio und Profilbild konsistent auf Leona umstellen.
-2. Vorhandene persönliche Threads-Inhalte prüfen; nichts ohne ausdrücklichen
+1. Im geöffneten GitHub-Tab anmelden und den vorbereiteten Commit auf `main` pushen.
+2. Anzeigename, Bio und Profilbild konsistent auf Leona umstellen.
+3. Vorhandene persönliche Threads-Inhalte prüfen; nichts ohne ausdrücklichen
    Löschauftrag entfernen.
-3. Ersten transparenten Start-Thread veröffentlichen.
-4. Ergebnis mit öffentlichem Beitragslink dokumentieren.
+4. Ersten transparenten Start-Thread veröffentlichen.
+5. Ergebnis mit öffentlichem Beitragslink dokumentieren.
+
+## GitHub-Synchronisation
+
+- Repository: https://github.com/zippotv1337-code/codex
+- Sichtbarkeit: öffentlich
+- Zielbranch: `main`
+- Vorbereiteter Commit: `579045b`
+- Blocker: GitHub-Schreibzugriff muss im Browser angemeldet werden.
 
 ## Nicht verändern
 
