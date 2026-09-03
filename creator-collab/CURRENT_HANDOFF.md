@@ -21,22 +21,26 @@ Stand: 3. September 2026
 
 ## Aktive Aufgabe
 
-Threads verlangt für das neu erstellte Mara-Profil eine echte
+`@leonavoss.ai` ist nicht gelöscht: Das öffentliche Profil mit Name, Bio,
+KI-Kennzeichnung und fünf Beiträgen wurde sichtbar verifiziert. Nach der
+Kontentrennung fehlt lediglich die gespeicherte Anmeldung. Instagram hat einen
+offiziellen Wiederherstellungslink an die hinterlegte Gmail-Adresse gesendet.
+Der Nutzer muss diesen Link persönlich öffnen.
+
+Threads verlangt parallel für das neu erstellte Mara-Profil eine echte
 Selfie-Verifizierung. Der einzige sichtbare alternative Menüpunkt ist
 `Mara Field abmelden`; eine normale Einspruchsoption wird auf dieser Seite nicht
-angeboten. Für Leona ist nach der Kontentrennung ebenfalls eine neue, eigene
-Instagram-Anmeldung erforderlich. In der Instagram-Kontenwechselliste erscheinen
-aktuell nur Mara und `zippo.rocco`, nicht Leona.
+angeboten.
 
 ## Nächste konkrete Schritte
 
-1. Nutzer entscheidet, ob er die offizielle Mara-Selfie-Verifizierung persönlich
+1. Nutzer öffnet den Instagram-Wiederherstellungslink aus seinem hinterlegten
+   Gmail-Postfach und stellt die Leona-Anmeldung persönlich wieder her.
+2. Danach `@leonavoss.ai` erneut als eigenes Instagram-Login hinzufügen.
+3. Nutzer entscheidet, ob er die offizielle Mara-Selfie-Verifizierung persönlich
    durchführen möchte; kein KI-Bild hochladen.
-2. `@leonavoss.ai` über `Bei bestehendem Konto anmelden` erneut als eigenes
-   Instagram-Login hinzufügen, ohne das Passwort im Chat zu teilen.
-3. Erst danach entscheiden, ob ein zweites Threads-Onboarding für Leona sinnvoll
+4. Erst danach entscheiden, ob ein zweites Threads-Onboarding für Leona sinnvoll
    ist oder bis zur Klärung der Mara-Prüfung pausiert wird.
-4. Im geöffneten GitHub-Tab anmelden und den vorbereiteten Commit auf `main` pushen.
 
 ## GitHub-Synchronisation
 
