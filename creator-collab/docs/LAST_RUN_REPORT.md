@@ -18,6 +18,8 @@ Stand: 3. September 2026
 - Die Prime-Time-Auswahl nutzt nach dem Cold Start historische 7-Tage-Metriken
   und vermeidet zu eng belegte Slots pro Creator.
 - Audio-, Asset-Reserve-, Engagement- und Export/Backup-Pfade sind ausführbar.
+- Eine lokale, responsive Morgen-Freigabeoberfläche zeigt Leona und Mara als
+  getrennte Review-Karten mit fünf Assets, Top 3, Checklist und Freigabe.
 
 ## Größter Fortschritt
 
@@ -60,6 +62,7 @@ lokale `mock://`-Publikationsadressen.
 - Asset-Plan mit Primary, Alternates und Reserves: fertig
 - Engagement Queue ohne automatische Ausführung: fertig
 - JSON-Export und SQLite-Backup: fertig
+- Lokale Review-/Approval-Oberfläche: fertig
 - Live-Publishing: absichtlich nicht implementiert
 
 ## Wichtige Dateien und Module
@@ -72,6 +75,9 @@ lokale `mock://`-Publikationsadressen.
 - `creator_ops/services.py` – Audio-, Asset-Fallback- und Engagement-Dienste
 - `creator_ops/evening.py` – idempotente Evening-Run-Orchestrierung
 - `creator_ops/exporting.py` – JSON-Export und SQLite-Backup
+- `creator_ops/review.py` – Morgen-Pakete, Read Model und auditierbare Freigabe
+- `creator_ops/web.py` – lokale HTTP-/JSON-Oberfläche
+- `dashboard/` – responsive Arbeitsfläche ohne externe Abhängigkeiten
 - `creator_ops/cli.py` – `init`, `demo` und `status`
 - `config/personas.json` – zentrale Persona-Daten
 - `config/prime_time.json` – anpassbare Cold-Start-Zeitfenster
@@ -109,7 +115,7 @@ werden nicht gespeichert. JSON-Exporte schließen dieses Feld ausdrücklich aus.
 Ausgeführt mit der gebündelten Python-3.12-Laufzeit:
 
 ```text
-Ran 16 tests
+Ran 20 tests
 OK
 ```
 
@@ -128,6 +134,10 @@ Abgedeckt:
 - Primary-, Alternate- und Reserve-Zuordnung aller Assets
 - rein manuelle Engagement Queue
 - geheimnisfreier JSON-Export und valides SQLite-Backup
+- vollständige Review-Karten für beide Personas
+- idempotente Vorbereitung eines Tages
+- Freigabe erzeugt nur einen Mock-Draft ohne externe ID oder URL
+- HTTP-Lesen, HTTP-Freigabe und Health-Check
 - Python-Kompilierung aller Module und Tests
 
 ## Demo-Laufergebnis
@@ -158,10 +168,13 @@ Tabellenzahlen blieben unverändert.
 ## Bekannte Fehler und Grenzen
 
 - Keine echte Generator-, Publishing- oder Analytics-API angebunden.
-- Keine HTTP-Oberfläche; Bedienung erfolgt aktuell über CLI und SQLite.
 - Asset-Dateien sind Mock-Referenzen, nicht erzeugte Bilddateien.
 - Prime-Time lernt aus simulierten Metriken; echte Plattformdaten fehlen noch.
 - Engagement-Vorschläge beziehen sich im Mock-Betrieb auf `mock://`-Ziele.
+- Die fünf visuellen Plätze sind derzeit ehrliche Mock-Asset-Kacheln; reale
+  Bilddateien werden erst nach einem Rechte- und Importpfad angezeigt.
+- WebMCP ist im Client feature-detected, konnte in der vorhandenen lokalen
+  Browserumgebung aber nicht als Browserstandard verifiziert werden.
 - Threads ist extern durch Metas Selfie-Prüfung für Mara blockiert; auch die
   Leona-Anmeldung wird in dieselbe ausgesetzte Threads-Sitzung geleitet.
 
@@ -182,10 +195,10 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 
 ## Fünf sinnvollste nächste Aufgaben
 
-1. Einfache lokale Review- und Queue-API oder UI
+1. Reale, rechtlich nutzbare Bilddateien in die Review-Kacheln importieren
    - Nutzen: hoch
    - Aufwand: mittel
-   - Risiko: niedrig
+   - Risiko: niedrig bei geklärten Rechten
    - Größe: M
 2. Restore-Prüfung und dokumentierter Disaster-Recovery-Test
    - Nutzen: mittel
@@ -232,9 +245,9 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 12. Gleiche Abend-Läufe sind idempotent.
 13. Provider-Fehler enden in `PARTIAL_READY`.
 14. Retry nach Fehler funktioniert.
-15. Sechzehn Tests sind grün.
+15. Zwanzig Tests sind grün.
 16. Neue Kosten betragen 0 EUR.
 17. Keine Secrets werden gespeichert.
-18. Nächster größter Nutzen ist eine lokale Review- und Queue-Oberfläche.
+18. Die lokale Review-Oberfläche ist fertig; nächster Nutzen sind echte Assets.
 19. GitHub-Sync ist auf `main` erfolgt; lokaler und Remote-Stand waren identisch.
 20. Threads bleibt extern durch Metas Identitätsprüfung blockiert.

@@ -19,6 +19,24 @@ Nur Tests:
 .\run_mvp.ps1 -TestOnly
 ```
 
+## Freigabeoberfläche
+
+```powershell
+.\run_dashboard.ps1
+```
+
+Im Browser `http://127.0.0.1:4180/` öffnen. Die Oberfläche verwendet
+standardmäßig `data/review_dashboard.db` und legt automatisch zwei Pakete für
+morgen an:
+
+- fünf registrierte Bilder je Persona
+- drei empfohlene Top Picks
+- Carousel, Caption, Musik-Fallback und Prime Time geprüft
+- ein klarer Freigabe-Button je Persona
+
+Eine Freigabe erstellt ausschließlich einen lokalen `mock-draft`. Es wird kein
+Social-Media-Adapter aufgerufen und nichts live veröffentlicht.
+
 ## Direkter Python-Aufruf
 
 ```powershell

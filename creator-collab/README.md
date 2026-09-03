@@ -30,6 +30,16 @@ python -m creator_ops.cli --db data/creator_ops.db status
 python -m unittest discover -s tests -v
 ```
 
+Die lokale Freigabeoberfläche startet separat:
+
+```powershell
+.\run_dashboard.ps1
+```
+
+Danach ist sie unter `http://127.0.0.1:4180/` erreichbar. Sie bereitet für den
+nächsten Tag je eine Review-Karte für Leona und Mara vor. „Freigeben“ erzeugt
+nur einen lokalen, auditierbaren `mock-draft`; es gibt keinen Live-Publisher.
+
 Enthalten sind:
 
 - zentrale Leona-/Mara-Konfiguration
@@ -43,6 +53,7 @@ Enthalten sind:
 - Primary-/Alternate-/Reserve-Plan für jedes Asset-Paket
 - Engagement-Vorschlagsqueue ohne automatische externe Aktionen
 - geheimnisfreier JSON-Export und integritätsgeprüftes SQLite-Backup
+- visuelle Morgen-Freigabe für Leona und Mara
 - `MockPublisher`
 - Analytics-Snapshots nach 24, 72 und 168 Stunden
 - einfache Learning-Entscheidung anhand mehrerer Qualitätsmetriken
