@@ -26,6 +26,8 @@ python -m creator_ops.cli --db data/creator_ops.db evening-run --at 2026-09-03T2
 python -m creator_ops.cli --db data/creator_ops.db engagement
 python -m creator_ops.cli --db data/creator_ops.db export --out backups --label latest
 python -m creator_ops.cli --db data/creator_ops.db backup --out backups --label latest
+python -m creator_ops.cli --db data/creator_ops.db restore --backup backups/creator-ops-backup-latest.db --out backups/restored.db
+python -m creator_ops.cli --db data/review_dashboard.db import-assets --creator leona-voss --date 2026-09-04 --rights-status AI_GENERATED C:\Pfad\zu\bild.png
 python -m creator_ops.cli --db data/creator_ops.db status
 python -m unittest discover -s tests -v
 ```
@@ -54,6 +56,8 @@ Enthalten sind:
 - Engagement-Vorschlagsqueue ohne automatische externe Aktionen
 - geheimnisfreier JSON-Export und integritätsgeprüftes SQLite-Backup
 - visuelle Morgen-Freigabe für Leona und Mara
+- lokaler JPG-/PNG-/WebP-Import mit Rechteangabe und sicherer Thumbnail-URL
+- atomarer Restore eines geprüften SQLite-Backups in eine frische Datenbank
 - `MockPublisher`
 - Analytics-Snapshots nach 24, 72 und 168 Stunden
 - einfache Learning-Entscheidung anhand mehrerer Qualitätsmetriken

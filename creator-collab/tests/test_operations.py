@@ -184,6 +184,20 @@ class OperationsTests(unittest.TestCase):
             check.close()
         self.assertEqual(self.database.scalar("SELECT COUNT(*) FROM export_jobs"), 2)
 
+    def test_sqlite_backup_restores_into_fresh_database(self) -> None:
+        self.pipeline.run_both(date(2026, 9, 13))
+        service = ExportBackupService(self.database)
+        backup_path = service.backup_sqlite(self.root / "backups", "restore-test")
+        restored_path = self.root / "restored" / "creator_ops.db"
+        service.restore_sqlite(backup_path, restored_path)
+        restored = CreatorDatabase(restored_path)
+        self.assertEqual(restored.scalar("PRAGMA integrity_check"), "ok")
+        self.assertEqual(restored.scalar("SELECT COUNT(*) FROM creators"), 2)
+        self.assertEqual(restored.scalar("SELECT COUNT(*) FROM content_items"), 2)
+        self.assertEqual(restored.scalar("SELECT COUNT(*) FROM assets"), 10)
+        with self.assertRaises(FileExistsError):
+            service.restore_sqlite(backup_path, restored_path)
+
 
 if __name__ == "__main__":
     unittest.main()

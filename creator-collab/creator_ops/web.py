@@ -10,6 +10,7 @@ from urllib.parse import parse_qs, urlparse
 from zoneinfo import ZoneInfo
 
 from .cli import ROOT, build_pipeline
+from .asset_import import LocalAssetImportService
 from .review import ReviewDashboardService
 
 
@@ -18,6 +19,7 @@ STATIC_ROOT = ROOT / "dashboard"
 
 class DashboardHandler(BaseHTTPRequestHandler):
     service: ReviewDashboardService
+    asset_root: Path = ROOT
 
     def _json(self, payload: object, status: HTTPStatus = HTTPStatus.OK) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -37,6 +39,15 @@ class DashboardHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _binary(self, path: Path, content_type: str) -> None:
+        body = path.read_bytes()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "private, max-age=300")
+        self.end_headers()
+        self.wfile.write(body)
+
     @staticmethod
     def _tomorrow() -> str:
         return (datetime.now(ZoneInfo("Europe/Berlin")).date() + timedelta(days=1)).isoformat()
@@ -50,6 +61,20 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._file("app.css", "text/css; charset=utf-8")
             elif parsed.path == "/app.js":
                 self._file("app.js", "text/javascript; charset=utf-8")
+            elif parsed.path in {
+                "/assets/leona-voss-avatar.png",
+                "/assets/mara-field-avatar.png",
+            }:
+                self._file(parsed.path.lstrip("/"), "image/png")
+            elif parsed.path.startswith("/api/assets/") and parsed.path.endswith("/preview"):
+                asset_id = int(parsed.path.split("/")[3])
+                preview = LocalAssetImportService(
+                    self.service.pipeline, self.asset_root
+                ).preview_path(asset_id)
+                if preview is None:
+                    self._json({"error": "preview_not_found"}, HTTPStatus.NOT_FOUND)
+                else:
+                    self._binary(*preview)
             elif parsed.path == "/api/reviews":
                 target = parse_qs(parsed.query).get("date", [self._tomorrow()])[0]
                 cards = self.service.ensure_date(datetime.fromisoformat(target).date())
@@ -90,11 +115,20 @@ class DashboardHandler(BaseHTTPRequestHandler):
         print(f"dashboard: {format % args}")
 
 
-def create_server(database_path: Path, host: str = "127.0.0.1", port: int = 4180) -> ThreadingHTTPServer:
+def create_server(
+    database_path: Path,
+    host: str = "127.0.0.1",
+    port: int = 4180,
+    asset_root: Path = ROOT,
+) -> ThreadingHTTPServer:
     pipeline = build_pipeline(database_path)
     pipeline.initialize()
     service = ReviewDashboardService(pipeline)
-    handler = type("BoundDashboardHandler", (DashboardHandler,), {"service": service})
+    handler = type(
+        "BoundDashboardHandler",
+        (DashboardHandler,),
+        {"service": service, "asset_root": asset_root},
+    )
     return ThreadingHTTPServer((host, port), handler)
 
 

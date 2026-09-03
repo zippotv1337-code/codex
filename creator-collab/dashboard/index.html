@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#111512" />
+    <meta name="theme-color" content="#f4efe6" />
     <meta name="description" content="Lokale Freigabeoberfläche für Leona Voss und Mara Field." />
     <title>Creator Ops · Freigabe für morgen</title>
     <link rel="stylesheet" href="/app.css" />
@@ -11,17 +11,21 @@
   <body>
     <main class="shell">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">Creator Ops · lokale Kontrolle</p>
-          <h1>Freigabe für morgen</h1>
+        <div class="brand-block">
+          <span class="season-mark" aria-hidden="true">S</span>
+          <div>
+            <p class="eyebrow">Creator Ops · September Studio</p>
+            <h1>Morgen steht.</h1>
+            <p class="intro">Zwei Creatorinnen, zwei klare Pakete. Du gibst den Takt vor.</p>
+          </div>
         </div>
-        <div class="mode"><span aria-hidden="true"></span> Mock-Modus · nichts geht live</div>
+        <div class="mode"><span aria-hidden="true"></span> Vorschau · nichts geht live</div>
       </header>
 
       <section class="summary" aria-label="Tagesübersicht">
-        <div><strong id="ready-count">–</strong><span>bereit zur Prüfung</span></div>
-        <div><strong id="target-date">–</strong><span>geplanter Tag</span></div>
-        <p>Du entscheidest. Erst der Klick auf „Freigeben“ legt einen lokalen Publishing-Draft an.</p>
+        <div class="summary-stat"><strong id="ready-count">–</strong><span>Pakete bereit</span></div>
+        <div class="summary-stat"><strong id="target-date">–</strong><span>geplanter Tag</span></div>
+        <p><b>Deine Aufgabe heute:</b> Top 3 prüfen und je Persona einmal „Freigeben“ klicken.</p>
       </section>
 
       <section id="cards" class="cards" aria-live="polite" aria-busy="true">
@@ -29,7 +33,7 @@
       </section>
 
       <footer>
-        <span>KI-Personas · SFW · Rechte geprüft</span>
+        <span>Fiktive KI-Personas · SFW · lokale Vorschau</span>
         <span>Kein Live-Publishing verbunden</span>
       </footer>
     </main>

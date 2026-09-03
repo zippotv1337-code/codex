@@ -6,6 +6,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 from .database import CreatorDatabase
+from .asset_import import LocalAssetImportService
 from .evening import EveningRunCoordinator
 from .exporting import ExportBackupService
 from .pipeline import VerticalPipeline
@@ -41,6 +42,18 @@ def parser() -> argparse.ArgumentParser:
     backup = subcommands.add_parser("backup", help="Create and integrity-check a SQLite backup")
     backup.add_argument("--out", type=Path, default=ROOT / "backups")
     backup.add_argument("--label")
+    restore = subcommands.add_parser("restore", help="Restore a verified backup into a fresh database")
+    restore.add_argument("--backup", type=Path, required=True)
+    restore.add_argument("--out", type=Path, required=True)
+    asset_import = subcommands.add_parser(
+        "import-assets", help="Copy local SFW images into tomorrow's review package"
+    )
+    asset_import.add_argument("--creator", required=True, choices=("leona-voss", "mara-field"))
+    asset_import.add_argument("--date", required=True)
+    asset_import.add_argument(
+        "--rights-status", default="AI_GENERATED", choices=("AI_GENERATED", "OWNED", "LICENSED")
+    )
+    asset_import.add_argument("files", nargs="+")
     subcommands.add_parser("status", help="Print database table counts")
     return result
 
@@ -71,6 +84,17 @@ def main() -> int:
     elif args.command == "backup":
         path = ExportBackupService(pipeline.db).backup_sqlite(args.out, args.label)
         print(json.dumps({"backup": str(path)}, ensure_ascii=False, indent=2))
+    elif args.command == "restore":
+        path = ExportBackupService.restore_sqlite(args.backup, args.out)
+        print(json.dumps({"restored": str(path)}, ensure_ascii=False, indent=2))
+    elif args.command == "import-assets":
+        imported = LocalAssetImportService(pipeline, ROOT).import_files(
+            args.creator,
+            date.fromisoformat(args.date),
+            [Path(value) for value in args.files],
+            rights_status=args.rights_status,
+        )
+        print(json.dumps({"imported": imported}, ensure_ascii=False, indent=2))
     elif args.command == "status":
         print(json.dumps(pipeline.db.table_counts(), indent=2))
     return 0

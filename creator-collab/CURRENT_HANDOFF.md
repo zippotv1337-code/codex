@@ -39,13 +39,24 @@ Stand: 3. September 2026
 - Die Freigabe wurde automatisiert getestet: genau ein `mock-draft`, keine
   externe ID, keine externe URL und kein Live-Publishing.
 - Gesamte Testsuite nach der Erweiterung: 20 Tests, alle bestanden.
+- Lokalen JPG-/PNG-/WebP-Import für bestehende Review-Slots ergänzt; Dateikopie,
+  SHA-256, SFW-Prüfung und Rechteangabe sind enthalten.
+- Sichere Preview-Auslieferung per Asset-ID umgesetzt; ohne echte Datei bleibt
+  die bisherige Mock-Kachel erhalten.
+- Je ein neues, vollständig fiktives KI-Porträt für Leona und Mara erzeugt,
+  als Dashboard-Profilbild eingebunden und testweise importiert.
+- Dashboard auf eine helle September-Optik mit größerer Checkliste, Statusfarben
+  und klarer „Was muss ich heute tun?“-Anweisung geschärft.
+- SQLite-Backup real erzeugt und in eine frische Prüfdatenbank restauriert:
+  Integrität `ok`, 2 Creator, 2 Content-Items, 10 Assets.
+- Gesamte Testsuite: 22 Tests, alle bestanden; Compileall ebenfalls grün.
 
 ## Aktive Aufgabe
 
-Die erste lokale Review-Oberfläche ist einsatzbereit. Der größte nächste Nutzen
-ist der Import echter, rechtlich nutzbarer Bilddateien anstelle der neutralen
-Mock-Asset-Kacheln und danach die Engagement Queue als zweite Ansicht. Bis zu
-einer ausdrücklichen Freigabe bleiben alle Publikationen simuliert.
+Die geschärfte Review-Oberfläche ist auf Port 4181 einsatzbereit. Der Importpfad
+für echte Assets und der Restore sind fertig. Aktuell zeigt jede Persona einen
+echten importierten Bildslot und vier Mock-Fallbacks. Bis zu einer ausdrücklichen
+Freigabe bleiben alle Publikationen simuliert.
 
 Separater Plattformblocker: Alle drei Instagram-Konten erscheinen wieder in der
 Kontenwechselliste. Threads verlangt für Mara weiterhin eine echte
@@ -54,9 +65,9 @@ Profil gebunden.
 
 ## Nächste konkrete Schritte
 
-1. Rechtegeprüften Asset-Import und echte Vorschaubilder ergänzen.
+1. Je Persona vier weitere finale, rechtlich geklärte Posting-Bilder importieren.
 2. Engagement Queue als zweite Dashboard-Ansicht ergänzen.
-3. Restore-Test für die erzeugten SQLite-Backups ergänzen.
+3. Optional später einen lokalen Dateiauswahldialog vor den CLI-Import setzen.
 4. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
    persönlich durchführen möchte; kein KI-Bild hochladen.
 5. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung
@@ -67,11 +78,12 @@ Profil gebunden.
 - Repository: https://github.com/zippotv1337-code/codex
 - Sichtbarkeit: öffentlich
 - Zielbranch: `main`
-- Bestätigter Remote-Stand: `b04e094`
+- Bestätigter Remote-Stand vor diesem Lauf: `b04e094`
 - Neun vorbereitete Projektcommits, der zwischenzeitliche Remote-Handoff und
   beide `AGENTS.md`-Regelwerke wurden ohne Force-Push zusammengeführt.
 - Lokaler Sync-Stand und `origin/main` waren nach dem Push identisch.
-- Aktueller Blocker: keiner.
+- GitHub blieb öffentlich: Die vorbereitete Privatstellung verlangte persönliche
+  GitHub-Sicherheitsbestätigung; danach priorisierte der Nutzer das Dashboard.
 
 ## Nicht verändern
 

@@ -218,7 +218,7 @@ class ReviewDashboardService:
             for row in rows:
                 assets = connection.execute(
                     """
-                    SELECT id, asset_id, is_top_pick, quality_score, status
+                    SELECT id, asset_id, is_top_pick, quality_score, status, generator
                     FROM assets WHERE content_id = ?
                     ORDER BY (quality_score + persona_fit_score + coherence_score) DESC
                     """,
@@ -261,6 +261,11 @@ class ReviewDashboardService:
                                 "label": f"Bild {index}",
                                 "top_pick": bool(asset["is_top_pick"]),
                                 "quality": round(asset["quality_score"] * 100),
+                                "preview_url": (
+                                    f"/api/assets/{asset['id']}/preview"
+                                    if asset["generator"] == "local-import"
+                                    else None
+                                ),
                             }
                             for index, asset in enumerate(assets, start=1)
                         ],

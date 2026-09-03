@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 from creator_ops.cli import build_pipeline
+from creator_ops.asset_import import LocalAssetImportService
 from creator_ops.database import CreatorDatabase
 from creator_ops.review import ReviewDashboardService
 from creator_ops.web import create_server
@@ -49,6 +50,36 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM content_items"), 2)
         self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM assets"), 10)
 
+    def test_local_image_import_replaces_mock_slot_and_keeps_fallbacks(self) -> None:
+        source = Path(self.tempdir.name) / "candidate.png"
+        source.write_bytes(b"\x89PNG\r\n\x1a\nlocal-test-image")
+        importer = LocalAssetImportService(self.pipeline, Path(self.tempdir.name))
+        imported = importer.import_files(
+            "leona-voss",
+            date(2026, 9, 4),
+            [source],
+            rights_status="OWNED",
+        )
+        cards = self.service.cards(date(2026, 9, 4))
+        leona = cards[0]
+        mara = cards[1]
+        self.assertEqual(len(imported), 1)
+        self.assertEqual(leona["asset_count"], 5)
+        self.assertEqual(sum(asset["preview_url"] is not None for asset in leona["assets"]), 1)
+        self.assertTrue(all(asset["preview_url"] is None for asset in mara["assets"]))
+        preview = importer.preview_path(imported[0]["asset_id"])
+        self.assertIsNotNone(preview)
+        self.assertEqual(preview[1], "image/png")
+        stored = self.pipeline.db.one(
+            "SELECT generator, safety_class, rights_status FROM assets WHERE id = ?",
+            (imported[0]["asset_id"],),
+        )
+        self.assertEqual(dict(stored), {
+            "generator": "local-import",
+            "safety_class": "SFW",
+            "rights_status": "OWNED",
+        })
+
     def test_approval_creates_only_a_local_mock_draft(self) -> None:
         card = self.service.ensure_date(date(2026, 9, 4))[0]
         result = self.service.approve(card["content_id"])
@@ -75,7 +106,14 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM publications"), 1)
 
     def test_http_surface_lists_and_approves_a_card(self) -> None:
-        server = create_server(self.database_path, port=0)
+        source = Path(self.tempdir.name) / "http-preview.png"
+        source.write_bytes(b"\x89PNG\r\n\x1a\nhttp-preview")
+        imported = LocalAssetImportService(
+            self.pipeline, Path(self.tempdir.name)
+        ).import_files("leona-voss", date(2026, 9, 4), [source])
+        server = create_server(
+            self.database_path, port=0, asset_root=Path(self.tempdir.name)
+        )
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
@@ -83,6 +121,11 @@ class ReviewDashboardTests(unittest.TestCase):
             with urlopen(f"{base}/api/reviews?date=2026-09-04", timeout=5) as response:
                 payload = json.load(response)
             self.assertEqual(len(payload["cards"]), 2)
+            preview_url = payload["cards"][0]["assets"][0]["preview_url"]
+            self.assertIsNotNone(preview_url)
+            with urlopen(f"{base}{preview_url}", timeout=5) as response:
+                self.assertEqual(response.headers.get_content_type(), "image/png")
+                self.assertEqual(response.read(), source.read_bytes())
             content_id = payload["cards"][0]["content_id"]
             request = Request(f"{base}/api/reviews/{content_id}/approve", method="POST")
             with urlopen(request, timeout=5) as response:
