@@ -11,26 +11,29 @@ Stand: 3. September 2026
 - GitHub-Repository `zippotv1337-code/codex` und Standardbranch `main` bestätigt.
 - Ein sauberer Handoff-Commit auf Basis des vorhandenen GitHub-Initial-Commits
   wurde vorbereitet; der Push wartet nur noch auf die GitHub-Anmeldung.
+- Privates Threads-Profil erfolgreich von `@leonavoss.ai` zurück auf
+  `@zippo.rocco` gesetzt; 73 Follower blieben erhalten.
+- `@leonavoss.ai` und `@mara.field.ai` aus der privaten Meta-Kontenübersicht in
+  jeweils eigene Creator-Kontenübersichten verschoben.
+- Neues öffentliches Threads-Profil `@mara.field.ai` erstellt und Onboarding
+  abgeschlossen: https://www.threads.com/@mara.field.ai
 
 ## Aktive Aufgabe
 
-Das vorhandene Threads-Profil wurde mit Zustimmung des Nutzers von
-`@zippo.rocco` auf `@leonavoss.ai` umbenannt und behält 73 Follower. Öffentlicher
-Profilpfad: https://www.threads.com/@leonavoss.ai
-
-Anzeigename, Bio und vorhandene persönliche Inhalte sind noch nicht umgestellt.
-Threads hat darauf hingewiesen, dass bei abweichenden Instagram- und
-Threads-Namen das Threads-Banner im Instagram-Profil und weitere verknüpfte
-Funktionen beeinträchtigt werden können.
+Das separate Threads-Profil für Leona soll erstellt werden. Instagram zeigt
+dafür aktuell einen Login-Dialog für `@leonavoss.ai`; nach der Kontentrennung
+kann die frühere private Anmeldung nicht mehr verwendet werden. Die Anmeldung
+muss der Nutzer einmalig selbst abschließen, ohne das Passwort im Chat zu teilen.
 
 ## Nächste konkrete Schritte
 
-1. Im geöffneten GitHub-Tab anmelden und den vorbereiteten Commit auf `main` pushen.
-2. Anzeigename, Bio und Profilbild konsistent auf Leona umstellen.
-3. Vorhandene persönliche Threads-Inhalte prüfen; nichts ohne ausdrücklichen
-   Löschauftrag entfernen.
-4. Ersten transparenten Start-Thread veröffentlichen.
-5. Ergebnis mit öffentlichem Beitragslink dokumentieren.
+1. Im geöffneten Instagram-Dialog `@leonavoss.ai` einmalig anmelden.
+2. Eigenes öffentliches Threads-Profil für Leona erstellen und den öffentlichen
+   Profilpfad prüfen.
+3. Bio und Profilbild beider Creator-Threads-Profile konsistent und transparent
+   als KI-Personas einrichten.
+4. Im geöffneten GitHub-Tab anmelden und den vorbereiteten Commit auf `main` pushen.
+5. Je einen Start-Thread veröffentlichen und die Beitragslinks dokumentieren.
 
 ## GitHub-Synchronisation
 
@@ -46,4 +49,5 @@ Funktionen beeinträchtigt werden können.
 
 - Instagram `@zippo.rocco` nicht umbenennen.
 - Bestehende Threads-Beiträge nicht löschen.
+- Privates Threads-Profil `@zippo.rocco` nicht wieder als Creator-Profil verwenden.
 - Keine Zugangsdaten im Repository speichern.

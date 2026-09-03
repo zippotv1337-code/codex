@@ -35,6 +35,13 @@ und KI-generiert.
 - Facebook-Crossposting blieb deaktiviert.
 - Jedes Profil folgt fünf manuell geprüften, thematisch passenden Startkonten.
 - Es wurde keine Massen-Follow-/Unfollow-Automation eingesetzt.
+- Die Creator-Instagram-Konten `@leonavoss.ai` und `@mara.field.ai` wurden aus
+  der privaten Meta-Kontenübersicht in jeweils eigene Kontenübersichten
+  verschoben.
+- Das frühere private Threads-Profil wurde wieder auf `@zippo.rocco`
+  zurückgestellt; seine 73 Follower blieben erhalten.
+- Für Mara wurde ein neues, öffentliches Threads-Profil `@mara.field.ai`
+  angelegt: https://www.threads.com/@mara.field.ai
 
 ## Instagram-Belege
 
@@ -83,7 +90,9 @@ und KI-generiert.
 
 ## Offene Projektbereiche
 
-- Threads-Profil für Leona fertig umstellen und ersten Start-Thread veröffentlichen.
+- Separates Threads-Profil für Leona nach einmaliger Instagram-Anmeldung erstellen.
+- Threads-Profile von Leona und Mara transparent als KI-Personas kennzeichnen
+  und jeweils einen Start-Thread veröffentlichen.
 - Regelmäßige Threads-Textformate und Antwortstrategie entwickeln.
 - TikTok-Profile und native Kurzvideos aufbauen.
 - Zentrale Linkseite und rechtssichere Monetarisierungsstrecke umsetzen.
