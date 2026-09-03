@@ -43,6 +43,10 @@ und KI-generiert.
 - Für Mara wurde ein neues Threads-Profil `@mara.field.ai` angelegt. Direkt
   nach dem Onboarding setzte Threads das Profil jedoch aus und verlangt eine
   echte Selfie-Verifizierung; das Profil ist daher noch nicht einsatzbereit.
+- Die Instagram-Kontenwechselliste enthält wieder Mara, Leona und das private
+  `zippo.rocco`; Leona ist nicht verloren.
+- Threads-Bios und Startposts für beide Creator liegen freigabefertig in
+  `creator-collab/THREADS_DRAFTS.md`.
 
 ## Instagram-Belege
 
