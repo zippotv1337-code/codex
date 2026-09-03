@@ -37,8 +37,10 @@ Funktionen beeinträchtigt werden können.
 - Repository: https://github.com/zippotv1337-code/codex
 - Sichtbarkeit: öffentlich
 - Zielbranch: `main`
-- Vorbereiteter Commit: `579045b`
-- Blocker: GitHub-Schreibzugriff muss im Browser angemeldet werden.
+- Vorbereitete Commits: `579045b`, `7144ecb`
+- Blocker: Der Git-Push wartet ohne Ausgabe auf eine Anmeldung; der geöffnete
+  GitHub-Tab zeigt weiterhin die Login-Seite. Schreibzugriff ist noch nicht
+  bestätigt.
 
 ## Nicht verändern
 

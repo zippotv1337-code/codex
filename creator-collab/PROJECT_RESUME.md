@@ -70,6 +70,17 @@ und KI-generiert.
 - Keine Passwörter, OTPs oder Kontaktinformationen in dieses Repository schreiben.
 - Reichweite über Content, Antworten und passende Themen aufbauen; keine Spam-Taktiken.
 
+## Zusammenarbeit Codex und ChatGPT
+
+- Gemeinsames Ziel-Repository: https://github.com/zippotv1337-code/codex
+- Zielbranch: `main`
+- Dauerhafter Projektstand: `creator-collab/PROJECT_RESUME.md`
+- Aktuelle Übergabe: `creator-collab/CURRENT_HANDOFF.md`
+- Pro abgeschlossener Sitzung wird ein datiertes Journal unter
+  `creator-collab/sessions/` angelegt.
+- Zugangsdaten, Bestätigungscodes und andere Geheimnisse werden niemals dort
+  gespeichert.
+
 ## Offene Projektbereiche
 
 - Threads-Profil für Leona fertig umstellen und ersten Start-Thread veröffentlichen.
@@ -77,4 +88,3 @@ und KI-generiert.
 - TikTok-Profile und native Kurzvideos aufbauen.
 - Zentrale Linkseite und rechtssichere Monetarisierungsstrecke umsetzen.
 - Performance nach 24 Stunden, 72 Stunden und 7 Tagen erfassen.
-
