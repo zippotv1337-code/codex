@@ -9,8 +9,8 @@ Stand: 3. September 2026
 - Pro Persona fünf passende Nischenkonten abonniert.
 - Gemeinsames GitHub-Journalformat für ChatGPT und Codex vorbereitet.
 - GitHub-Repository `zippotv1337-code/codex` und Standardbranch `main` bestätigt.
-- Ein sauberer Handoff-Commit auf Basis des vorhandenen GitHub-Initial-Commits
-  wurde vorbereitet; der Push wartet nur noch auf die GitHub-Anmeldung.
+- Der vollständige Handoff-Verlauf und der Creator-Ops-MVP wurden erfolgreich
+  mit dem GitHub-Branch `main` synchronisiert.
 - Privates Threads-Profil erfolgreich von `@leonavoss.ai` zurück auf
   `@zippo.rocco` gesetzt; 73 Follower blieben erhalten.
 - `@leonavoss.ai` und `@mara.field.ai` aus der privaten Meta-Kontenübersicht in
@@ -60,11 +60,11 @@ Profil gebunden.
 - Repository: https://github.com/zippotv1337-code/codex
 - Sichtbarkeit: öffentlich
 - Zielbranch: `main`
-- Der aktuelle Creator-Ops-Ausbau ist lokal commitbereit; die vorbereitete
-  Synchronisationshistorie liegt weiterhin im separaten Sync-Branch.
-- Blocker: Der Git-Push wartet ohne Ausgabe auf eine Anmeldung; der geöffnete
-  GitHub-Tab zeigt weiterhin die Login-Seite. Schreibzugriff ist noch nicht
-  bestätigt.
+- Bestätigter Remote-Stand: `b04e094`
+- Neun vorbereitete Projektcommits, der zwischenzeitliche Remote-Handoff und
+  beide `AGENTS.md`-Regelwerke wurden ohne Force-Push zusammengeführt.
+- Lokaler Sync-Stand und `origin/main` waren nach dem Push identisch.
+- Aktueller Blocker: keiner.
 
 ## Nicht verändern
 

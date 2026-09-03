@@ -170,7 +170,7 @@ Tabellenzahlen blieben unverändert.
 - Kein produktiver Social-API-Zugang; für diesen MVP nicht erforderlich.
 - Keine echte Analytics-API; Simulation deckt den Lernpfad ab.
 - Keine echte Generator-API; Mock-Assets halten die Pipeline testbar.
-- GitHub-Push wartet auf angemeldeten Schreibzugriff.
+- GitHub-Synchronisation auf `main` wurde erfolgreich bestätigt.
 - Threads verlangt eine persönliche offizielle Identitätsprüfung. Es wird keine
   KI-Aufnahme als Verifizierungs-Selfie verwendet.
 
@@ -236,5 +236,5 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 16. Neue Kosten betragen 0 EUR.
 17. Keine Secrets werden gespeichert.
 18. Nächster größter Nutzen ist eine lokale Review- und Queue-Oberfläche.
-19. GitHub-Sync wartet weiterhin auf Schreibanmeldung.
+19. GitHub-Sync ist auf `main` erfolgt; lokaler und Remote-Stand waren identisch.
 20. Threads bleibt extern durch Metas Identitätsprüfung blockiert.
