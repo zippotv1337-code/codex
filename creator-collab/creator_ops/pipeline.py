@@ -3,9 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import asdict
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 from .database import CreatorDatabase, utc_now
 from .models import (
@@ -14,6 +13,13 @@ from .models import (
     ContentStatus,
     SafetyClass,
     VerticalRunResult,
+)
+from .scheduling import PrimeTimePlanner
+from .services import (
+    AssetFallbackService,
+    AudioService,
+    EngagementQueueService,
+    MockAnalyticsAdapter,
 )
 
 
@@ -62,6 +68,11 @@ class VerticalPipeline:
         self.personas = json.loads(self.persona_config_path.read_text(encoding="utf-8"))
         self.prime_time = json.loads(self.prime_time_config_path.read_text(encoding="utf-8"))
         self.publisher = MockPublisher()
+        self.scheduler = PrimeTimePlanner(self.prime_time)
+        self.audio_service = AudioService()
+        self.analytics = MockAnalyticsAdapter()
+        self.asset_fallbacks = AssetFallbackService()
+        self.engagement = EngagementQueueService()
 
     def initialize(self) -> None:
         self.db.initialize()
@@ -93,19 +104,6 @@ class VerticalPipeline:
             """,
             (content_id, current.value, target.value, note, now),
         )
-
-    def _schedule_time(self, run_date: date, platform: str, content_format: str) -> str:
-        timezone = ZoneInfo(self.prime_time["timezone"])
-        local_time = self.prime_time["cold_start_windows"][platform][content_format][0]
-        hour, minute = (int(part) for part in local_time.split(":"))
-        return datetime(
-            run_date.year,
-            run_date.month,
-            run_date.day,
-            hour,
-            minute,
-            tzinfo=timezone,
-        ).isoformat()
 
     def _existing_result(self, run_key: str) -> VerticalRunResult | None:
         row = self.db.one(
@@ -257,6 +255,7 @@ class VerticalPipeline:
                 """,
                 (content_id,),
             )
+            self.asset_fallbacks.create_plan(connection, content_id)
 
             compliance = check_compliance(
                 ComplianceInput(
@@ -293,15 +292,11 @@ class VerticalPipeline:
                     now,
                 ),
             ).fetchone()[0]
-            connection.execute(
-                """
-                INSERT INTO audio_candidates
-                    (content_id, label, reference, license_status, fit_score, selected)
-                VALUES (?, 'Option ohne Musik', NULL, 'SAFE_NO_AUDIO', 1.0, 1),
-                       (?, 'Audio A prüfen', 'platform-native-search', 'VERIFY_BEFORE_USE', 0.8, 0),
-                       (?, 'Audio B prüfen', 'platform-native-search', 'VERIFY_BEFORE_USE', 0.7, 0)
-                """,
-                (content_id, content_id, content_id),
+            self.audio_service.register_candidates(
+                connection,
+                content_id,
+                creator_slug,
+                persona["default_series"],
             )
             self._transition(
                 connection,
@@ -327,26 +322,37 @@ class VerticalPipeline:
                 "approval simulation recorded",
             )
 
-            scheduled_at = self._schedule_time(run_date, "instagram", "carousel")
-            local_time = scheduled_at[11:16]
+            schedule = self.scheduler.choose(
+                connection,
+                creator["id"],
+                run_date,
+                "instagram",
+                "carousel",
+            )
+            scheduled_at = schedule.scheduled_at.isoformat()
             connection.execute(
                 """
                 INSERT OR IGNORE INTO posting_windows
                     (creator_id, platform, format, weekday, timezone, local_time,
                      source, confidence)
-                VALUES (?, 'instagram', 'carousel', ?, 'Europe/Berlin', ?,
-                        'cold-start-config', 0.45)
+                VALUES (?, 'instagram', 'carousel', ?, 'Europe/Berlin', ?, ?, ?)
                 """,
-                (creator["id"], run_date.weekday(), local_time),
+                (
+                    creator["id"],
+                    run_date.weekday(),
+                    schedule.local_time,
+                    schedule.source,
+                    schedule.confidence,
+                ),
             )
             publication_id = connection.execute(
                 """
                 INSERT INTO publications
                     (content_id, platform_variant_id, provider, scheduled_at, status)
-                VALUES (?, ?, 'mock', ?, 'SCHEDULED')
+                VALUES (?, ?, ?, ?, 'SCHEDULED')
                 RETURNING id
                 """,
-                (content_id, variant_id, scheduled_at),
+                (content_id, variant_id, self.publisher.provider, scheduled_at),
             ).fetchone()[0]
             self._transition(connection, content_id, ContentStatus.SCHEDULED, "prime-time slot selected")
 
@@ -360,11 +366,26 @@ class VerticalPipeline:
                 """,
                 (published_at, external_id, mock_url, publication_id),
             )
+            connection.execute(
+                """
+                INSERT INTO adapter_attempts
+                    (content_id, adapter_type, provider, status, detail, created_at)
+                VALUES (?, 'publisher', ?, 'SUCCESS', 'mock publication created', ?)
+                """,
+                (content_id, self.publisher.provider, utc_now()),
+            )
+            self.engagement.seed(
+                connection,
+                creator["id"],
+                publication_id,
+                "instagram",
+                mock_url,
+                published_at,
+            )
             self._transition(connection, content_id, ContentStatus.PUBLISHED, "MockPublisher succeeded")
 
-            base_views = 800 if creator_slug == "leona-voss" else 650
-            for window, multiplier in ((24, 1), (72, 2), (168, 3)):
-                views = base_views * multiplier
+            snapshots = self.analytics.snapshots(creator_slug)
+            for snapshot in snapshots:
                 connection.execute(
                     """
                     INSERT INTO analytics_snapshots
@@ -375,20 +396,28 @@ class VerticalPipeline:
                     """,
                     (
                         publication_id,
-                        window,
+                        snapshot["window_hours"],
                         utc_now(),
-                        views,
-                        0.58 + multiplier * 0.01,
-                        0.42 + multiplier * 0.01,
-                        int(views * 0.08),
-                        max(3, int(views * 0.009)),
-                        max(4, int(views * 0.014)),
-                        max(5, int(views * 0.018)),
-                        max(6, int(views * 0.022)),
-                        max(3, int(views * 0.011)),
-                        0,
+                        snapshot["views"],
+                        snapshot["retention"],
+                        snapshot["completion"],
+                        snapshot["likes"],
+                        snapshot["comments"],
+                        snapshot["shares"],
+                        snapshot["saves"],
+                        snapshot["profile_visits"],
+                        snapshot["follows"],
+                        snapshot["link_clicks"],
                     ),
                 )
+            connection.execute(
+                """
+                INSERT INTO adapter_attempts
+                    (content_id, adapter_type, provider, status, detail, created_at)
+                VALUES (?, 'analytics', ?, 'SUCCESS', ?, ?)
+                """,
+                (content_id, self.analytics.provider, f"{len(snapshots)} mock snapshots", utc_now()),
+            )
 
             metrics = connection.execute(
                 """

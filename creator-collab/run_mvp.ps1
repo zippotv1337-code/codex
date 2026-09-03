@@ -24,13 +24,12 @@ try {
     }
 
     if (-not $TestOnly) {
-        & $pythonExecutable -m creator_ops.cli --db $Database demo --date $RunDate
+        & $pythonExecutable -m creator_ops.cli --db $Database evening-run --at "${RunDate}T20:00:00"
         if ($LASTEXITCODE -ne 0) {
-            throw "Demo-Lauf fehlgeschlagen (Exitcode $LASTEXITCODE)."
+            throw "Evening Run fehlgeschlagen (Exitcode $LASTEXITCODE)."
         }
         & $pythonExecutable -m creator_ops.cli --db $Database status
     }
 } finally {
     Pop-Location
 }
-

@@ -1,6 +1,6 @@
 data/*.db
 data/*.db-*
 exports/
+backups/
 __pycache__/
 .pytest_cache/
-

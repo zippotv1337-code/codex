@@ -111,6 +111,17 @@ und KI-generiert.
   zehn Assets, zwei Mock-Publikationen und sechs Analytics-Snapshots.
 - Schnellstart und Ergebnisbericht stehen in `docs/QUICKSTART.md` und
   `docs/LAST_RUN_REPORT.md`.
+- Der tägliche Evening Run akzeptiert Starts nur zwischen 19:00 und 22:00 Uhr
+  in `Europe/Berlin` und ist pro Datum idempotent.
+- Prime Time beginnt konfigurationsbasiert, lernt anschließend aus
+  7-Tage-Metriken und hält pro Creator mindestens 30 Minuten Slot-Abstand.
+- Jeder neue Inhalt erhält einen Primary-/Alternate-/Reserve-Assetplan.
+- Audio läuft über einen Adapter; nur bestätigte eigene oder lizenzierte
+  Kandidaten werden gewählt, sonst greift sicher „ohne Musik“.
+- Die Engagement Queue erzeugt ausschließlich manuell zu prüfende Vorschläge
+  und führt keine Plattformaktion aus.
+- Secret-freie JSON-Exporte und integritätsgeprüfte SQLite-Backups stehen über
+  die CLI bereit.
 
 ## Offene Projektbereiche
 
@@ -127,3 +138,6 @@ und KI-generiert.
   ergänzen; echte Veröffentlichungen bleiben bis dahin deaktiviert.
 - Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
   ersetzen.
+- Lokale Review- und Engagement-Queue-Oberfläche ergänzen.
+- Wiederherstellung aus einem SQLite-Backup als eigenen Disaster-Recovery-Lauf
+  dokumentieren und testen.

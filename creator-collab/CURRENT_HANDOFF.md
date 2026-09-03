@@ -23,12 +23,22 @@ Stand: 3. September 2026
   erfolgreich ausgeführt; 6 automatisierte Tests sind grün.
 - Wiederholter Demo-Lauf als idempotent bestätigt: zwei Content-Items, zehn
   Assets, zwei Mock-Publikationen und sechs Analytics-Snapshots ohne Duplikate.
+- Evening Run von 19:00 bis 22:00 Uhr mit Berliner Zeitzone umgesetzt; ein
+  Aufruf um 18:59 wird ohne Seiteneffekte abgewiesen.
+- Prime-Time-History, 30-Minuten-Slot-Abstand, sichere Audio-Fallbacks sowie
+  Primary-/Alternate-/Reserve-Assetpläne umgesetzt.
+- Engagement Queue mit vier Vorschlägen pro Zwei-Persona-Lauf ergänzt; sie
+  besitzt bewusst keinen automatischen Ausführungspfad.
+- Secret-freier JSON-Export und integritätsgeprüftes SQLite-Backup ergänzt.
+- Sauberer End-to-End-Verifikationslauf mit 16 bestandenen Tests durchgeführt.
 
 ## Aktive Aufgabe
 
-Der lokale Creator-Ops-MVP ist einsatzbereit und dokumentiert. Der nächste
-technische Schritt ist die kontrollierte Erweiterung um echte Plattformadapter;
-bis zu einer ausdrücklichen Freigabe bleiben alle Publikationen simuliert.
+Der lokale Creator-Ops-MVP ist einschließlich Evening Run, Prime-Time-Lernen,
+Audio- und Asset-Fallbacks, Engagement Queue und Backup einsatzbereit. Der
+nächste technische Schritt ist eine kleine lokale Review-/Queue-Oberfläche oder
+ein offizieller Read-only-Analytics-Adapter. Bis zu einer ausdrücklichen
+Freigabe bleiben alle Publikationen simuliert.
 
 Separater Plattformblocker: Alle drei Instagram-Konten erscheinen wieder in der
 Kontenwechselliste. Threads verlangt für Mara weiterhin eine echte
@@ -37,10 +47,9 @@ Profil gebunden.
 
 ## Nächste konkrete Schritte
 
-1. Architektur und letzten Lauf in `docs/LAST_RUN_REPORT.md` prüfen; lokal mit
-   `run_mvp.ps1` reproduzieren.
-2. Entscheiden, welcher offizielle Plattformadapter zuerst entwickelt wird und
-   welche Freigabeschranke echte Publikationen schützen soll.
+1. Lokale Review-/Engagement-Queue-Oberfläche priorisieren oder alternativ den
+   ersten offiziellen Read-only-Analytics-Adapter festlegen.
+2. Restore-Test für die erzeugten SQLite-Backups ergänzen.
 3. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
    persönlich durchführen möchte; kein KI-Bild hochladen.
 4. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung
@@ -51,7 +60,8 @@ Profil gebunden.
 - Repository: https://github.com/zippotv1337-code/codex
 - Sichtbarkeit: öffentlich
 - Zielbranch: `main`
-- Vorbereitete Commits: `579045b`, `7144ecb`
+- Der aktuelle Creator-Ops-Ausbau ist lokal commitbereit; die vorbereitete
+  Synchronisationshistorie liegt weiterhin im separaten Sync-Branch.
 - Blocker: Der Git-Push wartet ohne Ausgabe auf eine Anmeldung; der geöffnete
   GitHub-Tab zeigt weiterhin die Login-Seite. Schreibzugriff ist noch nicht
   bestätigt.
