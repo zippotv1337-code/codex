@@ -21,26 +21,25 @@ Stand: 3. September 2026
 
 ## Aktive Aufgabe
 
-`@leonavoss.ai` ist nicht gelöscht: Das öffentliche Profil mit Name, Bio,
-KI-Kennzeichnung und fünf Beiträgen wurde sichtbar verifiziert. Nach der
-Kontentrennung fehlt lediglich die gespeicherte Anmeldung. Instagram hat einen
-offiziellen Wiederherstellungslink an die hinterlegte Gmail-Adresse gesendet.
-Der Nutzer muss diesen Link persönlich öffnen.
+Alle drei Instagram-Konten erscheinen wieder in der Kontenwechselliste:
+`mara.field.ai`, `zippo.rocco` und `leonavoss.ai`. Der Leona-Zugang ist damit
+wiederhergestellt.
 
-Threads verlangt parallel für das neu erstellte Mara-Profil eine echte
-Selfie-Verifizierung. Der einzige sichtbare alternative Menüpunkt ist
-`Mara Field abmelden`; eine normale Einspruchsoption wird auf dieser Seite nicht
-angeboten.
+Threads verlangt für das neu erstellte Mara-Profil weiterhin eine echte
+Selfie-Verifizierung. Auch nach dem Abmelden von Mara, dem Wechsel von Instagram
+zu `@leonavoss.ai` und der erneuten Threads-Anmeldung über Leona landet Threads
+wieder auf derselben Sperrseite; das Menü zeigt weiterhin `Mara Field abmelden`.
+Damit ist die Threads-SSO-Sitzung aktuell an das ausgesetzte Mara-Profil gebunden.
 
 ## Nächste konkrete Schritte
 
-1. Nutzer öffnet den Instagram-Wiederherstellungslink aus seinem hinterlegten
-   Gmail-Postfach und stellt die Leona-Anmeldung persönlich wieder her.
-2. Danach `@leonavoss.ai` erneut als eigenes Instagram-Login hinzufügen.
-3. Nutzer entscheidet, ob er die offizielle Mara-Selfie-Verifizierung persönlich
+1. Nutzer entscheidet, ob er die offizielle Mara-Selfie-Verifizierung persönlich
    durchführen möchte; kein KI-Bild hochladen.
-4. Erst danach entscheiden, ob ein zweites Threads-Onboarding für Leona sinnvoll
-   ist oder bis zur Klärung der Mara-Prüfung pausiert wird.
+2. Bis zur Freigabe keine weiteren Threads-Konten über dieselbe Sitzung anlegen.
+3. Nach offizieller Freigabe Mara eindeutig anmelden, Bio aus
+   `THREADS_DRAFTS.md` setzen und Startpost veröffentlichen.
+4. Danach Leona in einer klar getrennten Threads-Sitzung einrichten und ihren
+   vorbereiteten Startpost veröffentlichen.
 
 ## GitHub-Synchronisation
 
