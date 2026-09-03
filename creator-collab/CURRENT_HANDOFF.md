@@ -31,14 +31,21 @@ Stand: 3. September 2026
   besitzt bewusst keinen automatischen Ausführungspfad.
 - Secret-freier JSON-Export und integritätsgeprüftes SQLite-Backup ergänzt.
 - Sauberer End-to-End-Verifikationslauf mit 16 bestandenen Tests durchgeführt.
+- Lokale Morgen-Freigabeoberfläche unter `http://127.0.0.1:4180/` umgesetzt.
+- Leona und Mara erscheinen als getrennte Karten mit je fünf Asset-Plätzen,
+  drei Top Picks, vollständiger Checkliste und Freigabe-Button.
+- Aktuell sind beide Pakete für morgen review-bereit, nicht freigegeben und für
+  19:30 Uhr vorgeschlagen; Musik-Fallback ist „Option ohne Musik“.
+- Die Freigabe wurde automatisiert getestet: genau ein `mock-draft`, keine
+  externe ID, keine externe URL und kein Live-Publishing.
+- Gesamte Testsuite nach der Erweiterung: 20 Tests, alle bestanden.
 
 ## Aktive Aufgabe
 
-Der lokale Creator-Ops-MVP ist einschließlich Evening Run, Prime-Time-Lernen,
-Audio- und Asset-Fallbacks, Engagement Queue und Backup einsatzbereit. Der
-nächste technische Schritt ist eine kleine lokale Review-/Queue-Oberfläche oder
-ein offizieller Read-only-Analytics-Adapter. Bis zu einer ausdrücklichen
-Freigabe bleiben alle Publikationen simuliert.
+Die erste lokale Review-Oberfläche ist einsatzbereit. Der größte nächste Nutzen
+ist der Import echter, rechtlich nutzbarer Bilddateien anstelle der neutralen
+Mock-Asset-Kacheln und danach die Engagement Queue als zweite Ansicht. Bis zu
+einer ausdrücklichen Freigabe bleiben alle Publikationen simuliert.
 
 Separater Plattformblocker: Alle drei Instagram-Konten erscheinen wieder in der
 Kontenwechselliste. Threads verlangt für Mara weiterhin eine echte
@@ -47,12 +54,12 @@ Profil gebunden.
 
 ## Nächste konkrete Schritte
 
-1. Lokale Review-/Engagement-Queue-Oberfläche priorisieren oder alternativ den
-   ersten offiziellen Read-only-Analytics-Adapter festlegen.
-2. Restore-Test für die erzeugten SQLite-Backups ergänzen.
-3. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
+1. Rechtegeprüften Asset-Import und echte Vorschaubilder ergänzen.
+2. Engagement Queue als zweite Dashboard-Ansicht ergänzen.
+3. Restore-Test für die erzeugten SQLite-Backups ergänzen.
+4. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
    persönlich durchführen möchte; kein KI-Bild hochladen.
-4. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung
+5. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung
    anlegen.
 
 ## GitHub-Synchronisation

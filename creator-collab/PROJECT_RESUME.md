@@ -122,6 +122,10 @@ und KI-generiert.
   und führt keine Plattformaktion aus.
 - Secret-freie JSON-Exporte und integritätsgeprüfte SQLite-Backups stehen über
   die CLI bereit.
+- Eine lokale Freigabeoberfläche zeigt für morgen je eine Leona- und Mara-Karte
+  mit fünf Assets, Top 3, Carousel, Caption, Audio-Fallback und Prime Time.
+- Der Freigabe-Button protokolliert eine echte lokale Betreiberentscheidung,
+  erstellt aber ausschließlich einen `mock-draft` ohne externe Veröffentlichung.
 
 ## Offene Projektbereiche
 
@@ -138,6 +142,7 @@ und KI-generiert.
   ergänzen; echte Veröffentlichungen bleiben bis dahin deaktiviert.
 - Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
   ersetzen.
-- Lokale Review- und Engagement-Queue-Oberfläche ergänzen.
+- Reale, rechtlich nutzbare Asset-Dateien in die Review-Kacheln importieren.
+- Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
 - Wiederherstellung aus einem SQLite-Backup als eigenen Disaster-Recovery-Lauf
   dokumentieren und testen.
