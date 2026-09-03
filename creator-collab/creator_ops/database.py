@@ -231,6 +231,68 @@ CREATE TABLE IF NOT EXISTS platform_accounts (
     status TEXT NOT NULL,
     UNIQUE (creator_id, platform)
 );
+
+CREATE TABLE IF NOT EXISTS asset_usage_plan (
+    id INTEGER PRIMARY KEY,
+    content_id INTEGER NOT NULL REFERENCES content_items(id),
+    asset_id INTEGER NOT NULL REFERENCES assets(id),
+    role TEXT NOT NULL,
+    priority INTEGER NOT NULL,
+    trigger_reason TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'READY',
+    UNIQUE (content_id, asset_id)
+);
+
+CREATE TABLE IF NOT EXISTS adapter_attempts (
+    id INTEGER PRIMARY KEY,
+    content_id INTEGER REFERENCES content_items(id),
+    adapter_type TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    status TEXT NOT NULL,
+    fallback_provider TEXT,
+    detail TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS engagement_queue (
+    id INTEGER PRIMARY KEY,
+    creator_id INTEGER NOT NULL REFERENCES creators(id),
+    publication_id INTEGER NOT NULL REFERENCES publications(id),
+    platform TEXT NOT NULL,
+    action_type TEXT NOT NULL,
+    target_ref TEXT NOT NULL,
+    prompt TEXT NOT NULL,
+    safety_note TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'PROPOSED',
+    priority INTEGER NOT NULL,
+    not_before TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    reviewed_at TEXT,
+    UNIQUE (publication_id, action_type, target_ref)
+);
+
+CREATE TABLE IF NOT EXISTS evening_batches (
+    id INTEGER PRIMARY KEY,
+    batch_key TEXT NOT NULL UNIQUE,
+    run_date TEXT NOT NULL,
+    requested_at TEXT NOT NULL,
+    window_start TEXT NOT NULL,
+    window_end TEXT NOT NULL,
+    status TEXT NOT NULL,
+    results_json TEXT NOT NULL,
+    reason TEXT,
+    completed_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS export_jobs (
+    id INTEGER PRIMARY KEY,
+    kind TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    sha256 TEXT NOT NULL,
+    row_counts_json TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
 """
 
 
@@ -351,5 +413,11 @@ class CreatorDatabase:
             "experiments",
             "cost_events",
             "revenue_events",
+            "audio_candidates",
+            "asset_usage_plan",
+            "adapter_attempts",
+            "engagement_queue",
+            "evening_batches",
+            "export_jobs",
         )
         return {table: int(self.scalar(f"SELECT COUNT(*) FROM {table}") or 0) for table in tables}

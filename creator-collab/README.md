@@ -22,6 +22,10 @@ aufgerufen und nichts live veröffentlicht.
 
 ```powershell
 python -m creator_ops.cli --db data/creator_ops.db demo --date 2026-09-03
+python -m creator_ops.cli --db data/creator_ops.db evening-run --at 2026-09-03T20:00:00
+python -m creator_ops.cli --db data/creator_ops.db engagement
+python -m creator_ops.cli --db data/creator_ops.db export --out backups --label latest
+python -m creator_ops.cli --db data/creator_ops.db backup --out backups --label latest
 python -m creator_ops.cli --db data/creator_ops.db status
 python -m unittest discover -s tests -v
 ```
@@ -33,6 +37,12 @@ Enthalten sind:
 - QA-, Duplikat-, Rechte- und KI-Disclosure-Prüfung
 - Review- und Approval-Simulation
 - Prime-Time-Scheduling für `Europe/Berlin`
+- harte Evening-Run-Schranke von 19:00 bis 22:00 Uhr
+- Prime-Time-Lernen aus 7-Tage-Metriken und Kollisionsvermeidung
+- Audio-Adapter mit lizenzsicherem „ohne Musik“-Fallback
+- Primary-/Alternate-/Reserve-Plan für jedes Asset-Paket
+- Engagement-Vorschlagsqueue ohne automatische externe Aktionen
+- geheimnisfreier JSON-Export und integritätsgeprüftes SQLite-Backup
 - `MockPublisher`
 - Analytics-Snapshots nach 24, 72 und 168 Stunden
 - einfache Learning-Entscheidung anhand mehrerer Qualitätsmetriken

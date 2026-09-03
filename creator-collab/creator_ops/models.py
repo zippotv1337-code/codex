@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from enum import StrEnum
 
 
@@ -50,3 +51,29 @@ class VerticalRunResult:
     mock_url: str
     reused: bool = False
 
+
+@dataclass(frozen=True)
+class ScheduleDecision:
+    scheduled_at: datetime
+    local_time: str
+    source: str
+    confidence: float
+    score: float
+
+
+@dataclass(frozen=True)
+class AudioSelection:
+    label: str
+    reference: str | None
+    license_status: str
+    provider: str
+    fallback_used: bool
+
+
+@dataclass(frozen=True)
+class EveningRunResult:
+    batch_key: str
+    status: str
+    requested_at: str
+    results: tuple[VerticalRunResult, ...]
+    reason: str | None = None

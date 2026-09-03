@@ -1,5 +1,10 @@
 {
   "timezone": "Europe/Berlin",
+  "evening_run": {
+    "start": "19:00",
+    "end": "22:00",
+    "minimum_spacing_minutes": 30
+  },
   "cold_start_windows": {
     "instagram": {
       "image": ["19:15", "20:15"],
@@ -14,4 +19,3 @@
     }
   }
 }
-

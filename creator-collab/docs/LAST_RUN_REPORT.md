@@ -14,6 +14,10 @@ Stand: 3. September 2026
 - Ein wiederholter Abend-Lauf erzeugt keine doppelten Inhalte oder Assets.
 - Ein Provider-Ausfall endet nachvollziehbar in `PARTIAL_READY` und lässt sich
   anschließend erfolgreich erneut starten.
+- Der Evening Run erzwingt 19:00–22:00 Uhr in `Europe/Berlin`.
+- Die Prime-Time-Auswahl nutzt nach dem Cold Start historische 7-Tage-Metriken
+  und vermeidet zu eng belegte Slots pro Creator.
+- Audio-, Asset-Reserve-, Engagement- und Export/Backup-Pfade sind ausführbar.
 
 ## Größter Fortschritt
 
@@ -50,6 +54,12 @@ lokale `mock://`-Publikationsadressen.
 - Idempotenter Evening Run: erfolgreich
 - `PARTIAL_READY` + Retry: erfolgreich
 - Audio-Grundlage: drei sichere Kandidatenzustände vorhanden
+- Evening-Run-Orchestrierung: fertig
+- Prime-Time-History und Slot-Abstand: fertig
+- Audio-Adapter plus Safe-No-Audio-Fallback: fertig
+- Asset-Plan mit Primary, Alternates und Reserves: fertig
+- Engagement Queue ohne automatische Ausführung: fertig
+- JSON-Export und SQLite-Backup: fertig
 - Live-Publishing: absichtlich nicht implementiert
 
 ## Wichtige Dateien und Module
@@ -58,6 +68,10 @@ lokale `mock://`-Publikationsadressen.
 - `creator_ops/models.py` – Status-, Safety- und Ergebnisobjekte
 - `creator_ops/pipeline.py` – Compliance, Statusmaschine, Pipeline,
   MockPublisher, Analytics und Learning
+- `creator_ops/scheduling.py` – Evening Window, History-Scoring und Slot-Abstand
+- `creator_ops/services.py` – Audio-, Asset-Fallback- und Engagement-Dienste
+- `creator_ops/evening.py` – idempotente Evening-Run-Orchestrierung
+- `creator_ops/exporting.py` – JSON-Export und SQLite-Backup
 - `creator_ops/cli.py` – `init`, `demo` und `status`
 - `config/personas.json` – zentrale Persona-Daten
 - `config/prime_time.json` – anpassbare Cold-Start-Zeitfenster
@@ -75,7 +89,7 @@ Das Schema enthält:
 `platform_accounts`.
 
 `platform_accounts.secret_reference` ist optional; echte Passwörter oder Tokens
-werden nicht gespeichert.
+werden nicht gespeichert. JSON-Exporte schließen dieses Feld ausdrücklich aus.
 
 ## Architekturentscheidungen
 
@@ -95,7 +109,7 @@ werden nicht gespeichert.
 Ausgeführt mit der gebündelten Python-3.12-Laufzeit:
 
 ```text
-Ran 6 tests in 0.582s
+Ran 16 tests
 OK
 ```
 
@@ -108,22 +122,33 @@ Abgedeckt:
 - Blockierung von Adult-Inhalten auf Instagram
 - Pflicht für KI-Hinweis und Medienrechte
 - simulierter Publisher-Ausfall, `PARTIAL_READY` und erfolgreicher Retry
+- Evening-Run-Schranke innerhalb und außerhalb von 19:00–22:00 Uhr
+- Prime-Time-Wechsel von Cold Start zu History sowie Slot-Kollisionsvermeidung
+- Audio-Fallback bei Adapterausfall und Auswahl bestätigter eigener Musik
+- Primary-, Alternate- und Reserve-Zuordnung aller Assets
+- rein manuelle Engagement Queue
+- geheimnisfreier JSON-Export und valides SQLite-Backup
 - Python-Kompilierung aller Module und Tests
 
 ## Demo-Laufergebnis
 
-Erster Lauf:
+Bestätigter lokaler Datenstand nach dem erweiterten Lauf:
 
 - 2 Creator
 - 2 Serien
 - 2 Content Items
 - 10 Assets
-- 6 Top Picks
 - 2 Plattformvarianten
 - 2 Review-Ereignisse
 - 2 Mock-Publikationen
 - 6 Analytics-Snapshots
 - 2 Learning-Experimente
+- 6 Audio-Kandidaten
+- 10 Asset-Plan-Einträge
+- 6 protokollierte Adapter-Aufrufe
+- 4 Engagement-Vorschläge
+- 1 Evening Batch
+- 2 abgeschlossene Export-Jobs
 - 0 EUR Kosten
 - 0 EUR Umsatz
 
@@ -135,7 +160,8 @@ Tabellenzahlen blieben unverändert.
 - Keine echte Generator-, Publishing- oder Analytics-API angebunden.
 - Keine HTTP-Oberfläche; Bedienung erfolgt aktuell über CLI und SQLite.
 - Asset-Dateien sind Mock-Referenzen, nicht erzeugte Bilddateien.
-- Prime-Time basiert noch auf konfigurierten Cold-Start-Annahmen.
+- Prime-Time lernt aus simulierten Metriken; echte Plattformdaten fehlen noch.
+- Engagement-Vorschläge beziehen sich im Mock-Betrieb auf `mock://`-Ziele.
 - Threads ist extern durch Metas Selfie-Prüfung für Mara blockiert; auch die
   Leona-Anmeldung wird in dieselbe ausgesetzte Threads-Sitzung geleitet.
 
@@ -156,12 +182,12 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 
 ## Fünf sinnvollste nächste Aufgaben
 
-1. Einfache lokale Review-API oder UI
+1. Einfache lokale Review- und Queue-API oder UI
    - Nutzen: hoch
    - Aufwand: mittel
    - Risiko: niedrig
    - Größe: M
-2. JSON/CSV-Backup und Restore
+2. Restore-Prüfung und dokumentierter Disaster-Recovery-Test
    - Nutzen: mittel
    - Aufwand: klein
    - Risiko: niedrig
@@ -171,8 +197,8 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
    - Aufwand: mittel
    - Risiko: niedrig
    - Größe: M
-4. Engagement-Vorschlagsqueue ohne automatische externe Aktionen
-   - Nutzen: mittel
+4. Offiziellen Analytics-Adapter hinter der bestehenden Schnittstelle ergänzen
+   - Nutzen: hoch
    - Aufwand: mittel
    - Risiko: mittel
    - Größe: M
@@ -206,9 +232,9 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 12. Gleiche Abend-Läufe sind idempotent.
 13. Provider-Fehler enden in `PARTIAL_READY`.
 14. Retry nach Fehler funktioniert.
-15. Sechs Tests sind grün.
+15. Sechzehn Tests sind grün.
 16. Neue Kosten betragen 0 EUR.
 17. Keine Secrets werden gespeichert.
-18. Nächster größter Nutzen ist eine lokale Review-Oberfläche.
+18. Nächster größter Nutzen ist eine lokale Review- und Queue-Oberfläche.
 19. GitHub-Sync wartet weiterhin auf Schreibanmeldung.
 20. Threads bleibt extern durch Metas Identitätsprüfung blockiert.
