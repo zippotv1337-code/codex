@@ -18,7 +18,9 @@ Ergebnis: 4 vollständige Pakete, 20 reale Bildkandidaten, 12 kuratierte Top-Pic
   Ganzkörper/Bewegung, candid/Interaktion.
 - Deutsche/europäische Bildwelt; keine erfundene Partnerschaft und keine
   sichtbaren Markenlogos als Kooperation.
-- Rechte-/Herkunftsstatus: `AI_GENERATED`, `SFW`, `UNPUBLISHED`.
+- Rechte-/Herkunftsstatus beim Produktionsabschluss: `AI_GENERATED`, `SFW`,
+  `UNPUBLISHED`. Die spätere native Veröffentlichung von zwei S4-Assets ist
+  am Ende dieses Dokuments ergänzt.
 - Alle Captions bleiben ohne automatisch wiederholten KI-Disclaimer. Die
   Transparenz bleibt als strukturiertes Publishing-Metadatum und im
   Plattform-Review erhalten.
@@ -54,7 +56,7 @@ Pfad: `assets/generated/mara-field/2026-09-05/m1-maschinencheck/`
 | S1 | `01-frontal-profile-anchor.png` | vorhandener Front-/Profilanker | `0C31A1E52092` | Reserve |
 | S2 | `02-left-three-quarter-tire-check.png` | Reifencheck, links 3/4 | `236A93739F6F` | Top 2 |
 | S3 | `03-right-three-quarter-light-check.png` | Lichtcheck, rechts 3/4 | `6D6C6B193982` | Reserve |
-| S4 | `04-full-body-morning-walk.png` | Ganzkörper, Bewegung über deutschen Hof | `E62447F9A18B` | Top 1 |
+| S4 | `04-full-body-morning-walk.png` | Ganzkörper, Bewegung über deutschen Hof | `E62447F9A18B` | Top 1; veröffentlicht 04.09. |
 | S5 | `05-candid-tractor-step.png` | candid/Interaktion an grün-gelbem Traktor | `049B062BF5CB` | Top 3 |
 
 Carousel: `S4 -> S2 -> S5`. Ein präziser Edit-Pass änderte ausschließlich
@@ -77,7 +79,7 @@ Pfad: `assets/generated/leona-voss/2026-09-06/lv-btt-01-september-roofline/`
 | S1 | `01-frontal-rooftop.png` | frontal/halbnah auf Berliner Rooftop | `C0E09F32E1D3` | Reserve |
 | S2 | `02-left-three-quarter-railing.png` | links 3/4 am Geländer | `135D0F80D1EE` | Top 2 |
 | S3 | `03-right-three-quarter-reflection.png` | rechts 3/4 mit Reflexion | `7215640704E2` | Reserve |
-| S4 | `04-full-body-rooftop-walk.png` | Ganzkörper in Bewegung | `09D22EE74F45` | Top 1 |
+| S4 | `04-full-body-rooftop-walk.png` | Ganzkörper in Bewegung | `09D22EE74F45` | Top 1; veröffentlicht 04.09. |
 | S5 | `05-candid-seated-cuff.png` | sitzend/candid, Ärmelmoment | `1A311D6BA548` | Top 3 |
 
 Carousel: `S4 -> S2 -> S5`. Visuelle QA bestanden: klare Distanz- und
@@ -126,4 +128,18 @@ je Persona:
 - ausgewähltes Audio: `Option ohne Musik`
 - kein KI-Standardfooter in der organischen Caption
 
-Es erfolgte weder eine Owner-Freigabe noch eine externe Veröffentlichung.
+Im ursprünglichen Produktionslauf erfolgte weder eine Owner-Freigabe noch eine
+externe Veröffentlichung. Die zwei späteren nativen Einzelposts wurden
+separat und jeweils nach ausdrücklicher Owner-Freigabe ausgeführt.
+
+## Native Veröffentlichungsaktualisierung – 4. September 2026
+
+- Mara S4 `04-full-body-morning-walk.png`:
+  <https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/>
+- Leona S4 `04-full-body-rooftop-walk.png` im 4:5-Zuschnitt:
+  <https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/>
+
+Bei beiden Posts war das native Instagram-KI-Label aktiviert. Die übrigen
+Assets bleiben unveröffentlicht beziehungsweise in Review. Die lokalen
+Creator-Ops-Statuswerte bleiben `READY_FOR_REVIEW` und `approved=false`, weil
+die Veröffentlichungen nativ außerhalb des `MockPublisher` erfolgten.

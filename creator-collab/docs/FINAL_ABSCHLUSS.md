@@ -1,6 +1,6 @@
 # Creator Ops – Abschluss und Übergabe
 
-Stand: 4. September 2026, 10:57 Uhr
+Stand: 4. September 2026, 15:20 Uhr
 
 ## GitHub-Sichtbarkeit
 
@@ -31,7 +31,11 @@ lokale SQLite-Datenbanken, Importkopien und Backups.
   kuratierte Top-Picks.
 - Caption, Hook, CTA, Hashtags, Musik A/B/ohne und Prime Time sind vollständig.
 - Alle vier Pakete stehen auf `READY_FOR_REVIEW`.
-- `approved=false`: Es wurde nichts final freigegeben oder live veröffentlicht.
+- In Creator Ops bleibt `approved=false`; der lokale Mock-Workflow hat nichts
+  freigegeben oder live veröffentlicht.
+- Separat wurden nach ausdrücklicher Owner-Freigabe je ein Leona- und
+  Mara-Einzelmotiv nativ auf Instagram veröffentlicht. Das native KI-Label war
+  bei beiden Posts aktiviert.
 
 Fertige Pakete:
 
@@ -43,6 +47,18 @@ Fertige Pakete:
 Produktionsnachweis: `docs/CONTENT_PRODUCTION_RUN.md`
 
 Postingplan: `docs/POSTING_BRIDGE_TO_TUESDAY.md`
+
+### Bestätigte Live-Posts vom 4. September 2026
+
+- Mara – Maschinencheck, Ganzkörper/Hof-Walk:
+  <https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/>
+- Leona – September Roofline, Ganzkörper/Rooftop-Walk im 4:5-Zuschnitt:
+  <https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/>
+
+Instagram bestätigte beide Veröffentlichungen sichtbar. Danach zeigen
+`@mara.field.ai` und `@leonavoss.ai` jeweils sechs Feed-Beiträge. Diese beiden
+nativen Veröffentlichungen ändern nicht die lokale Creator-Ops-Datenbank und
+stellen keine Aktivierung eines Live-Publishers dar.
 
 ### Creator-Ops-System
 
@@ -118,7 +134,8 @@ wurde an das verbundene eigene Gmail-Konto gesendet.
 
 1. **Repository öffentlich lassen oder privat stellen?** Solange es `public`
    ist, sind Code, Dokumentation und die 20 eingecheckten Bilder öffentlich.
-2. Die vier Content-Pakete als Owner prüfen und freigeben.
+2. Die übrigen Motive der vier Content-Pakete als Owner prüfen; zwei
+   Einzelmotive sind bereits nativ veröffentlicht.
 3. Optional `cloudflared` installieren und den Remote-Test starten.
 4. Threads-Verifizierung von Mara nur über den offiziellen persönlichen Weg
    durchführen; kein KI-Selfie verwenden.
@@ -129,5 +146,6 @@ wurde an das verbundene eigene Gmail-Konto gesendet.
 Der technische und visuelle MVP ist **fertig für den Owner-Review**. Es fehlen
 keine Systemkomponenten für den lokalen Review. Für externen Zugriff fehlt nur
 die manuelle Installation von `cloudflared` und die persönliche Vergabe eines
-neuen Passworts. Veröffentlichungen bleiben bis zur ausdrücklichen Freigabe
-deaktiviert.
+neuen Passworts. Der Creator-Ops-Live-Publisher bleibt deaktiviert; zwei
+Einzelposts wurden separat nativ und jeweils erst nach ausdrücklicher
+Owner-Freigabe veröffentlicht.

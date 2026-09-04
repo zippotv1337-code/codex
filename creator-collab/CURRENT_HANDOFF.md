@@ -1,6 +1,6 @@
 # Aktueller Handoff
 
-Stand: 4. September 2026, 10:20 Uhr
+Stand: 4. September 2026, 15:20 Uhr
 
 ## Zuletzt erreicht
 
@@ -35,14 +35,28 @@ Stand: 4. September 2026, 10:20 Uhr
 - Remote-Access-Implementierung erfolgreich auf GitHub `main` gepusht
   (`d616bf4`) und Ergebnis-Mail an das verbundene eigene Gmail-Konto gesendet
   (Nachrichten-ID `1a06b99169f3809f`).
+- Nach ausdrücklicher Owner-Freigabe je einen nativen Instagram-Einzelpost
+  veröffentlicht; beide Veröffentlichungen wurden durch Instagrams
+  Erfolgsanzeige und anschließend im jeweiligen Profil bestätigt.
+- Mara: `assets/generated/mara-field/2026-09-05/m1-maschinencheck/04-full-body-morning-walk.png`
+  mit aktiviertem KI-Label veröffentlicht:
+  <https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/>.
+- Leona: `assets/generated/leona-voss/2026-09-06/lv-btt-01-september-roofline/04-full-body-rooftop-walk.png`
+  im 4:5-Zuschnitt mit aktiviertem KI-Label veröffentlicht:
+  <https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/>.
+- Beide Profile zeigen danach jeweils sechs Beiträge. Der lokale
+  `MockPublisher` und die Review-Statuswerte wurden durch die native
+  Instagram-Veröffentlichung nicht verändert.
 
 ## Aktive Aufgabe
 
-Die Bridge-to-Tuesday-Reserve ist bild- und textseitig fertig. Der Remote-Patch
-ist technisch abgeschlossen. Für einen echten externen Testlink fehlen nur die
-lokale `cloudflared`-Installation und ein neues, nicht gespeichertes Owner-
-Passwort. Danach bleibt der nächste Inhalts-Schritt der Owner-Review der vier
-fertigen Pakete.
+Die Bridge-to-Tuesday-Reserve ist bild- und textseitig fertig. Je ein
+Einzelmotiv für Leona und Mara ist nach Owner-Freigabe bereits nativ auf
+Instagram veröffentlicht. Der Remote-Patch ist technisch abgeschlossen. Für
+einen echten externen Testlink fehlen nur die lokale `cloudflared`-Installation
+und ein neues, nicht gespeichertes Owner-Passwort. Als nächster Inhaltsschritt
+stehen das Erfassen der 24-Stunden-Metriken sowie der Review der übrigen
+Paketmotive an.
 
 Separater Plattformblocker: Threads verlangt für Mara weiterhin eine echte
 Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
@@ -52,13 +66,14 @@ Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
 1. Owner installiert bei Bedarf `cloudflared`, startet
    `.\run_remote_free.ps1` und vergibt ein neues Passwort mit mindestens
    12 Zeichen; Details in `docs/REMOTE_ACCESS_FREE.md`.
-2. Owner prüft die vier Karten im lokalen oder temporären Remote-Dashboard; zuerst Mara
-   „Maschinencheck“, dann Leona „Roofline“, Mara „Küchenfenster“ und Leona
-   „Spätsommer“.
-3. Gewünschte Top-3-/Reihenfolge-Änderungen dokumentieren; konkreten Musiktrack
+2. Nach 24 Stunden Reichweite, Likes, Kommentare, Saves und Profilaktionen der
+   beiden neuen Einzelposts erfassen.
+3. Owner prüft die übrigen Karten/Motive im lokalen oder temporären
+   Remote-Dashboard; bereits veröffentlicht sind Mara „Maschinencheck“ S4 und
+   Leona „Roofline“ S4.
+4. Gewünschte Top-3-/Reihenfolge-Änderungen dokumentieren; konkreten Musiktrack
    nativ prüfen oder den sicheren Fallback „ohne Musik“ belassen.
-4. Erst nach ausdrücklicher Owner-Freigabe planen; Publishing bleibt außerhalb
-   dieses Laufs.
+5. Weitere Live-Posts weiterhin nur nach ausdrücklicher Owner-Freigabe.
 
 ## Wichtige Dateien
 

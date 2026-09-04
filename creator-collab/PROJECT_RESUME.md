@@ -30,9 +30,11 @@ und KI-generiert.
 ## Bestätigter Plattformstand
 
 - Beide Instagram-Profile sind erstellt und über die Meta-Kontenübersicht erreichbar.
-- Beide Instagram-Profile haben jeweils fünf veröffentlichte Feed-Beiträge.
+- Beide Instagram-Profile haben jeweils sechs veröffentlichte Feed-Beiträge.
 - Jeder neue Beitrag wurde mit dem Instagram-KI-Label veröffentlicht.
-- Facebook-Crossposting blieb deaktiviert.
+- Bei den zuvor bestätigten Beiträgen blieb Facebook-Crossposting deaktiviert;
+  die erweiterte Einstellung wurde für die zwei nativen Posts vom 4. September
+  in diesem Lauf nicht separat geöffnet.
 - Jedes Profil folgt fünf manuell geprüften, thematisch passenden Startkonten.
 - Es wurde keine Massen-Follow-/Unfollow-Automation eingesetzt.
 - Die Creator-Instagram-Konten `@leonavoss.ai` und `@mara.field.ai` wurden aus
@@ -57,6 +59,7 @@ und KI-generiert.
 - https://www.instagram.com/leonavoss.ai/p/Dc0pXtAgBJY/
 - https://www.instagram.com/leonavoss.ai/p/Dc0pc2sgDUd/
 - https://www.instagram.com/leonavoss.ai/p/Dc0pf8NAAnG/
+- https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/
 
 ### Mara
 
@@ -65,6 +68,7 @@ und KI-generiert.
 - https://www.instagram.com/mara.field.ai/p/Dc0pmnQAKHP/
 - https://www.instagram.com/mara.field.ai/p/Dc0ppmtAPJy/
 - https://www.instagram.com/mara.field.ai/p/Dc0pslwgH7R/
+- https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/
 
 ## Starter-Netzwerk
 
@@ -148,7 +152,14 @@ und KI-generiert.
   Paketdateien sind lokal, gehasht und als `AI_GENERATED` dokumentiert.
 - Content `3–6` besitzt in der Review-Datenbank jeweils fünf echte Previews,
   drei Top-Picks, vollständige Posting-Metadaten und Status
-  `READY_FOR_REVIEW`; keine Karte ist freigegeben oder veröffentlicht.
+  `READY_FOR_REVIEW`; keine Karte ist über den lokalen Mock-Workflow
+  freigegeben oder veröffentlicht.
+- Am 4. September 2026 wurden nach ausdrücklicher Owner-Freigabe je ein
+  einzelnes Paket-Asset nativ auf Instagram veröffentlicht: Mara
+  „Maschinencheck“ (`04-full-body-morning-walk.png`) und Leona „September
+  Roofline“ (`04-full-body-rooftop-walk.png`). Das native Instagram-KI-Label
+  war bei beiden Beiträgen aktiviert; der lokale `MockPublisher` blieb
+  unverändert und führte keine Live-Aktion aus.
 - Normale Review-Captions erhalten keinen automatisch wiederholten KI-Footer
   und keinen automatischen `kigeneriert`-Hashtag. Die Transparenz bleibt im
   Profil/About und als strukturiertes Plattformmetadatum erhalten.
@@ -180,8 +191,10 @@ und KI-generiert.
 - Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
   ersetzen.
 - Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
-- Owner-Review der vier fertigen Bridge-to-Tuesday-Pakete durchführen und Top 3
-  beziehungsweise Carousel-Reihenfolge bestätigen oder ändern.
+- Owner-Review der verbleibenden Bridge-to-Tuesday-Auswahl durchführen und Top
+  3 beziehungsweise Carousel-Reihenfolge bestätigen oder ändern; je ein
+  Einzelmotiv aus Mara „Maschinencheck“ und Leona „September Roofline“ ist
+  bereits nativ veröffentlicht.
 - Erst nach ausdrücklicher Owner-Freigabe planen; die vier übrigen Briefs nach
   dem Reset bewerten, ohne ein fünftes Paket in diesem Lauf zu beginnen.
 - Originaldateien der zehn älteren Feed-Posts mit Herkunft/Rechten später
