@@ -1,6 +1,64 @@
 # Last Run Report – Creator Ops MVP
 
-Stand: 3. September 2026
+Stand: 4. September 2026
+
+## Restzeit-Brücke bis Dienstag
+
+### Was tatsächlich gebaut wurde
+
+- `docs/CHATGPT_BRIDGE_TO_TUESDAY.md` enthält acht produktionsfertige Briefs.
+- Vier Briefs gehören zu Leona, vier zu Mara; geplant von Samstag bis Dienstag.
+- Jeder Brief enthält Idee, Hook, Format, fünf Shots, Pose-Matrix, Top 3,
+  Caption, CTA, Hashtags, Prime Time, Audio A/B/ohne Musik, Assetbedarf,
+  Persona-Fit und QA.
+- Es wurde keine neue technische Architektur begonnen.
+
+### Content-Reserve Leona
+
+1. Spätsommer in Berlin – City-Carousel.
+2. Gym Reset, aber echt – kurzes Routine-Reel.
+3. Ein Blazer, drei Stimmungen – Fashion-Carousel.
+4. Golden Hour an der Tram – filmisches City-Reel.
+
+### Content-Reserve Mara
+
+1. Fünf Minuten Maschinencheck – Nutzwert-Carousel.
+2. Werkstatt: Feierabend in drei Handgriffen – Routine-Carousel.
+3. Pause am Feldrand – nahbarer Landleben-Post.
+4. Was verrät das Reifenbild? – vorsichtiges Lern-Carousel.
+
+### Engagement-Vorschläge
+
+- Keine neue Plattformaktion ausgeführt.
+- Die bestehende DB-Queue bleibt rein manuell und enthält weiterhin nur Mock-
+  Vorschläge. Neue Follow-/Kommentarlisten wurden in diesem letzten Sparlauf
+  bewusst nicht begonnen, damit der vollständige Brief- und Abschlussstand
+  gesichert werden kann.
+
+### Dashboard, Tests, Fehler und Kosten
+
+- Dashboard-Stand dieses Abschlusslaufs unverändert; der vorherige Asset-/UX-
+  Boost bleibt aktiv.
+- Bestehende Suite zuletzt mit 22 grünen Tests bestätigt.
+- Fehler: keine neuen Produktfehler; Instagram-Webseiten waren über allgemeine
+  Websuche nicht zuverlässig lesbar, daher keine ungeprüften Handles übernommen.
+- Blocker: Mara Threads bleibt in persönlicher Selfie-Verifizierung.
+- Kosten: 0 EUR; keine API, kein Abo und kein Credit eingesetzt.
+
+### OWNER_DECISIONS_REQUIRED
+
+1. Welche der acht Briefs sollen zuerst als Bilder produziert werden?
+2. Pro Reel Audio A, Audio B oder Originalton/ohne Musik wählen.
+3. Vor Produktion prüfen, ob sichtbare Landmaschinen markenfrei bleiben sollen.
+4. Für spätere Engagement-Vorschläge konkrete aktuelle Zielposts manuell bestätigen.
+
+### Nächste fünf sinnvolle Aufgaben
+
+1. Owner wählt je Persona den ersten Brief.
+2. Für die gewählten Briefs jeweils fünf konsistente Assets erzeugen.
+3. Top 3 im Dashboard visuell bestätigen und Caption final lesen.
+4. Erst danach die manuelle Engagement-Reserve mit aktuellen Zielposts füllen.
+5. Nach Freigabe nur planen; tatsächliches Posting separat bestätigen.
 
 ## Wichtigste Veränderungen
 
@@ -242,18 +300,18 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 
 ## Für Auswertung mit ChatGPT
 
-1. Bestehender Vertikal-MVP für Leona und Mara blieb unverändert funktionsfähig.
-2. Der Review-Flow zeigt weiterhin fünf Kandidaten und Top 3 pro Persona.
-3. JPG, PNG und WebP können lokal und ohne neue Abhängigkeit importiert werden.
-4. Importdateien werden in verwalteten Projektpfaden abgelegt und gehasht.
-5. Rechteangabe ist auf `AI_GENERATED`, `OWNED` oder `LICENSED` begrenzt.
-6. Der Import akzeptiert für dieses Dashboard ausschließlich SFW-Inhalte.
-7. Echte Bilder erscheinen über sichere asset-id-basierte Preview-URLs.
-8. Fehlende echte Bilder fallen stabil auf Mock-Kacheln zurück.
-9. Das Dashboard ist heller, saisonal und je Persona klar getrennt.
-10. Owner-Aufgabe, Statusbadges und größere Checks sind direkt sichtbar.
-11. Leona und Mara besitzen eigene, fiktive KI-generierte Profilporträts.
-12. Backup und Restore wurden real gegen eine frische SQLite-Datei geprüft.
-13. Die wiederhergestellte DB enthält 2 Creator, 2 Inhalte und 10 Assets.
-14. Alle 22 Tests und die Python-Kompilierung sind grün.
-15. Live-Publishing, neue externe Pakete, Secrets und neue Kosten bleiben bei null.
+1. Der funktionierende Creator-Ops-Kern blieb unverändert.
+2. Acht vollständige Briefs liegen in `docs/CHATGPT_BRIDGE_TO_TUESDAY.md`.
+3. Leona hat vier unterschiedliche Reserveformate bis Dienstag.
+4. Mara hat vier unterschiedliche Reserveformate bis Dienstag.
+5. Jeder Brief besitzt fünf Shots, Pose-Matrix und eine klare Top 3.
+6. Caption, Hook, CTA und Hashtags sind sofort weiterverwendbar.
+7. Audio A/B/ohne Musik und Prime Time sind je Brief vorbereitet.
+8. Alle Motive sind SFW und für fiktive erwachsene KI-Personas formuliert.
+9. KI-Transparenz bleibt über Bio und natives Plattform-Label erhalten.
+10. Dashboard, echter Asset-Import und Mock-Fallback funktionieren weiterhin.
+11. Backup/Restore und zuletzt 22 Tests waren grün.
+12. Engagement bleibt Vorschlag/Mock; nichts wurde automatisch ausgeführt.
+13. Keine Live-Posts, DMs, Accounts, Käufe oder externen Verpflichtungen.
+14. Nächste Entscheidung: je Persona den ersten Produktionsbrief auswählen.
+15. Danach fünf Assets erzeugen, Top 3 prüfen und nur als Draft planen.
