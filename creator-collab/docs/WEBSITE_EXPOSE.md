@@ -33,16 +33,18 @@ wirken.
 
 ## Beste vorhandene Bilder / Asset-Referenzen
 
-1. Lokales Profilportraet: `dashboard/assets/leona-voss-avatar.png`
-2. <https://www.instagram.com/leonavoss.ai/p/Dc0mbMAgE1M/>
-3. <https://www.instagram.com/leonavoss.ai/p/Dc0oRg7APVa/>
-4. <https://www.instagram.com/leonavoss.ai/p/Dc0pXtAgBJY/>
-5. <https://www.instagram.com/leonavoss.ai/p/Dc0pc2sgDUd/>
-6. <https://www.instagram.com/leonavoss.ai/p/Dc0pf8NAAnG/>
+1. Rooftop-Hero:
+   `assets/generated/leona-voss/2026-09-06/lv-btt-01-september-roofline/04-full-body-rooftop-walk.png`
+2. Rooftop links 3/4: `.../lv-btt-01-september-roofline/02-left-three-quarter-railing.png`
+3. Rooftop candid: `.../lv-btt-01-september-roofline/05-candid-seated-cuff.png`
+4. City-Walk: `assets/generated/leona-voss/2026-09-05/l1-spaetsommer-berlin/04-full-body-walk.png`
+5. Cafe: `.../l1-spaetsommer-berlin/02-left-three-quarter-cafe.png`
+6. Cafe candid: `.../l1-spaetsommer-berlin/05-candid-shoulder-cafe.png`
+7. Profilportraet: `dashboard/assets/leona-voss-avatar.png`
 
-Die Feed-Referenzen zeigen Cafe, Rooftop, Abendlook, Gym und Glamour. Fuer die
-Website fehlen noch die lokalen Originaldateien; die URLs sind bis dahin nur
-Portfolio-Belege.
+Damit sind Hero, Profil, City-Lifestyle, Full-body und Candid lokal vorhanden.
+Die älteren Feed-URLs bleiben zusätzliche Portfolio-Belege, bis deren
+Masterdateien und Herkunft gesichert sind.
 
 ## Geeignete Serien
 
@@ -101,16 +103,18 @@ US-Cowgirl- oder Ranch-Klischees.
 
 ## Beste vorhandene Bilder / Asset-Referenzen
 
-1. Lokales Profilportraet: `dashboard/assets/mara-field-avatar.png`
-2. <https://www.instagram.com/mara.field.ai/p/Dc0mATVAF2u/>
-3. <https://www.instagram.com/mara.field.ai/p/Dc0oGuxgBWl/>
-4. <https://www.instagram.com/mara.field.ai/p/Dc0pmnQAKHP/>
-5. <https://www.instagram.com/mara.field.ai/p/Dc0ppmtAPJy/>
-6. <https://www.instagram.com/mara.field.ai/p/Dc0pslwgH7R/>
+1. Hof-Hero:
+   `assets/generated/mara-field/2026-09-05/m1-maschinencheck/04-full-body-morning-walk.png`
+2. Reifencheck: `.../m1-maschinencheck/02-left-three-quarter-tire-check.png`
+3. Traktor candid: `.../m1-maschinencheck/05-candid-tractor-step.png`
+4. Küchenfenster: `assets/generated/mara-field/2026-09-06/mf-btt-02-kuechenfenster/03-right-three-quarter-window.png`
+5. Küche Full-body: `.../mf-btt-02-kuechenfenster/04-full-body-kitchen-walk.png`
+6. Küche candid: `.../mf-btt-02-kuechenfenster/05-candid-table-notebook.png`
+7. Profilportraet: `dashboard/assets/mara-field-avatar.png`
 
-Direkt sichtbar bestaetigt sind Feldrand, Kuechentisch/Kaffee und Hof/Traktor.
-Fuer alle fuenf Feed-Posts fehlen noch lokale Master und ein eindeutiger
-Rechte-/Herkunftspfad fuer die Website.
+Damit sind Farm-Hero, Profil, Technik, Hof-Lifestyle, Full-body und Candid
+lokal vorhanden. Die älteren Feed-URLs bleiben zusätzliche Referenzen bis zur
+Master-/Rechte-Recovery.
 
 ## Geeignete Serien
 
@@ -148,12 +152,15 @@ behauptet.
 
 ## Beste Posts und Bilder
 
-- Leona: Rooftop-Anzug als spaeterer Hero, Cafe als Candid/City-Lifestyle,
+- Leona: neuer Rooftop-Walk als Hero, Cafe als Candid/City-Lifestyle und
   lokales Portraet fuer Profil/About.
-- Mara: Hof/Traktor als Kernpositionierung, Feldrand fuer Lifestyle,
-  Kuechentisch fuer Nahbarkeit, lokales Werkstattportraet fuer Profil/About.
-- Die zehn Instagram-Posts sind live belegt, duerfen fuer die Website aber erst
-  nach Recovery ihrer Masterdateien und Rechteinformationen verwendet werden.
+- Mara: neuer Hof-Walk/Traktor als Kernpositionierung, Maschinencheck fuer
+  Technik und Küchenfenster für Nahbarkeit.
+- 20 neue bzw. gezielt wiederverwendete Paket-Assets sind lokal vorhanden und
+  als `AI_GENERATED`, SFW und unveröffentlicht dokumentiert.
+- Die zehn älteren Instagram-Posts sind live belegt, dürfen für die Website
+  aber erst nach Recovery ihrer Masterdateien und Rechteinformationen
+  verwendet werden.
 
 ## Carousel-Beispiele
 

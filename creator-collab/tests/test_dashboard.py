@@ -39,6 +39,8 @@ class ReviewDashboardTests(unittest.TestCase):
             self.assertFalse(card["approved"])
             self.assertTrue(all(card["checks"].values()))
             self.assertEqual(card["status"], "READY_FOR_REVIEW")
+            self.assertNotIn(card["disclosure"], card["caption"])
+            self.assertNotIn("kigeneriert", card["caption"].lower())
 
     def test_preparing_same_day_is_idempotent(self) -> None:
         first = self.service.ensure_date(date(2026, 9, 4))

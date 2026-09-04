@@ -140,6 +140,21 @@ und KI-generiert.
   fünf veröffentlichte Instagram-Referenzen nach. Die zehn Feed-Originale fehlen
   lokal; Mock-Pfade sind keine Bilder. Inventar, CSV, Website-Exposé,
   Asset-Shortlist und Postingplan liegen in `docs/`.
+- Die Bridge-to-Tuesday-Produktion enthält vier vollständige SFW-Pakete mit je
+  fünf realen Kandidaten: Leona „Spätsommer in Berlin“ und „September
+  Roofline“, Mara „Fünf Minuten Maschinencheck“ und „Küchenfenster“.
+- 18 Bilder wurden neu mit Built-in ImageGen erzeugt; die zwei bestehenden
+  Profilanker wurden gezielt als Front-Slots wiederverwendet. Alle 20
+  Paketdateien sind lokal, gehasht und als `AI_GENERATED` dokumentiert.
+- Content `3–6` besitzt in der Review-Datenbank jeweils fünf echte Previews,
+  drei Top-Picks, vollständige Posting-Metadaten und Status
+  `READY_FOR_REVIEW`; keine Karte ist freigegeben oder veröffentlicht.
+- Normale Review-Captions erhalten keinen automatisch wiederholten KI-Footer
+  und keinen automatischen `kigeneriert`-Hashtag. Die Transparenz bleibt im
+  Profil/About und als strukturiertes Plattformmetadatum erhalten.
+- Produktionsnachweis, Top 3 und QA stehen in
+  `docs/CONTENT_PRODUCTION_RUN.md`; 22 Tests, Export, Backup und Restore sind
+  nach dem Lauf grün/verifiziert.
 
 ## Offene Projektbereiche
 
@@ -157,7 +172,10 @@ und KI-generiert.
 - Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
   ersetzen.
 - Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
-- Je Persona die verbleibenden vier finalen, rechtlich nutzbaren Posting-Bilder
-  über den neuen Importpfad ergänzen.
-- Zuerst Originaldateien der zehn Feed-Posts mit Herkunft/Rechten sichern und
-  den Dienstag-Briefs zuordnen; nur verbleibende 1–2 Lücken je Set neu erzeugen.
+- Owner-Review der vier fertigen Bridge-to-Tuesday-Pakete durchführen und Top 3
+  beziehungsweise Carousel-Reihenfolge bestätigen oder ändern.
+- Erst nach ausdrücklicher Owner-Freigabe planen; die vier übrigen Briefs nach
+  dem Reset bewerten, ohne ein fünftes Paket in diesem Lauf zu beginnen.
+- Originaldateien der zehn älteren Feed-Posts mit Herkunft/Rechten später
+  sichern; sie sind für die neue Vier-Paket-Reserve nicht mehr erforderlich,
+  bleiben aber für Archiv und Website-Portfolio relevant.
