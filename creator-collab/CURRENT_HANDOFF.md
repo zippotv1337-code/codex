@@ -63,7 +63,8 @@ Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
 
 - Repository: https://github.com/zippotv1337-code/codex
 - Zielbranch: `main`
-- Dieser Lauf wird als einzelner projektbezogener Handoff-Commit synchronisiert.
+- Content-Commit auf lokalem Arbeitsbranch: `37814ca`.
+- GitHub-Sync-Commit und bestätigter `origin/main`: `fa998be`.
 - `creator-collab/data/` bleibt unversioniert; keine Zugangsdaten oder Codes in
   Git übernehmen.
 

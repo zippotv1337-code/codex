@@ -421,6 +421,8 @@ erhalten. Ein Test schützt dieses Verhalten.
   `backups/creator-ops-restore-check-content-reserve-20260904-1019.db`.
 - Backup und Restore jeweils `PRAGMA integrity_check = ok`, 2 Creator,
   6 Content-Items, 30 Assets, 22 lokale Imports und 6 review-bereite Inhalte.
+- GitHub-Synchronisierung bestätigt: `origin/main` und Remote-Branch zeigen auf
+  Content-Commit `fa998be` (`handoff: finish bridge-to-tuesday content reserve`).
 
 ### Für Auswertung mit ChatGPT – Content-Run
 
