@@ -1,6 +1,6 @@
 # Projekt-Résumé: Virtual Creators Germany
 
-Stand: 3. September 2026
+Stand: 4. September 2026
 
 ## Ziel
 
@@ -136,6 +136,10 @@ und KI-generiert.
 - Acht vollständige Content-Briefs bilden eine viertägige Reserve bis Dienstag:
   vier für Leona, vier für Mara, jeweils mit fünf Shots, Top 3, Text, Audio-
   Optionen, Prime Time und QA. Übergabe: `docs/CHATGPT_BRIDGE_TO_TUESDAY.md`.
+- Die Bestandsauswertung weist je Persona ein eindeutiges lokales Bildmaster und
+  fünf veröffentlichte Instagram-Referenzen nach. Die zehn Feed-Originale fehlen
+  lokal; Mock-Pfade sind keine Bilder. Inventar, CSV, Website-Exposé,
+  Asset-Shortlist und Postingplan liegen in `docs/`.
 
 ## Offene Projektbereiche
 
@@ -155,4 +159,5 @@ und KI-generiert.
 - Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
 - Je Persona die verbleibenden vier finalen, rechtlich nutzbaren Posting-Bilder
   über den neuen Importpfad ergänzen.
-- Owner wählt aus der Dienstag-Brücke die ersten Produktionsbriefs aus.
+- Zuerst Originaldateien der zehn Feed-Posts mit Herkunft/Rechten sichern und
+  den Dienstag-Briefs zuordnen; nur verbleibende 1–2 Lücken je Set neu erzeugen.
