@@ -1,6 +1,6 @@
 # Aktueller Handoff
 
-Stand: 3. September 2026
+Stand: 4. September 2026
 
 ## Zuletzt erreicht
 
@@ -54,12 +54,20 @@ Stand: 3. September 2026
   vier für Mara in `docs/CHATGPT_BRIDGE_TO_TUESDAY.md`.
 - Jeder Brief enthält fünf Shots, Pose-Matrix, Top 3, Caption, Hook, CTA,
   Hashtags, Musik A/B/ohne, Prime Time, Assetbedarf, Persona-Fit und QA.
+- Vollständige Bestandsauswertung ergänzt: je Persona 1 eindeutiges lokales
+  Porträt, 1 exakte Importkopie und 5 veröffentlichte Feed-Referenzen ohne
+  lokale Masterdatei.
+- Website-Exposé, Website-Asset-Shortlist, Markdown-/CSV-Inventar und ein
+  ehrlicher Postingplan bis Dienstag liegen unter `docs/`.
 
 ## Aktive Aufgabe
 
-Die viertägige Content-Reserve ist textlich fertig. Der Owner muss als Nächstes
-je Persona einen Brief auswählen; erst danach sollen die fünf zugehörigen Assets
-produziert werden. Bis zu einer ausdrücklichen Freigabe bleiben alle
+Die viertägige Content-Reserve ist textlich fertig. Bildseitig ist noch kein
+Paket `READY_FOR_REVIEW`: Die zehn bereits veröffentlichten Feed-Master fehlen
+lokal und die Datenbank-Mocks sind keine Medien. Als Nächstes sollen zuerst die
+Originaldateien mit Herkunfts-/Rechtestatus wiederbeschafft, importiert und
+gegen die Shotlisten gematcht werden. Erst bei verbleibenden 1–2 Lücken pro Set
+wird gezielt neu generiert. Bis zur ausdrücklichen Freigabe bleiben alle
 Publikationen simuliert.
 
 Separater Plattformblocker: Alle drei Instagram-Konten erscheinen wieder in der
@@ -69,9 +77,11 @@ Profil gebunden.
 
 ## Nächste konkrete Schritte
 
-1. Owner wählt aus `docs/CHATGPT_BRIDGE_TO_TUESDAY.md` je Persona einen Brief.
-2. Für die beiden gewählten Briefs je fünf konsistente Assets produzieren.
-3. Top 3 im Dashboard prüfen; danach Engagement Queue als zweite Ansicht ergänzen.
+1. Originaldateien der zehn veröffentlichten Instagram-Posts samt Herkunft und
+   Rechtestatus sichern; Screenshots nicht als Master verwenden.
+2. Originale hashbasiert inventarisieren und den acht Briefs zuordnen.
+3. Nur bei Sets mit 3–4 passenden Bildern gezielt 1–2 Lücken erzeugen; danach
+   Top 3 im Dashboard prüfen und Owner-Freigabe einholen.
 4. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
    persönlich durchführen möchte; kein KI-Bild hochladen.
 5. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung

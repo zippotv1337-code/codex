@@ -6,7 +6,8 @@ Stand: 4. September 2026
 
 ### Was tatsächlich gebaut wurde
 
-- `docs/CHATGPT_BRIDGE_TO_TUESDAY.md` enthält acht produktionsfertige Briefs.
+- `docs/CHATGPT_BRIDGE_TO_TUESDAY.md` enthält acht vollständige Produktionsbriefs;
+  die dafür benötigten Bildsets fehlen noch.
 - Vier Briefs gehören zu Leona, vier zu Mara; geplant von Samstag bis Dienstag.
 - Jeder Brief enthält Idee, Hook, Format, fünf Shots, Pose-Matrix, Top 3,
   Caption, CTA, Hashtags, Prime Time, Audio A/B/ohne Musik, Assetbedarf,
@@ -315,3 +316,56 @@ Es wurden keine Dienste gebucht und keine Pakete aus dem Internet installiert.
 13. Keine Live-Posts, DMs, Accounts, Käufe oder externen Verpflichtungen.
 14. Nächste Entscheidung: je Persona den ersten Produktionsbrief auswählen.
 15. Danach fünf Assets erzeugen, Top 3 prüfen und nur als Draft planen.
+
+## Bestandsauswertung und Website-Exposé – 4. September 2026
+
+Im Sparmodus wurden Repository, SQLite-Datenbanken, Backups, JSON-Exporte,
+Asset-Verzeichnisse, Instagram-Belege und der zugängliche Teil des Projektchats
+`haupt` ausgewertet. Es wurden bewusst keine neuen Bilder generiert.
+
+### Verifizierter Medienbestand
+
+- Leona: 1 eindeutige lokale PNG-Masterdatei, 1 exakte Importkopie und 5
+  veröffentlichte Instagram-Referenzen ohne lokale Masterdatei.
+- Mara: 1 eindeutige lokale PNG-Masterdatei, 1 exakte Importkopie und 5
+  veröffentlichte Instagram-Referenzen ohne lokale Masterdatei.
+- Review-Datenbank: 2 echte lokale Imports und 8 Mock-Slots.
+- Letzter Pipeline-Export: 20 Mock-Assets; diese besitzen keine Bilddateien und
+  werden nicht als Content gezählt.
+- Chat-Anhänge: 10 erreichbar, davon 8 System-/Dashboard-Screenshots und 2
+  Instagram-Profilübersichten; keine hochauflösenden Einzelmotive.
+
+### Erzeugte Unterlagen
+
+- `docs/CONTENT_ASSET_INVENTORY.md`
+- `docs/CONTENT_ASSET_INVENTORY.csv`
+- `docs/WEBSITE_ASSET_SHORTLIST.md`
+- `docs/WEBSITE_EXPOSE.md`
+- `docs/POSTING_BRIDGE_TO_TUESDAY.md`
+
+### Readiness-Entscheidung
+
+Die 4 Leona- und 4 Mara-Pakete sind als vollständige Produktionsbriefs
+vorbereitet, aber nicht bildseitig `READY_FOR_REVIEW`. Je Persona existiert nur
+ein passendes lokales Porträt; kein Brief besitzt bereits 3–4 lokale
+Masterbilder. Deshalb wurde die Regel „nur 1–2 Lücken ergänzen“ noch nicht
+ausgelöst. Der nächste Schritt ist die Recovery der zehn bereits
+veröffentlichten Originaldateien mit Herkunfts-/Rechteinformationen.
+
+### Für Auswertung mit ChatGPT – Bestandslauf
+
+1. Zwei eindeutige lokale Bildmaster gefunden: je einer für Leona und Mara.
+2. Zwei Importdateien sind exakte Duplikate und keine zusätzlichen Motive.
+3. Zehn öffentliche Instagram-Posts sind als Portfolio-Referenzen belegt.
+4. Deren lokale Masterdateien und eindeutiger Rechtepfad fehlen.
+5. 28 `.mock`-Datensätze sind nur Test-/UI-Platzhalter.
+6. Acht Content-Pakete sind textlich vollständig vorbereitet.
+7. Null neue Feed-Posts sind derzeit asset-komplett `READY_FOR_REVIEW`.
+8. Story-Reshares vorhandener Posts sind ein manueller Null-Generierungs-Fallback.
+9. Prime Times stammen aus Creator Ops, aber bisher nur aus Mock-/Cold-Start-Daten.
+10. Leona eignet sich für Rooftop, Café, Fashion, Gym und Abendlook.
+11. Mara eignet sich für Hof/Traktor, Feldrand, Küche und Werkstatt.
+12. Beste lokale Website-Assets sind die beiden Profilporträts.
+13. Beste spätere Hero-Referenzen sind Leona Rooftop und Mara Hof/Feldrand.
+14. Keine Bilder, Posts, Accounts oder externen Dienste wurden neu erzeugt.
+15. Nächste Priorität: Originale sichern, registrieren, matchen und erst dann gezielt Lücken erzeugen.
