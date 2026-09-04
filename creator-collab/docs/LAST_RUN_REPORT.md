@@ -500,3 +500,24 @@ Die GitHub-Metadaten bestätigen `visibility=public`, Standardbranch `main` und
 eingecheckten Creator-Bilder lesen und herunterladen. Die vollständige
 Owner-Übergabe mit Projektstand, Verifikation und Restschritten steht in
 `docs/FINAL_ABSCHLUSS.md`. Die Repository-Sichtbarkeit wurde nicht verändert.
+
+## Native Instagram-Veröffentlichungen – 4. September 2026
+
+Nach ausdrücklicher Owner-Freigabe wurden zwei vorhandene, rechtlich als
+`AI_GENERATED` dokumentierte Paket-Assets nativ über Instagram veröffentlicht.
+Dies war eine manuelle Plattformaktion und keine Aktivierung oder Erweiterung
+des lokalen `MockPublisher`.
+
+- Mara „Fünf Minuten Maschinencheck“, S4
+  (`04-full-body-morning-walk.png`):
+  <https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/>
+- Leona „September Roofline“, S4
+  (`04-full-body-rooftop-walk.png`, 4:5-Zuschnitt):
+  <https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/>
+
+Bei beiden Veröffentlichungen war das native Instagram-KI-Label aktiviert.
+Instagram zeigte jeweils „Dein Beitrag wurde geteilt“, anschließend waren die
+neuen Beiträge in den Profilrastern sichtbar. Beide Profile enthalten damit je
+sechs Feed-Beiträge. Lokale Review-Karten bleiben technisch
+`READY_FOR_REVIEW`/`approved=false`, bis eine separate Synchronisierung dieses
+externen Zustands implementiert oder bewusst manuell dokumentiert wird.

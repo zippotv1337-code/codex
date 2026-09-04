@@ -9,7 +9,11 @@ Vier visuelle Pakete sind vollständig produziert und in Creator Ops
 importiert. Jedes Paket besitzt fünf echte Vorschaubilder, drei kuratierte
 Top-Picks, Caption, Hook, CTA, Hashtags, Musik A/B/ohne und Prime-Time-Wert.
 
-Status aller vier Pakete: `READY_FOR_REVIEW / OWNER_APPROVAL_REQUIRED`.
+Lokaler Status aller vier Pakete: `READY_FOR_REVIEW / OWNER_APPROVAL_REQUIRED`.
+Am 4. September wurden jedoch nach ausdrücklicher Owner-Freigabe bereits Mara
+„Maschinencheck“ S4 und Leona „September Roofline“ S4 als einzelne native
+Instagram-Posts veröffentlicht. Die unten ursprünglich geplanten Carousels
+dürfen deshalb nicht unverändert als Duplikat veröffentlicht werden.
 
 Die Uhrzeit `19:30` stammt aus der bestehenden lokalen Cold-Start-Konfiguration
 und ist noch keine echte Account-Analytics-Erkenntnis. Spätere echte
@@ -18,6 +22,11 @@ Persona-Daten haben Vorrang. Keine automatische externe Veröffentlichung.
 ## Samstag, 5. September – Mara
 
 ### Fünf Minuten Maschinencheck
+
+**Früher erfüllt als Einzelpost:** S4 wurde am 4. September veröffentlicht:
+<https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/>. Das ursprünglich für
+Samstag geplante Carousel ist pausiert. Für eine spätere Neufassung nur die
+noch unveröffentlichten Motive neu reviewen und erneut freigeben lassen.
 
 - Carousel: `Ganzkörper Hofweg -> Reifencheck links 3/4 -> candid Traktor`.
 - Caption: „Reifen, Flüssigkeiten, Licht – der kurze Rundgang gehört für mich
@@ -35,6 +44,11 @@ Persona-Daten haben Vorrang. Keine automatische externe Veröffentlichung.
 ## Sonntag, 6. September – Leona
 
 ### September Roofline
+
+**Früher erfüllt als Einzelpost:** S4 wurde am 4. September veröffentlicht:
+<https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/>. Das ursprünglich für
+Sonntag geplante Carousel ist pausiert. Für eine spätere Neufassung nur die
+noch unveröffentlichten Motive neu reviewen und erneut freigeben lassen.
 
 - Carousel: `Ganzkörper Rooftop-Walk -> links 3/4 am Geländer -> candid
   sitzend`.
@@ -88,8 +102,10 @@ Persona-Daten haben Vorrang. Keine automatische externe Veröffentlichung.
 
 ## Owner-Aktion
 
-1. Im Dashboard je Paket die fünf Bilder und die vorgeschlagenen Top 3 prüfen.
-2. Gegebenenfalls Top 3 oder Reihenfolge anpassen.
+1. Im Dashboard die noch unveröffentlichten Bilder und die vorgeschlagenen Top
+   3 prüfen; Mara Maschinencheck S4 und Leona Roofline S4 sind bereits live.
+2. Die pausierten Maschinencheck-/Roofline-Carousels nicht unverändert
+   veröffentlichen; gegebenenfalls eine neue Auswahl ohne Doppelpost bilden.
 3. Konkreten Musiktrack erst nativ in der Plattformbibliothek prüfen; „ohne
    Musik“ bleibt der sichere Fallback.
 4. Native KI-Kennzeichnung beim Publishing prüfen.

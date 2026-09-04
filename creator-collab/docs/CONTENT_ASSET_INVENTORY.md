@@ -18,8 +18,8 @@ Assets. Importkopien, Mock-Pfade und öffentliche URLs werden separat gezählt.
 | Persona | Paket/Pfad | Motive | Pose-Matrix | Qualität | Genutzt | Website | Instagram | Reserve | Empfehlung |
 |---|---|---|---|---|---|---|---|---|---|
 | Leona | `assets/generated/leona-voss/2026-09-05/l1-spaetsommer-berlin/` | Café, Altbau, City-Walk | 5/5 | 8,5–9 Ziel erreicht | unveröffentlicht; in Review | City, Candid, Full-body | Carousel | S1, S3 | **READY_FOR_REVIEW** |
-| Leona | `assets/generated/leona-voss/2026-09-06/lv-btt-01-september-roofline/` | Rooftop, Skyline, Reflexion | 5/5 | 8,5–9 Ziel erreicht | unveröffentlicht; in Review | Hero, Editorial, Full-body | Carousel | S1, S3 | **READY_FOR_REVIEW / HERO-KANDIDAT** |
-| Mara | `assets/generated/mara-field/2026-09-05/m1-maschinencheck/` | Hof, Reifen, Licht, Traktor | 5/5 | 8,5–9 Ziel erreicht | unveröffentlicht; in Review | Farm Hero, Technik, Full-body | Carousel | S1, S3 | **READY_FOR_REVIEW / FARM-HERO** |
+| Leona | `assets/generated/leona-voss/2026-09-06/lv-btt-01-september-roofline/` | Rooftop, Skyline, Reflexion | 5/5 | 8,5–9 Ziel erreicht | S4 am 04.09. veröffentlicht; Rest in Review | Hero, Editorial, Full-body | Einzelpost + spätere Auswahl | S1, S3 | **S4 PUBLISHED / REST READY_FOR_REVIEW** |
+| Mara | `assets/generated/mara-field/2026-09-05/m1-maschinencheck/` | Hof, Reifen, Licht, Traktor | 5/5 | 8,5–9 Ziel erreicht | S4 am 04.09. veröffentlicht; Rest in Review | Farm Hero, Technik, Full-body | Einzelpost + spätere Auswahl | S1, S3 | **S4 PUBLISHED / REST READY_FOR_REVIEW** |
 | Mara | `assets/generated/mara-field/2026-09-06/mf-btt-02-kuechenfenster/` | Hofküche, Kaffee, Notizbuch | 5/5 | 8,5–9 Ziel erreicht | unveröffentlicht; in Review | Lifestyle, Candid, Full-body | Carousel | S1, S2 | **READY_FOR_REVIEW** |
 
 Vollständige Einzeldateien, Hashes, Prompt-Deltas, QA und Top-3-Auswahl stehen
@@ -56,6 +56,16 @@ Importkopien und werden nicht als zusätzliche Motive gezählt.
 Diese zehn URLs bleiben Portfolio-Belege, aber keine wiederverwendbaren
 Masterdateien. Vor kommerzieller Wiederverwendung müssen Original und
 Herkunft/Rechte gesichert werden.
+
+## Neue veröffentlichte Referenzen mit lokalem Master
+
+- Leona Roofline S4:
+  <https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/>
+- Mara Maschinencheck S4:
+  <https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/>
+
+Die jeweiligen Originaldateien liegen in den oben genannten Paketpfaden; beide
+Posts wurden mit nativem Instagram-KI-Label veröffentlicht.
 
 ## Mocks und Duplikate
 
