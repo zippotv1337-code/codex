@@ -190,3 +190,7 @@ und KI-generiert.
 - Für einen realen temporären Remote-Link muss der Owner `cloudflared`
   installieren und beim Start ein neues Passwort mit mindestens 12 Zeichen
   eingeben; keine Zugangsdaten im Repository hinterlegen.
+- GitHub-Sichtbarkeit am 4. September 2026 direkt verifiziert: Repository
+  `zippotv1337-code/codex` ist `public`, Standardbranch `main`. Damit sind auch
+  die 20 eingecheckten Creator-Bilder öffentlich. Finale Gesamtübergabe:
+  `docs/FINAL_ABSCHLUSS.md`.
