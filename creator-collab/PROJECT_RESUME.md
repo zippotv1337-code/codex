@@ -133,6 +133,9 @@ und KI-generiert.
   der reale Prüflauf enthielt danach wieder 2 Creator, 2 Inhalte und 10 Assets.
 - Die helle September-Oberfläche zeigt größere Checks, eine klare Owner-Aufgabe,
   Statusfarben und getrennte, fiktive KI-Porträts für Leona und Mara.
+- Acht vollständige Content-Briefs bilden eine viertägige Reserve bis Dienstag:
+  vier für Leona, vier für Mara, jeweils mit fünf Shots, Top 3, Text, Audio-
+  Optionen, Prime Time und QA. Übergabe: `docs/CHATGPT_BRIDGE_TO_TUESDAY.md`.
 
 ## Offene Projektbereiche
 
@@ -152,3 +155,4 @@ und KI-generiert.
 - Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
 - Je Persona die verbleibenden vier finalen, rechtlich nutzbaren Posting-Bilder
   über den neuen Importpfad ergänzen.
+- Owner wählt aus der Dienstag-Brücke die ersten Produktionsbriefs aus.

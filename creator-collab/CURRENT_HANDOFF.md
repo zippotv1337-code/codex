@@ -50,13 +50,17 @@ Stand: 3. September 2026
 - SQLite-Backup real erzeugt und in eine frische Prüfdatenbank restauriert:
   Integrität `ok`, 2 Creator, 2 Content-Items, 10 Assets.
 - Gesamte Testsuite: 22 Tests, alle bestanden; Compileall ebenfalls grün.
+- Content-Brücke bis Dienstag ergänzt: vier vollständige Briefs für Leona und
+  vier für Mara in `docs/CHATGPT_BRIDGE_TO_TUESDAY.md`.
+- Jeder Brief enthält fünf Shots, Pose-Matrix, Top 3, Caption, Hook, CTA,
+  Hashtags, Musik A/B/ohne, Prime Time, Assetbedarf, Persona-Fit und QA.
 
 ## Aktive Aufgabe
 
-Die geschärfte Review-Oberfläche ist auf Port 4181 einsatzbereit. Der Importpfad
-für echte Assets und der Restore sind fertig. Aktuell zeigt jede Persona einen
-echten importierten Bildslot und vier Mock-Fallbacks. Bis zu einer ausdrücklichen
-Freigabe bleiben alle Publikationen simuliert.
+Die viertägige Content-Reserve ist textlich fertig. Der Owner muss als Nächstes
+je Persona einen Brief auswählen; erst danach sollen die fünf zugehörigen Assets
+produziert werden. Bis zu einer ausdrücklichen Freigabe bleiben alle
+Publikationen simuliert.
 
 Separater Plattformblocker: Alle drei Instagram-Konten erscheinen wieder in der
 Kontenwechselliste. Threads verlangt für Mara weiterhin eine echte
@@ -65,9 +69,9 @@ Profil gebunden.
 
 ## Nächste konkrete Schritte
 
-1. Je Persona vier weitere finale, rechtlich geklärte Posting-Bilder importieren.
-2. Engagement Queue als zweite Dashboard-Ansicht ergänzen.
-3. Optional später einen lokalen Dateiauswahldialog vor den CLI-Import setzen.
+1. Owner wählt aus `docs/CHATGPT_BRIDGE_TO_TUESDAY.md` je Persona einen Brief.
+2. Für die beiden gewählten Briefs je fünf konsistente Assets produzieren.
+3. Top 3 im Dashboard prüfen; danach Engagement Queue als zweite Ansicht ergänzen.
 4. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
    persönlich durchführen möchte; kein KI-Bild hochladen.
 5. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung
