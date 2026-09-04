@@ -488,3 +488,7 @@ temporärer Link wird daher erst erzeugt, nachdem der Owner den kostenlosen
 Client installiert, `.\run_remote_free.ps1` startet und ein neues Passwort mit
 mindestens 12 Zeichen eingibt. Das Passwort wird nicht per E-Mail oder GitHub
 verteilt.
+
+GitHub-Commit `d616bf4` wurde auf `main` bestätigt. Die Ergebnis-Mail mit
+Commit-Link, 31/31-Teststatus und Startanleitung ging anschließend an das
+verbundene eigene Gmail-Konto; Nachrichten-ID `1a06b99169f3809f`.
