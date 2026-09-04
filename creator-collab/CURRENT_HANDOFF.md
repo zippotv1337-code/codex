@@ -1,107 +1,76 @@
 # Aktueller Handoff
 
-Stand: 4. September 2026
+Stand: 4. September 2026, 10:20 Uhr
 
 ## Zuletzt erreicht
 
-- Zehn Instagram-Beiträge veröffentlicht: fünf für Leona und fünf für Mara.
-- KI-Kennzeichnung und deaktiviertes Facebook-Crossposting geprüft.
-- Pro Persona fünf passende Nischenkonten abonniert.
-- Gemeinsames GitHub-Journalformat für ChatGPT und Codex vorbereitet.
-- GitHub-Repository `zippotv1337-code/codex` und Standardbranch `main` bestätigt.
-- Der vollständige Handoff-Verlauf und der Creator-Ops-MVP wurden erfolgreich
-  mit dem GitHub-Branch `main` synchronisiert.
-- Privates Threads-Profil erfolgreich von `@leonavoss.ai` zurück auf
-  `@zippo.rocco` gesetzt; 73 Follower blieben erhalten.
-- `@leonavoss.ai` und `@mara.field.ai` aus der privaten Meta-Kontenübersicht in
-  jeweils eigene Creator-Kontenübersichten verschoben.
-- Threads-Profil `@mara.field.ai` erstellt und Onboarding abgeschlossen. Direkt
-  danach wurde es von Threads ausgesetzt; aktuell wird eine echte
-  Selfie-Verifizierung verlangt.
-- Creator-Ops-MVP für Leona und Mara vollständig lokal implementiert.
-- Vertikaler Ablauf von Content-Planung bis Analytics mit `MockPublisher`
-  erfolgreich ausgeführt; 6 automatisierte Tests sind grün.
-- Wiederholter Demo-Lauf als idempotent bestätigt: zwei Content-Items, zehn
-  Assets, zwei Mock-Publikationen und sechs Analytics-Snapshots ohne Duplikate.
-- Evening Run von 19:00 bis 22:00 Uhr mit Berliner Zeitzone umgesetzt; ein
-  Aufruf um 18:59 wird ohne Seiteneffekte abgewiesen.
-- Prime-Time-History, 30-Minuten-Slot-Abstand, sichere Audio-Fallbacks sowie
-  Primary-/Alternate-/Reserve-Assetpläne umgesetzt.
-- Engagement Queue mit vier Vorschlägen pro Zwei-Persona-Lauf ergänzt; sie
-  besitzt bewusst keinen automatischen Ausführungspfad.
-- Secret-freier JSON-Export und integritätsgeprüftes SQLite-Backup ergänzt.
-- Sauberer End-to-End-Verifikationslauf mit 16 bestandenen Tests durchgeführt.
-- Lokale Morgen-Freigabeoberfläche unter `http://127.0.0.1:4180/` umgesetzt.
-- Leona und Mara erscheinen als getrennte Karten mit je fünf Asset-Plätzen,
-  drei Top Picks, vollständiger Checkliste und Freigabe-Button.
-- Aktuell sind beide Pakete für morgen review-bereit, nicht freigegeben und für
-  19:30 Uhr vorgeschlagen; Musik-Fallback ist „Option ohne Musik“.
-- Die Freigabe wurde automatisiert getestet: genau ein `mock-draft`, keine
-  externe ID, keine externe URL und kein Live-Publishing.
-- Gesamte Testsuite nach der Erweiterung: 20 Tests, alle bestanden.
-- Lokalen JPG-/PNG-/WebP-Import für bestehende Review-Slots ergänzt; Dateikopie,
-  SHA-256, SFW-Prüfung und Rechteangabe sind enthalten.
-- Sichere Preview-Auslieferung per Asset-ID umgesetzt; ohne echte Datei bleibt
-  die bisherige Mock-Kachel erhalten.
-- Je ein neues, vollständig fiktives KI-Porträt für Leona und Mara erzeugt,
-  als Dashboard-Profilbild eingebunden und testweise importiert.
-- Dashboard auf eine helle September-Optik mit größerer Checkliste, Statusfarben
-  und klarer „Was muss ich heute tun?“-Anweisung geschärft.
-- SQLite-Backup real erzeugt und in eine frische Prüfdatenbank restauriert:
-  Integrität `ok`, 2 Creator, 2 Content-Items, 10 Assets.
-- Gesamte Testsuite: 22 Tests, alle bestanden; Compileall ebenfalls grün.
-- Content-Brücke bis Dienstag ergänzt: vier vollständige Briefs für Leona und
-  vier für Mara in `docs/CHATGPT_BRIDGE_TO_TUESDAY.md`.
-- Jeder Brief enthält fünf Shots, Pose-Matrix, Top 3, Caption, Hook, CTA,
-  Hashtags, Musik A/B/ohne, Prime Time, Assetbedarf, Persona-Fit und QA.
-- Vollständige Bestandsauswertung ergänzt: je Persona 1 eindeutiges lokales
-  Porträt, 1 exakte Importkopie und 5 veröffentlichte Feed-Referenzen ohne
-  lokale Masterdatei.
-- Website-Exposé, Website-Asset-Shortlist, Markdown-/CSV-Inventar und ein
-  ehrlicher Postingplan bis Dienstag liegen unter `docs/`.
+- Der bestehende Creator-Ops-MVP blieb erhalten; keine neue Architektur.
+- Vier Content-Pakete vollständig produziert:
+  - Leona: „Spätsommer in Berlin“ und „September Roofline“
+  - Mara: „Fünf Minuten Maschinencheck“ und „Küchenfenster“
+- Pro Paket fünf reale SFW-Bildkandidaten mit der verlangten Pose-Matrix.
+- 18 Bilder neu mit Built-in ImageGen erzeugt; zwei vorhandene Profilanker als
+  Front-Slots wiederverwendet.
+- Alle 20 Paketdateien mit SHA-256, Herkunft und QA in
+  `docs/CONTENT_PRODUCTION_RUN.md` dokumentiert.
+- 20 Bilder über den bestehenden lokalen Importweg in die Review-Datenbank
+  geladen; Content `3–6`, Assets `11–30`.
+- Je Paket drei Top-Picks, Carousel-Folge, Caption, Hook, CTA, Hashtags,
+  Musik A/B/ohne sowie Prime Time finalisiert.
+- Für alle vier Karten bestätigt: fünf echte Previews, drei Top-Picks,
+  `ready=true`, `READY_FOR_REVIEW`, `approved=false`, Prime Time 19:30.
+- Lokalen Dashboardserver auf Port 4180 mit dem aktuellen Projektstand neu
+  gestartet; echte Preview-Endpunkte liefern PNG-Dateien mit `200 OK`.
+- Automatischer KI-Standardfooter und `kigeneriert` wurden aus neu erzeugten
+  organischen Review-Captions entfernt; die strukturierte Plattform-
+  Transparenz bleibt bestehen.
+- 22/22 Tests und Compileall grün.
+- Secret-freier JSON-Export, SQLite-Backup und Restore-Prüfung erfolgreich;
+  Integrität jeweils `ok`.
+- Kein Live-Publishing, keine Freigabe und keine externe Plattformaktion.
 
 ## Aktive Aufgabe
 
-Die viertägige Content-Reserve ist textlich fertig. Bildseitig ist noch kein
-Paket `READY_FOR_REVIEW`: Die zehn bereits veröffentlichten Feed-Master fehlen
-lokal und die Datenbank-Mocks sind keine Medien. Als Nächstes sollen zuerst die
-Originaldateien mit Herkunfts-/Rechtestatus wiederbeschafft, importiert und
-gegen die Shotlisten gematcht werden. Erst bei verbleibenden 1–2 Lücken pro Set
-wird gezielt neu generiert. Bis zur ausdrücklichen Freigabe bleiben alle
-Publikationen simuliert.
+Die Bridge-to-Tuesday-Reserve ist bild- und textseitig fertig. Nächster Schritt
+ist ausschließlich Owner-Review: fünf Kandidaten ansehen, vorgeschlagene Top 3
+bestätigen oder ändern und erst danach freigeben. Ein fünftes Paket ist für
+diesen Lauf ausdrücklich nicht vorgesehen.
 
-Separater Plattformblocker: Alle drei Instagram-Konten erscheinen wieder in der
-Kontenwechselliste. Threads verlangt für Mara weiterhin eine echte
-Selfie-Verifizierung; die bestehende Threads-Sitzung ist an dieses ausgesetzte
-Profil gebunden.
+Separater Plattformblocker: Threads verlangt für Mara weiterhin eine echte
+Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
 
 ## Nächste konkrete Schritte
 
-1. Originaldateien der zehn veröffentlichten Instagram-Posts samt Herkunft und
-   Rechtestatus sichern; Screenshots nicht als Master verwenden.
-2. Originale hashbasiert inventarisieren und den acht Briefs zuordnen.
-3. Nur bei Sets mit 3–4 passenden Bildern gezielt 1–2 Lücken erzeugen; danach
-   Top 3 im Dashboard prüfen und Owner-Freigabe einholen.
-4. Nutzer entscheidet separat, ob er die offizielle Mara-Selfie-Verifizierung
-   persönlich durchführen möchte; kein KI-Bild hochladen.
-5. Bis zur Threads-Freigabe keine weiteren Threads-Konten über dieselbe Sitzung
-   anlegen.
+1. Owner prüft die vier Karten im lokalen Dashboard; zuerst Mara
+   „Maschinencheck“, dann Leona „Roofline“, Mara „Küchenfenster“ und Leona
+   „Spätsommer“.
+2. Gewünschte Top-3-/Reihenfolge-Änderungen dokumentieren; konkreten Musiktrack
+   nativ prüfen oder den sicheren Fallback „ohne Musik“ belassen.
+3. Erst nach ausdrücklicher Owner-Freigabe planen; Publishing bleibt außerhalb
+   dieses Laufs.
+
+## Wichtige Dateien
+
+- Produktionsnachweis: `docs/CONTENT_PRODUCTION_RUN.md`
+- Postingplan: `docs/POSTING_BRIDGE_TO_TUESDAY.md`
+- Inventar: `docs/CONTENT_ASSET_INVENTORY.md` und `.csv`
+- Website-Shortlist: `docs/WEBSITE_ASSET_SHORTLIST.md`
+- Report: `docs/LAST_RUN_REPORT.md`
+- Finale Sicherung:
+  `backups/creator-ops-backup-content-reserve-20260904-1019.db`
 
 ## GitHub-Synchronisation
 
 - Repository: https://github.com/zippotv1337-code/codex
-- Sichtbarkeit: öffentlich
 - Zielbranch: `main`
-- Bestätigter Remote-Stand vor diesem Lauf: `b04e094`
-- Neun vorbereitete Projektcommits, der zwischenzeitliche Remote-Handoff und
-  beide `AGENTS.md`-Regelwerke wurden ohne Force-Push zusammengeführt.
-- Lokaler Sync-Stand und `origin/main` waren nach dem Push identisch.
-- GitHub blieb öffentlich: Die vorbereitete Privatstellung verlangte persönliche
-  GitHub-Sicherheitsbestätigung; danach priorisierte der Nutzer das Dashboard.
+- Dieser Lauf wird als einzelner projektbezogener Handoff-Commit synchronisiert.
+- `creator-collab/data/` bleibt unversioniert; keine Zugangsdaten oder Codes in
+  Git übernehmen.
 
 ## Nicht verändern
 
 - Instagram `@zippo.rocco` nicht umbenennen.
 - Bestehende Threads-Beiträge nicht löschen.
-- Privates Threads-Profil `@zippo.rocco` nicht wieder als Creator-Profil verwenden.
-- Keine Zugangsdaten im Repository speichern.
+- Privates Threads-Profil `@zippo.rocco` nicht als Creator-Profil verwenden.
+- Keine Zugangsdaten, Codes, Tokens, Cookies oder privaten Schlüssel speichern.
+- Keine externe Veröffentlichung ohne Owner-Freigabe.

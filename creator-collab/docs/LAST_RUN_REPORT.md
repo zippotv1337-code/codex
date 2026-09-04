@@ -369,3 +369,73 @@ veröffentlichten Originaldateien mit Herkunfts-/Rechteinformationen.
 13. Beste spätere Hero-Referenzen sind Leona Rooftop und Mara Hof/Feldrand.
 14. Keine Bilder, Posts, Accounts oder externen Dienste wurden neu erzeugt.
 15. Nächste Priorität: Originale sichern, registrieren, matchen und erst dann gezielt Lücken erzeugen.
+
+## Content-Production-Run – 4. September 2026
+
+Der priorisierte Bridge-to-Tuesday-Lauf wurde ohne neue Systemarchitektur
+abgeschlossen. Zuerst wurde der lokale Bestand verwendet; anschließend wurden
+nur die für vier vollständige Pakete fehlenden Motive mit Built-in ImageGen
+erzeugt. Ein fünftes Paket wurde bewusst nicht begonnen.
+
+### Fertige Pakete
+
+| Persona | Paket | Kandidaten | Top 3 | Status |
+|---|---|---:|---|---|
+| Leona | Spätsommer in Berlin | 5 | Full-body Walk -> Café links 3/4 -> Café candid | `READY_FOR_REVIEW` |
+| Mara | Fünf Minuten Maschinencheck | 5 | Hof-Walk -> Reifencheck -> Traktor candid | `READY_FOR_REVIEW` |
+| Leona | September Roofline | 5 | Rooftop-Walk -> Geländer links 3/4 -> sitzend candid | `READY_FOR_REVIEW` |
+| Mara | Küchenfenster | 5 | Küchen-Walk -> Fenster rechts 3/4 -> Tisch candid | `READY_FOR_REVIEW` |
+
+### Asset- und Dashboard-Nachweis
+
+- 18 neue fotorealistische SFW-Bilder erzeugt.
+- 2 vorhandene Profilanker gezielt als Front-Slots wiederverwendet.
+- 20 Paketdateien mit SHA-256 dokumentiert.
+- 20/20 Bilder über den bestehenden Importweg registriert; Rechte-/Herkunft
+  `AI_GENERATED`, Safety `SFW`.
+- Für Content `3–6` jeweils 5 echte Preview-URLs, 3 Top-Picks, `ready=true`,
+  `approved=false` und Prime Time `19:30` aus `cold-start-config` bestätigt.
+- Veralteten lokalen Dashboardprozess ersetzt; der aktuelle Server auf
+  `http://127.0.0.1:4180/` liefert die neue Review-Datenbank. HTTP-Prüfung:
+  10/10 Preview-URLs für den 6. September, erster PNG-Endpunkt `200 OK`.
+- Caption, Hook, CTA, Hashtags, Musik A/B/ohne und Carousel-Folge je Paket
+  finalisiert.
+- Keine externe Veröffentlichung und keine Owner-Freigabe ausgelöst.
+
+### Kleine isolierte Korrektur
+
+Neue Review-Captions hängen den strukturierten KI-Hinweis nicht mehr
+automatisch als Standardfooter an und erzeugen nicht mehr automatisch den
+Hashtag `kigeneriert`. Die KI-Transparenz bleibt separat als Plattformmetadatum
+erhalten. Ein Test schützt dieses Verhalten.
+
+### Tests, Export und Restore
+
+- `python -m unittest discover -s tests -v`: **22/22 grün**.
+- `python -m compileall -q creator_ops tests`: **grün**.
+- Secret-freier Export:
+  `backups/creator-ops-export-content-reserve-20260904-1019.json`.
+- SQLite-Backup:
+  `backups/creator-ops-backup-content-reserve-20260904-1019.db`.
+- Restore-Prüfung:
+  `backups/creator-ops-restore-check-content-reserve-20260904-1019.db`.
+- Backup und Restore jeweils `PRAGMA integrity_check = ok`, 2 Creator,
+  6 Content-Items, 30 Assets, 22 lokale Imports und 6 review-bereite Inhalte.
+
+### Für Auswertung mit ChatGPT – Content-Run
+
+1. Vier vollständige hochwertige Pakete sind produziert.
+2. Leona besitzt 10 lokale Kandidaten in zwei Paketen.
+3. Mara besitzt 10 lokale Kandidaten in zwei Paketen.
+4. Insgesamt wurden 18 neue Bilder erzeugt und 2 Anker wiederverwendet.
+5. Jede Pose-Matrix deckt frontal, links 3/4, rechts 3/4, Bewegung und candid ab.
+6. Maximal zwei ähnliche Bilder pro Set; alle vier Sets bestanden die visuelle QA.
+7. Pro Paket sind drei unterschiedliche Carousel-Slides kuratiert.
+8. Alle 20 Bilder erscheinen als echte Vorschau im bestehenden Dashboard.
+9. Alle vier Zielpakete sind `READY_FOR_REVIEW`, aber nicht freigegeben.
+10. Caption, Hook, CTA, Hashtags und Musik A/B/ohne sind vollständig.
+11. Prime Time ist 19:30 Uhr aus der Cold-Start-Konfiguration.
+12. Der automatische KI-Caption-Footer wurde isoliert entfernt; Metadaten bleiben.
+13. 22 Tests und Compileall sind grün.
+14. Export, Backup und Restore wurden erfolgreich verifiziert.
+15. ChatGPT sollte bis Dienstag Owner-Feedback/Top-3-Änderungen sammeln; keine neuen Pakete nötig.

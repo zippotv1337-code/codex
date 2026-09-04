@@ -149,10 +149,10 @@ class ReviewDashboardService:
             )
             if not compliance.allowed:
                 raise ValueError(f"compliance failed: {compliance.reasons}")
-            caption = (
-                f"{persona['default_series']} — {persona['default_hook']} "
-                f"{persona['disclosure']}"
-            )
+            # Keep disclosure as structured publishing metadata. Do not append the
+            # same AI notice to every organic caption; the owner reviews the native
+            # platform disclosure separately.
+            caption = f"{persona['default_series']} — {persona['default_hook']}"
             connection.execute(
                 """
                 INSERT INTO platform_variants
@@ -164,7 +164,7 @@ class ReviewDashboardService:
                     content_id,
                     persona["default_hook"],
                     caption,
-                    json.dumps(["virtualcreator", "kigeneriert", creator_slug]),
+                    json.dumps(["virtualcreator", creator_slug]),
                     persona["default_hook"],
                     persona["disclosure"],
                     now,

@@ -1,5 +1,6 @@
 data/*.db
 data/*.db-*
+data/imported-assets/
 exports/
 backups/
 __pycache__/
