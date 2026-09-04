@@ -155,6 +155,14 @@ und KI-generiert.
 - Produktionsnachweis, Top 3 und QA stehen in
   `docs/CONTENT_PRODUCTION_RUN.md`; 22 Tests, Export, Backup und Restore sind
   nach dem Lauf grün/verifiziert.
+- Optionaler kostenloser Remote-Testmodus ergänzt: Ohne Passwort bleibt das
+  lokale Dashboard unverändert offen; mit `CREATOR_OPS_PASSWORD` schützen
+  Login, 12-Stunden-Session, CSRF-Token, Sicherheitsheader und Login-
+  Rate-Limitierung sämtliche Reviews, Assets und Freigaben.
+- `run_remote_free.ps1` startet Dashboard und einen optionalen Cloudflare Quick
+  Tunnel ausschließlich auf `127.0.0.1`; keine Router-Portfreigabe, kein
+  Passwort in Git/SQLite und kein Live-Publishing. 31 Tests einschließlich
+  echter HTTP-401-/Cookie-/CSRF-Fälle sind grün.
 
 ## Offene Projektbereiche
 
@@ -179,3 +187,6 @@ und KI-generiert.
 - Originaldateien der zehn älteren Feed-Posts mit Herkunft/Rechten später
   sichern; sie sind für die neue Vier-Paket-Reserve nicht mehr erforderlich,
   bleiben aber für Archiv und Website-Portfolio relevant.
+- Für einen realen temporären Remote-Link muss der Owner `cloudflared`
+  installieren und beim Start ein neues Passwort mit mindestens 12 Zeichen
+  eingeben; keine Zugangsdaten im Repository hinterlegen.

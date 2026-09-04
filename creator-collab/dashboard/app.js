@@ -11,6 +11,18 @@ const escapeHtml = (value) => String(value)
   .replaceAll('"', "&quot;")
   .replaceAll("'", "&#039;");
 
+function cookieValue(name) {
+  return document.cookie.split(";")
+    .map((value) => value.trim())
+    .filter((value) => value.startsWith(`${name}=`))
+    .map((value) => decodeURIComponent(value.substring(name.length + 1)))[0] || "";
+}
+
+function csrfHeaders() {
+  const token = cookieValue("creator_ops_csrf");
+  return token ? { "X-CSRF-Token": token } : {};
+}
+
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add("show");
@@ -77,10 +89,27 @@ function cardTemplate(card) {
     </article>`;
 }
 
+async function apiFetch(url, options = {}) {
+  const method = (options.method || "GET").toUpperCase();
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      ...(method === "POST" ? csrfHeaders() : {}),
+    },
+  });
+  if (response.status === 401) {
+    window.location.assign("/login");
+    throw new Error("Anmeldung erforderlich");
+  }
+  return response;
+}
+
 async function loadCards() {
   cardsRoot.setAttribute("aria-busy", "true");
   try {
-    const response = await fetch("/api/reviews", { headers: { Accept: "application/json" } });
+    const response = await apiFetch("/api/reviews", { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Status ${response.status}`);
     const payload = await response.json();
     currentCards = payload.cards;
@@ -103,7 +132,7 @@ async function approveContent(contentId) {
     button.disabled = true;
     button.textContent = "Wird freigegeben …";
   }
-  const response = await fetch(`/api/reviews/${contentId}/approve`, { method: "POST" });
+  const response = await apiFetch(`/api/reviews/${contentId}/approve`, { method: "POST" });
   const payload = await response.json();
   if (!response.ok) throw new Error(payload.error || "Freigabe fehlgeschlagen");
   await loadCards();
@@ -121,6 +150,19 @@ cardsRoot.addEventListener("click", async (event) => {
     await loadCards();
   }
 });
+
+function installLogoutButton() {
+  if (!cookieValue("creator_ops_csrf")) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = "Abmelden";
+  button.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:50;border:1px solid rgba(60,50,40,.15);background:rgba(255,255,255,.92);padding:9px 12px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.08);cursor:pointer;font:inherit;";
+  button.addEventListener("click", async () => {
+    await apiFetch("/logout", { method: "POST" });
+    window.location.assign("/login");
+  });
+  document.body.appendChild(button);
+}
 
 async function registerWebMcp() {
   const context = document.modelContext;
@@ -150,4 +192,5 @@ async function registerWebMcp() {
   }
 }
 
+installLogoutButton();
 loadCards().then(registerWebMcp);
