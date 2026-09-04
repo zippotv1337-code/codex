@@ -442,3 +442,49 @@ erhalten. Ein Test schützt dieses Verhalten.
 13. 22 Tests und Compileall sind grün.
 14. Export, Backup und Restore wurden erfolgreich verifiziert.
 15. ChatGPT sollte bis Dienstag Owner-Feedback/Top-3-Änderungen sammeln; keine neuen Pakete nötig.
+
+## Kostenloser Remote-Access-Patch – 4. September 2026
+
+Das bereitgestellte Patch-Archiv wurde gegen den aktuellen Creator-Ops-Stand
+integriert und dabei ergänzt. Der lokale Standardmodus bleibt kompatibel: Ohne
+`CREATOR_OPS_PASSWORD` sind Dashboard und API auf `127.0.0.1` wie bisher offen.
+
+### Implementiert
+
+- Optionaler Passwort-Login mit konstantzeitlichem Vergleich.
+- Passwort-Mindestlänge 12 Zeichen; ausschließlich Prozessumgebung, nicht Git
+  oder SQLite.
+- Zufällige In-Memory-Sessions mit 12 Stunden Laufzeit.
+- `HttpOnly`-/`SameSite=Strict`-Session-Cookie und separates CSRF-Cookie;
+  `Secure` bei HTTPS-Forwarding.
+- CSRF-Prüfung für Freigabe und Logout.
+- Sechs Fehlversuche pro Client in fünf Minuten als einfache Login-Sperre.
+- CSP, Frame-, Referrer- und MIME-Sicherheitsheader; HSTS über HTTPS.
+- Öffentlicher minimaler Health-Endpunkt mit sichtbarem Auth-Modus.
+- Dashboard-JavaScript für Session, CSRF, Login-Weiterleitung und Logout.
+- Kostenloses Startskript `run_remote_free.ps1` für lokalen Server plus
+  optionalen Cloudflare Quick Tunnel; Bindung bleibt `127.0.0.1`, keine
+  Router-Portfreigabe.
+- Anleitung `docs/REMOTE_ACCESS_FREE.md`; `tools/` und `.env*` werden ignoriert.
+
+### Verifiziert
+
+- Bestehende 22 Tests bleiben grün.
+- 4 Auth-Unit-Tests grün.
+- 5 echte HTTP-Tests grün:
+  - Review-API ohne Login -> `401`
+  - falsches Passwort -> `401`
+  - korrektes Passwort -> Session- und CSRF-Cookie
+  - Freigabe ohne CSRF -> `403`
+  - Freigabe mit Session + CSRF -> lokaler `mock-draft`
+- Gesamtsuite: **31/31 grün**.
+- Compileall: grün.
+- Kein Live-Publishing, keine Secrets und keine neue externe Abhängigkeit.
+
+### Noch manuell
+
+`cloudflared` ist auf dem aktuellen Rechner nicht installiert. Ein echter
+temporärer Link wird daher erst erzeugt, nachdem der Owner den kostenlosen
+Client installiert, `.\run_remote_free.ps1` startet und ein neues Passwort mit
+mindestens 12 Zeichen eingibt. Das Passwort wird nicht per E-Mail oder GitHub
+verteilt.

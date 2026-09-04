@@ -42,6 +42,17 @@ Danach ist sie unter `http://127.0.0.1:4180/` erreichbar. Sie bereitet für den
 nächsten Tag je eine Review-Karte für Leona und Mara vor. „Freigeben“ erzeugt
 nur einen lokalen, auditierbaren `mock-draft`; es gibt keinen Live-Publisher.
 
+Optionaler kostenloser Remote-Testzugang:
+
+```powershell
+.\run_remote_free.ps1
+```
+
+Dieser Modus verlangt ein nur im Prozess gehaltenes Passwort mit mindestens
+12 Zeichen und einen lokal installierten `cloudflared`-Client. Das Dashboard
+bleibt an `127.0.0.1` gebunden; es werden keine Router-Ports geöffnet. Details,
+Grenzen und Sicherheitsverhalten: `docs/REMOTE_ACCESS_FREE.md`.
+
 Enthalten sind:
 
 - zentrale Leona-/Mara-Konfiguration
@@ -56,6 +67,7 @@ Enthalten sind:
 - Engagement-Vorschlagsqueue ohne automatische externe Aktionen
 - geheimnisfreier JSON-Export und integritätsgeprüftes SQLite-Backup
 - visuelle Morgen-Freigabe für Leona und Mara
+- optionaler Passwort-/Session-/CSRF-Schutz für einen temporären Remote-Test
 - lokaler JPG-/PNG-/WebP-Import mit Rechteangabe und sicherer Thumbnail-URL
 - atomarer Restore eines geprüften SQLite-Backups in eine frische Datenbank
 - `MockPublisher`

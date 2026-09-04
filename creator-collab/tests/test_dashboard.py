@@ -135,7 +135,10 @@ class ReviewDashboardTests(unittest.TestCase):
             self.assertEqual(approved["status"], "SCHEDULED")
             with urlopen(f"{base}/api/health", timeout=5) as response:
                 health = json.load(response)
-            self.assertEqual(health, {"status": "ok", "mode": "local-mock"})
+            self.assertEqual(
+                health,
+                {"status": "ok", "mode": "local-mock", "auth": False},
+            )
         finally:
             server.shutdown()
             server.server_close()

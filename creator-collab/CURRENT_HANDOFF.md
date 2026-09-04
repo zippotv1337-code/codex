@@ -28,25 +28,33 @@ Stand: 4. September 2026, 10:20 Uhr
 - Secret-freier JSON-Export, SQLite-Backup und Restore-Prüfung erfolgreich;
   Integrität jeweils `ok`.
 - Kein Live-Publishing, keine Freigabe und keine externe Plattformaktion.
+- Kostenlosen optionalen Remote-Testmodus integriert: Passwort-Login,
+  In-Memory-Session, CSRF-Schutz, Sicherheitsheader und Login-Rate-Limitierung.
+- Lokaler Betrieb ohne `CREATOR_OPS_PASSWORD` bleibt unverändert offen.
+- Fünf echte HTTP-Sicherheitsfälle ergänzt; gesamte Suite jetzt 31/31 grün.
 
 ## Aktive Aufgabe
 
-Die Bridge-to-Tuesday-Reserve ist bild- und textseitig fertig. Nächster Schritt
-ist ausschließlich Owner-Review: fünf Kandidaten ansehen, vorgeschlagene Top 3
-bestätigen oder ändern und erst danach freigeben. Ein fünftes Paket ist für
-diesen Lauf ausdrücklich nicht vorgesehen.
+Die Bridge-to-Tuesday-Reserve ist bild- und textseitig fertig. Der Remote-Patch
+ist technisch abgeschlossen. Für einen echten externen Testlink fehlen nur die
+lokale `cloudflared`-Installation und ein neues, nicht gespeichertes Owner-
+Passwort. Danach bleibt der nächste Inhalts-Schritt der Owner-Review der vier
+fertigen Pakete.
 
 Separater Plattformblocker: Threads verlangt für Mara weiterhin eine echte
 Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
 
 ## Nächste konkrete Schritte
 
-1. Owner prüft die vier Karten im lokalen Dashboard; zuerst Mara
+1. Owner installiert bei Bedarf `cloudflared`, startet
+   `.\run_remote_free.ps1` und vergibt ein neues Passwort mit mindestens
+   12 Zeichen; Details in `docs/REMOTE_ACCESS_FREE.md`.
+2. Owner prüft die vier Karten im lokalen oder temporären Remote-Dashboard; zuerst Mara
    „Maschinencheck“, dann Leona „Roofline“, Mara „Küchenfenster“ und Leona
    „Spätsommer“.
-2. Gewünschte Top-3-/Reihenfolge-Änderungen dokumentieren; konkreten Musiktrack
+3. Gewünschte Top-3-/Reihenfolge-Änderungen dokumentieren; konkreten Musiktrack
    nativ prüfen oder den sicheren Fallback „ohne Musik“ belassen.
-3. Erst nach ausdrücklicher Owner-Freigabe planen; Publishing bleibt außerhalb
+4. Erst nach ausdrücklicher Owner-Freigabe planen; Publishing bleibt außerhalb
    dieses Laufs.
 
 ## Wichtige Dateien
@@ -56,6 +64,7 @@ Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
 - Inventar: `docs/CONTENT_ASSET_INVENTORY.md` und `.csv`
 - Website-Shortlist: `docs/WEBSITE_ASSET_SHORTLIST.md`
 - Report: `docs/LAST_RUN_REPORT.md`
+- Remote-Anleitung: `docs/REMOTE_ACCESS_FREE.md`
 - Finale Sicherung:
   `backups/creator-ops-backup-content-reserve-20260904-1019.db`
 
