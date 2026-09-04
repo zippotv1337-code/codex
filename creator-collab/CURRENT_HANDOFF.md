@@ -68,6 +68,7 @@ Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
 - Website-Shortlist: `docs/WEBSITE_ASSET_SHORTLIST.md`
 - Report: `docs/LAST_RUN_REPORT.md`
 - Remote-Anleitung: `docs/REMOTE_ACCESS_FREE.md`
+- Finale Gesamtübergabe: `docs/FINAL_ABSCHLUSS.md`
 - Finale Sicherung:
   `backups/creator-ops-backup-content-reserve-20260904-1019.db`
 
@@ -88,3 +89,10 @@ Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
 - Privates Threads-Profil `@zippo.rocco` nicht als Creator-Profil verwenden.
 - Keine Zugangsdaten, Codes, Tokens, Cookies oder privaten Schlüssel speichern.
 - Keine externe Veröffentlichung ohne Owner-Freigabe.
+
+## Letzte verifizierte GitHub-Sichtbarkeit
+
+GitHub meldet das Repository `zippotv1337-code/codex` am 4. September 2026 als
+`public`, Standardbranch `main`. Damit sind auch die eingecheckten 20
+Creator-Bilder öffentlich les- und herunterladbar. Eine Privatstellung wurde
+nicht angefordert und daher nicht vorgenommen.

@@ -492,3 +492,11 @@ verteilt.
 GitHub-Commit `d616bf4` wurde auf `main` bestätigt. Die Ergebnis-Mail mit
 Commit-Link, 31/31-Teststatus und Startanleitung ging anschließend an das
 verbundene eigene Gmail-Konto; Nachrichten-ID `1a06b99169f3809f`.
+
+## Abschlussdatei und Sichtbarkeit
+
+Die GitHub-Metadaten bestätigen `visibility=public`, Standardbranch `main` und
+`archived=false` für `zippotv1337-code/codex`. Andere können daher auch die 20
+eingecheckten Creator-Bilder lesen und herunterladen. Die vollständige
+Owner-Übergabe mit Projektstand, Verifikation und Restschritten steht in
+`docs/FINAL_ABSCHLUSS.md`. Die Repository-Sichtbarkeit wurde nicht verändert.
