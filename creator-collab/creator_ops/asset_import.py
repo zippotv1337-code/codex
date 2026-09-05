@@ -24,7 +24,10 @@ class LocalAssetImportService:
     def __init__(self, pipeline: VerticalPipeline, project_root: Path):
         self.pipeline = pipeline
         self.project_root = project_root.resolve()
-        self.storage_root = (self.project_root / "data" / "imported-assets").resolve()
+        self.storage_root = (self.project_root / "data" / "media" / "sfw").resolve()
+        self.legacy_storage_root = (
+            self.project_root / "data" / "imported-assets"
+        ).resolve()
 
     @staticmethod
     def _sha256(path: Path) -> str:
@@ -122,7 +125,8 @@ class LocalAssetImportService:
         if row is None or row["generator"] != "local-import":
             return None
         candidate = (self.project_root / row["file_path"]).resolve()
-        if self.storage_root not in candidate.parents or not candidate.is_file():
+        managed_roots = (self.storage_root, self.legacy_storage_root)
+        if not any(root in candidate.parents for root in managed_roots) or not candidate.is_file():
             return None
         content_type = ALLOWED_IMAGE_TYPES.get(candidate.suffix.lower())
         return None if content_type is None else (candidate, content_type)

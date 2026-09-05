@@ -2,7 +2,21 @@ const cardsRoot = document.querySelector("#cards");
 const readyCount = document.querySelector("#ready-count");
 const targetDate = document.querySelector("#target-date");
 const toast = document.querySelector("#toast");
+const stageFilters = document.querySelectorAll("[data-stage-filter]");
 let currentCards = [];
+let activeStage = "ALL";
+let previewState = null;
+let pendingDecision = null;
+
+const poseLabels = {
+  FRONTAL: "Frontal",
+  LEFT_3Q: "Links ¾",
+  RIGHT_3Q: "Rechts ¾",
+  FULL_BODY_ACTION: "Ganzkörper",
+  CANDID: "Candid",
+  UNASSIGNED: "Pose offen",
+};
+const instagramHandles = { "leona-voss": "leonavoss.ai", "mara-field": "mara.field.ai" };
 
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
@@ -40,53 +54,145 @@ function check(label, ok, detail) {
 }
 
 function statusMeta(card) {
+  if (card.schedule_status === "PUBLISHED") return { key: "published", label: "Veröffentlicht" };
+  if (card.schedule_status === "PUBLISHING") return { key: "scheduled", label: "Veröffentlichung läuft" };
+  if (card.schedule_status === "PUBLISH_DUE") return { key: "scheduled", label: "Veröffentlichung fällig" };
+  if (card.schedule_status === "NEEDS_RESCHEDULE_REVIEW") return { key: "change", label: "Neue Zeit prüfen" };
+  if (card.schedule_status === "FAILED_RETRYABLE") return { key: "change", label: "Erneut versuchen" };
+  if (card.schedule_status === "BLOCKED_EXTERNAL_PUBLISHING") return { key: "rejected", label: "Extern blockiert" };
+  if (card.schedule_status === "LOCAL_SCHEDULED") return { key: "scheduled", label: "Creator Ops terminiert" };
   if (card.approved || card.status === "OWNER_APPROVED") return { key: "approved", label: "Freigegeben" };
   if (card.status === "SCHEDULED") return { key: "scheduled", label: "Geplant" };
   if (card.status === "READY_FOR_REVIEW") return { key: "ready", label: "Review bereit" };
+  if (card.status === "PARTIAL_READY") return { key: "change", label: "Änderung nötig" };
+  if (card.status === "BLOCKED") return { key: "rejected", label: "Abgelehnt" };
   return { key: "pending", label: card.status.replaceAll("_", " ") };
 }
 
 function cardTemplate(card) {
+  const protectedPreview = card.privacy_blur || card.visibility_scope === "ADULT_ONLY";
   const assets = card.assets.map((asset) => `
-    <div class="asset ${asset.top_pick ? "top" : ""} ${asset.preview_url ? "has-preview" : ""}" ${asset.preview_url ? `style="background-image:url('${escapeHtml(asset.preview_url)}')"` : ""} aria-label="${escapeHtml(asset.label)}, Qualität ${asset.quality} Prozent${asset.top_pick ? ", Top Pick" : ""}">
+    <div class="asset ${asset.top_pick ? "top" : ""} ${asset.excluded ? "excluded" : ""} ${asset.preview_url ? "has-preview" : ""} ${protectedPreview ? "privacy-blur" : ""}" ${asset.preview_url ? `style="background-image:url('${escapeHtml(asset.preview_url)}')"` : ""} aria-label="${escapeHtml(asset.label)}, ${escapeHtml(poseLabels[asset.pose_slot] || asset.pose_slot)}, Qualität ${asset.quality} Prozent${asset.top_pick ? ", Top Pick" : ""}${asset.excluded ? ", bereits veröffentlicht und ausgeschlossen" : ""}">
       <span class="quality">${asset.quality}%</span>
-      ${asset.top_pick ? '<span class="asset-badge">TOP</span>' : ""}
-      <span>${escapeHtml(asset.label)}</span>
+      ${asset.top_pick ? `<span class="asset-badge">TOP ${asset.top_pick_order}</span>` : ""}
+      ${asset.excluded ? '<span class="excluded-badge">VERÖFFENTLICHT</span>' : ""}
+      <span>${escapeHtml(poseLabels[asset.pose_slot] || asset.label)}</span>
     </div>`).join("");
   const approved = card.approved;
+  const canApprove = card.can_approve ?? (card.ready && !approved && card.status === "READY_FOR_REVIEW");
   const status = statusMeta(card);
+  const audioDetails = card.audio_options.map((option) => {
+    const review = ["REVIEW_REQUIRED", "VERIFY_BEFORE_USE", "MOCK_ONLY"].includes(option.license_status)
+      ? " (vor Nutzung prüfen)"
+      : option.license_status === "SAFE_NO_AUDIO" ? " (sicherer Fallback)" : "";
+    return `${escapeHtml(option.label)}${option.selected ? " ✓ gewählt" : ""}${review}`;
+  }).join(" · ");
   return `
-    <article class="creator-card" data-persona="${escapeHtml(card.creator_slug)}">
+    <article class="creator-card ${protectedPreview ? "privacy-protected" : ""}" data-persona="${escapeHtml(card.creator_slug)}" data-stage="${escapeHtml(card.content_stage)}">
       <div class="card-head">
         <div class="identity">
           <img class="avatar" src="/assets/${escapeHtml(card.creator_slug)}-avatar.png" alt="KI-generiertes Profilbild von ${escapeHtml(card.display_name)}" />
           <div>
-            <p class="card-kicker">Morgen · ${escapeHtml(card.prime_time)} Uhr</p>
+            <p class="card-kicker">${escapeHtml(card.date)} · ${escapeHtml(card.prime_time)} Uhr</p>
             <h2>${escapeHtml(card.display_name)}</h2>
             <p class="series">${escapeHtml(card.series)}</p>
+            ${card.style_reference ? `<span class="style-ref">Style Ref: ${escapeHtml(card.style_reference)} · ${escapeHtml(card.reference_strength)}</span>` : ""}
           </div>
         </div>
-        <span class="status-pill status-${status.key}">${escapeHtml(status.label)}</span>
+        <div class="status-stack">
+          <span class="stage-pill stage-${escapeHtml(card.content_stage.toLowerCase())}">${escapeHtml(card.content_stage.replaceAll("_", " "))}</span>
+          <span class="status-pill status-${status.key}">${escapeHtml(status.label)}</span>
+        </div>
       </div>
       <div class="asset-summary">
         <span><strong>${card.asset_count}</strong><small>Bilder vorhanden</small></span>
         <span><strong>Top ${card.top_pick_count}</strong><small>empfohlen</small></span>
+        <span><strong>${card.excluded_published_count}</strong><small>veröffentlicht / raus</small></span>
       </div>
       <div class="asset-strip">${assets}</div>
+      ${protectedPreview ? '<button class="reveal-button" type="button" data-reveal>Geschützte Vorschau einmal anzeigen</button>' : ""}
       <div class="checklist">
-        ${check("Carousel", card.checks.carousel, "5 Slides vorbereitet")}
+        ${check("Carousel", card.checks.carousel, `${card.top_pick_count} Slides ausgewählt · ${card.available_asset_count} Kandidaten verfügbar`)}
         ${check("Caption", card.checks.caption, "Text vollständig")}
         ${check("Musik", card.checks.music, card.audio)}
         ${check("Prime Time", card.checks.prime_time, `${card.prime_time} Uhr · Berlin`)}
+        ${check("Pose-Matrix", card.checks.pose_matrix, "5 klar unterschiedliche Blickwinkel")}
+        ${check("Sichtbarkeit", card.checks.public_scope, card.visibility_scope)}
       </div>
-      <details class="caption-preview">
-        <summary>Caption ansehen</summary>
-        <p>${escapeHtml(card.caption)}</p>
+      ${card.qa_reasons.length ? `<p class="qa-warning">Noch offen: ${escapeHtml(card.qa_reasons.join(", "))}</p>` : ""}
+      <details class="caption-preview" open>
+        <summary>Posting-Details</summary>
+        <dl class="posting-details">
+          <div><dt>Hook</dt><dd>${escapeHtml(card.hook)}</dd></div>
+          <div><dt>Caption</dt><dd>${escapeHtml(card.caption)}</dd></div>
+          <div><dt>CTA</dt><dd>${escapeHtml(card.cta)}</dd></div>
+          <div><dt>Hashtags</dt><dd>${escapeHtml(card.hashtags.map(x => `#${x.replace(/^#/, "")}`).join(" "))}</dd></div>
+          <div><dt>Musik A / B / ohne</dt><dd>${audioDetails}</dd></div>
+          <div><dt>Prime Time</dt><dd>${escapeHtml(card.prime_time)} Uhr · ${escapeHtml(card.schedule_source)}</dd></div>
+          <div><dt>Terminierung</dt><dd>${escapeHtml(card.schedule_status.replaceAll("_", " "))}${card.suggested_at ? ` · Vorschlag ${escapeHtml(card.suggested_at)}` : ""}</dd></div>
+        </dl>
       </details>
-      <button class="approve-button" data-approve="${card.content_id}" ${(!card.ready || approved) ? "disabled" : ""}>
-        ${approved ? `Freigegeben · ${escapeHtml(card.prime_time)} Uhr` : `${escapeHtml(card.display_name)} freigeben`}
-      </button>
+      <button class="large-preview-button" type="button" data-large-preview="${card.content_id}">Große Instagram-Vorschau</button>
+      <div class="decision-help"><b>APPROVE</b> lokale Creator-Ops-Queue · <b>CHANGE</b> Überarbeitung · <b>REJECT</b> Paket blockieren</div>
+      <div class="decision-actions">
+        <button type="button" class="approve-button" data-action="approve" data-content-id="${card.content_id}" ${canApprove ? "" : "disabled"}>${approved ? "Freigegeben" : "APPROVE"}</button>
+        <button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">CHANGE</button>
+        <button type="button" class="reject-button" data-action="reject" data-content-id="${card.content_id}">REJECT</button>
+      </div>
     </article>`;
+}
+
+function renderCards() {
+  const visible = activeStage === "ALL"
+    ? currentCards
+    : currentCards.filter((card) => card.content_stage === activeStage);
+  cardsRoot.innerHTML = visible.length
+    ? visible.map(cardTemplate).join("")
+    : '<div class="empty">Für diesen Filter gibt es morgen kein Paket.</div>';
+}
+
+function previewSlides(card) {
+  const selected = card.assets.filter(asset => asset.top_pick && !asset.excluded)
+    .sort((a, b) => a.top_pick_order - b.top_pick_order);
+  return selected.length ? selected : card.assets.filter(asset => !asset.excluded).slice(0, 3);
+}
+
+function renderLargePreview() {
+  if (!previewState) return;
+  const { card, slides, index } = previewState;
+  const asset = slides[index];
+  const image = document.querySelector("#preview-image");
+  image.style.backgroundImage = asset?.preview_url ? `url('${asset.preview_url}')` : "";
+  image.classList.toggle("has-preview", Boolean(asset?.preview_url));
+  document.querySelector("#preview-fallback").hidden = Boolean(asset?.preview_url);
+  document.querySelector("#preview-counter").textContent = `${index + 1}/${slides.length}`;
+  document.querySelector("#preview-dots").innerHTML = slides.map((_, position) => `<i class="${position === index ? "active" : ""}"></i>`).join("");
+  document.querySelector("#preview-meta").textContent = `${poseLabels[asset?.pose_slot] || asset?.label || "Motiv"} · Qualität ${asset?.quality ?? "—"}% · ${card.prime_time} Uhr`;
+}
+
+function openLargePreview(card) {
+  const overlay = document.querySelector("#large-preview");
+  const slides = previewSlides(card);
+  previewState = { card, slides, index: 0 };
+  document.querySelector("#preview-avatar").src = `/assets/${card.creator_slug}-avatar.png`;
+  document.querySelector("#preview-avatar").alt = `Profilbild von ${card.display_name}`;
+  document.querySelector("#preview-handle").textContent = instagramHandles[card.creator_slug] || card.creator_slug;
+  document.querySelector("#preview-title").textContent = card.display_name;
+  document.querySelector("#preview-caption").textContent = card.caption;
+  document.querySelector("#preview-series").textContent = card.series;
+  overlay.hidden = false;
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("preview-open");
+  renderLargePreview();
+  document.querySelector("[data-preview-close]").focus();
+}
+
+function closeLargePreview() {
+  const overlay = document.querySelector("#large-preview");
+  overlay.hidden = true;
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("preview-open");
+  previewState = null;
 }
 
 async function apiFetch(url, options = {}) {
@@ -109,16 +215,15 @@ async function apiFetch(url, options = {}) {
 async function loadCards() {
   cardsRoot.setAttribute("aria-busy", "true");
   try {
-    const response = await apiFetch("/api/reviews", { headers: { Accept: "application/json" } });
+    const response = await apiFetch("/api/review-queue", { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Status ${response.status}`);
     const payload = await response.json();
     currentCards = payload.cards;
-    readyCount.textContent = payload.cards.filter((card) => card.ready && !card.approved).length;
-    targetDate.textContent = new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit" })
-      .format(new Date(`${payload.date}T12:00:00`));
-    cardsRoot.innerHTML = payload.cards.length
-      ? payload.cards.map(cardTemplate).join("")
-      : '<div class="error">Für morgen sind noch keine Freigabepakete vorhanden.</div>';
+    readyCount.textContent = payload.cards.filter((card) => card.can_approve ?? (card.ready && !card.approved && card.status === "READY_FOR_REVIEW")).length;
+    targetDate.textContent = payload.dates?.length
+      ? payload.dates.map(value => new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit" }).format(new Date(`${value}T12:00:00`))).join(" / ")
+      : "keine";
+    renderCards();
   } catch (error) {
     cardsRoot.innerHTML = `<div class="error">Die Freigabepakete konnten nicht geladen werden. ${escapeHtml(error.message)}</div>`;
   } finally {
@@ -126,30 +231,116 @@ async function loadCards() {
   }
 }
 
-async function approveContent(contentId) {
-  const button = document.querySelector(`[data-approve="${contentId}"]`);
+function requestDecisionNote(action) {
+  const overlay = document.querySelector("#decision-dialog");
+  const note = document.querySelector("#decision-note");
+  document.querySelector("#decision-title").textContent = action === "change" ? "Paket ändern" : "Paket ablehnen";
+  document.querySelector("#decision-copy").textContent = action === "change"
+    ? "Notiere kurz, was angepasst werden soll."
+    : "Notiere kurz, warum dieses Paket nicht verwendet werden soll.";
+  document.querySelector("[data-decision-save]").textContent = action === "change"
+    ? "Änderung speichern"
+    : "Ablehnung speichern";
+  note.value = "";
+  overlay.hidden = false;
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("decision-open");
+  window.setTimeout(() => note.focus(), 0);
+  return new Promise((resolve) => {
+    pendingDecision = { resolve };
+  });
+}
+
+function closeDecisionDialog(value = null) {
+  if (!pendingDecision) return;
+  const overlay = document.querySelector("#decision-dialog");
+  overlay.hidden = true;
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("decision-open");
+  const resolve = pendingDecision.resolve;
+  pendingDecision = null;
+  resolve(value);
+}
+
+async function ownerDecision(contentId, action) {
+  let note = "";
+  if (action !== "approve") {
+    const response = await requestDecisionNote(action);
+    if (response === null) return { cancelled: true };
+    note = response;
+  }
+  const button = document.querySelector(`[data-action="${action}"][data-content-id="${contentId}"]`);
   if (button) {
     button.disabled = true;
-    button.textContent = "Wird freigegeben …";
+    button.textContent = "Wird gespeichert …";
   }
-  const response = await apiFetch(`/api/reviews/${contentId}/approve`, { method: "POST" });
+  const response = await apiFetch(`/api/reviews/${contentId}/${action}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ note }),
+  });
   const payload = await response.json();
   if (!response.ok) throw new Error(payload.error || "Freigabe fehlgeschlagen");
   await loadCards();
-  showToast("Freigabe gespeichert · lokaler Mock-Draft angelegt");
+  showToast(action === "approve" ? "Freigabe gespeichert · Creator Ops hält den Termin lokal" : "Owner-Entscheidung lokal gespeichert");
   return payload;
 }
 
 cardsRoot.addEventListener("click", async (event) => {
-  const button = event.target.closest("[data-approve]");
+  const preview = event.target.closest("[data-large-preview]");
+  if (preview) {
+    const card = currentCards.find(item => item.content_id === Number(preview.dataset.largePreview));
+    if (card) openLargePreview(card);
+    return;
+  }
+  const reveal = event.target.closest("[data-reveal]");
+  if (reveal) {
+    reveal.closest(".creator-card")?.classList.add("privacy-revealed");
+    reveal.remove();
+    return;
+  }
+  const button = event.target.closest("[data-action]");
   if (!button) return;
   try {
-    await approveContent(Number(button.dataset.approve));
+    await ownerDecision(Number(button.dataset.contentId), button.dataset.action);
   } catch (error) {
     showToast(error.message);
     await loadCards();
   }
 });
+
+document.querySelector("#decision-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  closeDecisionDialog(document.querySelector("#decision-note").value.trim());
+});
+document.querySelector("[data-decision-cancel]").addEventListener("click", () => closeDecisionDialog());
+document.querySelector("#decision-dialog").addEventListener("click", (event) => {
+  if (event.target.id === "decision-dialog") closeDecisionDialog();
+});
+
+document.querySelector("#large-preview").addEventListener("click", (event) => {
+  if (event.target.matches("[data-preview-close]") || event.target.id === "large-preview") return closeLargePreview();
+  if (!previewState) return;
+  if (event.target.matches("[data-preview-prev]")) previewState.index = (previewState.index - 1 + previewState.slides.length) % previewState.slides.length;
+  if (event.target.matches("[data-preview-next]")) previewState.index = (previewState.index + 1) % previewState.slides.length;
+  renderLargePreview();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && pendingDecision) {
+    closeDecisionDialog();
+    return;
+  }
+  if (!previewState) return;
+  if (event.key === "Escape") closeLargePreview();
+  if (event.key === "ArrowLeft") { previewState.index = (previewState.index - 1 + previewState.slides.length) % previewState.slides.length; renderLargePreview(); }
+  if (event.key === "ArrowRight") { previewState.index = (previewState.index + 1) % previewState.slides.length; renderLargePreview(); }
+});
+
+stageFilters.forEach((button) => button.addEventListener("click", () => {
+  activeStage = button.dataset.stageFilter;
+  stageFilters.forEach((candidate) => candidate.classList.toggle("active", candidate === button));
+  renderCards();
+}));
 
 function installLogoutButton() {
   if (!cookieValue("creator_ops_csrf")) return;
@@ -184,7 +375,7 @@ async function registerWebMcp() {
         if (!Number.isInteger(id) || !currentCards.some((card) => card.content_id === id)) {
           throw new Error("Unbekannte Content-ID");
         }
-        return approveContent(id);
+        return ownerDecision(id, "approve");
       },
     });
   } catch (error) {

@@ -1,0 +1,107 @@
+{
+  "generated_at": "2026-09-05T17:37:31+00:00",
+  "app_version": "1.4.1",
+  "schema_version": 5,
+  "git": {
+    "state": "PARKED_BY_OWNER"
+  },
+  "personas": [
+    {
+      "slug": "leona-voss",
+      "display_name": "Leona Voss",
+      "instagram_handle": "leonavoss.ai",
+      "active": 1
+    },
+    {
+      "slug": "mara-field",
+      "display_name": "Mara Field",
+      "instagram_handle": "mara.field.ai",
+      "active": 1
+    }
+  ],
+  "content": {
+    "total": 6,
+    "by_status": {
+      "READY_FOR_REVIEW": 3,
+      "SCHEDULED": 3
+    },
+    "by_stage": {
+      "ALLTAG": 6
+    },
+    "review_required": 3,
+    "mix_target_percent": {
+      "ALLTAG": 40,
+      "TEASER": 35,
+      "ADULT_18": 25
+    },
+    "next_recommended_stage": "TEASER"
+  },
+  "assets": {
+    "total": 30,
+    "real": 22,
+    "mock": 8,
+    "by_safety": {
+      "SFW": 30
+    },
+    "by_visibility": {
+      "PUBLIC_SFW": 30
+    }
+  },
+  "reserve": {
+    "dates": [
+      "2026-09-04",
+      "2026-09-05",
+      "2026-09-06"
+    ],
+    "days": 3,
+    "through": "2026-09-06"
+  },
+  "publications": {
+    "owner_confirmed_native": 2,
+    "mock": 4,
+    "manual_analytics_events": 0,
+    "local_queue": {
+      "LOCAL_SCHEDULED": 3
+    }
+  },
+  "background_runs": {
+    "COMPLETE": 2
+  },
+  "engagement": {
+    "real_post_proposals": 4,
+    "execution": "manual-owner-only"
+  },
+  "finance": {
+    "cost_eur": 0.0,
+    "revenue_eur": 0.0,
+    "adworks_real_revenue_eur": 0.0,
+    "adworks_dry_run_revenue_eur": 123.45,
+    "funnel_events_real": 0,
+    "funnel_events_dry_run": 4,
+    "paid_spend": "OWNER_GATE"
+  },
+  "remote": {
+    "active": false,
+    "started_at": null
+  },
+  "tests": {
+    "status": "passed",
+    "passed": 96,
+    "failed": 0
+  },
+  "blockers": {
+    "owner_review_required": 3,
+    "mock_assets_remaining": 8
+  },
+  "owner_decisions": {
+    "source": "OWNER_DECISIONS.md",
+    "red_gates": [
+      "live_publishing",
+      "adult_generation_or_publishing",
+      "cloud_permission_changes",
+      "irreversible_external_actions",
+      "paid_services"
+    ]
+  },
+  "publishing_mode": "human-gated local queue; external official adapter unavailable"
+}

@@ -15,28 +15,64 @@
           <span class="season-mark" aria-hidden="true">S</span>
           <div>
             <p class="eyebrow">Creator Ops · September Studio</p>
-            <h1>Morgen steht.</h1>
-            <p class="intro">Zwei Creatorinnen, zwei klare Pakete. Du gibst den Takt vor.</p>
+            <h1>Owner Review.</h1>
+            <p class="intro">Vier fertige Pakete. Prüfen, ändern oder lokal freigeben.</p>
           </div>
         </div>
         <div class="mode"><span aria-hidden="true"></span> Vorschau · nichts geht live</div>
       </header>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a class="active" href="/">Review</a><a href="/stories">Stories</a><a href="/collections">Alben</a><a href="/archive">Archiv</a><a href="/top3">Top 3</a><a href="/engagement">Engagement</a><a href="/control">Autopilot</a><a href="/revenue">Revenue</a><a href="/offer">Angebot</a>
+      </nav>
 
       <section class="summary" aria-label="Tagesübersicht">
         <div class="summary-stat"><strong id="ready-count">–</strong><span>Pakete bereit</span></div>
-        <div class="summary-stat"><strong id="target-date">–</strong><span>geplanter Tag</span></div>
-        <p><b>Deine Aufgabe heute:</b> Top 3 prüfen und je Persona einmal „Freigeben“ klicken.</p>
+        <div class="summary-stat"><strong id="target-date">–</strong><span>Planung</span></div>
+        <p><b>Deine Aufgabe heute:</b> Je Paket Top 3 und Text prüfen, dann <b>Freigeben</b>, <b>Ändern</b> oder <b>Ablehnen</b>. Nichts geht live.</p>
       </section>
+
+      <nav class="stage-filters" aria-label="Content-Stufe filtern">
+        <button class="stage-filter active" type="button" data-stage-filter="ALL">Alle</button>
+        <button class="stage-filter" type="button" data-stage-filter="ALLTAG">Alltag</button>
+        <button class="stage-filter" type="button" data-stage-filter="TEASER">Teaser</button>
+        <button class="stage-filter" type="button" data-stage-filter="ADULT_18">Adult 18+</button>
+      </nav>
 
       <section id="cards" class="cards" aria-live="polite" aria-busy="true">
         <div class="loading">Freigabepakete werden vorbereitet …</div>
       </section>
 
       <footer>
-        <span>Fiktive KI-Personas · SFW · lokale Vorschau</span>
+        <span>Fiktive KI-Personas · sichere lokale Vorschau</span>
         <span>Kein Live-Publishing verbunden</span>
       </footer>
     </main>
+    <div id="large-preview" class="preview-overlay" hidden aria-hidden="true">
+      <section class="preview-dialog" role="dialog" aria-modal="true" aria-labelledby="preview-title">
+        <button class="preview-close" type="button" data-preview-close aria-label="Vorschau schließen">×</button>
+        <div class="instagram-frame">
+          <header><img id="preview-avatar" alt="" /><span><b id="preview-handle"></b><small>KI-Creator · lokale Vorschau</small></span></header>
+          <div id="preview-image" class="preview-image"><span id="preview-fallback">Kein echtes Bild vorhanden</span><button type="button" data-preview-prev aria-label="Vorheriges Bild">‹</button><button type="button" data-preview-next aria-label="Nächstes Bild">›</button><em id="preview-counter"></em></div>
+          <div id="preview-dots" class="preview-dots" aria-label="Carousel-Position"></div>
+          <div class="preview-actions" aria-hidden="true">♡　⌁　↗</div>
+          <p class="preview-caption"><b id="preview-title"></b> <span id="preview-caption"></span></p>
+        </div>
+        <aside class="preview-side"><p class="card-kicker">Carousel Story</p><h2 id="preview-series"></h2><p id="preview-meta"></p><p class="control-warning">Nur Layout-Vorschau. Kein Instagram-Zugriff und kein Live-Posting.</p></aside>
+      </section>
+    </div>
+    <div id="decision-dialog" class="decision-overlay" hidden aria-hidden="true">
+      <form id="decision-form" class="decision-dialog" aria-labelledby="decision-title">
+        <p class="card-kicker">Owner-Entscheidung</p>
+        <h2 id="decision-title">Paket ändern</h2>
+        <p id="decision-copy">Notiere kurz, was angepasst werden soll.</p>
+        <label for="decision-note">Hinweis (optional)</label>
+        <textarea id="decision-note" name="note" rows="4" maxlength="600" placeholder="Zum Beispiel: andere Caption oder Bild 2 ersetzen"></textarea>
+        <div class="decision-dialog-actions">
+          <button type="button" data-decision-cancel>Abbrechen</button>
+          <button type="submit" data-decision-save>Entscheidung speichern</button>
+        </div>
+      </form>
+    </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script src="/app.js" defer></script>
   </body>

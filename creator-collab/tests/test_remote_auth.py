@@ -32,6 +32,11 @@ class DashboardAuthUnitTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             DashboardAuth("too-short")
 
+    def test_non_local_listener_requires_password(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            with self.assertRaisesRegex(ValueError, "password is required"):
+                create_server(Path(tempdir) / "review.db", host="0.0.0.0", port=0)
+
     def test_password_session_and_logout(self) -> None:
         auth = DashboardAuth(PASSWORD)
         self.assertIsNone(auth.authenticate("wrong", "127.0.0.1"))
@@ -116,6 +121,11 @@ class DashboardAuthHttpTests(unittest.TestCase):
         ) as response:
             payload = json.load(response)
         self.assertEqual(len(payload["cards"]), 2)
+        with opener.open(f"{self.base}/api/status", timeout=5) as response:
+            status = json.load(response)
+        self.assertEqual(status["schema_version"], 5)
+        self.assertIn("human-gated", status["publishing_mode"])
+        self.assertNotIn("url", status["remote"])
 
     def test_approval_requires_valid_csrf(self) -> None:
         opener, cookies = self._authenticated_opener()
@@ -149,7 +159,11 @@ class DashboardAuthHttpTests(unittest.TestCase):
     def test_health_is_public_and_reports_auth_mode(self) -> None:
         with urlopen(f"{self.base}/api/health", timeout=5) as response:
             payload = json.load(response)
-        self.assertEqual(payload, {"status": "ok", "mode": "local-mock", "auth": True})
+            self.assertEqual(payload["status"], "ok")
+            self.assertEqual(payload["mode"], "local-mock")
+            self.assertTrue(payload["auth"])
+            self.assertEqual(payload["database"], "ok")
+            self.assertIn("runtime", payload)
 
 
 if __name__ == "__main__":

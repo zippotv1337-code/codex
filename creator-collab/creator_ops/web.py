@@ -8,6 +8,7 @@ import os
 import secrets
 import threading
 import time
+from dataclasses import asdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from http import HTTPStatus
@@ -18,8 +19,15 @@ from urllib.parse import parse_qs, urlparse
 from zoneinfo import ZoneInfo
 
 from .asset_import import LocalAssetImportService
+from .archive import ArchiveService
 from .cli import ROOT, build_pipeline
+from .current_state import CurrentStateService
 from .review import ReviewDashboardService
+from .stories import StoryReserveService
+from .collections import CollectionService
+from .control_plane import ControlPlaneService
+from .adworks import AdWorksService
+from .publishing import PublishQueueService
 
 
 STATIC_ROOT = ROOT / "dashboard"
@@ -116,6 +124,9 @@ class DashboardAuth:
 
 class DashboardHandler(BaseHTTPRequestHandler):
     service: ReviewDashboardService
+    control_plane: ControlPlaneService
+    adworks: AdWorksService
+    publishing: PublishQueueService
     asset_root: Path = ROOT
     auth: DashboardAuth = DashboardAuth(None)
 
@@ -287,8 +298,16 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
         parsed = urlparse(self.path)
         try:
             if parsed.path == "/api/health":
+                runtime = self.control_plane.background.health()
                 self._json(
-                    {"status": "ok", "mode": "local-mock", "auth": self.auth.enabled}
+                    {
+                        "status": runtime["status"],
+                        "mode": "local-mock",
+                        "auth": self.auth.enabled,
+                        "database": "ok",
+                        "runtime": runtime,
+                        "publish_queue": len(self.publishing.list()),
+                    }
                 )
                 return
             if parsed.path == "/login":
@@ -304,10 +323,42 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
 
             if parsed.path == "/":
                 self._file("index.html", "text/html; charset=utf-8")
+            elif parsed.path == "/archive":
+                self._file("archive.html", "text/html; charset=utf-8")
+            elif parsed.path == "/top3":
+                self._file("top3.html", "text/html; charset=utf-8")
+            elif parsed.path == "/engagement":
+                self._file("engagement.html", "text/html; charset=utf-8")
+            elif parsed.path == "/stories":
+                self._file("stories.html", "text/html; charset=utf-8")
+            elif parsed.path == "/collections":
+                self._file("collections.html", "text/html; charset=utf-8")
+            elif parsed.path == "/control":
+                self._file("control.html", "text/html; charset=utf-8")
+            elif parsed.path == "/revenue":
+                self._file("revenue.html", "text/html; charset=utf-8")
+            elif parsed.path == "/offer":
+                self._file("offer.html", "text/html; charset=utf-8")
             elif parsed.path == "/app.css":
                 self._file("app.css", "text/css; charset=utf-8")
             elif parsed.path == "/app.js":
                 self._file("app.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/archive.js":
+                self._file("archive.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/top3.js":
+                self._file("top3.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/engagement.js":
+                self._file("engagement.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/stories.js":
+                self._file("stories.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/collections.js":
+                self._file("collections.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/control.js":
+                self._file("control.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/revenue.js":
+                self._file("revenue.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/offer.js":
+                self._file("offer.js", "text/javascript; charset=utf-8")
             elif parsed.path in {
                 "/assets/leona-voss-avatar.png",
                 "/assets/mara-field-avatar.png",
@@ -326,6 +377,59 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 target = parse_qs(parsed.query).get("date", [self._tomorrow()])[0]
                 cards = self.service.ensure_date(datetime.fromisoformat(target).date())
                 self._json({"date": target, "cards": cards})
+            elif parsed.path == "/api/review-queue":
+                self._json(self.service.review_queue())
+            elif parsed.path == "/api/status":
+                self._json(
+                    CurrentStateService(
+                        self.service.pipeline.db, self.asset_root
+                    ).snapshot()
+                )
+            elif parsed.path == "/api/archive":
+                query = parse_qs(parsed.query)
+                self._json(
+                    {
+                        "items": ArchiveService(self.service.pipeline.db).list(
+                            persona=query.get("persona", [None])[0],
+                            mode=query.get("mode", ["real"])[0],
+                        )
+                    }
+                )
+            elif parsed.path == "/api/top3":
+                query = parse_qs(parsed.query)
+                self._json(
+                    ArchiveService(self.service.pipeline.db).top3(
+                        persona=query.get("persona", [None])[0],
+                        mode=query.get("mode", ["real"])[0],
+                    )
+                )
+            elif parsed.path == "/api/engagement":
+                query = parse_qs(parsed.query)
+                self._json(
+                    {
+                        "items": ArchiveService(self.service.pipeline.db).engagement(
+                            status=query.get("status", ["PROPOSED"])[0],
+                            mode=query.get("mode", ["real"])[0],
+                        ),
+                        "execution": "proposal-only",
+                    }
+                )
+            elif parsed.path == "/api/stories":
+                self._json({"items": StoryReserveService(self.service).packages(), "execution": "owner-review-only"})
+            elif parsed.path == "/api/collections":
+                query = parse_qs(parsed.query)
+                self._json({"items": CollectionService(self.service).list(query.get("persona", [None])[0])})
+            elif parsed.path == "/api/control-plane":
+                self._json(self.control_plane.snapshot())
+            elif parsed.path == "/api/adworks":
+                self._json(self.adworks.dashboard())
+            elif parsed.path == "/api/publish-queue":
+                self._json(
+                    {
+                        "items": self.publishing.list(),
+                        "external_execution": "owner-gated-official-adapter-only",
+                    }
+                )
             elif parsed.path == "/api/session":
                 self._json(
                     {
@@ -402,6 +506,28 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 content_id = int(parts[2])
                 self._json(self.service.approve(content_id))
                 return
+            if (
+                len(parts) == 4
+                and parts[:2] == ["api", "reviews"]
+                and parts[3] in {"reject", "change"}
+            ):
+                content_id = int(parts[2])
+                note = self._read_form().get("note", [""])[0]
+                self._json(self.service.record_owner_decision(content_id, parts[3], note))
+                return
+            if len(parts) == 3 and parts[:2] == ["api", "control-plane"]:
+                self._json(self.control_plane.command(parts[2]))
+                return
+            if parsed.path == "/api/publish-queue/reconcile":
+                self._json(self.publishing.reconcile())
+                return
+            if parsed.path == "/api/publish-queue/dispatch-due":
+                self._json(self.publishing.dispatch_due())
+                return
+            if parsed.path == "/api/adworks/dry-run":
+                pack_key = self._read_form().get("pack", ["creator-sfw-basic"])[0]
+                self._json(asdict(self.adworks.dry_run(pack_key)))
+                return
             self._json({"error": "not_found"}, HTTPStatus.NOT_FOUND)
         except KeyError as error:
             self._json({"error": str(error)}, HTTPStatus.NOT_FOUND)
@@ -424,9 +550,20 @@ def create_server(
     asset_root: Path = ROOT,
     auth_password: str | None = None,
 ) -> ThreadingHTTPServer:
+    if host not in {"127.0.0.1", "localhost", "::1"} and not auth_password:
+        raise ValueError("A password is required when the dashboard listens beyond localhost")
     pipeline = build_pipeline(database_path)
     pipeline.initialize()
     service = ReviewDashboardService(pipeline)
+    publishing = PublishQueueService(pipeline.db)
+    publishing.reconcile()
+    control_plane = ControlPlaneService(
+        service,
+        asset_root / "data" / "autopilot_control.json",
+        publishing,
+    )
+    adworks = AdWorksService(pipeline.db)
+    adworks.seed_catalog()
     handler = type(
         "BoundDashboardHandler",
         (DashboardHandler,),
@@ -434,6 +571,9 @@ def create_server(
             "service": service,
             "asset_root": asset_root,
             "auth": DashboardAuth(auth_password),
+            "control_plane": control_plane,
+            "adworks": adworks,
+            "publishing": publishing,
         },
     )
     return ThreadingHTTPServer((host, port), handler)

@@ -1,0 +1,37 @@
+[app]
+release = "BETA_1_5"
+timezone = "Europe/Berlin"
+
+[runtime]
+host = "127.0.0.1"
+port = 4180
+database = "data/review_dashboard.db"
+offline_output = "output/offline"
+health_path = "/api/health"
+
+[scheduler]
+interval_minutes = 5
+morning_hour = 5
+morning_minute = 30
+dispatch_live = false
+
+[watchdog]
+interval_minutes = 5
+maximum_restarts = 3
+window_minutes = 30
+backoff_seconds = 30
+
+[supervisor]
+poll_seconds = 30
+
+[publishing]
+adapter = "unconfigured"
+live_enabled = false
+
+[capabilities]
+standalone_runtime = true
+per_user_autostart_fallback = true
+offline_snapshot = true
+official_instagram_publish = false
+live_external_actions = false
+hard_dependency_on_gpt6 = false

@@ -37,7 +37,19 @@ kein dauerhaftes 24/7-Hosting. Der Heim-PC und beide Prozesse müssen laufen.
 
 4. Ein neues Passwort mit mindestens 12 Zeichen eingeben. Es wird nur für
    diesen Prozess gesetzt und nicht in GitHub oder SQLite gespeichert.
-5. Die ausgegebene `https://…trycloudflare.com`-Adresse öffnen und anmelden.
+5. Die erkannte `https://…trycloudflare.com`-Adresse wird nach lokalem und
+   externem Healthcheck angezeigt und in die Zwischenablage kopiert.
+
+Optional kann ein lokales Benachrichtigungsskript angegeben werden. Es erhält
+nur URL und Startzeit; Fehler darin beenden den Tunnel nicht:
+
+```powershell
+.\run_remote_free.ps1 -NotificationScript C:\Pfad\notify-owner.ps1
+```
+
+Die Laufzeit-URL steht nur vorübergehend in der ignorierten Datei
+`data/REMOTE_ACCESS_CURRENT.txt`. Dashboard- und Tunnel-Logs liegen ebenfalls
+unter dem ignorierten `data/logs/`.
 
 ## Sicherheitsverhalten
 
@@ -55,8 +67,8 @@ Wenn `CREATOR_OPS_PASSWORD` gesetzt ist:
 ## Beenden
 
 Im Terminal `Strg+C` drücken. Das Startskript beendet anschließend auch den
-lokalen passwortgeschützten Dashboardprozess und entfernt das Passwort aus der
-Prozessumgebung.
+lokalen passwortgeschützten Dashboardprozess, entfernt die temporäre URL-Datei
+und löscht das Passwort aus der Prozessumgebung.
 
 ## Später
 

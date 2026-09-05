@@ -1,6 +1,6 @@
 # Projekt-Résumé: Virtual Creators Germany
 
-Stand: 4. September 2026
+Stand: 5. September 2026
 
 ## Ziel
 
@@ -174,6 +174,98 @@ und KI-generiert.
   Tunnel ausschließlich auf `127.0.0.1`; keine Router-Portfreigabe, kein
   Passwort in Git/SQLite und kein Live-Publishing. 31 Tests einschließlich
   echter HTTP-401-/Cookie-/CSRF-Fälle sind grün.
+- Daily-Usable v1.1 ergänzt `content_stage`, `safety_class` und
+  `visibility_scope` über eine additive Migration auf Schema 2. SQLite-Trigger
+  und Compliance verhindern Adult-Leaks auf öffentliche SFW-Plattformen.
+- Jedes neue Fünfer-Paket besitzt feste Pose-Slots; die Top 3 werden gewichtet
+  nach Qualität, Persona-Fit, Kohärenz, Stage-Fit und Neuheit ausgewählt und
+  müssen pose-divers sein.
+- Der rollierende Content-Mix 40/35/25 ist eine reine Planungsempfehlung.
+  Adult-Erzeugung und Adult-Publishing bleiben manuelle Owner-Gates.
+- Öffentliche JSON-Exporte enthalten nur `SFW + PUBLIC_SFW`; Adult- und
+  Local-only-Daten bleiben in der lokalen Datenbank.
+- `docs/CURRENT_STATE.json` ist die maschinenlesbare Momentaufnahme; zusätzlich
+  liefert `/api/status` den dynamischen Laufzeitstand ohne Secrets.
+- Das Dashboard unterstützt Stage-Filter, Pose-/QA-Anzeige und geschützte,
+  standardmäßig verschwommene Vorschauen. Nicht-Loopback-Betrieb ohne Passwort
+  wird beim Serverstart verweigert.
+- Der Remote-Helfer erkennt und prüft die temporäre Tunnel-URL automatisch,
+  kopiert sie in die Zwischenablage und entfernt die lokale URL-Datei beim
+  Beenden. Ein optionaler Benachrichtigungshook erhält nur URL und Startzeit.
+- Nach der v1.1-Migration sind 42 Tests sowie Backup/Restore der realen
+  Review-Datenbank grün; Details stehen im aktuellen Handoff und Report.
+- Creator Ops v1.2.0 führt owner-bestätigte native Instagram-Veröffentlichungen
+  getrennt von Mock-Drafts und idempotent als `instagram-native-manual`.
+- Manuelle Analytics für 24/72/168 Stunden sind append-only; Archiv und Top 3
+  verwenden echte Daten standardmäßig und zeigen fehlende Werte als fehlend.
+- Das lokale Dashboard besitzt jetzt die Navigation `Morgen / Archiv / Top 3`.
+- Secret-freie Wochen- und Monats-Recovery-ZIPs enthalten Manifest, SHA256 und
+  eine integritätsgeprüfte, von `secret_reference` bereinigte SQLite-Kopie.
+- Der LAN-Modus erkennt die aktive Windows-Verbindung automatisch, verlangt
+  ein Passwort und öffnet weder Router-Ports noch UPnP.
+- v1.2.0 ist mit 47 Tests, Syntaxprüfungen, realen Recovery-Archiven und zwei
+  getrennten Codex-/Advisor-Exporten lokal verifiziert.
+- Der Medium-Autopilot hat veröffentlichte Einzelassets automatisch aus
+  späteren Carousel-Top-3 entfernt und kollidierende Mock-Zeitpläne pausiert.
+- Leona und Mara besitzen danach jeweils neun unveröffentlichte reale Assets
+  in zwei feedfähigen Paketen; neue Texte und Story-Reserven stehen in
+  `docs/MEDIUM_AUTOPILOT_RESERVE.md`.
+- `/engagement` zeigt vier Vorschläge zu echten Posts ausschließlich zur
+  manuellen Prüfung; keine Plattformaktion kann automatisch ausgeführt werden.
+- Prime Time priorisiert echte manuelle 7-Tage-Daten vor Mock-Historie.
+- 48 Tests und der lokale Post-Run-Checkpoint sind grün.
+- Das Owner Review bündelt jetzt vier feedfähige Pakete, nummerierte Top 3,
+  veröffentlichte Ausschlüsse, vollständige Postingdetails und auditierte lokale
+  APPROVE-/CHANGE-/REJECT-Entscheidungen.
+- Engagement erfindet ohne echte Kommentartexte keine Antwortentwürfe.
+- `AUTOPILOT_CHECKPOINT.md` dient als atomarer Savegame-Stand für Folgeruns.
+- Der lokale Server besitzt robuste Start-/Stop-/Restart-/Status-Wrapper mit
+  Portprüfung, Health-Wait, absolutem DB-Pfad, PID und lokalen Logs.
+- Abschlussverifikation: 54 Tests, SQLite-Integrität sowie echter Start/Stop grün.
+- Sicherer LAN-/Safari-Start ist über die automatisch erkannte private
+  PC-Adresse verfügbar; Passwortschutz ist zwingend, Routerports bleiben zu.
+- LAN-Healthcheck und Authentifizierungsmodus sind real geprüft; 55 Tests grün.
+- Vier Story-Pakete leiten aus vorhandenen Feedassets je Teaser, alternatives
+  Poll-Motiv und Community-Frage ab; veröffentlichte Motive bleiben gesperrt.
+- Vier read-only Collections bündeln Cover, Tags, Reserve, Veröffentlichungen
+  und Top-3-Reihenfolge. Performance bleibt ohne echte Analytics unbekannt.
+- Story- und Collections-Dashboard sind sichtbar geprüft; 59 Tests grün.
+- Die neue Control Plane unter `/control` steuert ausschließlich sichere lokale
+  Autopilot-Zustände, verwendet einen versionierten Capability-Vertrag und
+  schreibt ihren Zustand atomar. Das aktuell stabile Modell ist die Baseline;
+  spätere Modelle sind kein Betriebszwang.
+- Reviewkarten besitzen eine große, responsive Instagram-artige Top-3-
+  Carousel-Vorschau. Sie ist rein lokal und hat keinen Plattformzugriff.
+- Abschlussstand: 63 Tests, Python-/JavaScript-Syntax und SQLite-Integrität
+  grün; P1 wurde vor P2 umgesetzt.
+- Creator Ops 1.3.0 ergänzt drei owner-gegatete SFW-Service-Packs, lokalen
+  Offer-Entwurf und ein Revenue Board. Schema 4 speichert AdWorks-Lineage
+  additiv und trennt reale von synthetischen Funnel-/Revenue-Signalen.
+- Der idempotente AdWorks-Akzeptanztest führt Pack → Tracking → Click → Landing
+  → Lead → Purchase → Feedback vollständig lokal aus. 68 Tests und ein realer
+  Restore auf Schema 4 sind grün; Paid Spend und externes Publishing fehlen
+  absichtlich als ausführbare Fähigkeiten.
+- Creator Ops 1.4.0 ergänzt Schema 5 mit dauerhafter lokaler Publish Queue,
+  Background-Run-State, DB-Lease, Stale-Recovery, `WAITING_FOR_CAPACITY`,
+  strukturierten Runtime-Events und Mini-Journal. Owner-Freigaben werden als
+  `LOCAL_SCHEDULED` gehalten; ohne offiziellen Instagram-Adapter gibt es keinen
+  falschen externen Erfolgsstatus. Der 05:30-Morning-Run ist idempotent,
+  Patch-Backups validieren alle Member-Hashes und `mz_poke` ist nur als leichte
+  interne SFW-Experimentreferenz erlaubt. Abschlussstand: 81 Tests grün.
+- Der verifizierte Stand 1.4.0 ist zusätzlich als sechsseitiger, visuell
+  geprüfter A4-Abschlussbericht unter
+  `output/pdf/Creator_Ops_Abschlussbericht_v1.4.0_2026-09-05.pdf`
+  zusammengeführt. Das PDF trennt vier produktive Feedpakete von zwei älteren
+  Review-/Demo-Karten und erklärt lokale Queue, Owner-Gates und Restore-Kette.
+- Creator Ops 1.4.1 korrigiert Queue-Prime-Time, Audio-Lizenzprüfung,
+  veröffentlichte Reserven, Analytics-unbewertete Top-3-Karten sowie
+  Retry-/Neuplanungszustände. Background-Runs besitzen Lease-Heartbeat und
+  owner-token-geschützte Abschlussupdates. Der eingebettete Browser verwendet
+  für CHANGE/REJECT einen eigenen responsiven Dialog statt `window.prompt()`.
+  Ein secrets-reduzierter read-only Offline-Snapshot und sichere Standalone-
+  Skripte sind vorbereitet; die Windows-Aufgaben bleiben ohne explizites
+  `-Apply` uninstalliert. Abschlussstand: 96 Tests, aktiver Healthcheck und
+  echter SQLite-Restore grün; Git/GitHub sowie Live-Publishing geparkt.
 
 ## Offene Projektbereiche
 
