@@ -6,13 +6,17 @@ from dataclasses import asdict
 from datetime import date
 from pathlib import Path
 
+from .curation import select_diverse_top_picks
 from .database import CreatorDatabase, utc_now
 from .models import (
     ComplianceInput,
     ComplianceResult,
+    ContentStage,
     ContentStatus,
+    POSE_SLOT_ORDER,
     SafetyClass,
     VerticalRunResult,
+    VisibilityScope,
 )
 from .scheduling import PrimeTimePlanner
 from .services import (
@@ -38,7 +42,21 @@ ALLOWED_TRANSITIONS = {
 
 def check_compliance(item: ComplianceInput) -> ComplianceResult:
     reasons: list[str] = []
-    if item.platform.lower() in PUBLIC_SFW_PLATFORMS and item.safety_class is SafetyClass.ADULT:
+    public_platform = item.platform.lower() in PUBLIC_SFW_PLATFORMS
+    if item.content_stage is ContentStage.ADULT_18:
+        if item.safety_class is not SafetyClass.ADULT:
+            reasons.append("adult_stage_requires_adult_safety")
+        if item.visibility_scope is not VisibilityScope.ADULT_ONLY:
+            reasons.append("adult_stage_requires_adult_only_visibility")
+    elif item.safety_class is SafetyClass.ADULT:
+        reasons.append("adult_safety_requires_adult_stage")
+    if item.safety_class is SafetyClass.ADULT and item.visibility_scope is not VisibilityScope.ADULT_ONLY:
+        reasons.append("adult_content_requires_adult_only_visibility")
+    if item.visibility_scope is VisibilityScope.PUBLIC_SFW and item.safety_class is not SafetyClass.SFW:
+        reasons.append("public_sfw_visibility_requires_sfw_content")
+    if public_platform and item.visibility_scope is not VisibilityScope.PUBLIC_SFW:
+        reasons.append("public_platform_requires_public_sfw_visibility")
+    if public_platform and item.safety_class is SafetyClass.ADULT:
         reasons.append("adult_content_not_allowed_on_public_sfw_platform")
     if item.ai_generated and item.needs_ai_disclosure and not item.disclosure_present:
         reasons.append("missing_ai_disclosure")
@@ -114,7 +132,7 @@ class VerticalPipeline:
             JOIN creators cr ON cr.id = r.creator_id
             JOIN content_items c ON c.run_id = r.id
             JOIN publications p ON p.content_id = c.id
-            LEFT JOIN experiments e ON e.content_id = c.id
+            LEFT JOIN experiments e ON e.content_id = c.id AND e.variable='vertical-demo'
             WHERE r.run_key = ? AND r.status = 'COMPLETE'
             """,
             (run_key,),
@@ -179,9 +197,10 @@ class VerticalPipeline:
                 """
                 INSERT INTO content_items
                     (creator_id, series_id, run_id, run_key, title, idea, status,
-                     safety_class, ai_generated, adult, needs_ai_disclosure,
-                     approved, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'SFW', 1, 0, 1, 0, ?, ?)
+                     safety_class, content_stage, visibility_scope, ai_generated,
+                     adult, needs_ai_disclosure, approved, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'SFW', 'ALLTAG', 'PUBLIC_SFW',
+                        1, 0, 1, 0, ?, ?)
                 RETURNING id
                 """,
                 (
@@ -207,7 +226,7 @@ class VerticalPipeline:
             self._transition(connection, content_id, ContentStatus.GENERATING, "asset jobs started")
 
             hashes: set[str] = set()
-            for index in range(1, 6):
+            for index, pose_slot in enumerate(POSE_SLOT_ORDER, start=1):
                 file_path = (
                     f"assets/{creator_slug}/{run_date.isoformat()}/"
                     f"{persona['default_series'].lower().replace(' ', '-')}-{index}.mock"
@@ -220,41 +239,37 @@ class VerticalPipeline:
                     """
                     INSERT INTO assets
                         (asset_id, creator_id, content_id, series_id, asset_type,
-                         safety_class, status, file_path, reference_version,
+                         safety_class, content_stage, visibility_scope, pose_slot,
+                         similarity_group, status, file_path, reference_version,
                          prompt_version, generator, created_at, estimated_cost,
                          rights_status, platform_allowed, published_status,
                          perceptual_hash, quality_score, persona_fit_score,
-                         coherence_score, is_top_pick)
-                    VALUES (?, ?, ?, ?, 'image', 'SFW', 'GENERATED', ?, 'v1',
-                            'v1', 'mock-generator', ?, 0, 'AI_GENERATED',
-                            'instagram,threads,tiktok', 'UNPUBLISHED', ?, ?, ?, ?, 0)
+                         coherence_score, stage_fit_score, novelty_score,
+                         is_top_pick)
+                    VALUES (?, ?, ?, ?, 'image', 'SFW', 'ALLTAG', 'PUBLIC_SFW',
+                            ?, '', 'GENERATED', ?, 'v1', 'v1', 'mock-generator',
+                            ?, 0, 'AI_GENERATED', 'instagram,threads,tiktok',
+                            'UNPUBLISHED', ?, ?, ?, ?, ?, ?, 0)
                     """,
                     (
                         f"{creator_slug}-{run_date.isoformat()}-{index}",
                         creator["id"],
                         content_id,
                         series_id,
+                        pose_slot.value,
                         file_path,
                         now,
                         perceptual_hash,
                         0.96 - index * 0.025,
                         0.97 - index * 0.02,
                         0.95 - index * 0.015,
+                        1.0,
+                        0.80 + index * 0.025,
                     ),
                 )
 
             self._transition(connection, content_id, ContentStatus.CURATING, "five assets registered")
-            connection.execute(
-                """
-                UPDATE assets SET is_top_pick = 1, status = 'CURATED'
-                WHERE id IN (
-                    SELECT id FROM assets WHERE content_id = ?
-                    ORDER BY (quality_score + persona_fit_score + coherence_score) DESC
-                    LIMIT 3
-                )
-                """,
-                (content_id,),
-            )
+            select_diverse_top_picks(connection, content_id)
             self.asset_fallbacks.create_plan(connection, content_id)
 
             compliance = check_compliance(
@@ -265,15 +280,14 @@ class VerticalPipeline:
                     needs_ai_disclosure=True,
                     disclosure_present=bool(persona["disclosure"]),
                     rights_status="AI_GENERATED",
+                    content_stage=ContentStage.ALLTAG,
+                    visibility_scope=VisibilityScope.PUBLIC_SFW,
                 )
             )
             if not compliance.allowed:
                 raise ValueError(f"compliance failed: {compliance.reasons}")
 
-            caption = (
-                f"{persona['default_series']} — {persona['default_hook']} "
-                f"{persona['disclosure']}"
-            )
+            caption = f"{persona['default_series']} — {persona['default_hook']}"
             variant_id = connection.execute(
                 """
                 INSERT INTO platform_variants
@@ -286,7 +300,7 @@ class VerticalPipeline:
                     content_id,
                     persona["default_hook"],
                     caption,
-                    json.dumps(["virtualcreator", "kigeneriert", creator_slug]),
+                    json.dumps(["virtualcreator", creator_slug]),
                     persona["default_hook"],
                     persona["disclosure"],
                     now,

@@ -2,6 +2,70 @@
 
 Stand: 4. September 2026
 
+## Final Fast Apply 1.4 — 5. September 2026
+
+Der 1.3.0-Stand wurde zuerst vollständig abgeschlossen und erneut bestätigt.
+Danach wurden ausschließlich echte Deltas des neuen Pakets umgesetzt: durable
+Background-Runs mit Lease/Capacity/Journal, ehrliche lokale Publish Queue,
+idempotenter 05:30-Morning-Run, validierte Patch-Backup-Kette und leichte
+interne `mz_poke`-Experimentmarkierung. Aktive DB: Schema 5, Integrität `ok`,
+drei lokale Queuejobs, keine externe Ausführung. Final 81/81 Tests grün.
+Vollbericht: `docs/RUN_REPORT_FINAL_FAST_APPLY_V1_4.md`.
+
+## Story-/Collections-Sidequests – 5. September 2026
+
+Nach dem stabilen lokalen P0-Server wurden genau zwei kleine Sidequests aus dem
+vorherigen Bündel umgesetzt. `/stories` erzeugt aus den vier vorhandenen
+Feedpaketen zwölf owner-reviewbare Frames, ohne neue Bilder oder Publikation.
+`/collections` stellt dieselben Asset-IDs als vier filterbare Alben mit Cover,
+Tags, Reserve, veröffentlichten Assets und Top 3 dar. Fehlende Performancewerte
+bleiben ausdrücklich unbekannt.
+
+Verifikation: 59/59 Tests, Syntaxprüfungen und SQLite-Integrität grün. Beide
+Ansichten wurden sichtbar gegen die reale DB geprüft. Backup SHA256:
+`3BF0A5CF67BF659C9D26BAF683223188ADDC8C966E12C63BDFE9FB46C7BA64A2`.
+Keine neue Bildserie, keine externe Aktion und keine Git-/GitHub-Arbeit.
+
+## Abschluss-/Betriebsrun – 4. September 2026, 22:14 Uhr
+
+Die vier Feedpakete sind jetzt gemeinsam und vollständig entscheidungsfähig im
+Owner Review. Veröffentlichte Einzelassets werden ausgeschlossen, Top 1–3
+nummeriert und alle Postingmetadaten unmittelbar angezeigt. APPROVE legt nur
+einen lokalen Mock-Draft an; CHANGE und REJECT speichern auditierte lokale
+Owner-Entscheidungen.
+
+Engagement bleibt streng evidenzgebunden: vier Vorschläge zu echten Posts sind
+vorhanden, aber bei null echten Kommentartexten werden null Antwortentwürfe
+erzeugt. `AUTOPILOT_CHECKPOINT.md` wurde als atomarer Savegame-Mechanismus
+ergänzt.
+
+Der anschließend gelieferte P0-Serverauftrag wurde minimal umgesetzt. Der neue
+Startweg prüft Python, Verzeichnisse, Port, absolute DB-Pfade und Health, öffnet
+den Browser erst danach und schreibt PID sowie Logs. Start, Status,
+`/api/review-queue` mit vier Karten und Stop wurden real verifiziert.
+
+- Tests: 54/54 grün
+- Compileall und JavaScript-Syntax: grün
+- SQLite `integrity_check`: ok
+- Backup: `creator-ops-backup-post-owner-review-server-fix.db`
+- SHA256: `E5E59FD1ECB9B2E896EE9FD2DA40C7BC00915381CE10DC003EABEC6414625509`
+- Externe Aktionen/Kosten: keine / 0 EUR
+- Git/GitHub: gemäß Owner-Regel vollständig geparkt
+
+### LAN und Mobile Safari
+
+Die tatsächliche WLAN-Adresse ist `192.168.188.131`, nicht
+`192.168.1.188`. Ein neuer LAN-Start erkennt die lokale Adresse automatisch,
+erzwingt ein temporäres Sitzungspasswort und startet Creator Ops ohne
+Routerfreigabe. Der Healthcheck über die LAN-Adresse meldete `ok` und
+`auth=true`. Eine optionale Firewallregel ist auf privates Profil, lokales
+Subnetz und TCP 4180 begrenzt und muss bewusst mit Administratorrechten
+aktiviert werden. Die responsive Oberfläche ist für Mobile Safari vorbereitet.
+
+Final: 55/55 Tests, PowerShell-Syntax und SQLite-Integrität grün. Backup
+`creator-ops-backup-post-lan-safari.db`, SHA256
+`090DA23B61C0F140AF1913A3E28A2DE0FAF2B8987F73E90FECCD53530D733609`.
+
 ## Restzeit-Brücke bis Dienstag
 
 ### Was tatsächlich gebaut wurde
@@ -521,3 +585,175 @@ neuen Beiträge in den Profilrastern sichtbar. Beide Profile enthalten damit je
 sechs Feed-Beiträge. Lokale Review-Karten bleiben technisch
 `READY_FOR_REVIEW`/`approved=false`, bis eine separate Synchronisierung dieses
 externen Zustands implementiert oder bewusst manuell dokumentiert wird.
+
+## Daily-Usable v1.1 – 4. September 2026, 16:00 Uhr
+
+Der Master-Export wurde von einfachen, reversiblen Änderungen zu den schwereren
+Sicherheits- und Medienpunkten abgearbeitet. Funktionierende MVP-Bausteine
+blieben erhalten.
+
+### Ergebnis
+
+- Additive Schema-2-Migration mit `ALLTAG`, `TEASER`, `ADULT_18`,
+  `PUBLIC_SFW`, `ADULT_ONLY`, `LOCAL_ONLY` und fünf Pose-Slots.
+- Datenbank- und Compliance-Hartblock gegen Stage-/Safety-/Visibility-Mismatch
+  sowie Adult-Ausgabe an öffentliche Plattformen.
+- Gewichtete Top-3-Kuratierung (30/25/20/15/10) mit Pose- und
+  Ähnlichkeitsregeln.
+- Automatische QA für fünf Dateien, eindeutige Hashes, fünf Pose-Slots,
+  maximal zwei ähnliche Assets und drei diverse Top-Picks.
+- 40/35/25-Mixplaner, ohne Generierungs- oder Publishing-Seiteneffekt.
+- Öffentlicher JSON-Export auf `PUBLIC_SFW` begrenzt.
+- Dashboard-Stage-Filter, geschützte Blur-Vorschau, Pose-/QA-/Visibility-Anzeige.
+- Dynamischer Status per CLI und `/api/status`.
+- Remote-URL-Erkennung, Clipboard, zwei Healthchecks, ephemerer Status und
+  optionaler Notification-Hook; Nicht-Loopback ohne Passwort gesperrt.
+
+### Verifikation
+
+- 42/42 Tests grün; Compileall, JavaScript- und PowerShell-Syntax grün.
+- Reale DB erfolgreich auf Schema 2 migriert.
+- Post-Migrationsbackup und Restore: `integrity=ok`, 6 Pakete, 30 Assets.
+- Alle 20 Git-Medien besitzen verifizierte lokale Kopien; zusätzliches
+  Medien-ZIP mit 50 Einträgen und SHA-256
+  `2816BA6E69BF6B0B0793442033E2D4737D1285D958EF97B2C8D3A9D4C300C15D`.
+- Keine neue Veröffentlichung, kein Adult-Asset, keine Kosten, keine Secrets.
+
+### Owner-Gate
+
+GitHub wurde sichtbar als `Public` bestätigt. Die Privatstellung und das
+anschließende Entfernen der 20 Medien aus dem Git-Index warten auf die direkt
+vor der Cloud-Berechtigungsänderung erforderliche Owner-Bestätigung. Ein
+History Rewrite ist ausdrücklich nicht Teil dieses Laufs.
+# Creator Ops v1.2.0 – Betriebsmodus (4. September 2026, 21:08 Uhr)
+
+Der bestehende Daily-Usable-v1.1-Kern wurde gezielt erweitert, nicht neu
+gebaut. Schema 3 ergänzt owner-bestätigte native Publikationen und append-only
+manuelle Analytics. Die zwei bereits bestätigten Instagram-Posts sind lokal
+idempotent abgeglichen; es fand in diesem Lauf keine externe Aktion statt.
+
+Das Dashboard bietet nun `Morgen`, `Archiv` und `Top 3`. Archiv zeigt reale
+Posts standardmäßig getrennt von Mock-Drafts. Top 3 verwendet die Gewichtung
+Saves 25, Shares 20, Comments 15, Profile Visits 15, Follows 10, Link Clicks
+10, Likes 5 und berechnet Raten, sobald Reach oder Views vorhanden sind.
+
+Recovery ist dauerhaft vorbereitet: Wochen- und Monatsarchive enthalten eine
+bereinigte SQLite-Kopie, Manifest und SHA256, werden nach ZIP-/DB-Integrität
+validiert und löschen keine Vorgänger. Der Scheduler-Dry-Run ist rein lesend;
+`-Apply` bleibt eine bewusste Owner-Aktion. Der LAN-Start erkennt NIC, Gateway
+und IPv4 automatisch, verlangt mindestens 12 Passwortzeichen und öffnet keine
+Routerports.
+
+Verifikation: 47/47 Tests, compileall, JavaScript- und PowerShell-Syntax grün;
+Archiv und Top 3 wurden gegen die reale DB sichtbar geprüft. Reale DB:
+Schema 3, 6 Pakete, 30 Assets, 2 echte owner-bestätigte und 2 Mock-
+Publikationen, 0 manuelle Analytics-Events. Kosten: 0 €; Secrets: keine.
+
+Backups:
+
+- Woche: `Backup_Woche_KW36_2026_20260904-2107.zip`, SHA256
+  `C4DC9E0FDEB8E9806F84AB5EEE27F3EA95789A258A0828CD17AEF204FBC8C13D`.
+- Monat: `Backup_Monat_2026-09_FULL_20260904-2107.zip`, SHA256
+  `6D1154028ED27968411634A854859FD4AFD6C42C1640B9B38EDB0BF72D121ECC`.
+
+GitHub-Privatstellung, Commit und Push bleiben Human-Handoff: GitHub wartet
+auf persönliche Sudo-Bestätigung; die aktuelle Sandbox verweigert Schreibzugriff
+auf `.git/index.lock`. Es wurde kein unsicherer Workaround eingesetzt.
+# Medium-Autopilot – Contentbetrieb (4. September 2026, 21:29 Uhr)
+
+Git und GitHub waren für diesen Run ausdrücklich geparkt. Der lokale Betrieb
+wurde dennoch fortgeführt: Bereits veröffentlichte S4-Assets werden bei einer
+erneuten Reconciliation aus den Carousel-Top-3 entfernt. Mara Maschinencheck
+und Leona Roofline verwenden jetzt jeweils S2, S3 und S5. Maras kollidierender
+Mock-Zeitplan ist pausiert und benötigt eine neue Owner-Freigabe.
+
+Die neue read-only Seite `/engagement` zeigt vier Vorschläge zu den zwei echten
+Posts und filtert Mock-Daten standardmäßig aus. Es gibt weiterhin keine
+automatische Kommentar-, Like-, Follow- oder DM-Ausführung. Prime Time zieht
+künftig echte 168-h-Daten vor Mock-Historie heran.
+
+Content-Reserve: je Persona neun unveröffentlichte reale Assets in zwei
+feedfähigen Paketen; zusätzlich je drei vollständige Briefs ohne Assets.
+Nächste Produktionskandidaten sind Leona „Gym Reset, aber echt“ und Mara
+„Werkstatt: Feierabend in drei Handgriffen“. Vorhandene Reserve wurde zuerst
+ausgeschöpft; keine halbfertige Bildserie erzeugt.
+
+Verifikation: 48/48 Tests, compileall und JavaScript-Syntax grün. Die
+Engagement-Seite wurde sichtbar gegen die reale DB geprüft. Post-Run-Backup:
+`creator-ops-backup-post-medium-autopilot.db`, SHA256
+`982A61EC493CCA29CBF7DD2DC9D0832DB23671BCF5E1ABED9597017B7A33BEC0`.
+Public-SFW-Export: SHA256
+`FFAC86A73F2E07F56DB334CD3C717F17C37E0B55423370B71E1F2F833EC14252`.
+Kosten und externe Aktionen: 0.
+
+# Modellkompatible Control Plane und große Vorschau – 5. September 2026
+
+Der bestehende Creator-Ops-Kern wurde nicht neu gebaut. P1 ergänzt unter
+`/control` eine versionierte, capability-basierte Control Plane auf demselben
+Server. Das aktuell stabile Modell ist die vollständige Baseline; spätere
+Modelle sind ausschließlich als optionaler Bonus ausgewiesen. Die sicheren
+Kommandos prüfen die lokale Queue, pausieren/fortsetzen und schreiben einen
+atomaren Speicherstand. Externes Publishing bleibt ein nicht ausführbares
+Owner-Gate.
+
+Erst nach P1 wurde P2 umgesetzt: Jede Reviewkarte öffnet ihre echten Top 3 in
+einer großen, responsiven 4:5-Carousel-Vorschau mit Caption, Persona, Pose,
+Qualität und Prime Time. Die Vorschau hat keinen Instagram-Zugriff.
+
+Verifikation: 63/63 Tests, Python-/JavaScript-Syntax und SQLite-Integrität
+grün. Control Plane und große Vorschau wurden im laufenden lokalen Dashboard
+sichtbar geprüft. Vorab-Backup:
+`backups/creator-ops-backup-pre-control-plane.db/creator-ops-backup-20260905-080028.db`,
+SHA256 `54292848E9573DFA3AA67DCD013C35506CA635F1A99F84B5421713767AFF1C5B`.
+Keine externe Plattformaktion, keine Kosten, keine Secrets und keine
+Git-/GitHub-Arbeit.
+
+Post-Run-Backup: `backups/creator-ops-backup-post-control-plane-preview.db`,
+SQLite-Integrität `ok`, SHA256
+`54FB260AA13535B2AAE334051E0DB769BD06EA89680A61BA51BEA2EF87398186`.
+
+# Revenue-first Creator Ops 1.3.0 – 5. September 2026
+
+Der neue Owner-Auftrag reaktivierte ausdrücklich ein überarbeitetes V1.1-
+Paket. Der bestehende Kern wurde um drei SFW-Service-Packs, Fiverr-/Intake-/
+Fulfillment-Unterlagen, `/offer`, `/revenue` und eine isolierte AdWorks-Schicht
+erweitert. Preise und Rechts-/Lieferentscheidungen wurden nicht erfunden.
+
+Schema 4 ist additiv. Der lokale Akzeptanztest erzeugt idempotent vier als Mock
+markierte Events von Click bis Purchase und ein Feedbacksignal. Das Board zeigt
+123,45 € synthetisch, aber weiterhin 0 € real. Paid Spend und externe
+Veröffentlichung bleiben technisch beziehungsweise organisatorisch gesperrt.
+
+68/68 Tests, Python-/JavaScript-/PowerShell-Syntax, SQLite-Integrität und ein
+Restore mit Schema 4, drei Packs und vier Funnel-Events sind grün. Finales
+Backup: `creator-ops-backup-post-revenue-first-v130.db`, SHA256
+`99A8AF434095B9F9DB1318EDABECA214D754E18954410EF8B9DDE7C9FA5F56FB`.
+Keine externe Aktion, Kosten, Secrets oder Git-/GitHub-Arbeit.
+
+# Creator Ops 1.4.1 – High-Autopilot-Härtung – 5. September 2026
+
+Der bestehende Kern wurde gezielt gehärtet: Queue und Prime-Time verwenden die
+lokale Publish Queue als maßgebliche Quelle, Audio bleibt ohne bestätigte
+Lizenz fail-closed, veröffentlichte Assets bleiben aus neuen Empfehlungen
+ausgeschlossen und fehlende Analytics werden nicht künstlich gerankt.
+Background-Runs erneuern ihre Lease, setzen echte Wartezeiten fort und schützen
+Abschlusszustände vor verlorenen Leases.
+
+Für den Betrieb ohne laufenden Codex wurden ein secrets-reduzierter, read-only
+Offline-Snapshot sowie begrenzte Scheduler-, Watchdog- und Windows-Aufgaben-
+Skripte vorbereitet. Die Installation blieb bis zu einer ausdrücklichen
+Owner-Entscheidung im reinen Vorschaumodus.
+
+Der gemeldete tote Owner-Review-Pfad wurde reproduziert: Der eingebettete
+Browser unterstützt `window.prompt()` nicht. CHANGE und REJECT verwenden nun
+einen eigenen responsiven Dialog. Große Vorschau, Dialog und Abbruch ohne
+Datenänderung wurden im laufenden Dashboard sichtbar geprüft; das offene
+Mara-Paket blieb unverändert `READY_FOR_REVIEW`.
+
+Verifikation: 96/96 Tests, Python-Compilecheck, 9/9 JavaScript-Syntaxchecks,
+PowerShell-Parser und SQLite-Integrität grün. Finales SQLite-Backup:
+`backups/creator-ops-backup-high-autopilot-final-20260905-193722.db`, SHA256
+`2142C60A9D874C05CC7D137D8B0437F3989D4E8107D2DCA0D5E21CEBB942C985`.
+Der Restore in eine frische Datenbank ergab `integrity_check = ok`, sechs
+Inhalte und drei Queuejobs. Keine externe Veröffentlichung, keine Kosten und
+keine Secrets.

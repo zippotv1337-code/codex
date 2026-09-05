@@ -3,6 +3,13 @@
 Stand: Freitag, 4. September 2026  
 Zeitzone: `Europe/Berlin`
 
+> Autopilot-Aktualisierung: Für Mara „Maschinencheck“ und Leona „Roofline“
+> wurden die bereits veröffentlichten S4-Motive technisch aus den Top 3
+> entfernt. Die neue Reihenfolge lautet jeweils `S2 → S3 → S5`. Maras alter
+> lokaler Mock-Zeitplan ist `PAUSED_DUPLICATE_RISK`; beide überarbeiteten
+> Detail-Carousels benötigen eine neue Owner-Freigabe. Vollständige Texte:
+> `docs/MEDIUM_AUTOPILOT_RESERVE.md`.
+
 ## Readiness
 
 Vier visuelle Pakete sind vollständig produziert und in Creator Ops

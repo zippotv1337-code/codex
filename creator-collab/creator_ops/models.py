@@ -19,9 +19,50 @@ class ContentStatus(StrEnum):
     FAILED_RETRYABLE = "FAILED_RETRYABLE"
 
 
+class PublishStatus(StrEnum):
+    NOT_READY = "NOT_READY"
+    LOCAL_SCHEDULED = "LOCAL_SCHEDULED"
+    PUBLISH_DUE = "PUBLISH_DUE"
+    PUBLISHING = "PUBLISHING"
+    PUBLISHED = "PUBLISHED"
+    NEEDS_RESCHEDULE_REVIEW = "NEEDS_RESCHEDULE_REVIEW"
+    FAILED_RETRYABLE = "FAILED_RETRYABLE"
+    BLOCKED_EXTERNAL_PUBLISHING = "BLOCKED_EXTERNAL_PUBLISHING"
+    OWNER_ACTION_REQUIRED = "OWNER_ACTION_REQUIRED"
+
+
 class SafetyClass(StrEnum):
     SFW = "SFW"
     ADULT = "ADULT"
+
+
+class ContentStage(StrEnum):
+    ALLTAG = "ALLTAG"
+    TEASER = "TEASER"
+    ADULT_18 = "ADULT_18"
+
+
+class VisibilityScope(StrEnum):
+    PUBLIC_SFW = "PUBLIC_SFW"
+    ADULT_ONLY = "ADULT_ONLY"
+    LOCAL_ONLY = "LOCAL_ONLY"
+
+
+class PoseSlot(StrEnum):
+    FRONTAL = "FRONTAL"
+    LEFT_3Q = "LEFT_3Q"
+    RIGHT_3Q = "RIGHT_3Q"
+    FULL_BODY_ACTION = "FULL_BODY_ACTION"
+    CANDID = "CANDID"
+
+
+POSE_SLOT_ORDER = (
+    PoseSlot.FRONTAL,
+    PoseSlot.LEFT_3Q,
+    PoseSlot.RIGHT_3Q,
+    PoseSlot.FULL_BODY_ACTION,
+    PoseSlot.CANDID,
+)
 
 
 @dataclass(frozen=True)
@@ -32,6 +73,8 @@ class ComplianceInput:
     needs_ai_disclosure: bool
     disclosure_present: bool
     rights_status: str
+    content_stage: ContentStage = ContentStage.ALLTAG
+    visibility_scope: VisibilityScope = VisibilityScope.PUBLIC_SFW
 
 
 @dataclass(frozen=True)

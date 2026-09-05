@@ -4,7 +4,7 @@ import json
 import tempfile
 import threading
 import unittest
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -21,7 +21,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class ReviewDashboardTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tempdir = tempfile.TemporaryDirectory()
-        self.database_path = Path(self.tempdir.name) / "review.db"
+        self.root = Path(self.tempdir.name)
+        self.database_path = self.root / "review.db"
         self.pipeline = build_pipeline(self.database_path)
         self.pipeline.initialize()
         self.service = ReviewDashboardService(self.pipeline)
@@ -41,6 +42,162 @@ class ReviewDashboardTests(unittest.TestCase):
             self.assertEqual(card["status"], "READY_FOR_REVIEW")
             self.assertNotIn(card["disclosure"], card["caption"])
             self.assertNotIn("kigeneriert", card["caption"].lower())
+            self.assertEqual(card["content_stage"], "ALLTAG")
+            self.assertEqual(card["safety_class"], "SFW")
+            self.assertEqual(card["visibility_scope"], "PUBLIC_SFW")
+            self.assertFalse(card["privacy_blur"])
+            self.assertTrue(card["checks"]["pose_matrix"])
+            self.assertTrue(card["checks"]["top3_diversity"])
+            self.assertTrue(card["hook"])
+            self.assertTrue(card["cta"])
+            self.assertIsInstance(card["hashtags"], list)
+            self.assertEqual(sorted(a["top_pick_order"] for a in card["assets"] if a["top_pick"]), [1, 2, 3])
+            self.assertIn("without", "without music")
+
+    def test_owner_change_and_reject_are_audited_without_external_action(self) -> None:
+        cards = self.service.ensure_date(date(2026, 9, 4))
+        changed = self.service.record_owner_decision(cards[0]["content_id"], "change", "Neuer Hook")
+        rejected = self.service.record_owner_decision(cards[1]["content_id"], "reject", "Nicht passend")
+        self.assertEqual(changed["status"], "PARTIAL_READY")
+        self.assertEqual(rejected["status"], "BLOCKED")
+        self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM publications"), 0)
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT COUNT(*) FROM review_events WHERE action IN ('OWNER_CHANGE_REQUESTED_UI','OWNER_REJECTED_UI')"
+            ),
+            2,
+        )
+        refreshed = self.service.cards(date(2026, 9, 4))
+        self.assertFalse(refreshed[0]["can_approve"])
+        self.assertFalse(refreshed[1]["can_approve"])
+
+    def test_review_queue_spans_all_actionable_dates(self) -> None:
+        self.service.ensure_date(date(2026, 9, 5))
+        self.service.ensure_date(date(2026, 9, 6))
+        queue = self.service.review_queue()
+        self.assertEqual(queue["dates"], ["2026-09-05", "2026-09-06"])
+        self.assertEqual(len(queue["cards"]), 4)
+
+    def test_review_queue_prefers_real_productive_packages_without_global_date_cutoff(self) -> None:
+        self.service.ensure_date(date(2026, 9, 4))
+        current = self.service.ensure_date(date(2026, 9, 5))
+        sources = []
+        for index in range(3):
+            source = self.root / f"candidate-{index}.png"
+            source.write_bytes(b"\x89PNG\r\n\x1a\n" + bytes([index]))
+            sources.append(source)
+        importer = LocalAssetImportService(self.pipeline, self.root)
+        importer.import_files("leona-voss", date(2026, 9, 5), sources)
+        importer.import_files("mara-field", date(2026, 9, 5), sources)
+        with self.pipeline.db.transaction() as connection:
+            variant_id = connection.execute(
+                "SELECT id FROM platform_variants WHERE content_id=?",
+                (current[0]["content_id"],),
+            ).fetchone()[0]
+            connection.execute(
+                """
+                INSERT INTO publications
+                    (content_id, platform_variant_id, provider, scheduled_at,
+                     published_at, external_id, external_url, status)
+                VALUES (?, ?, 'instagram-native-manual', '2026-09-06',
+                        '2026-09-06', 'later-native',
+                        'https://www.instagram.com/p/later-native/', 'PUBLISHED')
+                """,
+                (current[0]["content_id"], variant_id),
+            )
+        queue = self.service.review_queue()
+        self.assertEqual(queue["dates"], ["2026-09-05"])
+        self.assertEqual(
+            {card["content_id"] for card in queue["cards"]},
+            {card["content_id"] for card in current},
+        )
+
+    def test_queue_time_wins_over_native_date_only_publication(self) -> None:
+        cards = self.service.ensure_date(date(2026, 9, 8))
+        approved = cards[0]
+        self.service.approve(approved["content_id"])
+        planned_at = self.pipeline.db.scalar(
+            "SELECT planned_at FROM publish_queue WHERE content_id=?",
+            (approved["content_id"],),
+        )
+        with self.pipeline.db.transaction() as connection:
+            for card in cards:
+                variant_id = connection.execute(
+                    "SELECT id FROM platform_variants WHERE content_id=?",
+                    (card["content_id"],),
+                ).fetchone()[0]
+                connection.execute(
+                    """
+                    INSERT INTO publications
+                        (content_id, platform_variant_id, provider, scheduled_at,
+                         published_at, external_id, external_url, status)
+                    VALUES (?, ?, 'instagram-native-manual', '2026-09-04',
+                            '2026-09-04', ?, ?, 'PUBLISHED')
+                    """,
+                    (
+                        card["content_id"],
+                        variant_id,
+                        f"native-{card['content_id']}",
+                        f"https://www.instagram.com/p/native-{card['content_id']}/",
+                    ),
+                )
+        refreshed = self.service.cards(date(2026, 9, 8))
+        self.assertEqual(
+            refreshed[0]["prime_time"],
+            datetime.fromisoformat(planned_at).strftime("%H:%M"),
+        )
+        self.assertEqual(refreshed[0]["schedule_source"], "local-publish-queue")
+        self.assertNotEqual(refreshed[1]["prime_time"], "00:00")
+        self.assertNotEqual(refreshed[1]["schedule_source"], "approved-draft")
+
+    def test_music_check_requires_safe_selected_license_and_repairs_silent_fallback(self) -> None:
+        card = self.service.ensure_date(date(2026, 9, 4))[0]
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                "UPDATE audio_candidates SET selected=0 WHERE content_id=?",
+                (card["content_id"],),
+            )
+            connection.execute(
+                """
+                UPDATE audio_candidates SET selected=1
+                WHERE content_id=? AND license_status='VERIFY_BEFORE_USE'
+                """,
+                (card["content_id"],),
+            )
+        unsafe = self.service.cards(date(2026, 9, 4))[0]
+        self.assertFalse(unsafe["checks"]["music"])
+        self.assertFalse(unsafe["can_approve"])
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE audio_candidates
+                SET selected=CASE WHEN lower(label)='option ohne musik' THEN 1 ELSE 0 END,
+                    license_status=CASE WHEN lower(label)='option ohne musik'
+                                        THEN 'REVIEW_REQUIRED' ELSE license_status END
+                WHERE content_id=?
+                """,
+                (card["content_id"],),
+            )
+        self.pipeline.db.initialize()
+        repaired = self.service.cards(date(2026, 9, 4))[0]
+        self.assertEqual(repaired["audio_license"], "SAFE_NO_AUDIO")
+        self.assertTrue(repaired["checks"]["music"])
+
+    def test_dashboard_has_stage_filter_and_protected_preview_controls(self) -> None:
+        html = (ROOT / "dashboard" / "index.html").read_text(encoding="utf-8")
+        script = (ROOT / "dashboard" / "app.js").read_text(encoding="utf-8")
+        styles = (ROOT / "dashboard" / "app.css").read_text(encoding="utf-8")
+        self.assertIn('data-stage-filter="ADULT_18"', html)
+        self.assertIn("data-reveal", script)
+        self.assertIn("privacy-blur", script)
+        self.assertIn(".privacy-protected .asset.privacy-blur", styles)
+        self.assertIn("if (response === null) return", script)
+        self.assertIn("card.can_approve", script)
+        self.assertNotIn("window.prompt", script)
+        self.assertIn("requestDecisionNote", script)
+        self.assertIn('id="decision-dialog"', html)
+        self.assertNotIn(".status-pill { display: none; }", styles)
+        self.assertIn("Slides ausgewählt", script)
 
     def test_preparing_same_day_is_idempotent(self) -> None:
         first = self.service.ensure_date(date(2026, 9, 4))
@@ -135,10 +292,10 @@ class ReviewDashboardTests(unittest.TestCase):
             self.assertEqual(approved["status"], "SCHEDULED")
             with urlopen(f"{base}/api/health", timeout=5) as response:
                 health = json.load(response)
-            self.assertEqual(
-                health,
-                {"status": "ok", "mode": "local-mock", "auth": False},
-            )
+            self.assertEqual(health["status"], "ok")
+            self.assertEqual(health["mode"], "local-mock")
+            self.assertFalse(health["auth"])
+            self.assertEqual(health["database"], "ok")
         finally:
             server.shutdown()
             server.server_close()

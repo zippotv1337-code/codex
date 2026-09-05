@@ -1,0 +1,36 @@
+[run]
+version = "BETA_1_5"
+overall_effort = "high"
+
+[[task]]
+id = "STANDALONE_RUNTIME"
+effort = "high"
+
+[[task]]
+id = "GITHUB_RECOVERY_SYNC"
+effort = "high"
+
+[[task]]
+id = "CONTENT_ACTIVATION_PUBLISHING"
+effort = "high"
+
+[[task]]
+id = "NEXT_CONTENT_PRODUCTION"
+effort = "medium"
+
+[[task]]
+id = "ANALYTICS_LEARNING"
+effort = "medium"
+
+[[task]]
+id = "REVENUE_FIVERR"
+effort = "medium"
+
+[[task]]
+id = "BACKUP_RESTORE"
+effort = "high"
+
+[future_models]
+hard_dependency_on_gpt6 = false
+prefer_stronger_when_available = true
+capability_based = true

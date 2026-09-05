@@ -44,6 +44,12 @@ class PrimeTimePlanner:
         ).fetchall()
         for row in rows:
             existing = datetime.fromisoformat(row[0])
+            if existing.tzinfo is None:
+                # Legacy/local rows were stored without an offset. They represent
+                # the configured local scheduling timezone.
+                existing = existing.replace(tzinfo=self.timezone)
+            else:
+                existing = existing.astimezone(self.timezone)
             if abs((existing - candidate).total_seconds()) < minimum_spacing * 60:
                 return True
         return False
@@ -56,6 +62,24 @@ class PrimeTimePlanner:
         content_format: str,
         local_time: str,
     ) -> tuple[float | None, int]:
+        real = connection.execute(
+            """
+            SELECT AVG((COALESCE(a.shares,0) + COALESCE(a.saves,0) + COALESCE(a.follows,0)) * 1.0 /
+                       CASE WHEN COALESCE(a.reach,a.views,0) = 0 THEN 1
+                            ELSE COALESCE(a.reach,a.views) END) AS quality,
+                   COUNT(*) AS samples
+            FROM manual_analytics_events a
+            JOIN publications p ON p.id = a.publication_id
+            JOIN platform_variants v ON v.id = p.platform_variant_id
+            JOIN content_items c ON c.id = p.content_id
+            WHERE c.creator_id = ? AND v.platform = ? AND v.format = ?
+              AND a.window_hours = 168 AND p.provider = 'instagram-native-manual'
+              AND substr(COALESCE(p.published_at,p.scheduled_at), 12, 5) = ?
+            """,
+            (creator_id, platform, content_format, local_time),
+        ).fetchone()
+        if real and int(real["samples"]):
+            return real["quality"], int(real["samples"])
         row = connection.execute(
             """
             SELECT AVG((a.shares + a.saves + a.follows) * 1.0 /

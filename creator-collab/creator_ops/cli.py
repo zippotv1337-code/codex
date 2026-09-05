@@ -2,14 +2,25 @@ from __future__ import annotations
 
 import argparse
 import json
+from dataclasses import asdict
 from datetime import date, datetime
 from pathlib import Path
 
 from .database import CreatorDatabase
 from .asset_import import LocalAssetImportService
+from .current_state import CurrentStateService
 from .evening import EveningRunCoordinator
 from .exporting import ExportBackupService
 from .pipeline import VerticalPipeline
+from .reconcile import ManualInstagramService
+from .recovery import RecoveryBackupService
+from .checkpoint import AutopilotCheckpointService
+from .adworks import AdWorksService
+from .publishing import PublishQueueService
+from .morning import MorningContentFactory
+from .offline import OfflineSnapshotService
+from .review import ReviewDashboardService
+from .style_reference import StyleReferenceService
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,7 +65,75 @@ def parser() -> argparse.ArgumentParser:
         "--rights-status", default="AI_GENERATED", choices=("AI_GENERATED", "OWNED", "LICENSED")
     )
     asset_import.add_argument("files", nargs="+")
-    subcommands.add_parser("status", help="Print database table counts")
+    status = subcommands.add_parser("status", help="Print a dynamic, secret-free project snapshot")
+    status.add_argument("--out", type=Path)
+    status.add_argument("--include-remote-url", action="store_true")
+    status.add_argument("--tests-passed", type=int)
+    status.add_argument("--tests-failed", type=int)
+    recovery = subcommands.add_parser("recovery-backup", help="Create a validated secret-free recovery ZIP")
+    recovery.add_argument("--kind", required=True, choices=("weekly", "monthly", "milestone"))
+    recovery.add_argument("--out", type=Path, default=ROOT / "backups")
+    patch_backup = subcommands.add_parser(
+        "patch-backup", help="Create a manifest-backed patch linked to a base backup"
+    )
+    patch_backup.add_argument("--base", type=Path, required=True)
+    patch_backup.add_argument("--reason", required=True)
+    patch_backup.add_argument("--label", required=True)
+    patch_backup.add_argument("--file", action="append", required=True)
+    patch_backup.add_argument("--out", type=Path, default=ROOT / "backups")
+    reconcile = subcommands.add_parser("reconcile-instagram", help="Record an owner-confirmed native post")
+    reconcile.add_argument("--creator", required=True, choices=("leona-voss", "mara-field"))
+    reconcile.add_argument("--content-id", required=True, type=int)
+    reconcile.add_argument("--url", required=True)
+    reconcile.add_argument("--published-at", required=True)
+    reconcile.add_argument("--asset-id", type=int)
+    reconcile.add_argument("--no-ai-disclosure", action="store_true")
+    analytics = subcommands.add_parser("manual-analytics", help="Append an owner-reported analytics snapshot")
+    analytics.add_argument("--publication-id", required=True, type=int)
+    analytics.add_argument("--window", required=True, type=int, choices=(24, 72, 168))
+    for metric in ("reach", "views", "likes", "comments", "shares", "saves", "profile-visits", "follows", "link-clicks"):
+        analytics.add_argument(f"--{metric}", type=int)
+    analytics.add_argument("--revenue", type=float)
+    analytics.add_argument("--note", default="")
+    checkpoint = subcommands.add_parser("checkpoint", help="Write an atomic autopilot savegame")
+    checkpoint.add_argument("--out", type=Path, default=ROOT / "AUTOPILOT_CHECKPOINT.md")
+    checkpoint.add_argument("--last-completed", required=True)
+    checkpoint.add_argument("--current-task", required=True)
+    checkpoint.add_argument("--continuation", required=True)
+    checkpoint.add_argument("--changed-file", action="append", default=[])
+    checkpoint.add_argument("--tests-passed", type=int, required=True)
+    checkpoint.add_argument("--tests-failed", type=int, default=0)
+    checkpoint.add_argument("--backup-status", required=True)
+    checkpoint.add_argument("--blocker", action="append", default=[])
+    checkpoint.add_argument("--owner-gate", action="append", default=[])
+    checkpoint.add_argument("--parked", action="append", default=[])
+    checkpoint.add_argument("--next-task", action="append", required=True)
+    subcommands.add_parser("adworks-status", help="Show real and dry-run revenue lanes separately")
+    adworks = subcommands.add_parser("adworks-dry-run", help="Run the local Pack-to-Revenue acceptance path")
+    adworks.add_argument("--pack", default="creator-sfw-basic")
+    subcommands.add_parser("publish-queue", help="List the durable local publishing queue")
+    subcommands.add_parser("publish-reconcile", help="Reconcile approved posts into the local queue")
+    dispatch = subcommands.add_parser(
+        "publish-dispatch-due", help="Dispatch due jobs through the configured fail-closed adapter"
+    )
+    dispatch.add_argument("--at", default=datetime.now().astimezone().isoformat())
+    morning = subcommands.add_parser("morning-run", help="Prepare the idempotent 05:30 review batch")
+    morning.add_argument("--at", default=datetime.now().astimezone().isoformat())
+    morning.add_argument("--waiting-for-capacity", action="store_true")
+    style = subcommands.add_parser(
+        "style-reference-set", help="Mark an internal mz.poke-inspired experiment"
+    )
+    style.add_argument("--content-id", required=True, type=int)
+    style.add_argument("--strength", required=True, choices=("light", "medium"))
+    style.add_argument(
+        "--format",
+        required=True,
+        choices=("fashion", "teaser", "humor_reel", "personality"),
+    )
+    offline = subcommands.add_parser(
+        "offline-snapshot", help="Write a static read-only operating snapshot"
+    )
+    offline.add_argument("--out", type=Path, default=ROOT / "output" / "offline")
     return result
 
 
@@ -96,7 +175,122 @@ def main() -> int:
         )
         print(json.dumps({"imported": imported}, ensure_ascii=False, indent=2))
     elif args.command == "status":
-        print(json.dumps(pipeline.db.table_counts(), indent=2))
+        service = CurrentStateService(pipeline.db, ROOT)
+        snapshot = service.snapshot(
+            include_remote_url=args.include_remote_url,
+            tests_passed=args.tests_passed,
+            tests_failed=args.tests_failed,
+        )
+        if args.out:
+            service.write(args.out, snapshot)
+        print(json.dumps(snapshot, ensure_ascii=False, indent=2))
+    elif args.command == "recovery-backup":
+        path = RecoveryBackupService(pipeline.db, ROOT).build(args.out, kind=args.kind)
+        print(json.dumps(RecoveryBackupService.validate(path), ensure_ascii=False, indent=2))
+    elif args.command == "patch-backup":
+        path = RecoveryBackupService(pipeline.db, ROOT).build_patch(
+            args.out,
+            changed_files=args.file,
+            base_backup=args.base,
+            reason=args.reason,
+            label=args.label,
+        )
+        print(json.dumps(RecoveryBackupService.validate(path), ensure_ascii=False, indent=2))
+    elif args.command == "reconcile-instagram":
+        result = ManualInstagramService(pipeline.db).reconcile(
+            creator_slug=args.creator,
+            content_id=args.content_id,
+            external_url=args.url,
+            published_at=args.published_at,
+            ai_disclosure=not args.no_ai_disclosure,
+            asset_id=args.asset_id,
+        )
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == "manual-analytics":
+        metrics = {
+            "reach": args.reach,
+            "views": args.views,
+            "likes": args.likes,
+            "comments": args.comments,
+            "shares": args.shares,
+            "saves": args.saves,
+            "profile_visits": args.profile_visits,
+            "follows": args.follows,
+            "link_clicks": args.link_clicks,
+            "revenue": args.revenue,
+        }
+        event_id = ManualInstagramService(pipeline.db).append_analytics(
+            args.publication_id,
+            args.window,
+            note=args.note,
+            **metrics,
+        )
+        print(json.dumps({"analytics_event_id": event_id}, indent=2))
+    elif args.command == "checkpoint":
+        path = AutopilotCheckpointService(ROOT).write(
+            args.out,
+            last_completed_task=args.last_completed,
+            current_task=args.current_task,
+            continuation_point=args.continuation,
+            changed_files=args.changed_file,
+            tests_passed=args.tests_passed,
+            tests_failed=args.tests_failed,
+            backup_status=args.backup_status,
+            blockers=args.blocker,
+            owner_gates=args.owner_gate,
+            parked_tasks=args.parked,
+            next_tasks=args.next_task,
+        )
+        print(json.dumps({"checkpoint": str(path)}, ensure_ascii=False, indent=2))
+    elif args.command == "adworks-status":
+        print(json.dumps(AdWorksService(pipeline.db).dashboard(), ensure_ascii=False, indent=2))
+    elif args.command == "adworks-dry-run":
+        result = AdWorksService(pipeline.db).dry_run(args.pack)
+        print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
+    elif args.command == "publish-queue":
+        print(json.dumps(PublishQueueService(pipeline.db).list(), ensure_ascii=False, indent=2))
+    elif args.command == "publish-reconcile":
+        print(json.dumps(PublishQueueService(pipeline.db).reconcile(), ensure_ascii=False, indent=2))
+    elif args.command == "publish-dispatch-due":
+        print(
+            json.dumps(
+                PublishQueueService(pipeline.db).dispatch_due(datetime.fromisoformat(args.at)),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "morning-run":
+        service = MorningContentFactory(ReviewDashboardService(pipeline), ROOT)
+        print(
+            json.dumps(
+                service.run(
+                    datetime.fromisoformat(args.at),
+                    capacity_available=not args.waiting_for_capacity,
+                ),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "style-reference-set":
+        print(
+            json.dumps(
+                StyleReferenceService(pipeline.db).mark(
+                    args.content_id,
+                    strength=args.strength,
+                    reference_format=args.format,
+                ),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "offline-snapshot":
+        print(
+            json.dumps(
+                OfflineSnapshotService(pipeline.db, ROOT).build(args.out),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     return 0
 
 

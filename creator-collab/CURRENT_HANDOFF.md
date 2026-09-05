@@ -1,113 +1,55 @@
 # Aktueller Handoff
 
-Stand: 4. September 2026, 15:20 Uhr
+Stand: 5. September 2026, 19:40 Uhr · Creator Ops 1.4.1
 
-## Zuletzt erreicht
+## Verifizierter Stand
 
-- Der bestehende Creator-Ops-MVP blieb erhalten; keine neue Architektur.
-- Vier Content-Pakete vollständig produziert:
-  - Leona: „Spätsommer in Berlin“ und „September Roofline“
-  - Mara: „Fünf Minuten Maschinencheck“ und „Küchenfenster“
-- Pro Paket fünf reale SFW-Bildkandidaten mit der verlangten Pose-Matrix.
-- 18 Bilder neu mit Built-in ImageGen erzeugt; zwei vorhandene Profilanker als
-  Front-Slots wiederverwendet.
-- Alle 20 Paketdateien mit SHA-256, Herkunft und QA in
-  `docs/CONTENT_PRODUCTION_RUN.md` dokumentiert.
-- 20 Bilder über den bestehenden lokalen Importweg in die Review-Datenbank
-  geladen; Content `3–6`, Assets `11–30`.
-- Je Paket drei Top-Picks, Carousel-Folge, Caption, Hook, CTA, Hashtags,
-  Musik A/B/ohne sowie Prime Time finalisiert.
-- Für alle vier Karten bestätigt: fünf echte Previews, drei Top-Picks,
-  `ready=true`, `READY_FOR_REVIEW`, `approved=false`, Prime Time 19:30.
-- Lokalen Dashboardserver auf Port 4180 mit dem aktuellen Projektstand neu
-  gestartet; echte Preview-Endpunkte liefern PNG-Dateien mit `200 OK`.
-- Automatischer KI-Standardfooter und `kigeneriert` wurden aus neu erzeugten
-  organischen Review-Captions entfernt; die strukturierte Plattform-
-  Transparenz bleibt bestehen.
-- 22/22 Tests und Compileall grün.
-- Secret-freier JSON-Export, SQLite-Backup und Restore-Prüfung erfolgreich;
-  Integrität jeweils `ok`.
-- Kein Live-Publishing, keine Freigabe und keine externe Plattformaktion.
-- Kostenlosen optionalen Remote-Testmodus integriert: Passwort-Login,
-  In-Memory-Session, CSRF-Schutz, Sicherheitsheader und Login-Rate-Limitierung.
-- Lokaler Betrieb ohne `CREATOR_OPS_PASSWORD` bleibt unverändert offen.
-- Fünf echte HTTP-Sicherheitsfälle ergänzt; gesamte Suite jetzt 31/31 grün.
-- Remote-Access-Implementierung erfolgreich auf GitHub `main` gepusht
-  (`d616bf4`) und Ergebnis-Mail an das verbundene eigene Gmail-Konto gesendet
-  (Nachrichten-ID `1a06b99169f3809f`).
-- Nach ausdrücklicher Owner-Freigabe je einen nativen Instagram-Einzelpost
-  veröffentlicht; beide Veröffentlichungen wurden durch Instagrams
-  Erfolgsanzeige und anschließend im jeweiligen Profil bestätigt.
-- Mara: `assets/generated/mara-field/2026-09-05/m1-maschinencheck/04-full-body-morning-walk.png`
-  mit aktiviertem KI-Label veröffentlicht:
-  <https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/>.
-- Leona: `assets/generated/leona-voss/2026-09-06/lv-btt-01-september-roofline/04-full-body-rooftop-walk.png`
-  im 4:5-Zuschnitt mit aktiviertem KI-Label veröffentlicht:
-  <https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/>.
-- Beide Profile zeigen danach jeweils sechs Beiträge. Der lokale
-  `MockPublisher` und die Review-Statuswerte wurden durch die native
-  Instagram-Veröffentlichung nicht verändert.
+- 96/96 Tests, Python-Compilecheck und 9 JavaScript-Syntaxchecks sind grün.
+- Aktive Datenbank: Schema 5, `integrity_check = ok`, sechs Inhalte und drei
+  unveränderte `LOCAL_SCHEDULED`-Queuejobs.
+- Das lokale Dashboard läuft gesund unter `http://127.0.0.1:4180/`.
+- Der tote CHANGE-/REJECT-Pfad wurde behoben: Der eingebettete Browser kann
+  `window.prompt()` nicht verwenden; ein eigener responsiver Owner-Dialog ist
+  jetzt im echten Dashboard sichtbar geprüft.
+- Mara „Fünf Minuten Maschinencheck“ ist das einzige produktive Paket mit
+  `READY_FOR_REVIEW`; APPROVE ist aktiv. Der Testdialog wurde ohne Entscheidung
+  geschlossen, der Owner-Status blieb unverändert.
+- Drei Pakete sind lokal terminiert: Leona „Spätsommer in Berlin“ und
+  „September Roofline“ sowie Mara „Küchenfenster“.
+- Pro Persona liegen neun unveröffentlichte reale Assets in produktiven
+  Feedpaketen; zusätzlich existiert je ein älteres reales Einzelasset in einer
+  unvollständigen Karte. Veröffentlichte S4-Motive bleiben ausgeschlossen.
+- Prime-Time kommt für terminierte Karten aus der lokalen Queue. Musik ist
+  fail-closed auf „Option ohne Musik“, solange keine Lizenz bestätigt ist.
+- Fehlende Analytics werden nicht mehr als künstliches Ranking dargestellt.
+- Background-Runs erneuern ihre Lease per Heartbeat, warten bis zur echten
+  Fortsetzungszeit und schützen Abschlusszustände vor verlorenen Leases.
+- Ein statischer, secrets-reduzierter Offline-Snapshot wurde unter
+  `output/offline/` erzeugt.
+- Standalone-Skripte für Scheduler, Watchdog sowie Installation/Deinstallation
+  sind vorbereitet. Ohne ausdrückliches `-Apply` zeigen sie nur eine Vorschau;
+  in diesem Run wurde keine Windows-Aufgabe installiert.
+- Keine externe Veröffentlichung, kein Accountzugriff, keine Kosten, keine
+  Secrets und keine Git-/GitHub-Arbeit.
 
-## Aktive Aufgabe
+## Backup und Restore
 
-Die Bridge-to-Tuesday-Reserve ist bild- und textseitig fertig. Je ein
-Einzelmotiv für Leona und Mara ist nach Owner-Freigabe bereits nativ auf
-Instagram veröffentlicht. Der Remote-Patch ist technisch abgeschlossen. Für
-einen echten externen Testlink fehlen nur die lokale `cloudflared`-Installation
-und ein neues, nicht gespeichertes Owner-Passwort. Als nächster Inhaltsschritt
-stehen das Erfassen der 24-Stunden-Metriken sowie der Review der übrigen
-Paketmotive an.
+- Finales SQLite-Backup:
+  `backups/creator-ops-backup-high-autopilot-final-20260905-193722.db`
+- SHA256:
+  `2142C60A9D874C05CC7D137D8B0437F3989D4E8107D2DCA0D5E21CEBB942C985`
+- Real wiederhergestellt nach
+  `tmp/restore-check-v141-20260905-193722.db`.
+- Restore-Ergebnis: `integrity_check = ok`, sechs Inhalte, drei Queuejobs.
 
-Separater Plattformblocker: Threads verlangt für Mara weiterhin eine echte
-Selfie-Verifizierung. Keine KI-Aufnahme als Verifizierungs-Selfie verwenden.
+## Nächste drei Arbeiten
 
-## Nächste konkrete Schritte
+1. Owner entscheidet im Dashboard bei Mara „Fünf Minuten Maschinencheck“:
+   APPROVE, CHANGE oder REJECT.
+2. Owner prüft die Vorschau von `scripts/install_runtime_tasks.ps1` und
+   entscheidet separat, ob die lokalen Windows-Aufgaben mit `-Apply`
+   installiert werden sollen.
+3. Nach echten Veröffentlichungen 24-/72-/168-h-Analytics erfassen und erst
+   daraus die nächste Produktion priorisieren.
 
-1. Owner installiert bei Bedarf `cloudflared`, startet
-   `.\run_remote_free.ps1` und vergibt ein neues Passwort mit mindestens
-   12 Zeichen; Details in `docs/REMOTE_ACCESS_FREE.md`.
-2. Nach 24 Stunden Reichweite, Likes, Kommentare, Saves und Profilaktionen der
-   beiden neuen Einzelposts erfassen.
-3. Owner prüft die übrigen Karten/Motive im lokalen oder temporären
-   Remote-Dashboard; bereits veröffentlicht sind Mara „Maschinencheck“ S4 und
-   Leona „Roofline“ S4.
-4. Gewünschte Top-3-/Reihenfolge-Änderungen dokumentieren; konkreten Musiktrack
-   nativ prüfen oder den sicheren Fallback „ohne Musik“ belassen.
-5. Weitere Live-Posts weiterhin nur nach ausdrücklicher Owner-Freigabe.
-
-## Wichtige Dateien
-
-- Produktionsnachweis: `docs/CONTENT_PRODUCTION_RUN.md`
-- Postingplan: `docs/POSTING_BRIDGE_TO_TUESDAY.md`
-- Inventar: `docs/CONTENT_ASSET_INVENTORY.md` und `.csv`
-- Website-Shortlist: `docs/WEBSITE_ASSET_SHORTLIST.md`
-- Report: `docs/LAST_RUN_REPORT.md`
-- Remote-Anleitung: `docs/REMOTE_ACCESS_FREE.md`
-- Finale Gesamtübergabe: `docs/FINAL_ABSCHLUSS.md`
-- Finale Sicherung:
-  `backups/creator-ops-backup-content-reserve-20260904-1019.db`
-
-## GitHub-Synchronisation
-
-- Repository: https://github.com/zippotv1337-code/codex
-- Zielbranch: `main`
-- Content-Commit auf lokalem Arbeitsbranch: `37814ca`.
-- GitHub-Content-Sync-Commit: `fa998be`; der anschließende Dokumentations-
-  Folgecommit wurde ebenfalls erfolgreich auf `main` gepusht.
-- `creator-collab/data/` bleibt unversioniert; keine Zugangsdaten oder Codes in
-  Git übernehmen.
-
-## Nicht verändern
-
-- Instagram `@zippo.rocco` nicht umbenennen.
-- Bestehende Threads-Beiträge nicht löschen.
-- Privates Threads-Profil `@zippo.rocco` nicht als Creator-Profil verwenden.
-- Keine Zugangsdaten, Codes, Tokens, Cookies oder privaten Schlüssel speichern.
-- Keine externe Veröffentlichung ohne Owner-Freigabe.
-
-## Letzte verifizierte GitHub-Sichtbarkeit
-
-GitHub meldet das Repository `zippotv1337-code/codex` am 4. September 2026 als
-`public`, Standardbranch `main`. Damit sind auch die eingecheckten 20
-Creator-Bilder öffentlich les- und herunterladbar. Eine Privatstellung wurde
-nicht angefordert und daher nicht vorgenommen.
+Git/GitHub bleiben geparkt. Live-Publishing bleibt ein separates Owner-Gate.

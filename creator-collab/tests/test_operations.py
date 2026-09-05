@@ -184,6 +184,39 @@ class OperationsTests(unittest.TestCase):
             check.close()
         self.assertEqual(self.database.scalar("SELECT COUNT(*) FROM export_jobs"), 2)
 
+    def test_public_export_excludes_adult_and_local_only_content(self) -> None:
+        results = self.pipeline.run_both(date(2026, 9, 11))
+        adult_id = results[0].content_id
+        with self.database.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE content_items
+                SET content_stage = 'ADULT_18', safety_class = 'ADULT',
+                    visibility_scope = 'ADULT_ONLY', adult = 1
+                WHERE id = ?
+                """,
+                (adult_id,),
+            )
+            connection.execute(
+                """
+                UPDATE assets
+                SET content_stage = 'ADULT_18', safety_class = 'ADULT',
+                    visibility_scope = 'ADULT_ONLY'
+                WHERE content_id = ?
+                """,
+                (adult_id,),
+            )
+        export_path = ExportBackupService(self.database).export_json(
+            self.root / "exports", "public-only"
+        )
+        payload = json.loads(export_path.read_text(encoding="utf-8"))
+        serialized = json.dumps(payload)
+        self.assertEqual(payload["scope"], "PUBLIC_SFW")
+        self.assertNotIn("ADULT_18", serialized)
+        self.assertNotIn("ADULT_ONLY", serialized)
+        self.assertEqual(len(payload["tables"]["content_items"]), 1)
+        self.assertEqual(len(payload["tables"]["assets"]), 5)
+
     def test_sqlite_backup_restores_into_fresh_database(self) -> None:
         self.pipeline.run_both(date(2026, 9, 13))
         service = ExportBackupService(self.database)

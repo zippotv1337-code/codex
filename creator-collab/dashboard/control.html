@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4efe6" />
+    <title>Creator Ops · Control Plane</title>
+    <link rel="stylesheet" href="/app.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand-block"><span class="season-mark" aria-hidden="true">C</span><div>
+          <p class="eyebrow">Creator Ops · sichere lokale Steuerung</p>
+          <h1>Control Plane.</h1>
+          <p class="intro">Capability-basiert, modellagnostisch und checkpointfähig.</p>
+        </div></div>
+        <div class="mode"><span aria-hidden="true"></span> Keine externe Ausführung</div>
+      </header>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="/">Review</a><a href="/stories">Stories</a><a href="/collections">Alben</a><a href="/archive">Archiv</a><a href="/top3">Top 3</a><a href="/engagement">Engagement</a><a class="active" href="/control">Autopilot</a><a href="/revenue">Revenue</a><a href="/offer">Angebot</a>
+      </nav>
+
+      <section id="control-root" aria-live="polite" aria-busy="true">
+        <div class="loading">Control Plane wird geprüft …</div>
+      </section>
+      <footer><span>Aktuelles stabiles Modell genügt vollständig</span><span>Spätere Modelle sind nur ein optionaler Bonus</span></footer>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/control.js" defer></script>
+  </body>
+</html>
