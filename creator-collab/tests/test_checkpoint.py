@@ -37,7 +37,9 @@ class AutopilotCheckpointTests(unittest.TestCase):
                 "## Nächste 3 priorisierte Aufgaben", "## Exakter Resume-Auftrag",
             ):
                 self.assertIn(heading, text)
-            self.assertIn("Git/GitHub bleiben geparkt", text)
+            self.assertNotIn("Git/GitHub bleiben geparkt", text)
+            self.assertIn("Vorab freigegebene Publish-Aktionen", text)
+            self.assertIn("rote Schranken bleiben Owner-only", text)
             self.assertIn("Bestanden: 49", text)
 
     def test_checkpoint_requires_exactly_three_next_tasks(self) -> None:

@@ -37,8 +37,30 @@ class CurrentStateTests(unittest.TestCase):
             self.assertEqual(stored["tests"]["status"], "passed")
             self.assertEqual(stored["app_version"], "1.6.4-beta")
             self.assertEqual(stored["git"]["state"], "MANAGED_OUTSIDE_RUNTIME")
-            self.assertIn("live_publishing", stored["owner_decisions"]["red_gates"])
+            self.assertNotIn("live_publishing", stored["owner_decisions"]["red_gates"])
+            self.assertEqual(
+                stored["owner_decisions"]["pre_approved_actions"]
+                ["instagram_official_live_publish"],
+                "PRE_APPROVED_WITH_SAFETY_GATES",
+            )
+            self.assertEqual(
+                stored["owner_decisions"]["pre_approved_actions"]
+                ["fiverr_public_gig_publish"],
+                "PRE_APPROVED_AFTER_IDENTITY_GATE",
+            )
+            self.assertIn(
+                "personal_identity_or_verification",
+                stored["owner_decisions"]["owner_only_gates"],
+            )
+            self.assertFalse(
+                stored["publications"]["instagram_channel_real_live"]
+            )
+            self.assertEqual(
+                stored["publications"]["meta_graph_automation_proof"],
+                "not_yet_proven",
+            )
             self.assertIn("official adapter available", stored["publishing_mode"])
+            self.assertIn("pre-approved with safety gates", stored["publishing_mode"])
             self.assertNotIn("adapter unavailable", stored["publishing_mode"])
             self.assertTrue(stored["remote"]["active"])
             self.assertNotIn("url", stored["remote"])

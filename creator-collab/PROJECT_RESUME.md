@@ -301,15 +301,24 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   wurde am 6. September nativ mit drei Bildern veröffentlicht und sichtbar mit
   Permalink sowie nativem KI-Label bestätigt. Die lokale Abstimmung bewahrt den
   älteren Einzelpost und markiert alle drei tatsächlich genutzten Top-Picks.
-- Das Fiverr-Angebot ist mit festen Launchpreisen, Lieferzeiten, Revisionen,
-  FAQ, Requirements und eigenem Gallery-Cover vollständig vorbereitet. Das
-  persönliche Verkäuferprofil und der öffentliche Gig-Publish bleiben beim
-  Owner; Status `FIVERR_LAUNCH_READY_WAITING_FOR_OWNER`.
+- Das aktuelle Fiverr-Gig-1-Angebot `AI Workflow Automation` ist mit dem
+  Owner-Scope 149/349/699 USD, 4/7/10 Tagen, 1/2/3 Revisionen, FAQ,
+  Requirements und eigenem Gallery-Cover vollständig vorbereitet. Der frühere
+  SFW-Social-Content-Pack bleibt als separates Creator-Ops-Angebot erhalten und
+  wird nicht mit Gig 1 vermischt. Das
+  persönliche Verkäuferprofil und persönliche Identitäts-/Verifikationsdaten
+  bleiben beim Owner. Der öffentliche Gig-Publish ist danach projektseitig
+  vorab freigegeben; Status
+  `FIVERR_GIG1_CONTENT_COMPLETE_WAITING_FOR_OWNER_IDENTITY`.
 - Die frühere unvollständige Leona-Demokarte ist jetzt das vollständige
   SFW-Paket „Gym Reset, aber echt“: fünf reale KI-Assets, Pose-Matrix, Top 3,
-  Caption, Hook, CTA, Musik A/B/ohne und Prime Time, jedoch ohne Freigabe oder
-  Veröffentlichung.
-- Abschlussstand: 117 Tests sowie Python-, Runtime- und SQLite-Prüfung grün.
+  Caption, Hook, CTA, Musik A/B/ohne und Prime Time. Der Owner gab es am
+  6. September lokal frei; es ist für den 7. September 19:30 Uhr
+  `LOCAL_SCHEDULED`, aber nicht extern veröffentlicht.
+- Mara „Fünf Minuten Maschinencheck“ erhielt lokal CHANGE-Feedback
+  `ist nicht so` und danach REJECT. Der finale Status ist `BLOCKED`; ohne
+  klareres neues Owner-Signal wird es nicht automatisch neu erzeugt.
+- Abschlussstand: 119 Tests sowie Python-, Runtime- und SQLite-Prüfung grün.
 
 ## Offene Projektbereiche
 
@@ -324,13 +333,19 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
 - Performance nach 24 Stunden, 72 Stunden und 7 Tagen erfassen.
 - Den vorhandenen offiziellen Meta-Adapter erst mit echten, sicher gesetzten
   Zugangsdaten und öffentlichen HTTPS-Asset-URLs aktivieren; ohne vollständige
-  Gates bleibt der Versand fail-closed.
+  Gates bleibt der Versand fail-closed. Für ein owner-freigegebenes
+  `SFW + PUBLIC_SFW`-Paket ist der offizielle Publish projektseitig vorab
+  freigegeben; `INSTAGRAM_CHANNEL_REAL_LIVE` und der noch fehlende
+  `META_GRAPH_AUTOMATION_PROOF` bleiben getrennt.
 - Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
   ersetzen.
 - Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
-- Owner-Review der offenen Auswahl durchführen. „Gym Reset, aber echt“ besitzt
-  fünf neue echte Kandidaten; Mara „Maschinencheck“ und „Küchenfenster“ sowie
-  Leona „Spätsommer“ bleiben ohne neue Einzelentscheidung unveröffentlicht.
+- Die aktuellen Owner-Entscheidungen respektieren: „Gym Reset“ bleibt lokal
+  terminiert, „Maschinencheck“ bleibt blockiert. „Spätsommer“ und
+  „Küchenfenster“ sind ebenfalls nur lokal terminiert. Die unvollständige
+  Legacy-Karte „Werkstattabend“ ist der einzige verbleibende
+  `READY_FOR_REVIEW`-Datensatz und muss vor einer echten Prüfung repariert oder
+  archiviert werden.
 - Echte Analytics für Leona `Dc75xWsgEQo` nach 24/72/168 Stunden erfassen;
   fehlende Werte bleiben `UNKNOWN` statt künstlich `0`.
 - Erst nach ausdrücklicher Owner-Freigabe planen; die vier übrigen Briefs nach

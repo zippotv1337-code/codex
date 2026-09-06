@@ -4,95 +4,111 @@ Aktueller atomarer Speicherstand für den nächsten Run.
 
 ## Zeitpunkt
 
-2026-09-06T15:10:00+02:00 · Europe/Berlin
+2026-09-06T18:50:00+02:00 · Europe/Berlin
 
 ## Letzter vollständig erledigter Task
 
-North-Star-Run abgeschlossen: ein owner-bestätigter nativer Leona-Carousel ist
-live und lokal vollständig abgestimmt; Fiverr ist bis zum persönlichen
-Verkäuferprofil launch-ready; genau ein neues vollständiges SFW-Contentpaket
-„Gym Reset, aber echt“ ist reviewbereit. Die dafür notwendige
-Carousel-Reconciliation ist regressionsgetestet und auf GitHub synchronisiert.
+P0-0 Owner-Gate-Sync und das neue Fiverr-Gig-1-Primärziel sind abgeschlossen.
+Instagram-/Meta-Publish ist für owner-freigegebene `SFW + PUBLIC_SFW`-Pakete
+projektseitig `PRE_APPROVED_WITH_SAFETY_GATES`; Fiverr-Gig-Publish ist nach
+erfülltem persönlichen Identity-Gate `PRE_APPROVED`. Gig 1 ist jetzt das
+vollständig vorbereitete Angebot `AI Workflow Automation` mit 149/349/699 USD,
+Copy, FAQ, Intake, Scope-Grenzen, Checkliste und eigenem Gallery-Cover.
+Die während des Abschlusslaufs eingegangenen Dashboard-Entscheidungen sind
+ebenfalls vollständig übernommen: Leona `Gym Reset` wurde lokal freigegeben
+und für den 7. September um 19:30 Uhr `LOCAL_SCHEDULED`; Mara
+`Maschinencheck` wurde nach CHANGE-Feedback `ist nicht so` abgelehnt und ist
+`BLOCKED`. Keine dieser Entscheidungen löste einen externen Post aus.
 
 ## Aktuell angefangener Task
 
-Kein halbfertiger technischer oder Browser-Task. Der Resume-Check um 15:10 Uhr
-bestätigte Runtime, Datenbank und Queue als gesund. Fiverr zeigt weiterhin
-`Create your profile`; neue Reviewentscheidungen liegen nicht vor. Der nächste
-Fortschritt hängt daher von Owner-Review, persönlichen Fiverr-Angaben oder
-zeitlich fälligen echten Analytics ab.
+Kein halbfertiger technischer oder Browser-Task. Fiverr zeigt weiterhin
+`Create your profile`; Status
+`FIVERR_GIG1_CONTENT_COMPLETE_WAITING_FOR_OWNER_IDENTITY`. Die neuen
+Reviewentscheidungen sind lokal verarbeitet. Genau eine ältere, unvollständige
+Mara-Karte `Werkstattabend` steht technisch noch auf `READY_FOR_REVIEW`; sie
+ist wegen vier Mock-Slots nicht als fertiges Feedpaket zu behandeln.
+24h-Analytics sind noch nicht fällig.
 
 ## Exakter Fortsetzungspunkt
 
-Zuerst `CURRENT_HANDOFF.md`, `docs/HUMAN_HANDOFF.md` und dieses Checkpoint
-lesen. Health auf `http://127.0.0.1:4180/api/health` sowie SQLite-Integrität
-kurz prüfen. Nicht erneut auf Fiverr klicken, solange der Owner nicht meldet,
-dass `Create your profile` abgeschlossen ist. Danach den
-vorbereiteten Gig in einem Formularlauf bis zur Vorschau eintragen; den finalen
-öffentlichen Publish unmittelbar bestätigen lassen. Andernfalls die lokalen
-Reviews für Leona „Gym Reset“ und Mara „Fünf Minuten Maschinencheck“
-verarbeiten. Vor dem 24h-Zeitpunkt keine Analytics erfinden.
+Nicht erneut auf Fiverr klicken, solange der Owner nicht meldet, dass
+Freelancerprofil und persönliche Identity-/Verification-Schritte abgeschlossen
+sind. Danach `docs/FIVERR_GIG_DRAFT.md` in einem Formularlauf eintragen, die
+tatsächlich verfügbare Kategorie prüfen, das kanonische Cover hochladen, die
+Vorschau verifizieren und innerhalb der gültigen Projekt-/Oberflächenregeln
+publizieren. Für `Maschinencheck` nichts automatisch regenerieren: Das Paket
+bleibt blockiert, bis ein klareres Owner-Signal oder ein neuer Brief vorliegt.
+Die nächste zeitgebundene Aufgabe sind die echten 24h-Insights am 7. September
+gegen 13:00 Uhr.
 
 ## Geänderte Dateien
 
-- Reconciliation: `creator_ops/reconcile.py`, `creator_ops/cli.py`,
-  `creator_ops/scheduling.py`, `creator_ops/current_state.py`
-- Tests: `tests/test_v120_operations.py`, `tests/test_current_state.py`
-- Regeln/Status: `OWNER_DECISIONS.md`, `PROJECT_RESUME.md`,
-  `CURRENT_HANDOFF.md`, `LIVE_EVIDENCE.md`, `docs/CURRENT_STATE.json`
-- Fiverr: `docs/PACK_CATALOG.md`, `docs/FIVERR_GIG_DRAFT.md`,
-  `docs/LAUNCH_CHECKLIST.md`, eigenes lokales Gallery-Cover
-- Content: `docs/CONTENT_PACKAGE_GYM_RESET_2026-09-06.md` und fünf
-  lokale/managed Leona-Bilder
-- Übergabe: `docs/HUMAN_HANDOFF.md`, `docs/LAST_RUN_REPORT.md`, neues Journal
+- Permissions/State: `OWNER_DECISIONS.md`, `creator_ops/current_state.py`,
+  `creator_ops/checkpoint.py`, `docs/CURRENT_STATE.json`
+- Fiverr Gig 1: `docs/FIVERR_GIG_DRAFT.md`,
+  `docs/FIVERR_GIG1_PACKAGE_CATALOG.md`, `docs/FIVERR_GIG1_INTAKE.md`,
+  `docs/LAUNCH_CHECKLIST.md`
+- Gallery: `docs/assets/fiverr-gig-cover-ai-workflow-automation-v1.png`
+- Tests: `tests/test_current_state.py`, `tests/test_checkpoint.py`,
+  `tests/test_fiverr_gig1_package.py`
+- Übergabe: `CURRENT_HANDOFF.md`, `docs/HUMAN_HANDOFF.md`,
+  `PROJECT_RESUME.md`, `LIVE_EVIDENCE.md`, `CHANGELOG.md`, `docs/BACKLOG.md`,
+  `docs/RUN_REPORT_FIVERR_GIG1_2026-09-06.md` und neues Journal
 
 ## Teststatus
 
-- 117/117 Tests bestanden
-- Python-Compilecheck: grün
-- Runtime-Neustart und Healthcheck: grün
+- 119/119 Tests bestanden
+- Runtime Health: `ok`
 - SQLite `integrity_check`: `ok`
-- Gym-Reviewkarte: fünf Preview-URLs, `ready=true`, keine QA-Gründe
+- Current State: 6 Inhalte, 30 Assets, 3 native Publikationen, 8 Publikationen
+  insgesamt und 4 Queuejobs
+- Contentstatus: 1 `PUBLISHED`, 3 `SCHEDULED`, 1 `READY_FOR_REVIEW`,
+  1 `BLOCKED`
+- Gig-Paket-QA: Titel 53 Zeichen, Beschreibung 1.034 Zeichen, Cover-Hash korrekt
 
 ## Backupstatus
 
-- Vor der Gym-Datenmutation:
-  `backups/creator-ops-backup-pre-gym-reset-package.db`
-- Finales vollständiges, secrets-freies Arbeitspaket:
-  `backups/Backup_Meilenstein_20260906-1337.zip`
+- Aktuelles validiertes Post-Decision-Meilensteinbackup:
+  `backups/Backup_Meilenstein_20260906-1852.zip`
 - SHA256:
-  `7bde139ddede97092a9be7c57e7d8a9fc67ee13ad7d9d9b89645f7a5c4215199`
-- Recovery-Service validiert Manifest, Member-Hashes, Sanitized-DB und
-  Datenbankintegrität. Kein Secret wird aufgenommen.
+  `17df17d6c82fca6a7ca3d2b3c1df29c186c8d513ae694fda37f6695df6e03676`
+- 233 ZIP-Members, `testzip = none`, `database_integrity = ok`,
+  `contains_secrets = false`.
 
 ## Bekannte Blocker
 
-- Offizielle Meta-Automation: echte Credentials und öffentliche
-  HTTPS-Asset-URLs fehlen.
-- Fiverr: Verkäuferprofil und persönliche Identitäts-/Telefon-/Steuerdaten.
-- Instagram: echte 24h/72h/168h-Insights sind noch nicht zeitlich fällig.
+- Fiverr: persönliches Freelancerprofil, Identity-/Telefon-/OTP-Prüfung und
+  gegebenenfalls fehlende persönliche Steuer-/Identifikationsnummern.
+- Meta Graph: echte Credentials und öffentliche HTTPS-Asset-URLs fehlen.
+- Instagram: 24h/72h/168h-Insights sind noch nicht zeitlich fällig.
 
 ## Owner-Gates
 
-- Fiverr-Verkäuferprofil und persönliche Verifikationsdaten.
-- Finaler öffentlicher Fiverr-Publish.
-- Jede weitere Instagram-Live-Veröffentlichung einzeln.
-- Kommentare, Likes, Follows, DMs, neue Accounts, Paid Services und
-  Repo-Sichtbarkeit.
+- Fiverr-Verkäuferprofil und persönliche Verifikationsdaten bleiben
+  unmittelbar owner-only.
+- Falls Mara `Maschinencheck` ersetzt werden soll, braucht das neue Paket ein
+  klareres Motiv-/Änderungssignal; die Ablehnung selbst ist bereits gespeichert.
+- Kommentare, Likes, Follows, DMs, neue Accounts, Paid Services, Adult,
+  Repo-Sichtbarkeit und destruktive Aktionen.
 
 ## Geparkte Aufgaben
 
-- Keine weitere große Bildserie, neue Persona oder neue Plattform beginnen.
-- Offiziellen Meta-Adapter nicht mit erfundenen Credentials umgehen.
-- Revenue-Learning erst mit einem echten Gig/Lead/Umsatzsignal.
+- Gig 2 erst nach live/verifiziertem Gig 1; Gig 3 erst nach live/verifiziertem
+  Gig 2. Kein Gig 4 in diesem Lauf.
+- Keine neue Bildserie oder Persona beginnen.
+- Meta-Adapter nicht ohne echte Credentials und öffentliche HTTPS-Assets testen.
+- Revenue-Learning erst mit echtem Lead-/Order-/Umsatzsignal.
 
 ## Nächste 3 priorisierte Aufgaben
 
-1. Fiverr-Verkäuferprofil durch den Owner abschließen lassen und anschließend
-   den vorbereiteten Gig bis zur Vorschau eintragen.
-2. Leona „Gym Reset“ und Mara „Fünf Minuten Maschinencheck“ lokal reviewen.
-3. Echte 24h-Insights für `Dc75xWsgEQo` ab 7. September ca. 13:00 Uhr erfassen.
+1. Nach abgeschlossenem Fiverr-Identity-Gate Gig 1 eintragen, prüfen und gemäß
+   gültiger Vorabfreigabe veröffentlichen.
+2. Ab 7. September ca. 13:00 Uhr echte 24h-Insights für `Dc75xWsgEQo`
+   erfassen.
+3. Erst bei einem klaren Owner-Signal `Maschinencheck` neu briefen; alternativ
+   die unvollständige Legacy-Karte `Werkstattabend` reparieren oder archivieren.
 
 ## Exakter Resume-Auftrag
 
-> Lies AUTOPILOT_CHECKPOINT.md, CURRENT_HANDOFF.md, PROJECT_RESUME.md und das neueste datierte Journal. Prüfe Health und SQLite kurz, wiederhole keine Runtime-/Publishing-Baseline. Bearbeite zuerst ein vorhandenes Owner-Ergebnis: Fiverr-Profil fertig → Gig bis zur Vorschau; Reviewentscheidung vorhanden → lokal anwenden; 24h-Metriken fällig → echt erfassen. Ohne unmittelbare Einzelbestätigung keinen öffentlichen Publish. Wenn keines dieser Signale vorhanden ist, sauber stoppen und keine künstliche neue Arbeit erzeugen.
+> Lies AUTOPILOT_CHECKPOINT.md, CURRENT_HANDOFF.md, OWNER_DECISIONS.md und das neueste Journal. Wiederhole weder Runtime-/Meta-Baseline noch Fiverr-Copy oder die bereits gespeicherten Reviewentscheidungen. Bearbeite zuerst ein neues echtes Signal: Fiverr-Profil/Identity fertig → docs/FIVERR_GIG_DRAFT.md in einem Formularlauf umsetzen; 24h-Metriken fällig → echt erfassen; klarer Mara-Änderungsbrief vorhanden → blockiertes Paket gezielt ersetzen. Safety-, Rechte-, Technik-, Identity- und Oberflächen-Gates bleiben verbindlich. Gig 2/3 nur sequenziell nach verifiziertem Vorgänger. Wenn kein Signal vorliegt, sauber stoppen und keine künstliche Arbeit erzeugen.

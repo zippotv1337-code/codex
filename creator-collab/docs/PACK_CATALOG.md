@@ -2,6 +2,11 @@
 
 Stand: 5. September 2026 · Single Source of Truth für den Launch-Entwurf
 
+> Abgrenzung: Dies ist der bestehende Creator-Content-Pack-Katalog des lokalen
+> AdWorks-Dry-Runs. Der aktuelle Fiverr-Gig 1 ist das separate
+> Automationsangebot in `FIVERR_GIG1_PACKAGE_CATALOG.md`; beide Angebote dürfen
+> bei Preis, Scope oder Umsatzsignalen nicht vermischt werden.
+
 Alle Angebote sind SFW, KI-gestützt und werden vor Lieferung menschlich
 geprüft. Die folgenden Startpreise und Lieferbedingungen sind der verbindliche
 Launch-Entwurf; Fiverr kann sie beim Einstellen in die Kontowährung umrechnen.

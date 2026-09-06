@@ -40,8 +40,11 @@ class AutopilotCheckpointService:
         resume = (
             "Lies zuerst AUTOPILOT_CHECKPOINT.md, PROJECT_RESUME.md, CURRENT_HANDOFF.md "
             "und das neueste Sitzungsjournal. Prüfe den lokalen Zustand und setze bei "
-            f"folgendem Punkt fort: {continuation_point} Git/GitHub bleiben geparkt. "
-            "Keine externen Aktionen ohne Owner-Freigabe; rechtzeitig erneut checkpointen."
+            f"folgendem Punkt fort: {continuation_point} Beachte OWNER_DECISIONS.md: "
+            "Vorab freigegebene Publish-Aktionen nur bei vollständig grünen Safety-, "
+            "Rechte-, Technik- und Identity-Gates ausführen; rote Schranken bleiben "
+            "Owner-only. Sichere Fast-Forward-Git-Synchronisierung ist erlaubt; "
+            "rechtzeitig erneut checkpointen."
         )
         body = f"""# AUTOPILOT CHECKPOINT
 
