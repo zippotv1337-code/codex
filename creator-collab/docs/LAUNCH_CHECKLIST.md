@@ -11,13 +11,13 @@
 
 ## Owner-Gates vor Fiverr-Veröffentlichung
 
-- [ ] Basic-/Standard-/Premium-Preis
-- [ ] Lieferzeiten und Revisionsanzahl
+- [x] Basic-/Standard-/Premium-Startpreis lokal festgelegt
+- [x] Lieferzeiten und Revisionsanzahl lokal festgelegt
 - [ ] Kategorie/Subkategorie und verpflichtende Fiverr-Felder
-- [ ] kommerzielle Nutzung, Exklusivität und Referenzrechte
-- [ ] Gallery-Assets final auswählen und Rechte bestätigen
+- [x] kommerzielle Nutzung, Exklusivität und Referenzrechte definiert
+- [x] ein verpflichtendes, eigenes Gallery-Cover erstellt und Rechte dokumentiert
 - [ ] Anbieter-/Steuer-/DAC7-/Identitätsanforderungen abschließen
-- [ ] Dateiformate und Auflösung als Lieferstandard festlegen
+- [x] Dateiformate und Auflösung als Lieferstandard festgelegt
 - [ ] Gig-Vorschau prüfen und Veröffentlichung ausdrücklich freigeben
 
 ## Nach Launch

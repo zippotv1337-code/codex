@@ -1,6 +1,6 @@
 # Projekt-Résumé: Virtual Creators Germany
 
-Stand: 5. September 2026
+Stand: 6. September 2026
 
 ## Ziel
 
@@ -8,6 +8,16 @@ Zwei klar getrennte virtuelle Creator-Personas für den deutschen Markt
 aufbauen, organische Reichweite testen und später über eine zentrale Linkseite
 regelkonform monetarisieren. Alle Personas sind fiktiv, volljährig dargestellt
 und KI-generiert.
+
+## North Star
+
+Creator Ops entwickelt sich zu einem weitgehend automatisierten und später
+verkaufbaren Creator-/Content-Betriebssystem. Instagram validiert den Loop
+`Content → Publish → Audience → Analytics → Learning`; Fiverr validiert
+`Offer → Customer → Intake → Fulfillment → Revenue → Learning`. Gemeinsame
+Logik bleibt im wiederverwendbaren Kern, kanalspezifische Details in Adaptern.
+Leitregel: heute konkret bauen, morgen wiederverwendbar halten — ohne einen
+abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
 
 ## Personas
 
@@ -30,7 +40,7 @@ und KI-generiert.
 ## Bestätigter Plattformstand
 
 - Beide Instagram-Profile sind erstellt und über die Meta-Kontenübersicht erreichbar.
-- Beide Instagram-Profile haben jeweils sechs veröffentlichte Feed-Beiträge.
+- Leona hat sieben und Mara sechs veröffentlichte Feed-Beiträge.
 - Jeder neue Beitrag wurde mit dem Instagram-KI-Label veröffentlicht.
 - Bei den zuvor bestätigten Beiträgen blieb Facebook-Crossposting deaktiviert;
   die erweiterte Einstellung wurde für die zwei nativen Posts vom 4. September
@@ -60,6 +70,7 @@ und KI-generiert.
 - https://www.instagram.com/leonavoss.ai/p/Dc0pc2sgDUd/
 - https://www.instagram.com/leonavoss.ai/p/Dc0pf8NAAnG/
 - https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/
+- https://www.instagram.com/p/Dc75xWsgEQo/
 
 ### Mara
 
@@ -286,9 +297,19 @@ und KI-generiert.
   Fallback-Runtime bleibt vollständig ausreichend; es wurde kein Model-
   Executor, kein OpenAI-API-Aufruf und keine kostenpflichtige Abhängigkeit
   aktiviert.
-- Abschlussstand: 116 Tests sowie Python-, JavaScript-, PowerShell-, Runtime-
-  und Restore-Prüfung grün. Dieser Run führte keine externe Plattformaktion
-  aus.
+- Ein weiterer, ausdrücklich freigegebener Leona-Carousel „September Roofline“
+  wurde am 6. September nativ mit drei Bildern veröffentlicht und sichtbar mit
+  Permalink sowie nativem KI-Label bestätigt. Die lokale Abstimmung bewahrt den
+  älteren Einzelpost und markiert alle drei tatsächlich genutzten Top-Picks.
+- Das Fiverr-Angebot ist mit festen Launchpreisen, Lieferzeiten, Revisionen,
+  FAQ, Requirements und eigenem Gallery-Cover vollständig vorbereitet. Das
+  persönliche Verkäuferprofil und der öffentliche Gig-Publish bleiben beim
+  Owner; Status `FIVERR_LAUNCH_READY_WAITING_FOR_OWNER`.
+- Die frühere unvollständige Leona-Demokarte ist jetzt das vollständige
+  SFW-Paket „Gym Reset, aber echt“: fünf reale KI-Assets, Pose-Matrix, Top 3,
+  Caption, Hook, CTA, Musik A/B/ohne und Prime Time, jedoch ohne Freigabe oder
+  Veröffentlichung.
+- Abschlussstand: 117 Tests sowie Python-, Runtime- und SQLite-Prüfung grün.
 
 ## Offene Projektbereiche
 
@@ -301,15 +322,17 @@ und KI-generiert.
 - TikTok-Profile und native Kurzvideos aufbauen.
 - Zentrale Linkseite und rechtssichere Monetarisierungsstrecke umsetzen.
 - Performance nach 24 Stunden, 72 Stunden und 7 Tagen erfassen.
-- MockPublisher nach separater Freigabe durch offizielle Plattformadapter
-  ergänzen; echte Veröffentlichungen bleiben bis dahin deaktiviert.
+- Den vorhandenen offiziellen Meta-Adapter erst mit echten, sicher gesetzten
+  Zugangsdaten und öffentlichen HTTPS-Asset-URLs aktivieren; ohne vollständige
+  Gates bleibt der Versand fail-closed.
 - Die simulierten Analytics später durch erlaubte, offizielle API-Metriken
   ersetzen.
 - Engagement Queue als zweite Ansicht in die lokale Oberfläche aufnehmen.
-- Owner-Review der verbleibenden Bridge-to-Tuesday-Auswahl durchführen und Top
-  3 beziehungsweise Carousel-Reihenfolge bestätigen oder ändern; je ein
-  Einzelmotiv aus Mara „Maschinencheck“ und Leona „September Roofline“ ist
-  bereits nativ veröffentlicht.
+- Owner-Review der offenen Auswahl durchführen. „Gym Reset, aber echt“ besitzt
+  fünf neue echte Kandidaten; Mara „Maschinencheck“ und „Küchenfenster“ sowie
+  Leona „Spätsommer“ bleiben ohne neue Einzelentscheidung unveröffentlicht.
+- Echte Analytics für Leona `Dc75xWsgEQo` nach 24/72/168 Stunden erfassen;
+  fehlende Werte bleiben `UNKNOWN` statt künstlich `0`.
 - Erst nach ausdrücklicher Owner-Freigabe planen; die vier übrigen Briefs nach
   dem Reset bewerten, ohne ein fünftes Paket in diesem Lauf zu beginnen.
 - Originaldateien der zehn älteren Feed-Posts mit Herkunft/Rechten später

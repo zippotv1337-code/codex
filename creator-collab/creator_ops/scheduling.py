@@ -73,7 +73,7 @@ class PrimeTimePlanner:
             JOIN platform_variants v ON v.id = p.platform_variant_id
             JOIN content_items c ON c.id = p.content_id
             WHERE c.creator_id = ? AND v.platform = ? AND v.format = ?
-              AND a.window_hours = 168 AND p.provider = 'instagram-native-manual'
+              AND a.window_hours = 168 AND p.provider LIKE 'instagram-native-manual%'
               AND substr(COALESCE(p.published_at,p.scheduled_at), 12, 5) = ?
             """,
             (creator_id, platform, content_format, local_time),

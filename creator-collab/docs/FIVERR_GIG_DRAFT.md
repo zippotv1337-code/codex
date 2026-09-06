@@ -1,4 +1,6 @@
-# Fiverr Gig Draft — nicht veröffentlicht
+# Fiverr Gig — Launch-Entwurf, nicht veröffentlicht
+
+Status: `FIVERR_LAUNCH_READY_WAITING_FOR_OWNER`
 
 ## Titelentwurf
 
@@ -6,7 +8,9 @@ I will create a realistic AI social content pack for your virtual persona
 
 ## Kategorie / Suchbegriffe
 
-- Kategorie/Subkategorie: `[OWNER GATE – im Fiverr-Desktopformular auswählen]`
+- Bevorzugte Kategorie: `AI Services`
+- Bevorzugte Subkategorie: `AI Artists` / `AI Image Generation` — im aktuellen
+  Fiverr-Formular die nächstpassende angebotene Option auswählen
 - Tags: `ai influencer`, `social media content`, `virtual influencer`,
   `instagram carousel`, `ai photography`
 
@@ -20,8 +24,8 @@ required.
 
 ## Pakete
 
-Die Leistungen entsprechen exakt [PACK_CATALOG.md](PACK_CATALOG.md). Fiverr-
-Preis, Lieferzeit und Revisionszahl bleiben pro Stufe `[OWNER GATE]`.
+Die Leistungen, Startpreise, Lieferzeiten, Revisionen und Nutzungsgrenzen
+entsprechen exakt [PACK_CATALOG.md](PACK_CATALOG.md).
 
 ## FAQ
 
@@ -54,21 +58,35 @@ Nein. Es können Stilrichtungen vorgeschlagen werden, aber keine Musiklizenz.
 4. Referenzen mit ausdrücklicher Bestätigung der Nutzungsrechte
 5. Logos/Marken nur mit bestätigter Berechtigung
 6. gewünschte Sprache und Tonalität
-7. gewünschtes Dateiformat/Auflösung `[OWNER GATE für Standardangebot]`
+7. gewünschtes Dateiformat; Standard ist JPG/PNG in 1080 × 1350 px
 
 ## Gallery-Konzept
 
-- Bild 1: Cover „5 Kandidaten → Top 3 → fertiges Carousel“
+- Bild 1 fertig: `output/fiverr-gallery/fiverr-gig-cover-ai-social-content-pack.png`
+  (1618 × 972 px, eigenes KI-generiertes SFW-Motiv, keine fremde Marke,
+  keine Kontaktdaten oder Performancebehauptung)
 - Bild 2: anonymisierte Pose-Matrix / QA-Übersicht
 - Bild 3: lokale Review-Ansicht oder PDF-Sample
 
-Leona-/Mara-Material erst nach ausdrücklicher Gallery-Rechtefreigabe verwenden.
+Ein Bild genügt laut Fiverr für den Launch; Bild 2 und 3 bleiben optionale
+spätere Verbesserungen. Leona-/Mara-Material wird ohne ausdrückliche
+Gallery-Rechtefreigabe nicht verwendet.
 
 ## Vor Veröffentlichung noch zwingend
 
-- Preise, Lieferzeiten, Revisionen
-- Kategorie und Fiverr-Pflichtfelder
-- kommerzielle Nutzungs-/Exklusivitätsregeln
-- Gallery-Auswahl und Rechte
+- Fiverr-Verkäuferprofil mit den echten persönlichen Angaben des Owners
+- Kategorie/Subkategorie und Fiverr-Pflichtfelder im zugänglichen Gig-Formular
+- vorhandenes rechteklares Gallery-Cover hochladen
 - Anbieter-, Steuer-/DAC7-, Identitäts- und Business-Angaben
-- konkrete Owner-Freigabe für `Publish Gig`
+- Gig-Vorschau prüfen und den finalen öffentlichen `Publish Gig`-Klick
+  unmittelbar bestätigen
+
+## Plattformkonformität
+
+Der Gig ist ausdrücklich KI-gestützt, SFW und individuell geprüft. Keine
+Deepfakes, keine nicht einvernehmliche Ähnlichkeitskopie, keine Fake-Reichweite
+und keine Performancegarantie. Maßgeblich sind die offiziellen Fiverr-
+Richtlinien:
+
+- https://help.fiverr.com/hc/en-us/articles/37554976380177
+- https://help.fiverr.com/hc/en-us/articles/32242973123985-Our-Community-Standards

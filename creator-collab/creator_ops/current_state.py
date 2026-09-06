@@ -128,7 +128,7 @@ class CurrentStateService:
         )
         real_publications = int(
             self.database.scalar(
-                "SELECT COUNT(*) FROM publications WHERE provider = 'instagram-native-manual'"
+                "SELECT COUNT(*) FROM publications WHERE provider LIKE 'instagram-native-manual%'"
             )
             or 0
         )
@@ -238,7 +238,10 @@ class CurrentStateService:
                     "paid_services",
                 ],
             },
-            "publishing_mode": "human-gated local queue; external official adapter unavailable",
+            "publishing_mode": (
+                "human-gated local queue; official adapter available; "
+                "live state depends on current owner/config gates"
+            ),
         }
 
     @staticmethod

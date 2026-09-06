@@ -1,5 +1,23 @@
 # Changelog
 
+## Betriebsupdate — 2026-09-06
+
+- Ein owner-bestätigter nativer Leona-Carousel mit drei Bildern wurde sichtbar
+  auf Instagram veröffentlicht und anschließend lokal mit externer ID,
+  Permalink, KI-Disclosure und allen drei verwendeten Asset-IDs abgeglichen.
+- Die manuelle Instagram-Abstimmung unterstützt nun mehrere veröffentlichte
+  Bilder pro Carousel und mehrere echte Posts zu demselben Content, ohne den
+  älteren Einzelpost zu überschreiben oder einen Doppelpost zu behaupten.
+- Wenn alle aktuellen Top-Picks bestätigt veröffentlicht sind, schließen
+  Content und Queue konsistent auf `PUBLISHED`; Analytics, Archiv und
+  Prime-Time erkennen alle manuellen Provider-Varianten weiter als reale Daten.
+- Fiverr-Angebot, Pakete, FAQ, Anforderungen und ein eigenes rechteklares
+  Gallery-Cover sind `FIVERR_LAUNCH_READY_WAITING_FOR_OWNER`. Das persönliche
+  Verkäuferprofil und der finale öffentliche Publish bleiben Owner-Gates.
+- Die frühere unvollständige Leona-Demokarte wurde als vollständiges SFW-Paket
+  „Gym Reset, aber echt“ mit fünf realen Kandidaten, Pose-Matrix und Top 3
+  erneuert. Es wurde nicht freigegeben oder veröffentlicht.
+
 ## 1.6.4-beta — 2026-09-05
 
 - Standalone-Betrieb läuft über einen einzelnen Supervisor mit Watchdog,

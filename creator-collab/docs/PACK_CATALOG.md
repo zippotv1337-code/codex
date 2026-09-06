@@ -3,8 +3,8 @@
 Stand: 5. September 2026 · Single Source of Truth für den Launch-Entwurf
 
 Alle Angebote sind SFW, KI-gestützt und werden vor Lieferung menschlich
-geprüft. Preise, Lieferzeit, Revisionen und kommerzielle Lizenzbedingungen sind
-noch `[OWNER GATE]`. Bis zu deren Freigabe bleibt jedes Pack ein Entwurf.
+geprüft. Die folgenden Startpreise und Lieferbedingungen sind der verbindliche
+Launch-Entwurf; Fiverr kann sie beim Einstellen in die Kontowährung umrechnen.
 
 ## BASIC — SFW Social Content Pack
 
@@ -13,16 +13,18 @@ noch `[OWNER GATE]`. Bis zu deren Freigabe bleibt jedes Pack ein Entwurf.
 - visuelle QA, Duplikatprüfung und Top-3-Empfehlung
 - Carousel-Reihenfolge, Caption, Hook, CTA und Hashtags
 - Übergabe als Bilddateien plus kompakte Review-Übersicht
-- Preis: `[OWNER GATE]`
-- Lieferzeit: `[OWNER GATE]`
-- Revisionen: `[OWNER GATE]`
+- Startpreis: 45 USD
+- Lieferzeit: 3 Kalendertage
+- Revisionen: 1 gebündelte Korrekturrunde
 
 ## STANDARD — SFW Content Duo
 
 - alles aus BASIC für 2 vollständige Pakete / 10 Bildkandidaten
 - konsistenter Themen- und Pose-Mix
 - 2 Story-Konzepte mit je 3 Frames
-- Preis, Lieferzeit und Revisionen: `[OWNER GATE]`
+- Startpreis: 95 USD
+- Lieferzeit: 5 Kalendertage
+- Revisionen: 2 gebündelte Korrekturrunden
 
 ## PREMIUM — SFW Content Reserve
 
@@ -30,7 +32,9 @@ noch `[OWNER GATE]`. Bis zu deren Freigabe bleibt jedes Pack ein Entwurf.
 - QA, Top 3, Texte und Carousel je Paket
 - 4 Story-Sequenzen mit je 3 Frames
 - Content-Reserve, Portfolio-/Collection-Zuordnung und Review-Übersicht
-- Preis, Lieferzeit und Revisionen: `[OWNER GATE]`
+- Startpreis: 175 USD
+- Lieferzeit: 8 Kalendertage
+- Revisionen: 3 gebündelte Korrekturrunden
 
 ## Feste Grenzen
 
@@ -42,3 +46,16 @@ Referenzen, Logos und Markenmaterialien.
 
 Zusätzliche Persona, zusätzliche Pakete, Identitätswechsel oder neue
 Generationsrunden sind Add-on beziehungsweise Custom Offer.
+
+## Lieferstandard und Nutzungsrechte
+
+- Feed-Master als JPG oder PNG in 1080 × 1350 px; vorhandene höher aufgelöste
+  Originale werden zusätzlich geliefert, sofern die jeweilige Tool-Lizenz das
+  erlaubt.
+- Caption/Hook/CTA/Hashtags und Review-Übersicht als UTF-8-PDF oder Markdown.
+- Einfache kommerzielle Nutzung der final gelieferten Auswahl ist enthalten,
+  soweit Generator-, Referenz-, Marken- und Kundenrechte dies erlauben.
+- Exklusivität, Buy-out, bezahlte Werbung, Whitelisting und Roh-/Arbeitsdateien
+  sind nicht automatisch enthalten und benötigen ein Custom Offer.
+- Der Kunde bestätigt vor Beginn die Rechte an Referenzen, Logos, Marken und
+  Personenabbildungen. Nicht geklärte Rechte stoppen die betroffene Produktion.
