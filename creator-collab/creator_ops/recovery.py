@@ -72,12 +72,15 @@ class RecoveryBackupService:
             "CHANGELOG.md",
             "pyproject.toml",
             "AUTOPILOT_CHECKPOINT.md",
+            "config.toml",
             ".env.example",
             "START_CREATOR_OPS.ps1",
             "STOP_CREATOR_OPS.ps1",
             "RESTART_CREATOR_OPS.ps1",
             "STATUS_CREATOR_OPS.ps1",
             "START_LAN_CREATOR_OPS.ps1",
+            "START_STANDALONE_CREATOR_OPS.ps1",
+            "STOP_STANDALONE_CREATOR_OPS.ps1",
         ):
             path = self.project_root / name
             if path.is_file():
@@ -213,6 +216,11 @@ class RecoveryBackupService:
             ):
                 raise ValueError(f"unsafe_patch_member:{relative.as_posix()}")
             selected.append(path)
+
+        # Meta receipts are part of the publish idempotency boundary, not
+        # optional diagnostics. Every patch must carry the latest validated
+        # intents/confirmations even when callers only name code or docs.
+        selected.extend(self._meta_receipt_files())
 
         now = now or datetime.now().astimezone()
         destination = Path(destination)

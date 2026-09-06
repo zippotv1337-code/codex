@@ -110,13 +110,52 @@ class PublishQueueTests(unittest.TestCase):
         self.assertFalse(result["external_action"])
         self.assertEqual(updated["status"], LOCAL_SCHEDULED)
         self.assertIsNone(updated["suggested_at"])
-        self.assertNotEqual(updated["queue_key"], original["queue_key"])
+        # Rescheduling is the same approved publication attempt. Keeping the
+        # key ensures a durable intent/receipt can never be bypassed by moving
+        # the local slot.
+        self.assertEqual(updated["queue_key"], original["queue_key"])
         self.assertEqual(
             self.pipeline.db.scalar(
                 "SELECT COUNT(*) FROM review_events WHERE action='OWNER_RESCHEDULED_UI'"
             ),
             1,
         )
+        with self.assertRaisesRegex(ValueError, "reschedule_review_not_required"):
+            service.accept_suggested_reschedule(
+                self.card["content_id"], planned + timedelta(hours=1)
+            )
+
+    def test_stale_publishing_claim_blocks_without_rekey_or_automatic_retry(self) -> None:
+        self._approve()
+        service = PublishQueueService(self.pipeline.db)
+        original = service.list()[0]
+        planned = datetime.fromisoformat(original["planned_at"])
+        stale_at = planned.astimezone(UTC) - timedelta(hours=1)
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE publish_queue
+                SET status=?, attempts=1, updated_at=?
+                WHERE id=?
+                """,
+                ("PUBLISHING", stale_at.isoformat(), original["id"]),
+            )
+
+        service.reconcile(planned + timedelta(hours=1))
+        blocked = service.list()[0]
+
+        self.assertEqual(blocked["status"], BLOCKED_EXTERNAL_PUBLISHING)
+        self.assertEqual(blocked["queue_key"], original["queue_key"])
+        self.assertEqual(
+            blocked["last_error"],
+            "stale_publishing_claim_owner_reconcile_required",
+        )
+        self.assertIsNone(blocked["suggested_at"])
+        self.assertIsNone(blocked["next_attempt_at"])
+        with self.assertRaisesRegex(ValueError, "manual_reconcile"):
+            service.rearm_blocked_preflight(
+                self.card["content_id"], planned + timedelta(hours=1)
+            )
         with self.assertRaisesRegex(ValueError, "reschedule_review_not_required"):
             service.accept_suggested_reschedule(
                 self.card["content_id"], planned + timedelta(hours=1)

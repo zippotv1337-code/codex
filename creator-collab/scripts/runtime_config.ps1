@@ -55,6 +55,8 @@ function Get-CreatorOpsRuntimeConfig([string]$ProjectRoot,[string]$ConfigPath = 
     SupervisorPollSeconds = [int]$config.supervisor.poll_seconds
     PublishingLiveEnabled = [bool]$config.publishing.live_enabled
     PublishingAdapter = [string]$config.publishing.adapter
+    OfficialInstagramPublish = [bool]$config.capabilities.official_instagram_publish
+    LiveExternalActions = [bool]$config.capabilities.live_external_actions
   }
 }
 
