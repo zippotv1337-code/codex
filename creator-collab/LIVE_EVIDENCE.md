@@ -74,4 +74,7 @@ Caption:
 - Tests: 117/117 grün; Python-Compilecheck grün.
 - `CURRENT_STATE`: offizieller Adapter korrekt als verfügbar beschrieben;
   Live-Zustand hängt von Owner-/Konfigurations-Gates ab.
+- Recovery: `backups/Backup_Meilenstein_20260906-1337.zip`, SHA256
+  `7bde139ddede97092a9be7c57e7d8a9fc67ee13ad7d9d9b89645f7a5c4215199`,
+  225 Members und ZIP-Integrität grün.
 - Kosten und neue Secrets: 0.

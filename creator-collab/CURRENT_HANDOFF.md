@@ -65,6 +65,24 @@ Stand: 6. September 2026, 13:34 Uhr · Creator Ops 1.6.4-beta
   Kommentartexte wird keine individuelle Antwort erfunden.
 - Reale Fiverr-Umsatz- oder Lead-Signale existieren noch nicht.
 
+## Git/GitHub
+
+- Der geprüfte Funktions- und Dokumentationsstand ist ohne Force-Push oder
+  History-Rewrite als Commit `faa563f` auf `origin/main` synchronisiert.
+- Die lokale Arbeitskopie nutzt historisch eine parallele `master`-Linie;
+  deshalb erfolgte der sichere Sync als inhaltsgleicher Cherry-pick über den
+  sauberen Main-Worktree. Der `creator-collab`-Projektbaum wurde bitgleich
+  verifiziert; fremde Root-Dateien blieben unberührt.
+
+## Recovery
+
+- Vollständiges secrets-freies Meilensteinbackup:
+  `backups/Backup_Meilenstein_20260906-1337.zip`
+- SHA256:
+  `7bde139ddede97092a9be7c57e7d8a9fc67ee13ad7d9d9b89645f7a5c4215199`
+- Validiert: 225 Members, alle Hashes korrekt, Sanitized-DB Integrität `ok`,
+  fünf Gym-Previewdateien und aktueller Checkpoint enthalten.
+
 ## Nächste drei Arbeiten
 
 1. Owner vervollständigt bei Fiverr das echte Verkäuferprofil. Danach kann der

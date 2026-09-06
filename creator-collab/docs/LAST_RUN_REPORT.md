@@ -843,3 +843,56 @@ anschließend von Astra ohne offenen P0/P1-Blocker nachgeprüft.
 13. Eine Leona-Neuplanung und eine Mara-Reviewentscheidung sind offen.
 14. Reale Analytics fehlen und dürfen nicht erfunden werden.
 15. Dieser Run führte keine externe Plattformaktion aus.
+
+# Creator Ops 1.6.4-beta — Channel-Validierung — 6. September 2026
+
+Die beiden neuen P0-Lanes wurden delta-first bearbeitet. Nach konkreter
+Owner-Bestätigung ging ein Leona-Carousel „September Roofline“ mit drei echten
+Assets nativ live. Der sichtbare Permalink
+`https://www.instagram.com/p/Dc75xWsgEQo/`, drei Slides, Caption, Alt-Texte und
+das native Instagram-Label `KI-Inhalte` wurden geprüft. Publication 7,
+Queuejob 2, Content 5 und die Assets 22/25/23 sind lokal konsistent auf
+`PUBLISHED`; der ältere Einzelpost bleibt erhalten.
+
+Die dabei gefundene Lücke der manuellen Abstimmung wurde minimal geschlossen:
+Carousels akzeptieren mehrere Asset-IDs, mehrere native Posts desselben
+Contents kollidieren nicht mehr am Provider-Schlüssel, und reale Analytics,
+Archiv, Prime-Time sowie Current State erkennen alle manuellen Provider-
+Varianten. Der offizielle Meta-Adapter bleibt vorhanden, aber ohne Credentials
+und öffentliche Asset-URLs fail-closed. Der native Pilot erhöht daher den
+Automation-Proof bewusst nicht.
+
+Fiverr ist `FIVERR_LAUNCH_READY_WAITING_FOR_OWNER`: drei bepreiste Pakete,
+Lieferzeiten, Revisionen, FAQ, Requirements, Nutzungsgrenzen und ein eigenes
+Gallery-Cover sind fertig. Das persönliche Verkäuferprofil ist noch nicht
+erstellt; Identität, Telefon, Steuer/DAC7 und Businessdaten bleiben Owner-only.
+
+Als genau ein P1-Paket wurde die alte unvollständige Leona-Demokarte in „Gym
+Reset, aber echt“ umgewandelt. Fünf eigene SFW-Bilder decken Frontal, links 3/4,
+rechts 3/4, Ganzkörper/Bewegung und candid ab. Top 3 ist `S1 → S2 → S5`; alle
+Dashboard-Checks sind grün, Status `READY_FOR_REVIEW`, kein Publish.
+
+Abschlussprüfung: 117/117 Tests, Python-Compile, Runtime-Neustart, Healthcheck
+und SQLite-Integrität grün. Aktueller Bestand: 26 reale Assets, 4 Mock-Slots,
+7 Publikationen, 3 Queuejobs. Das validierte Meilensteinbackup
+`Backup_Meilenstein_20260906-1337.zip` hat SHA256
+`7bde139ddede97092a9be7c57e7d8a9fc67ee13ad7d9d9b89645f7a5c4215199`.
+Kosten und neue Secrets: 0.
+
+## Für Auswertung mit ChatGPT
+
+1. Leona-Carousel `Dc75xWsgEQo` ist real live.
+2. Der Pilot war nativ, nicht per Graph API; Automation-Proof bleibt 0/10.
+3. Drei Carousel-Assets sind lokal tatsächlich als veröffentlicht markiert.
+4. Der ältere Roofline-Einzelpost bleibt separat erhalten.
+5. 117/117 Tests sind grün.
+6. Offizieller Meta-Adapter ist vorhanden, derzeit owner-/config-gegatet.
+7. Fiverr-Inhalt und Cover sind launch-ready.
+8. Fiverr-Verkäuferprofil bleibt persönliches Owner-Gate.
+9. Leona „Gym Reset“ besitzt fünf echte neue Kandidaten.
+10. Gym Reset ist nur reviewbereit, nicht freigegeben oder live.
+11. Insgesamt sind 26 echte Vorschauen vorhanden.
+12. Leona hat 11, Mara 10 reale unveröffentlichte Assets.
+13. Echte 24h-Analytics frühestens am 7. September ca. 13:00 Uhr erfassen.
+14. Keine Kommentare, Reichweite oder Umsätze erfinden.
+15. `origin/main` enthält den geprüften Funktionsstand ab `faa563f`.
