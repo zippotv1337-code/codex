@@ -63,6 +63,23 @@ class RecoveryChainTests(unittest.TestCase):
             root = Path(tempdir)
             (root / "docs").mkdir()
             (root / "docs" / "delta.md").write_text("safe delta\n", encoding="utf-8")
+            receipt_key = "c" * 64
+            receipts = root / "data" / "meta-receipts"
+            receipts.mkdir(parents=True)
+            (receipts / f"{receipt_key}.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "creator-ops-meta-receipt-v1",
+                        "status": "PUBLISH_INTENT",
+                        "idempotency_key": receipt_key,
+                        "creation_id": "container-patch",
+                        "creator_slug": "mara-field",
+                        "ig_user_id": "17841400000000002",
+                        "created_at": "2026-09-06T00:02:00+00:00",
+                    }
+                ),
+                encoding="utf-8",
+            )
             database = CreatorDatabase(root / "data" / "active.db")
             database.initialize()
             base = ExportBackupService(database).backup_sqlite(root / "backups", "base")
@@ -82,7 +99,33 @@ class RecoveryChainTests(unittest.TestCase):
                 self.assertEqual(manifest["base_backup"], base.name)
                 self.assertEqual(manifest["restore_order"], [base.name, patch.name])
                 self.assertIn("docs/delta.md", archive.namelist())
+                self.assertIn(f"data/meta-receipts/{receipt_key}.json", archive.namelist())
                 self.assertIn("recovery/creator_ops.db", archive.namelist())
+
+    def test_full_backup_contains_standalone_boot_configuration(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            (root / "config.toml").write_text(
+                '[runtime]\nport = 4180\n', encoding="utf-8"
+            )
+            (root / "START_STANDALONE_CREATOR_OPS.ps1").write_text(
+                "# safe test wrapper\n", encoding="utf-8"
+            )
+            (root / "STOP_STANDALONE_CREATOR_OPS.ps1").write_text(
+                "# safe test wrapper\n", encoding="utf-8"
+            )
+            database = CreatorDatabase(root / "data" / "active.db")
+            database.initialize()
+
+            backup = RecoveryBackupService(database, root).build(
+                root / "backups", kind="milestone"
+            )
+
+            with zipfile.ZipFile(backup) as archive:
+                names = set(archive.namelist())
+                self.assertIn("config.toml", names)
+                self.assertIn("START_STANDALONE_CREATOR_OPS.ps1", names)
+                self.assertIn("STOP_STANDALONE_CREATOR_OPS.ps1", names)
 
     def test_patch_rejects_members_outside_project(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

@@ -730,21 +730,38 @@ class PublishQueueService:
                 (utc_now(),),
             )
             stale_before = (current - self.missed_slot_grace).isoformat()
+            stale_claims = connection.execute(
+                """
+                SELECT id, publication_id FROM publish_queue
+                WHERE status=? AND updated_at < ?
+                """,
+                (PUBLISHING, stale_before),
+            ).fetchall()
             connection.execute(
                 """
                 UPDATE publish_queue
-                SET status=?, last_error='stale_publishing_claim_recovered',
-                    next_attempt_at=?, updated_at=?
+                SET status=?,
+                    last_error='stale_publishing_claim_owner_reconcile_required',
+                    next_attempt_at=NULL, suggested_at=NULL, updated_at=?
                 WHERE status=? AND updated_at < ?
                 """,
                 (
-                    FAILED_RETRYABLE,
-                    current.isoformat(),
+                    BLOCKED_EXTERNAL_PUBLISHING,
                     utc_now(),
                     PUBLISHING,
                     stale_before,
                 ),
             )
+            for stale in stale_claims:
+                connection.execute(
+                    """
+                    UPDATE publications
+                    SET schedule_status=?,
+                        schedule_error='stale_publishing_claim_owner_reconcile_required'
+                    WHERE id=?
+                    """,
+                    (BLOCKED_EXTERNAL_PUBLISHING, stale["publication_id"]),
+                )
             connection.execute(
                 """
                 UPDATE publish_queue
@@ -1051,19 +1068,15 @@ class PublishQueueService:
             if self._as_utc(suggested) <= current:
                 raise ValueError("reschedule_suggestion_expired")
             planned_at = suggested.isoformat()
-            queue_key = self._queue_key(
-                row["platform"], content_id, row["approval_version"], planned_at
-            )
             connection.execute(
                 """
                 UPDATE publish_queue
-                SET queue_key=?, planned_at=?, status=?, last_error=NULL,
+                SET planned_at=?, status=?, last_error=NULL,
                     suggested_at=NULL, next_attempt_at=NULL,
                     adapter_provider=?, updated_at=?
                 WHERE id=?
                 """,
                 (
-                    queue_key,
                     planned_at,
                     LOCAL_SCHEDULED,
                     self.adapter.provider,

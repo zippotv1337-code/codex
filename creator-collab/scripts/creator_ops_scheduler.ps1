@@ -37,10 +37,18 @@ Push-Location $projectRoot
 try {
   Write-RunLog 'scheduler invocation started'
   Invoke-CreatorOpsStep -CommandArgs @('publish-reconcile')
-  if ($runtimeConfig.DispatchLive -and $runtimeConfig.PublishingLiveEnabled) {
+  $passwordReady = -not [string]::IsNullOrEmpty($env:CREATOR_OPS_PASSWORD) -and `
+    $env:CREATOR_OPS_PASSWORD.Length -ge 12
+  $completeLiveGate = $runtimeConfig.DispatchLive -and `
+    $runtimeConfig.PublishingLiveEnabled -and `
+    $runtimeConfig.OfficialInstagramPublish -and `
+    $runtimeConfig.LiveExternalActions -and `
+    $runtimeConfig.PublishingAdapter -eq 'meta-graph' -and `
+    $passwordReady
+  if ($completeLiveGate) {
     Invoke-CreatorOpsStep -CommandArgs @('publish-dispatch-due', '--at', [DateTimeOffset]::Now.ToString('o'))
   } else {
-    Write-RunLog 'live dispatch skipped by config.toml owner gate'
+    Write-RunLog 'live dispatch skipped by complete owner gate'
   }
 
   $berlin = [TimeZoneInfo]::FindSystemTimeZoneById('W. Europe Standard Time')
