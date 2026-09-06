@@ -95,6 +95,13 @@ h2 { margin: 0; font: 500 31px/1 Georgia, serif; letter-spacing: -.035em; }
 .approve-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.07); }
 .approve-button:focus-visible { outline: 3px solid var(--card-accent); outline-offset: 3px; }
 .approve-button:disabled { color: #7c766d; background: #d8d1c5; box-shadow: none; cursor: default; }
+.reschedule-button { width:100%; min-height:48px; margin:0 0 8px; border:1px solid #d3a94f; border-radius:12px; color:#5f4309; background:#fff0c8; cursor:pointer; font-weight:850; }
+.reschedule-button:hover { filter:brightness(1.03); }
+.live-authorize-button { width:100%; min-height:48px; margin:0 0 8px; border:1px solid #8c6740; border-radius:12px; color:#fff; background:#714c2f; cursor:pointer; font-weight:850; }
+.live-authorize-button:hover { filter:brightness(1.08); }
+.rearm-preflight-button { width:100%; min-height:48px; margin:0 0 8px; border:1px solid #52718a; border-radius:12px; color:#173a54; background:#e2f1fb; cursor:pointer; font-weight:850; }
+.rearm-preflight-button:hover { filter:brightness(1.04); }
+.live-gate-status { margin:0 0 8px; padding:10px 12px; border-radius:10px; color:#31523d; background:#e7f3e9; font-size:.85rem; font-weight:750; }
 .decision-help { margin:12px 0 8px; color:var(--muted); font-size:10px; line-height:1.5; }
 .decision-actions { display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px; }
 .decision-actions button { min-height:48px; border:0; border-radius:12px; cursor:pointer; font-weight:850; }

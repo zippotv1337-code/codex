@@ -1,5 +1,5 @@
 [app]
-release = "BETA_1_5"
+release = "BETA_1_6_4"
 timezone = "Europe/Berlin"
 
 [runtime]
@@ -32,6 +32,7 @@ live_enabled = false
 standalone_runtime = true
 per_user_autostart_fallback = true
 offline_snapshot = true
+official_instagram_publish_adapter = true
 official_instagram_publish = false
 live_external_actions = false
 hard_dependency_on_gpt6 = false

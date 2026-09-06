@@ -24,7 +24,8 @@ function Write-RunLog([string]$Message) {
 }
 
 function Invoke-CreatorOpsStep([string[]]$CommandArgs) {
-  $output = & $python -m creator_ops.cli --db $databasePath @CommandArgs 2>&1
+  $output = & $python -m creator_ops.cli --db $databasePath `
+    --config $runtimeConfig.ConfigPath @CommandArgs 2>&1
   $exit = $LASTEXITCODE
   $output | ForEach-Object { Write-RunLog $_ }
   if ($exit -ne 0) {

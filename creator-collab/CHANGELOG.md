@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.6.4-beta — 2026-09-05
+
+- Standalone-Betrieb läuft über einen einzelnen Supervisor mit Watchdog,
+  Scheduler, Morning Run, read-only Offline-Snapshot und benutzereigenem
+  Windows-Autostart; Live-Dispatch bleibt standardmäßig deaktiviert.
+- Offizieller Meta-Graph-Adapter für Instagram-Carousels ergänzt: öffentliche
+  HTTPS-Asset-URLs, persona-feste Kontozuordnung, `is_ai_generated=true` am
+  Carousel-Parent, drei Top-Picks, Containerprüfung und echte ID-/Permalink-
+  Bestätigung sind Pflicht.
+- Lokales APPROVE ist keine Live-Freigabe: ein separater auditierter
+  Zweiklick-Schritt autorisiert immer nur das konkrete Paket.
+- Ein dauerhafter Publish-Intent wird vor `media_publish` geschrieben.
+  Unsichere Ausgänge blockieren automatische Wiederholungen; bestätigte
+  Receipts verhindern Doppelposts nach einem lokalen Neustart.
+- Live-Konfiguration erzwingt selbst auf Loopback den Passwort-/CSRF-Schutz.
+- Überfällige Queuejobs erhalten einen expliziten Owner-Button zum Übernehmen
+  des vorgeschlagenen neuen Termins; die Aktion bleibt rein lokal.
+- GPT-6 Astra HIGH ist als optionaler bevorzugter Capability-Pfad hinterlegt;
+  GPT-5.6 Sol und der Runtime-Default bleiben funktionsfähige Fallbacks.
+- Keine Live-Veröffentlichung, kein Fiverr-Formular und keine externe
+  Accountaktion wurden in diesem lokalen Implementierungslauf ausgeführt.
+
 ## 1.4.1 — 2026-09-05
 
 - Reviewkarten verwenden den autoritativen lokalen Queue-Termin; alte native

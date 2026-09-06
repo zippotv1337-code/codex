@@ -20,7 +20,7 @@ from zoneinfo import ZoneInfo
 
 from .asset_import import LocalAssetImportService
 from .archive import ArchiveService
-from .cli import ROOT, build_pipeline
+from .cli import ROOT, build_pipeline, build_publish_queue, live_publishing_requested
 from .current_state import CurrentStateService
 from .review import ReviewDashboardService
 from .stories import StoryReserveService
@@ -506,6 +506,30 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 content_id = int(parts[2])
                 self._json(self.service.approve(content_id))
                 return
+            if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "reschedule":
+                content_id = int(parts[2])
+                self._json(self.publishing.accept_suggested_reschedule(content_id))
+                return
+            if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "live-authorize":
+                if not self.auth.enabled:
+                    self._json(
+                        {"error": "password_protected_dashboard_required_for_live_authorization"},
+                        HTTPStatus.FORBIDDEN,
+                    )
+                    return
+                content_id = int(parts[2])
+                self._json(self.publishing.authorize_live_publish(content_id))
+                return
+            if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "rearm-preflight":
+                if not self.auth.enabled:
+                    self._json(
+                        {"error": "password_protected_dashboard_required_for_publish_rearm"},
+                        HTTPStatus.FORBIDDEN,
+                    )
+                    return
+                content_id = int(parts[2])
+                self._json(self.publishing.rearm_blocked_preflight(content_id))
+                return
             if (
                 len(parts) == 4
                 and parts[:2] == ["api", "reviews"]
@@ -549,13 +573,16 @@ def create_server(
     port: int = 4180,
     asset_root: Path = ROOT,
     auth_password: str | None = None,
+    config_path: Path = ROOT / "config.toml",
 ) -> ThreadingHTTPServer:
     if host not in {"127.0.0.1", "localhost", "::1"} and not auth_password:
         raise ValueError("A password is required when the dashboard listens beyond localhost")
+    if live_publishing_requested(config_path) and not auth_password:
+        raise ValueError("CREATOR_OPS_PASSWORD is required whenever live publishing is enabled")
     pipeline = build_pipeline(database_path)
     pipeline.initialize()
     service = ReviewDashboardService(pipeline)
-    publishing = PublishQueueService(pipeline.db)
+    publishing = build_publish_queue(pipeline, config_path)
     publishing.reconcile()
     control_plane = ControlPlaneService(
         service,
@@ -584,6 +611,7 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--db", type=Path, default=ROOT / "data" / "review_dashboard.db")
     result.add_argument("--host", default="127.0.0.1")
     result.add_argument("--port", type=int, default=4180)
+    result.add_argument("--config", type=Path, default=ROOT / "config.toml")
     return result
 
 
@@ -595,6 +623,7 @@ def main() -> int:
         args.host,
         args.port,
         auth_password=password,
+        config_path=args.config,
     )
     auth_mode = "password" if password else "local-open"
     print(

@@ -3,6 +3,7 @@ data/*.db-*
 data/*.pid
 data/*.json
 data/logs/
+data/meta-receipts/
 data/imported-assets/
 data/media/
 assets/generated/

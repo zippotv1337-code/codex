@@ -37,6 +37,17 @@ class DashboardAuthUnitTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "password is required"):
                 create_server(Path(tempdir) / "review.db", host="0.0.0.0", port=0)
 
+    def test_live_publishing_requires_password_even_on_loopback(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            config = root / "config.toml"
+            config.write_text(
+                '[scheduler]\ndispatch_live = true\n[publishing]\nadapter = "meta-graph"\nlive_enabled = true\n[capabilities]\nofficial_instagram_publish = true\nlive_external_actions = true\n',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "PASSWORD is required"):
+                create_server(root / "review.db", port=0, config_path=config)
+
     def test_password_session_and_logout(self) -> None:
         auth = DashboardAuth(PASSWORD)
         self.assertIsNone(auth.authenticate("wrong", "127.0.0.1"))
@@ -148,6 +159,16 @@ class DashboardAuthHttpTests(unittest.TestCase):
         with opener.open(authorized, timeout=5) as response:
             payload = json.load(response)
         self.assertEqual(payload["status"], "SCHEDULED")
+        live_authorization = Request(
+            f"{self.base}/api/reviews/{self.content_id}/live-authorize",
+            data=b"",
+            headers={"X-CSRF-Token": cookies[CSRF_COOKIE]},
+            method="POST",
+        )
+        with opener.open(live_authorization, timeout=5) as response:
+            live_payload = json.load(response)
+        self.assertTrue(live_payload["live_publish_authorized"])
+        self.assertFalse(live_payload["external_action"])
         publication = self.server.RequestHandlerClass.service.pipeline.db.one(
             "SELECT provider, external_id, external_url FROM publications WHERE content_id = ?",
             (self.content_id,),

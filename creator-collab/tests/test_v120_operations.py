@@ -105,6 +105,30 @@ class V120OperationsTests(unittest.TestCase):
         ranking = ArchiveService(self.pipeline.db).top3()
         self.assertTrue(ranking["overall"][0]["uses_rates"])
 
+    def test_initialize_preserves_explicit_missing_disclosure_on_historic_post(self) -> None:
+        result = self.pipeline.run("leona-voss", date(2026, 9, 4))
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                "UPDATE content_items SET approved=1 WHERE id=?", (result.content_id,)
+            )
+        publication = ManualInstagramService(self.pipeline.db).reconcile(
+            creator_slug="leona-voss",
+            content_id=result.content_id,
+            external_url="https://www.instagram.com/leonavoss.ai/p/NoDisclosure/",
+            published_at="2026-09-04T19:30:00+02:00",
+            ai_disclosure=False,
+        )
+
+        self.pipeline.db.initialize()
+
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT ai_disclosure FROM publications WHERE id=?",
+                (publication["publication_id"],),
+            ),
+            0,
+        )
+
     def test_invalid_window_and_instagram_url_are_rejected(self) -> None:
         result = self.pipeline.run("mara-field", date(2026, 9, 4))
         service = ManualInstagramService(self.pipeline.db)

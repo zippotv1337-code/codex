@@ -16,6 +16,27 @@ den verfügbaren Übergabeanhängen nicht vorhanden. Deshalb wurden keine Inhalt
 dieser fehlenden Quelle erfunden. Die ausdrücklich im Owner-Auftrag genannten
 Kompatibilitätsregeln sind direkt umgesetzt.
 
+## Optionaler Astra-Pfad
+
+`config/model_routing.toml` bevorzugt `gpt-6-astra` mit Reasoning `high`, wenn
+die laufende Umgebung dieses Modell tatsächlich anbietet. `gpt-5.6-sol` bleibt
+der stabile Fallback; kennt die Runtime keines von beiden, bleibt Creator Ops
+mit ihrem Runtime-Default arbeitsfähig. Weder Datenbank, Queue, Dashboard noch
+Publishing hängen von Astra ab.
+
+Der aktuelle Stand ist bewusst ein validierter Routing-Vertrag plus reiner
+Resolver. Die Control Plane veröffentlicht diese Policy mit
+`selected_model = null` und `selection_source = resolved-at-runtime`; sie fragt
+noch kein externes Modellinventar ab und startet keinen Modell-Executor. Eine
+echte Auswahl darf später nur an einem kostenlosen/owner-freigegebenen
+Executor-Adapter erfolgen. Bis dahin ist „Astra unterstützt“ nicht gleich
+„Astra wurde in diesem lokalen Run aufgerufen“.
+
+Der Modellname und die Reasoning-Stufen wurden am 5. September 2026 gegen die
+[offizielle OpenAI-Modellseite](https://developers.openai.com/api/docs/models/gpt-6-astra)
+geprüft. Creator Ops ruft dadurch noch keine OpenAI-API auf, speichert keinen
+API-Schlüssel und erzeugt keine zusätzlichen Kosten.
+
 ## P1: Control Plane / Autopilot
 
 Die Route `/control` läuft auf demselben Python-/SQLite-Kern und unter denselben

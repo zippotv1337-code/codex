@@ -12,6 +12,52 @@ from creator_ops.recovery import RecoveryBackupService
 
 
 class RecoveryChainTests(unittest.TestCase):
+    def test_weekly_backup_preserves_publish_intent_and_confirmed_receipts(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            database = CreatorDatabase(root / "data" / "active.db")
+            database.initialize()
+            receipts = root / "data" / "meta-receipts"
+            receipts.mkdir(parents=True)
+            intent_key = "a" * 64
+            confirmed_key = "b" * 64
+            (receipts / f"{intent_key}.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "creator-ops-meta-receipt-v1",
+                        "status": "PUBLISH_INTENT",
+                        "idempotency_key": intent_key,
+                        "creation_id": "container-1",
+                        "creator_slug": "leona-voss",
+                        "ig_user_id": "17841400000000001",
+                        "created_at": "2026-09-06T00:00:00+00:00",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (receipts / f"{confirmed_key}.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "creator-ops-meta-receipt-v1",
+                        "status": "CONFIRMED",
+                        "idempotency_key": confirmed_key,
+                        "external_id": "18000000000000123",
+                        "external_url": "https://www.instagram.com/p/Confirmed123/",
+                        "confirmed_at": "2026-09-06T00:01:00+00:00",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            backup = RecoveryBackupService(database, root).build(
+                root / "backups", kind="weekly"
+            )
+
+            with zipfile.ZipFile(backup) as archive:
+                names = set(archive.namelist())
+                self.assertIn(f"data/meta-receipts/{intent_key}.json", names)
+                self.assertIn(f"data/meta-receipts/{confirmed_key}.json", names)
+
     def test_patch_links_base_contains_safe_db_and_validates_hashes(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             root = Path(tempdir)

@@ -9,6 +9,7 @@ from tempfile import NamedTemporaryFile
 from .review import ReviewDashboardService
 from .background import BackgroundCoordinator, WAITING_FOR_CAPACITY
 from .publishing import PublishQueueService
+from .model_routing import ModelRoutingPolicy
 
 
 CONTROL_PLANE_SCHEMA = 1
@@ -116,6 +117,12 @@ class ControlPlaneService:
                 "required": False,
             },
             {
+                "id": "generation.astra",
+                "label": "GPT-6 Astra HIGH (optional)",
+                "state": "OPTIONAL_BONUS",
+                "required": False,
+            },
+            {
                 "id": "adworks.dry_run",
                 "label": "Pack-zu-Revenue-Dry-Run",
                 "state": "AVAILABLE",
@@ -169,6 +176,7 @@ class ControlPlaneService:
                 "model_policy": "stable-current-model",
                 "future_models": "optional-capability-bonus",
                 "backward_compatible": True,
+                "model_routing": ModelRoutingPolicy.load().describe(),
             },
             "state": state,
             "runtime": self.background.health(),

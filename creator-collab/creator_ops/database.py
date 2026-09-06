@@ -690,6 +690,22 @@ class CreatorDatabase:
             """
         )
 
+        # Approved AI publications carry the explicit disclosure intent. The
+        # official adapter still requires a separate owner-confirmed native
+        # platform disclosure in its ignored local media manifest.
+        connection.execute(
+            """
+            UPDATE publications
+            SET ai_disclosure=1
+            WHERE content_id IN (
+                SELECT id FROM content_items
+                WHERE approved=1 AND needs_ai_disclosure=1
+            )
+              AND provider='mock-draft'
+              AND status!='PUBLISHED'
+            """
+        )
+
         # Keep fallback roles aligned with the already selected Top 3 without
         # changing their owner-visible order. This repairs legacy plans after a
         # published asset was excluded or a production import changed picks.

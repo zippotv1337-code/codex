@@ -17,9 +17,12 @@ aktualisiert. Geheimnisse und Login-Daten gehören niemals in dieses Repository.
 ## Lokaler Creator-Ops-MVP
 
 Der MVP bildet den vollständigen Freigabe- und Lernpfad lokal ab. Er verwendet
-SQLite, erzeugt ausschließlich lokale Mock-Drafts und kann vom Owner bereits
-bestätigte native Posts nachträglich erfassen. Es werden keine Social-Media-APIs
-aufgerufen und nichts live veröffentlicht.
+SQLite, erzeugt standardmäßig ausschließlich lokale Drafts und kann vom Owner
+bereits bestätigte native Posts nachträglich erfassen. Ein fail-closed
+Instagram-Meta-Adapter ist vorhanden, bleibt ohne alle bewussten Gates
+(vier Live-Schalter, Passwortschutz, getrennte Kontozuordnung, öffentliche
+Asset-URLs, native KI-Kennzeichnung und separate Freigabe des konkreten
+Pakets) jedoch vollständig inaktiv.
 
 ```powershell
 python -m creator_ops.cli --db data/creator_ops.db demo --date 2026-09-03
@@ -51,10 +54,22 @@ Die lokale Freigabeoberfläche startet separat:
 .\run_dashboard.ps1
 ```
 
+Dauerbetrieb ohne laufendes Codex-Fenster:
+
+```powershell
+.\START_STANDALONE_CREATOR_OPS.ps1 -NoBrowser
+```
+
+Die sichere Meta-Aktivierung ist in `docs/OFFICIAL_META_PUBLISHING.md`
+beschrieben. Standardmäßig stehen in `config.toml` sowohl
+`dispatch_live = false` und `live_enabled = false` als auch beide externen
+Capability-Schalter auf `false`.
+
 Danach ist sie unter `http://127.0.0.1:4180/` erreichbar. Sie bereitet für den
 nächsten Tag je eine Review-Karte für Leona und Mara vor. „Freigeben“ erzeugt
-einen lokalen, auditierbaren Queue-Eintrag mit `LOCAL_SCHEDULED`; es gibt
-keinen konfigurierten Live-Publisher.
+einen lokalen, auditierbaren Queue-Eintrag mit `LOCAL_SCHEDULED`; ohne bewusst
+aktivierte offizielle Konfiguration und einen zweiten Live-Freigabeschritt für
+genau dieses Paket gibt es keinen Live-Publisher.
 Die Navigation enthält zusätzlich `/archive`, `/top3`, `/control`, `/offer`
 und `/revenue`. Echte Einträge sind
 standardmäßig von Mock-Daten getrennt; Top 3 verwendet vorhandene Raten vor

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sqlite3
 import tempfile
 import zipfile
@@ -60,6 +61,7 @@ class RecoveryBackupService:
                 if path.name in {"remote_url.txt", "cloudflared.log", "cloudflared.err.log"}:
                     continue
                 files.append(path)
+        files.extend(self._meta_receipt_files())
         for name in (
             "README.md",
             "PROJECT_RESUME.md",
@@ -81,6 +83,44 @@ class RecoveryBackupService:
             if path.is_file():
                 files.append(path)
         return sorted(set(files))
+
+    def _meta_receipt_files(self) -> list[Path]:
+        """Return only schema-validated, secret-free publish safety receipts."""
+        root = self.project_root / "data" / "meta-receipts"
+        if not root.is_dir():
+            return []
+        allowed = {
+            "schema",
+            "status",
+            "idempotency_key",
+            "creation_id",
+            "creator_slug",
+            "ig_user_id",
+            "created_at",
+            "external_id",
+            "external_url",
+            "confirmed_at",
+        }
+        receipts: list[Path] = []
+        for path in sorted(root.glob("*.json")):
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as error:
+                raise RuntimeError(f"invalid_meta_receipt:{path.name}") from error
+            if (
+                not isinstance(payload, dict)
+                or payload.get("schema") != "creator-ops-meta-receipt-v1"
+                or payload.get("status") not in {"PUBLISH_INTENT", "CONFIRMED"}
+                or set(payload) - allowed
+                or not re.fullmatch(r"[0-9a-f]{64}", path.stem)
+                or payload.get("idempotency_key") != path.stem
+            ):
+                raise RuntimeError(f"unsafe_meta_receipt:{path.name}")
+            lowered = path.read_text(encoding="utf-8").lower()
+            if any(marker in lowered for marker in ("access_token", "password", "cookie")):
+                raise RuntimeError(f"secret_marker_in_meta_receipt:{path.name}")
+            receipts.append(path)
+        return receipts
 
     def build(self, destination: Path, *, kind: str, now: datetime | None = None) -> Path:
         if kind not in {"weekly", "monthly", "milestone"}:

@@ -92,6 +92,36 @@ class PublishQueueTests(unittest.TestCase):
             "planned_slot_expired_owner_review_required",
         )
 
+    def test_owner_can_accept_future_reschedule_suggestion_once(self) -> None:
+        self._approve()
+        service = PublishQueueService(self.pipeline.db)
+        original = service.list()[0]
+        planned = datetime.fromisoformat(original["planned_at"])
+        service.reconcile(planned + timedelta(hours=1))
+        suggested = service.list()[0]["suggested_at"]
+
+        result = service.accept_suggested_reschedule(
+            self.card["content_id"], planned + timedelta(hours=1)
+        )
+        updated = service.list()[0]
+
+        self.assertEqual(result["status"], LOCAL_SCHEDULED)
+        self.assertEqual(result["planned_at"], suggested)
+        self.assertFalse(result["external_action"])
+        self.assertEqual(updated["status"], LOCAL_SCHEDULED)
+        self.assertIsNone(updated["suggested_at"])
+        self.assertNotEqual(updated["queue_key"], original["queue_key"])
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT COUNT(*) FROM review_events WHERE action='OWNER_RESCHEDULED_UI'"
+            ),
+            1,
+        )
+        with self.assertRaisesRegex(ValueError, "reschedule_review_not_required"):
+            service.accept_suggested_reschedule(
+                self.card["content_id"], planned + timedelta(hours=1)
+            )
+
     def test_due_without_official_adapter_is_honestly_blocked(self) -> None:
         self._approve()
         service = PublishQueueService(self.pipeline.db)
@@ -115,6 +145,37 @@ class PublishQueueTests(unittest.TestCase):
             preserved["schedule_error"],
             "official_instagram_adapter_not_configured",
         )
+
+    def test_owner_can_rearm_only_a_safe_preflight_block(self) -> None:
+        self._approve()
+        service = PublishQueueService(self.pipeline.db)
+        planned = datetime.fromisoformat(service.list()[0]["planned_at"])
+        service.dispatch_due(planned + timedelta(minutes=1))
+        authorization = service.authorize_live_publish(self.card["content_id"])
+        self.assertTrue(authorization["live_publish_authorized"])
+        self.assertEqual(
+            authorization["schedule_status"], BLOCKED_EXTERNAL_PUBLISHING
+        )
+
+        safe = service.rearm_blocked_preflight(
+            self.card["content_id"], planned - timedelta(minutes=5)
+        )
+        self.assertEqual(safe["status"], LOCAL_SCHEDULED)
+        self.assertFalse(safe["external_action"])
+
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE publish_queue
+                SET status=?, last_error='meta_publish_outcome_unknown_owner_reconcile_required'
+                WHERE content_id=?
+                """,
+                (BLOCKED_EXTERNAL_PUBLISHING, self.card["content_id"]),
+            )
+        with self.assertRaisesRegex(ValueError, "manual_reconcile"):
+            service.rearm_blocked_preflight(
+                self.card["content_id"], planned - timedelta(minutes=4)
+            )
 
     def test_retry_stays_inside_grace_window_and_succeeds_once(self) -> None:
         self._approve()
