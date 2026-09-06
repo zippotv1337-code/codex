@@ -108,12 +108,14 @@ Stand: 6. September 2026, 18:50 Uhr · Creator Ops 1.6.4-beta
 
 ## Git/GitHub
 
-- Der vor diesem Abschlussdelta synchronisierte `origin/main`-Stand ist
-  `2204676` (`handoff: record p0 p1 resume gates`).
-- Die lokale Arbeitskopie nutzt historisch eine parallele `master`-Linie.
-  Deshalb wird auch dieses ausschließlich projektbezogene Delta als
-  inhaltsgleicher Cherry-pick über den sauberen Main-Worktree synchronisiert,
-  ohne Merge der getrennten Historien, Force-Push oder History-Rewrite.
+- Der gesamte projektbezogene Stand dieses Laufs ist über den sauberen
+  Main-Worktree per normalem Fast-Forward-Push auf `origin/main`
+  synchronisiert. Der inhaltliche Hauptcommit auf `main` ist `5cc560f`.
+- Die lokale Arbeitskopie nutzt historisch eine parallele `master`-Linie; der
+  zugehörige inhaltsgleiche Quellcommit ist `206f84c`. Die
+  `creator-collab`-Subtree-Hashes waren identisch. Es gab keinen Merge der
+  getrennten Historien, keinen Force-Push und kein History-Rewrite; fremde
+  Root-Dateien blieben unberührt.
 
 ## Recovery
 

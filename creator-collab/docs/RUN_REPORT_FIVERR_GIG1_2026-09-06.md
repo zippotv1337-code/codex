@@ -96,6 +96,9 @@ den Gig nach erfülltem Identity-Gate gemäß Projektfreigabe veröffentlichen.
   `backups/Backup_Meilenstein_20260906-1852.zip`, SHA256
   `17df17d6c82fca6a7ca3d2b3c1df29c186c8d513ae694fda37f6695df6e03676`;
   233 Members, ZIP-Test und Sanitized-DB-Integrität grün.
+- Der inhaltliche Projektcommit wurde als `5cc560f` ohne Force-Push auf
+  `origin/main` synchronisiert; der saubere Sync-Worktree bestand danach erneut
+  119/119 Tests und den Compilecheck.
 - Keine Kosten, kein neues Konto, kein externer Publish und keine persönlichen
   Daten übertragen. Die einzige neue Datenbankänderung stammt aus den lokalen
   Owner-Buttons im Dashboard.
