@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-06T06:18:22+00:00",
+  "generated_at": "2026-09-06T11:33:28+00:00",
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
@@ -22,8 +22,9 @@
   "content": {
     "total": 6,
     "by_status": {
+      "PUBLISHED": 1,
       "READY_FOR_REVIEW": 3,
-      "SCHEDULED": 3
+      "SCHEDULED": 2
     },
     "by_stage": {
       "ALLTAG": 6
@@ -38,8 +39,8 @@
   },
   "assets": {
     "total": 30,
-    "real": 22,
-    "mock": 8,
+    "real": 26,
+    "mock": 4,
     "by_safety": {
       "SFW": 30
     },
@@ -51,25 +52,26 @@
     "dates": [
       "2026-09-04",
       "2026-09-05",
-      "2026-09-06"
+      "2026-09-06",
+      "2026-09-07"
     ],
-    "days": 3,
-    "through": "2026-09-06"
+    "days": 4,
+    "through": "2026-09-07"
   },
   "publications": {
-    "owner_confirmed_native": 2,
+    "owner_confirmed_native": 3,
     "mock": 4,
     "manual_analytics_events": 0,
     "local_queue": {
       "LOCAL_SCHEDULED": 2,
-      "NEEDS_RESCHEDULE_REVIEW": 1
+      "PUBLISHED": 1
     }
   },
   "background_runs": {
     "COMPLETE": 3
   },
   "engagement": {
-    "real_post_proposals": 4,
+    "real_post_proposals": 6,
     "execution": "manual-owner-only"
   },
   "finance": {
@@ -87,12 +89,12 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 116,
+    "passed": 117,
     "failed": 0
   },
   "blockers": {
     "owner_review_required": 3,
-    "mock_assets_remaining": 8
+    "mock_assets_remaining": 4
   },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",
@@ -104,5 +106,5 @@
       "paid_services"
     ]
   },
-  "publishing_mode": "human-gated local queue; external official adapter unavailable"
+  "publishing_mode": "human-gated local queue; official adapter available; live state depends on current owner/config gates"
 }

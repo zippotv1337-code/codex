@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -40,9 +41,16 @@ class ManualInstagramService:
         published_at: str,
         ai_disclosure: bool = True,
         asset_id: int | None = None,
+        asset_ids: Iterable[int] | None = None,
     ) -> dict[str, object]:
         shortcode = self._shortcode(external_url)
         datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+        resolved_asset_ids = tuple(
+            dict.fromkeys(
+                [int(value) for value in (asset_ids or ())]
+                + ([int(asset_id)] if asset_id is not None else [])
+            )
+        )
         with self.database.transaction() as connection:
             row = connection.execute(
                 """
@@ -59,19 +67,28 @@ class ManualInstagramService:
             existing = connection.execute(
                 """
                 SELECT id FROM publications
-                WHERE provider = ? AND (external_id = ? OR external_url = ?)
+                WHERE provider LIKE ? AND (external_id = ? OR external_url = ?)
                 """,
-                (self.PROVIDER, shortcode, external_url),
+                (f"{self.PROVIDER}%", shortcode, external_url),
             ).fetchone()
             if existing:
                 publication_id = int(existing["id"])
                 self.refresh_after_native_publication(connection, publication_id)
                 return {"publication_id": publication_id, "reused": True}
-            if asset_id is not None and connection.execute(
-                "SELECT id FROM assets WHERE id = ? AND content_id = ?",
-                (asset_id, content_id),
-            ).fetchone() is None:
-                raise KeyError("asset_not_in_content")
+            if resolved_asset_ids:
+                placeholders = ",".join("?" for _ in resolved_asset_ids)
+                matched_assets = connection.execute(
+                    f"SELECT COUNT(*) FROM assets WHERE content_id = ? AND id IN ({placeholders})",
+                    (content_id, *resolved_asset_ids),
+                ).fetchone()[0]
+                if matched_assets != len(resolved_asset_ids):
+                    raise KeyError("asset_not_in_content")
+            provider = self.PROVIDER
+            if connection.execute(
+                "SELECT 1 FROM publications WHERE content_id=? AND provider=?",
+                (content_id, self.PROVIDER),
+            ).fetchone():
+                provider = f"{self.PROVIDER}:{shortcode}"
             cursor = connection.execute(
                 """
                 INSERT INTO publications
@@ -83,7 +100,7 @@ class ManualInstagramService:
                 (
                     content_id,
                     row["variant_id"],
-                    self.PROVIDER,
+                    provider,
                     published_at,
                     published_at,
                     shortcode,
@@ -101,18 +118,24 @@ class ManualInstagramService:
                 """,
                 (
                     content_id,
-                    self.PROVIDER,
+                    provider,
                     "owner-confirmed native post; no external API call",
                     utc_now(),
                 ),
             )
-            if asset_id is not None:
+            if resolved_asset_ids:
+                placeholders = ",".join("?" for _ in resolved_asset_ids)
                 connection.execute(
-                    "UPDATE assets SET published_status = 'PUBLISHED' WHERE id = ?",
-                    (asset_id,),
+                    f"UPDATE assets SET published_status = 'PUBLISHED' WHERE id IN ({placeholders})",
+                    resolved_asset_ids,
                 )
             self.refresh_after_native_publication(connection, publication_id)
-        return {"publication_id": publication_id, "reused": False}
+        return {
+            "publication_id": publication_id,
+            "reused": False,
+            "provider": provider,
+            "asset_ids": list(resolved_asset_ids),
+        }
 
     @staticmethod
     def refresh_after_native_publication(connection, publication_id: int) -> tuple[int, ...]:
@@ -120,7 +143,7 @@ class ManualInstagramService:
             """
             SELECT p.*, c.creator_id, c.approved, c.status AS content_status
             FROM publications p JOIN content_items c ON c.id=p.content_id
-            WHERE p.id=? AND p.provider='instagram-native-manual'
+            WHERE p.id=? AND p.provider LIKE 'instagram-native-manual%'
             """,
             (publication_id,),
         ).fetchone()
@@ -137,6 +160,87 @@ class ManualInstagramService:
             "SELECT COUNT(*) FROM assets WHERE content_id=? AND published_status='PUBLISHED'",
             (publication["content_id"],),
         ).fetchone()[0]
+        expected_top_picks = connection.execute(
+            "SELECT COUNT(*) FROM assets WHERE content_id=? AND is_top_pick=1",
+            (publication["content_id"],),
+        ).fetchone()[0]
+        published_top_picks = connection.execute(
+            """
+            SELECT COUNT(*) FROM assets
+            WHERE content_id=? AND is_top_pick=1 AND published_status='PUBLISHED'
+            """,
+            (publication["content_id"],),
+        ).fetchone()[0]
+        complete_carousel = (
+            expected_top_picks >= 2 and published_top_picks == expected_top_picks
+        )
+        if complete_carousel:
+            published_ids = tuple(
+                int(row["id"])
+                for row in connection.execute(
+                    """
+                    SELECT id FROM assets
+                    WHERE content_id=? AND is_top_pick=1 AND published_status='PUBLISHED'
+                    ORDER BY id
+                    """,
+                    (publication["content_id"],),
+                ).fetchall()
+            )
+            connection.execute(
+                """
+                UPDATE asset_usage_plan SET status='PUBLISHED_USED'
+                WHERE asset_id IN (
+                    SELECT id FROM assets
+                    WHERE content_id=? AND published_status='PUBLISHED'
+                )
+                """,
+                (publication["content_id"],),
+            )
+            connection.execute(
+                """
+                UPDATE publish_queue
+                SET status='PUBLISHED', last_error=NULL, next_attempt_at=NULL,
+                    suggested_at=NULL, external_schedule_id=?, updated_at=?
+                WHERE content_id=? AND status NOT IN ('PUBLISHED','OWNER_REJECTED')
+                """,
+                (
+                    publication["external_id"],
+                    utc_now(),
+                    publication["content_id"],
+                ),
+            )
+            previous_status = publication["content_status"]
+            connection.execute(
+                "UPDATE content_items SET status='PUBLISHED', updated_at=? WHERE id=?",
+                (utc_now(), publication["content_id"]),
+            )
+            if previous_status != "PUBLISHED":
+                connection.execute(
+                    """
+                    INSERT INTO content_status_events
+                        (content_id,previous_status,new_status,note,created_at)
+                    VALUES (?,?,'PUBLISHED',
+                            'owner-confirmed native carousel publication',?)
+                    """,
+                    (publication["content_id"], previous_status, utc_now()),
+                )
+                connection.execute(
+                    """
+                    INSERT INTO review_events(content_id,action,actor,note,created_at)
+                    VALUES (?,'NATIVE_CAROUSEL_RECONCILED','owner',
+                            'All selected carousel assets confirmed live on Instagram',?)
+                    """,
+                    (publication["content_id"], utc_now()),
+                )
+            EngagementQueueService().seed(
+                connection,
+                publication["creator_id"],
+                publication_id,
+                "instagram",
+                publication["external_url"],
+                publication["published_at"],
+            )
+            return published_ids
         selected = select_diverse_top_picks(
             connection, publication["content_id"], exclude_published=bool(published_assets)
         )
@@ -228,8 +332,8 @@ class ManualInstagramService:
         if any(value is not None and value < 0 for value in values.values()):
             raise ValueError("analytics_values_must_be_non_negative")
         if not self.database.one(
-            "SELECT id FROM publications WHERE id = ? AND provider = ?",
-            (publication_id, self.PROVIDER),
+            "SELECT id FROM publications WHERE id = ? AND provider LIKE ?",
+            (publication_id, f"{self.PROVIDER}%"),
         ):
             raise KeyError("manual_publication_not_found")
         columns = list(values)

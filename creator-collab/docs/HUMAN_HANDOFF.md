@@ -1,50 +1,44 @@
 # Human Handoff — einzige aktive Owner-Inbox
 
-Stand: 6. September 2026, 08:10 Uhr · Creator Ops 1.6.4-beta
+Stand: 6. September 2026, 13:34 Uhr · Creator Ops 1.6.4-beta
 
-## JETZT
+## Erledigt
 
-1. Öffne `http://127.0.0.1:4180/`.
-2. Bei Leona „Spätsommer in Berlin“ den vorgeschlagenen neuen Termin
-   **6. September, 19:30 Uhr** übernehmen oder unverändert zur Prüfung lassen.
-   Das ändert ausschließlich die lokale Queue.
-3. Bei Mara „Fünf Minuten Maschinencheck“ **APPROVE**, **CHANGE** oder
-   **REJECT** wählen. Auch APPROVE veröffentlicht nicht live.
+- Leona-Carousel „September Roofline“ ist mit drei Bildern live:
+  https://www.instagram.com/p/Dc75xWsgEQo/
+- Instagram-KI-Label, Caption, Alt-Texte und drei Slides wurden sichtbar
+  geprüft; Creator Ops ist lokal auf `PUBLISHED` abgestimmt.
+- Fiverr-Angebot und Gallery-Cover sind launch-ready.
+- Leona „Gym Reset, aber echt“ ist als neues vollständiges Fünferpaket im
+  Dashboard reviewbereit.
 
-Leona „September Roofline“ und Mara „Küchenfenster“ stehen bereits lokal auf
-6. September, 19:30 Uhr. Der aktuelle `local-mock`-Modus sendet sie nicht an
-Instagram.
+## JETZT — nur zwei Owner-Schritte
 
-## NICHT DRINGEND
+1. Bei Fiverr `Create your profile` mit den eigenen echten Angaben abschließen.
+   Identität, Telefon, Steuer/DAC7 und Businessdaten niemals an Codex erfinden
+   lassen. Danach kann Codex die vorbereiteten Gig-Felder eintragen; der
+   finale öffentliche Publish wird unmittelbar vorher erneut bestätigt.
+2. In Creator Ops `http://127.0.0.1:4180/` Leona „Gym Reset, aber echt“ und
+   Mara „Fünf Minuten Maschinencheck“ mit APPROVE, CHANGE oder REJECT prüfen.
+   APPROVE terminiert ausschließlich lokal und postet nicht live.
 
-- „Berlin Filmlook“ und „Werkstattabend“ sind ältere unvollständige Karten mit
-  je nur einem realen Asset. Sie gehören nicht zur produktiven Vier-Paket-
-  Reserve und können später bereinigt oder ergänzt werden.
-- Pro Persona sind 10 reale Assets unveröffentlicht; 9 davon liegen in den
-  zwei feedfähigen Paketen.
+## Danach
 
-## SEPARATE FREIGABEN
-
-- Jede einzelne Live-Veröffentlichung benötigt nach lokaler Freigabe noch den
-  separaten Live-Zweiklick-Gate.
-- Meta-Credentials, öffentliche Asset-URLs und natives KI-Disclosure müssen
-  vollständig eingerichtet sein; Anleitung: `OFFICIAL_META_PUBLISHING.md`.
-- Kommentare, Likes, Follows, DMs, Fiverr, kostenpflichtige Dienste und eine
-  Änderung der GitHub-Sichtbarkeit bleiben eigene Owner-Entscheidungen.
-
-## DANACH
-
-- Echte Instagram-Insights nach 24, 72 und 168 Stunden manuell erfassen.
-- Ohne echte Kommentartexte oder Analytics wird nichts erfunden.
-- Erst danach die nächste Produktion datenbasiert auswählen.
+- Erste echte Leona-Insights frühestens nach 24 Stunden erfassen:
+  7. September ca. 13:00 Uhr; anschließend 72h und 168h.
+- Fehlende Werte bleiben `UNKNOWN`; keine Reichweite, Kommentare oder Umsätze
+  erfinden.
+- Leona „Spätsommer“ und Mara „Küchenfenster“ sind nur lokal vorgemerkt. Ohne
+  neue Einzelbestätigung findet kein externer Versand statt.
 
 ## Betrieb und Belege
 
 - Dashboard: `http://127.0.0.1:4180/`
 - Offline-Leseansicht: `output/offline/index.html`
+- Live-Beleg: `LIVE_EVIDENCE.md`
+- Contentmanifest: `docs/CONTENT_PACKAGE_GYM_RESET_2026-09-06.md`
+- Fiverr-Entwurf: `docs/FIVERR_GIG_DRAFT.md`
 - Status: `docs/CURRENT_STATE.json`
-- Tests: 116/116 grün
+- Tests: 117/117 grün
 - Datenbank: Integrität `ok`
-- Backup: `backups/Backup_Meilenstein_20260906-0809.zip`
-- Restore: Integrität `ok`, 0 Secret-Referenzen
-- Externe Aktionen dieses Runs: 0
+- Externe Aktion dieses Runs: genau 1 owner-bestätigter Leona-Carousel

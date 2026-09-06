@@ -119,7 +119,12 @@ def parser() -> argparse.ArgumentParser:
     reconcile.add_argument("--content-id", required=True, type=int)
     reconcile.add_argument("--url", required=True)
     reconcile.add_argument("--published-at", required=True)
-    reconcile.add_argument("--asset-id", type=int)
+    reconcile.add_argument(
+        "--asset-id",
+        type=int,
+        action="append",
+        help="Published asset id; repeat for every image in a confirmed carousel",
+    )
     reconcile.add_argument("--no-ai-disclosure", action="store_true")
     analytics = subcommands.add_parser("manual-analytics", help="Append an owner-reported analytics snapshot")
     analytics.add_argument("--publication-id", required=True, type=int)
@@ -236,7 +241,7 @@ def main() -> int:
             external_url=args.url,
             published_at=args.published_at,
             ai_disclosure=not args.no_ai_disclosure,
-            asset_id=args.asset_id,
+            asset_ids=args.asset_id,
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command == "manual-analytics":

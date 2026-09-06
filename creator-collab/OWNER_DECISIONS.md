@@ -1,6 +1,6 @@
 # Verbindliche Owner-Entscheidungen
 
-Stand: 4. September 2026
+Stand: 6. September 2026
 
 Diese Datei hält dauerhafte Produkt- und Sicherheitsregeln fest. Status und
 Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
@@ -42,8 +42,33 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
 - `READY_FOR_REVIEW` ist keine Veröffentlichungsfreigabe.
 - Owner-Freigabe legt im MVP nur einen lokalen `mock-draft` an.
 - Live-Publishing, Accountänderungen, Nachrichten und Follow-Aktionen brauchen
-  einen eigenen, konkreten Auftrag.
+  einen eigenen, konkreten Auftrag. Der finale öffentliche Klick wird immer
+  unmittelbar vor der Aktion noch einmal bestätigt.
 - Keine Massen-Follow-/Unfollow-Automation.
+
+## Dauerhafter Arbeitsmodus
+
+- Pro Run höchstens zwei Hauptquests; Sidequests erst nach Abschluss oder
+  sauber dokumentiertem Blocker der P0-Lanes.
+- Verifizierte Baseline wird als `SKIP_DONE` behandelt. Rework gibt es nur bei
+  reproduzierbarem Fehler, geänderter Owner-Anforderung oder direkter
+  Abhängigkeit eines echten Deltas.
+- Ein kleiner Blocker erhält einen konzentrierten Lösungsversuch von ungefähr
+  fünf Minuten. Danach: Ursache, Fallback und Fortsetzungspunkt dokumentieren
+  und in einer unabhängigen Lane weiterarbeiten.
+- Browser-/UI-Fehler: ein Fix und ein Retest; danach sicherer Fallback oder
+  Human Handoff statt Schleife.
+- Tests und Backups sind risikobasiert: Publishing, Auth, Datenbank,
+  Idempotenz und Recovery erhalten Integrationstests; kleine Doku-/Content-
+  Änderungen nur gezielte Prüfungen.
+- HIGH/ULTRA ist für Meta-Publish, Secrets/Auth, externe Unsicherheit,
+  Datenbank/Idempotenz und Recovery reserviert. Routine-Content und normale
+  Dokumentation bleiben MEDIUM.
+- Sichere Fast-Forward-Git-Synchronisierung ist erlaubt; Force-Push,
+  History-Rewrite und Sichtbarkeitsänderungen bleiben verboten.
+- Owner-Fragen werden gebündelt. Persönliche Identität, OTP, Steuerdaten,
+  Passwörter sowie neue API-/OAuth-Schlüssel bleiben beim Owner beziehungsweise
+  benötigen eine unmittelbare Einzelbestätigung.
 
 ## Medien, Rechte und Geheimnisse
 

@@ -1,76 +1,78 @@
 # Aktueller Handoff
 
-Stand: 6. September 2026, 08:10 Uhr · Creator Ops 1.6.4-beta
+Stand: 6. September 2026, 13:34 Uhr · Creator Ops 1.6.4-beta
 
 ## Verifizierter Stand
 
-- 116/116 Tests sind grün. Python-Compilecheck, alle vorhandenen JavaScript-
-  Syntaxchecks, PowerShell-Parser und `git diff --check` sind ebenfalls grün.
-- Die aktive SQLite-Datenbank hat Schema 5 und `integrity_check = ok`:
-  6 Inhalte, 30 Assets, 6 Publikationen und 3 Queuejobs.
-- Das Dashboard läuft als dauerhafter lokaler Prozess gesund unter
-  `http://127.0.0.1:4180/`. Genau ein Supervisor ist aktiv; Watchdog,
-  Scheduler und read-only Offline-Snapshot wurden real ausgeführt.
-- Der persönliche Windows-Autostart `CreatorOpsStandalone.cmd` ist vorhanden.
-  Es wurden keine Admin-Aufgaben und keine Routerfreigaben eingerichtet.
-- Der Scheduler prüft alle Live-Gates gemeinsam: beide Konfigurationsschalter,
-  beide externen Capabilities, Adapter `meta-graph` und ein mindestens zwölf
-  Zeichen langes Laufzeitpasswort. Im aktuellen Standardmodus wird Live-
-  Versand ausdrücklich übersprungen.
-- Der offizielle Meta-Carousel-Pfad ist lokal implementiert und mit Fake-
-  Transport getestet. Persona-Kontozuordnung, exakt drei unveröffentlichte
-  PUBLIC_SFW-Top-Picks, native KI-Kennzeichnung, separater Paket-Live-Gate,
-  Containerstatus sowie echte ID-/Permalink-Bestätigung sind Pflicht.
-- Ein persistenter `PUBLISH_INTENT` wird vor `media_publish` geschrieben.
-  Unsichere oder abgestürzte Publish-Vorgänge werden nicht automatisch erneut
-  gesendet. Neuplanung behält denselben Queue-Key; Stale-Publishing verlangt
-  manuelle Abstimmung.
-- Meilenstein- und Patch-Recovery enthalten validierte Meta-Receipts. Ein
-  Full-Backup enthält außerdem `config.toml` sowie Standalone-Start/Stop.
-- Astra HIGH wurde als unabhängige Read-only-Zweitprüfung eingesetzt. Alle drei
-  dabei gefundenen P1-Risiken sind geschlossen und nochmals bestätigt.
-- `gpt-6-astra` ist nur bevorzugter optionaler Capability-Pfad. Der stabile
-  Fallback und der Runtime-Default bleiben vollständig funktionsfähig; es gibt
-  noch keinen externen Model-Executor und keinen API-Aufruf.
+- 117/117 Tests und Python-Compilecheck sind grün.
+- SQLite Schema 5: `integrity_check = ok`, 6 Inhalte, 30 Assets,
+  7 Publikationen und 3 Queuejobs.
+- Das Dashboard läuft gesund unter `http://127.0.0.1:4180/`; Neustart und
+  Healthcheck nach dem Code-Delta waren erfolgreich.
+- Der offizielle Meta-Carousel-Adapter ist vorhanden und bleibt fail-closed.
+  Echte Meta-Credentials und öffentliche HTTPS-Asset-URLs fehlen; der lokale
+  Standardmodus sendet nichts automatisch.
+- Die manuelle Instagram-Abstimmung unterstützt nun echte Carousels mit
+  mehreren Asset-IDs sowie mehrere Posts zu demselben Content. Duplicate-
+  Erkennung, echte Analytics, Archiv und Prime-Time erkennen alle
+  `instagram-native-manual*`-Varianten.
 
-## Aktueller Content- und Queue-Stand
+## Instagram
 
-- Pro Persona: 11 reale lokale Assets, davon 10 unveröffentlicht. Davon liegen
-  9 je Persona in zwei feedfähigen Paketen; je ein weiteres unveröffentlichtes
-  Einzelasset gehört zu einer älteren unvollständigen Reviewkarte.
-- `LOCAL_SCHEDULED`: Leona „September Roofline“ und Mara „Küchenfenster“,
-  beide lokal für 6. September 2026, 19:30 Uhr vorgemerkt.
-- `NEEDS_RESCHEDULE_REVIEW`: Leona „Spätsommer in Berlin“, Vorschlag
-  6. September 2026, 19:30 Uhr.
-- Produktive offene Reviewkarte: Mara „Fünf Minuten Maschinencheck“.
-- Zwei ältere unvollständige Reviewkarten („Berlin Filmlook“ und
-  „Werkstattabend“) bleiben ehrlich als Reviewbedarf sichtbar.
-- Zwei frühere owner-bestätigte native Instagram-Posts sind lokal dokumentiert.
-  Dieser Run hat keinen neuen Post, Kommentar, Like, Follow, DM oder Fiverr-
-  Vorgang ausgeführt. `INSTAGRAM_AUTOMATION_PROOF = 0/10`.
+- Nach der ausdrücklichen Einzelbestätigung des Owners wurde Leona
+  „September Roofline“ als Dreier-Carousel nativ veröffentlicht:
+  https://www.instagram.com/p/Dc75xWsgEQo/
+- Sichtbar bestätigt: drei Slides, Caption, Alt-Texte, natives `KI-Inhalte`-
+  Label und Profilstand sieben Posts.
+- Lokal: Publication `7`, Queue `2` und Content `5` sind `PUBLISHED`; Assets
+  `22`, `25`, `23` sind als verwendet markiert. Der frühere S4-Einzelpost
+  bleibt erhalten und wird nicht überschrieben.
+- `INSTAGRAM_AUTOMATION_PROOF` bleibt ehrlich 0/10, weil dies ein bestätigter
+  nativer Browser-Pilot und kein Meta-Graph-Autopublish war.
 
-## Git und Recovery
+## Fiverr
 
-- Git/GitHub sind nicht mehr geparkt.
-- Offizieller Code-Stand ist per Fast-Forward auf `origin/main` synchronisiert.
-- Relevante Code-Commits: `cd5375f`, `14d832d`, `8ed82dd`.
-- Finales Recovery-ZIP:
-  `backups/Backup_Meilenstein_20260906-0809.zip`
-- SHA256:
-  `e937c16d6e80c52bc9d96ee746f6f71989d3a5687bb7cf26bd3bf553b6b41401`
-- Frischer Restore nach `tmp/restore-check-20260906-080949/`:
-  Integrität `ok`, 6 Inhalte, 6 Publikationen, 3 Queuejobs, 0 Secret-Referenzen.
+- Status `FIVERR_LAUNCH_READY_WAITING_FOR_OWNER`.
+- Pakete: Basic 45 USD / 3 Tage / 1 Revision; Standard 95 USD / 5 Tage /
+  2 Revisionen; Premium 175 USD / 8 Tage / 3 Revisionen.
+- Gig-Text, FAQ, Requirements, Tags, Rechte-/Lieferstandard und ein eigenes
+  rechteklares Gallery-Cover sind fertig.
+- Blocker: Das Fiverr-Konto verlangt zuerst `Create your profile`. Persönliche
+  Identität, Telefon-, Steuer-/DAC7- und Businessangaben muss der Owner
+  wahrheitsgemäß selbst vervollständigen. Es wurde kein Gig veröffentlicht.
+
+## Content und Reserve
+
+- Neu vollständig: Leona „Gym Reset, aber echt“, Content `1`, Datum
+  7. September, fünf echte SFW-Previews und Top 3 `S1 → S2 → S5`.
+- Das Paket enthält Caption, Hook, CTA, Hashtags, Musik A/B/ohne sowie
+  Prime-Time 19:30 Uhr und ist `READY_FOR_REVIEW`; keine Freigabe, keine Queue.
+- Leona: 15 reale Assets, davon 4 veröffentlicht und 11 unveröffentlicht.
+- Mara: 11 reale Assets, davon 1 veröffentlicht und 10 unveröffentlicht.
+- Insgesamt: 26 reale Assets, 4 Mock-Slots. Leona und Mara besitzen weiterhin
+  jeweils zwei feedfähige unveröffentlichte Pakete.
+- Queue: Leona „Spätsommer in Berlin“ und Mara „Küchenfenster“ sind
+  `LOCAL_SCHEDULED`; sie werden im `local-mock`-Modus nicht live gesendet.
+- Mara „Fünf Minuten Maschinencheck“ und Leona „Gym Reset“ warten auf Review.
+  Die ältere Mara-Karte „Werkstattabend“ bleibt mit einem echten Asset
+  unvollständig.
+
+## Offene echte Signale
+
+- Für den neuen Leona-Carousel sind 24h/72h/168h-Analytics noch `UNKNOWN`.
+  Sie dürfen nicht als null oder Erfolg interpretiert werden.
+- Für Engagement liegen nur sichere Prüf-/Folgeideen vor; ohne echte
+  Kommentartexte wird keine individuelle Antwort erfunden.
+- Reale Fiverr-Umsatz- oder Lead-Signale existieren noch nicht.
 
 ## Nächste drei Arbeiten
 
-1. Owner übernimmt oder verwirft im Dashboard den neuen Termin für Leona
-   „Spätsommer in Berlin“.
-2. Owner entscheidet bei Mara „Fünf Minuten Maschinencheck“ mit APPROVE,
-   CHANGE oder REJECT. Das ist weiterhin nur eine lokale Entscheidung.
-3. Nur wenn echter Live-Versand gewünscht ist: offizielle Meta-Voraussetzungen
-   aus `docs/OFFICIAL_META_PUBLISHING.md` vollständig einrichten und danach
-   genau ein Paket separat autorisieren. Sonst echte 24-/72-/168-h-Analytics
-   der vorhandenen Posts erfassen.
+1. Owner vervollständigt bei Fiverr das echte Verkäuferprofil. Danach kann der
+   Gig in einem einzigen Formularlauf eingetragen und vor dem finalen
+   öffentlichen Publish nochmals bestätigt werden.
+2. Owner prüft „Gym Reset, aber echt“ und Mara „Fünf Minuten
+   Maschinencheck“ mit APPROVE, CHANGE oder REJECT. APPROVE bleibt lokal.
+3. Ab 7. September ca. 13:00 Uhr die ersten echten 24h-Insights des neuen
+   Leona-Carousels erfassen; danach 72h und 168h ergänzen.
 
-Es gibt keinen halbfertigen technischen Task. Creator Ops läuft lokal weiter;
-externe Aktionen bleiben bewusst owner-gegatet.
+Es gibt keinen halbfertigen technischen Task und keine Browser-Schleife.

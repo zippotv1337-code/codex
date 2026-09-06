@@ -12,6 +12,7 @@ from urllib.request import urlopen
 
 from creator_ops.archive import ArchiveService
 from creator_ops.cli import build_pipeline
+from creator_ops.database import utc_now
 from creator_ops.reconcile import ManualInstagramService
 from creator_ops.recovery import RecoveryBackupService
 from creator_ops.web import create_server
@@ -104,6 +105,102 @@ class V120OperationsTests(unittest.TestCase):
         self.assertEqual(archive[0]["analytics"][0]["reach"], 120)
         ranking = ArchiveService(self.pipeline.db).top3()
         self.assertTrue(ranking["overall"][0]["uses_rates"])
+
+    def test_native_carousel_reconcile_marks_all_top_picks_and_queue_published(self) -> None:
+        result = self.pipeline.run("leona-voss", date(2026, 9, 4))
+        service = ManualInstagramService(self.pipeline.db)
+        earlier_asset_id = self.pipeline.db.scalar(
+            "SELECT id FROM assets WHERE content_id=? AND pose_slot='FULL_BODY_ACTION'",
+            (result.content_id,),
+        )
+        service.reconcile(
+            creator_slug="leona-voss",
+            content_id=result.content_id,
+            external_url="https://www.instagram.com/p/EarlierSingle/",
+            published_at="2026-09-03T19:30:00+02:00",
+            asset_id=earlier_asset_id,
+        )
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                "UPDATE content_items SET approved=1, status='SCHEDULED' WHERE id=?",
+                (result.content_id,),
+            )
+            publication_id = connection.execute(
+                "SELECT id FROM publications WHERE content_id=? AND provider LIKE 'mock%'",
+                (result.content_id,),
+            ).fetchone()[0]
+            connection.execute(
+                """
+                INSERT INTO publish_queue
+                    (queue_key,publication_id,content_id,platform,planned_at,timezone,
+                     approval_version,status,attempts,adapter_provider,created_at,updated_at)
+                VALUES ('carousel-test',?,?,'instagram','2026-09-04T19:30:00+02:00',
+                        'Europe/Berlin',1,'LOCAL_SCHEDULED',0,'unconfigured',?,?)
+                """,
+                (publication_id, result.content_id, utc_now(), utc_now()),
+            )
+        top_picks = tuple(
+            int(row["id"])
+            for row in self.pipeline.db.all(
+                "SELECT id FROM assets WHERE content_id=? AND is_top_pick=1 ORDER BY id",
+                (result.content_id,),
+            )
+        )
+        first = service.reconcile(
+            creator_slug="leona-voss",
+            content_id=result.content_id,
+            external_url="https://www.instagram.com/p/CarouselExample/",
+            published_at="2026-09-04T19:30:00+02:00",
+            asset_ids=top_picks,
+        )
+        second = service.reconcile(
+            creator_slug="leona-voss",
+            content_id=result.content_id,
+            external_url="https://www.instagram.com/p/CarouselExample/",
+            published_at="2026-09-04T19:30:00+02:00",
+            asset_ids=top_picks,
+        )
+
+        self.assertFalse(first["reused"])
+        self.assertTrue(second["reused"])
+        self.assertEqual(first["provider"], "instagram-native-manual:CarouselExample")
+        self.assertEqual(first["asset_ids"], list(top_picks))
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT COUNT(*) FROM publications WHERE content_id=? AND provider LIKE 'instagram-native-manual%'",
+                (result.content_id,),
+            ),
+            2,
+        )
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                """
+                SELECT COUNT(*) FROM assets
+                WHERE content_id=? AND is_top_pick=1 AND published_status='PUBLISHED'
+                """,
+                (result.content_id,),
+            ),
+            3,
+        )
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT status FROM content_items WHERE id=?", (result.content_id,)
+            ),
+            "PUBLISHED",
+        )
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT status FROM publish_queue WHERE content_id=?", (result.content_id,)
+            ),
+            "PUBLISHED",
+        )
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT COUNT(*) FROM engagement_queue WHERE publication_id=?",
+                (first["publication_id"],),
+            ),
+            2,
+        )
 
     def test_initialize_preserves_explicit_missing_disclosure_on_historic_post(self) -> None:
         result = self.pipeline.run("leona-voss", date(2026, 9, 4))
