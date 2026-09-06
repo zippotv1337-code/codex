@@ -1,6 +1,6 @@
 # Modellkompatibilität und Control Plane
 
-Stand: 5. September 2026
+Stand: 6. September 2026
 
 ## Verbindliche Baseline
 
@@ -30,7 +30,12 @@ Resolver. Die Control Plane veröffentlicht diese Policy mit
 noch kein externes Modellinventar ab und startet keinen Modell-Executor. Eine
 echte Auswahl darf später nur an einem kostenlosen/owner-freigegebenen
 Executor-Adapter erfolgen. Bis dahin ist „Astra unterstützt“ nicht gleich
-„Astra wurde in diesem lokalen Run aufgerufen“.
+„Creator Ops führt selbst Astra-Aufträge aus“.
+
+Am 6. September wurde Astra HIGH getrennt vom Creator-Ops-Laufzeitprozess als
+read-only Codex-Zweitprüfung eingesetzt. Diese Prüfung fand drei P1-Risiken,
+die anschließend behoben und nachgeprüft wurden. Sie aktiviert keinen Executor
+im Produkt, speichert keinen Schlüssel und macht Astra nicht zur Voraussetzung.
 
 Der Modellname und die Reasoning-Stufen wurden am 5. September 2026 gegen die
 [offizielle OpenAI-Modellseite](https://developers.openai.com/api/docs/models/gpt-6-astra)

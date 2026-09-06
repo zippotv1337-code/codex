@@ -14,6 +14,13 @@
 - Ein dauerhafter Publish-Intent wird vor `media_publish` geschrieben.
   Unsichere Ausgänge blockieren automatische Wiederholungen; bestätigte
   Receipts verhindern Doppelposts nach einem lokalen Neustart.
+- Abgestürzte `PUBLISHING`-Claims bleiben bis zur manuellen Abstimmung
+  blockiert. Eine Owner-Neuplanung behält denselben Queue-Key und kann einen
+  alten Intent/Receipt nicht umgehen.
+- Patch-Recovery nimmt validierte Meta-Receipts automatisch mit. Full-Recovery
+  enthält `config.toml` und beide Standalone-Wrapper.
+- Der Standalone-Scheduler prüft Adapter, vier Live-Gates und Passwortschutz
+  vollständig, bevor er überhaupt einen Dispatch-Unterbefehl aufruft.
 - Live-Konfiguration erzwingt selbst auf Loopback den Passwort-/CSRF-Schutz.
 - Überfällige Queuejobs erhalten einen expliziten Owner-Button zum Übernehmen
   des vorgeschlagenen neuen Termins; die Aktion bleibt rein lokal.
@@ -21,6 +28,8 @@
   GPT-5.6 Sol und der Runtime-Default bleiben funktionsfähige Fallbacks.
 - Keine Live-Veröffentlichung, kein Fiverr-Formular und keine externe
   Accountaktion wurden in diesem lokalen Implementierungslauf ausgeführt.
+- Abschlussprüfung: 116/116 Tests, realer Runtime-Smoke-Test und echter
+  Meilenstein-Restore grün; Astra-HIGH-Zweitprüfung ohne offenen P0/P1-Blocker.
 
 ## 1.4.1 — 2026-09-05
 

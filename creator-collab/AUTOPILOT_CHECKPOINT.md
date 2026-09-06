@@ -1,74 +1,82 @@
 # AUTOPILOT CHECKPOINT
 
-Aktueller Speicherstand, ersetzt bei jedem abgeschlossenen Autopilot-Run.
+Aktueller atomarer Speicherstand für den nächsten Run.
 
 ## Zeitpunkt
 
-2026-09-05T19:40:00+02:00 · Europe/Berlin
+2026-09-06T08:10:00+02:00 · Europe/Berlin
 
 ## Letzter vollständig erledigter Task
 
-Creator Ops 1.4.1 lokal gehärtet: Queue-/Prime-Time-/Audio-/Top-3-Korrekturen,
-Lease-Heartbeat und Resume-Sicherheit, statischer Offline-Snapshot,
-owner-gegatete Standalone-Skripte sowie der reparierte CHANGE-/REJECT-Dialog
-sind implementiert und verifiziert.
+Creator Ops 1.6.4-beta als sicherer lokaler Dauerbetrieb abgeschlossen:
+vollständige Scheduler-Gates, offizieller fail-closed Meta-Carousel-Adapter,
+per-Paket-Live-Freigabe, absturzsicherer Doppelpostschutz, vollständige
+Recovery-Kette, optionale Astra-HIGH-Routing-Policy, GitHub-Synchronisierung,
+realer Runtime-Smoke-Test sowie Backup/Restore sind verifiziert.
 
 ## Aktuell angefangener Task
 
-Kein halbfertiger technischer Task. Mara „Fünf Minuten Maschinencheck“ wartet
-unverändert auf die Owner-Entscheidung; drei lokale Queuejobs warten ohne
-externen Publisher.
+Kein halbfertiger technischer Task. Externe Veröffentlichung bleibt aus; der
+Owner hat lokale Review- und Neuplanungsentscheidungen offen.
 
 ## Exakter Fortsetzungspunkt
 
-Owner öffnet das laufende Dashboard und entscheidet zuerst über Mara. Danach
-wird separat entschieden, ob die bereits geprüfte Standalone-Vorschau mit
-`-Apply` als Windows-Aufgaben installiert werden darf.
+Dashboard unter `http://127.0.0.1:4180/` prüfen. Zuerst den vorgeschlagenen
+Termin für Leona „Spätsommer in Berlin“ lokal annehmen oder verwerfen, danach
+Mara „Fünf Minuten Maschinencheck“ prüfen. Ohne eine neue ausdrückliche Live-
+Entscheidung keine Meta-, Instagram-, Fiverr- oder andere Plattformaktion.
 
 ## Geänderte Dateien
 
-- `creator_ops/review.py`, `database.py`, `publishing.py`, `archive.py`
-- `creator_ops/background.py`, `control_plane.py`, `offline.py`, `cli.py`
-- `dashboard/app.js`, `dashboard/app.css`, `dashboard/index.html`, `dashboard/top3.js`
-- `scripts/creator_ops_scheduler.ps1`, `creator_ops_watchdog.ps1`
-- `scripts/install_runtime_tasks.ps1`, `uninstall_runtime_tasks.ps1`
-- zugehörige Tests, README, Versions- und Übergabedokumente
+- Publishing/Recovery: `creator_ops/publishing.py`, `creator_ops/recovery.py`,
+  `creator_ops/cli.py`, `creator_ops/web.py`, `creator_ops/current_state.py`
+- Runtime: `config.toml`, `scripts/runtime_config.ps1`,
+  `scripts/creator_ops_scheduler.ps1`, Standalone-Wrapper
+- UI: Review-Neuplanung und separater Live-Zweiklick-Gate
+- Modellrouting: `creator_ops/model_routing.py`, `config/model_routing.toml`
+- Tests, README, Changelog, Meta-Dokumentation und Übergaben
 
 ## Teststatus
 
-- Bestanden: 96
+- Bestanden: 116
 - Fehlgeschlagen: 0
 - Python-Compilecheck: grün
-- JavaScript-Syntax: 9/9 grün
-- Browserprüfung: großer Preview-Button und neuer CHANGE-Dialog funktionieren
+- JavaScript-Syntax: alle vorhandenen Dashboard-Dateien grün
+- PowerShell-Parser: alle Projekt-Skripte grün
+- Astra-P1-Nachprüfung: keine offenen Release-Blocker
 
 ## Backupstatus
 
-`creator-ops-backup-high-autopilot-final-20260905-193722.db`, SHA256
-`2142C60A9D874C05CC7D137D8B0437F3989D4E8107D2DCA0D5E21CEBB942C985`;
-frischer Restore: Integrität `ok`, sechs Inhalte, drei Queuejobs.
+`backups/Backup_Meilenstein_20260906-0809.zip`, SHA256
+`e937c16d6e80c52bc9d96ee746f6f71989d3a5687bb7cf26bd3bf553b6b41401`.
+Frischer Restore: Integrität `ok`, 6 Inhalte, 6 Publikationen, 3 Queuejobs,
+0 Secret-Referenzen; Standalone-Konfiguration und Start/Stop enthalten.
 
 ## Bekannte Blocker
 
-- Offizieller Instagram-Publisher und Credentials fehlen absichtlich.
-- Reale Analytics-Snapshots fehlen; Rankings bleiben daher unbewertet.
+- Echte Meta-Credentials und öffentliche HTTPS-URLs fehlen absichtlich.
+- Kein Paket besitzt in diesem Run die separate Live-Autorisierung.
+- Reale 24-/72-/168-h-Analytics fehlen weiterhin.
 
 ## Owner-Gates
 
-- Mara-Paket freigeben, ändern oder ablehnen.
-- Live-Publishing und jede externe Plattformaktion separat freigeben.
-- Installation der lokalen Windows-Aufgaben separat mit `-Apply` freigeben.
+- Review/Neuplanung der offenen Pakete.
+- Jede einzelne Live-Veröffentlichung separat autorisieren.
+- Externe Kommentare, Likes, Follows, DMs, Fiverr und kostenpflichtige Dienste.
+- Eine spätere Änderung der öffentlichen GitHub-Sichtbarkeit.
 
 ## Geparkte Aufgaben
 
-- Git, GitHub, Commit, Push, Privatstellung und Remote-Reparaturen.
+- Fiverr-Livegang, neue Plattformen, neue Persona und neue große Bildserie.
+- Kein P2/P3-Ausbau, solange Review und reale Analytics offen sind.
 
 ## Nächste 3 priorisierte Aufgaben
 
-1. Mara „Fünf Minuten Maschinencheck“ im Dashboard entscheiden.
-2. Standalone-Aufgaben in der Vorschau prüfen und Installation bewusst entscheiden.
-3. Echte 24-/72-/168-h-Analytics erfassen und die nächste Produktion datenbasiert wählen.
+1. Leona-Neuplanung im Dashboard entscheiden.
+2. Mara-Reviewkarte entscheiden.
+3. Reale Analytics erfassen oder – nur nach separater Freigabe – einen einzigen
+   offiziellen Meta-Testpost vorbereiten.
 
 ## Exakter Resume-Auftrag
 
-> Lies AUTOPILOT_CHECKPOINT.md, PROJECT_RESUME.md, CURRENT_HANDOFF.md und das neueste Sitzungsjournal. Prüfe Dashboard-Health und Datenbankintegrität. Setze bei Mara „Fünf Minuten Maschinencheck“ beziehungsweise der nächsten sicheren lokalen Aufgabe fort. Installiere Windows-Aufgaben nur nach ausdrücklicher Owner-Entscheidung mit `-Apply`. Git/GitHub und Live-Publishing bleiben geparkt; bei fehlenden echten Analytics nichts erfinden.
+> Lies AUTOPILOT_CHECKPOINT.md, PROJECT_RESUME.md, CURRENT_HANDOFF.md und das neueste datierte Sitzungsjournal. Prüfe Health, genau einen Supervisor, Queue und SQLite-Integrität. Wiederhole keine abgeschlossenen Beta-1.6.4-Arbeiten. Bearbeite zuerst lokale Owner-Review-Ergebnisse oder echte Analytics. Ohne neue ausdrückliche Einzelentscheidung keine externe Aktion. Astra bleibt optional; der stabile Fallback muss funktionieren. Rechtzeitig erneut checkpointen.

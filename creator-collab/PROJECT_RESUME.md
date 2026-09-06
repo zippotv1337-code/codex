@@ -266,6 +266,29 @@ und KI-generiert.
   Skripte sind vorbereitet; die Windows-Aufgaben bleiben ohne explizites
   `-Apply` uninstalliert. Abschlussstand: 96 Tests, aktiver Healthcheck und
   echter SQLite-Restore grün; Git/GitHub sowie Live-Publishing geparkt.
+- Creator Ops 1.6.4-beta betreibt Dashboard, Watchdog, Scheduler und read-only
+  Offline-Snapshot dauerhaft über genau einen lokalen Supervisor und einen
+  benutzereigenen Windows-Autostart. Healthcheck auf Port 4180, SQLite-
+  Integrität und der vollständige Schedulerlauf sind real grün.
+- Der offizielle Meta-Carousel-Adapter ist fail-closed implementiert: getrennte
+  Persona-Konten, exakt drei unveröffentlichte PUBLIC_SFW-Top-Picks, native
+  KI-Kennzeichnung, eigener Paket-Live-Gate, Containerstatus und bestätigte
+  Medien-ID/Instagram-Permalink sind Pflicht. `PUBLISH_INTENT`, stabiler Queue-
+  Key, Stale-Claim-Blockierung und Recovery-Receipts verhindern Blind-Retrys.
+- Patch- und Full-Recovery bewahren Meta-Intents/Receipts; Full enthält die
+  Standalone-Konfiguration und Start/Stop-Wrapper. Das Meilensteinbackup vom
+  6. September wurde frisch wiederhergestellt: Integrität `ok`, 0 Secret-
+  Referenzen.
+- Git/GitHub wurden durch neue Owner-Entscheidung wieder freigegeben. Der
+  geprüfte Code wurde ohne Force-Push oder History-Rewrite auf `main`
+  synchronisiert.
+- GPT-6 Astra HIGH ist ein optionaler bevorzugter Capability-Pfad. Die stabile
+  Fallback-Runtime bleibt vollständig ausreichend; es wurde kein Model-
+  Executor, kein OpenAI-API-Aufruf und keine kostenpflichtige Abhängigkeit
+  aktiviert.
+- Abschlussstand: 116 Tests sowie Python-, JavaScript-, PowerShell-, Runtime-
+  und Restore-Prüfung grün. Dieser Run führte keine externe Plattformaktion
+  aus.
 
 ## Offene Projektbereiche
 
