@@ -757,3 +757,89 @@ PowerShell-Parser und SQLite-Integrität grün. Finales SQLite-Backup:
 Der Restore in eine frische Datenbank ergab `integrity_check = ok`, sechs
 Inhalte und drei Queuejobs. Keine externe Veröffentlichung, keine Kosten und
 keine Secrets.
+
+# Creator Ops 1.6.4-beta — Live-Safety-Abschluss — 6. September 2026
+
+Der bestehende Kern wurde nicht neu gebaut. Der Run beendete die offene
+Standalone-, GitHub-, Publishing- und Recovery-Arbeit aus dem Beta-1.6.4-
+Paket und stoppte danach an einem atomaren Checkpoint.
+
+## Umgesetzt
+
+- Dauerbetrieb über genau einen lokalen Supervisor, persönlichen Windows-
+  Autostart, Watchdog, begrenzten Scheduler und read-only Offline-Snapshot.
+- Vollständiger Scheduler-Gate: Dispatch nur bei zwei Publishing-Schaltern,
+  zwei externen Capabilities, Adapter `meta-graph` und sicherem Laufzeitlogin.
+- Offizieller Meta-Carousel-Adapter mit persona-fester Kontozuordnung, exakt
+  drei unveröffentlichten PUBLIC_SFW-Top-Picks, nativer KI-Kennzeichnung,
+  separater Live-Freigabe, Containerprüfung und bestätigter ID/Permalink.
+- Persistenter Publish-Intent vor dem externen Publish. Unsichere Ergebnisse,
+  abgestürzte Claims und fehlende Receipts blockieren ohne Blind-Retry.
+- Neuplanung behält den Queue-Key und kann keine alte Intent-/Receipt-Sperre
+  umgehen.
+- Patch-Recovery enthält validierte Meta-Receipts automatisch. Full-Recovery
+  enthält `config.toml` und die Standalone-Start/Stop-Wrapper.
+- Modellrouting bevorzugt Astra HIGH nur capability-basiert und optional;
+  Sol/Runtime-Default bleiben vollständige Fallbacks. Kein externer Model-
+  Executor und kein API-Aufruf wurden aktiviert.
+- GitHub `main` wurde in drei sicheren Fast-Forward-Schritten synchronisiert;
+  kein Force-Push und kein History-Rewrite.
+
+## Astra-Zweitprüfung
+
+Eine unabhängige read-only Astra-HIGH-Prüfung fand drei P1-Risiken: einen
+möglichen Doppelpostpfad nach Stale-Publishing plus Neuplanung, fehlende Meta-
+Receipts in Patch-Backups und fehlende Standalone-Bootdateien in Full-Backups.
+Alle drei Punkte wurden gezielt behoben, mit Regressionstests abgesichert und
+anschließend von Astra ohne offenen P0/P1-Blocker nachgeprüft.
+
+## Verifikation
+
+- 116/116 Tests grün
+- Python-Compilecheck grün
+- alle vorhandenen Dashboard-JavaScript-Dateien syntaktisch grün
+- alle PowerShell-Projektskripte parsebar
+- `git diff --check` grün
+- Runtime: Health `ok`, Version `1.6.4-beta`, genau ein Supervisor
+- SQLite: `integrity_check = ok`, 6 Inhalte, 30 Assets, 6 Publikationen,
+  3 Queuejobs
+- Schedulerlog bestätigt `live dispatch skipped by complete owner gate`
+
+## Backup/Restore
+
+- Backup: `backups/Backup_Meilenstein_20260906-0809.zip`
+- SHA256:
+  `e937c16d6e80c52bc9d96ee746f6f71989d3a5687bb7cf26bd3bf553b6b41401`
+- Frischer Restore:
+  `tmp/restore-check-20260906-080949/recovery/creator_ops.db`
+- Ergebnis: Integrität `ok`, 6 Inhalte, 6 Publikationen, 3 Queuejobs,
+  0 Secret-Referenzen; `config.toml` und Standalone-Wrapper vorhanden.
+
+## Betriebsstand
+
+- Je Persona 11 reale Assets, davon 10 unveröffentlicht. Neun unveröffentlichte
+  Assets je Persona liegen in zwei feedfähigen Paketen; je ein zusätzliches
+  Asset gehört zu einer älteren unvollständigen Karte.
+- Zwei Pakete sind lokal für 6. September, 19:30 Uhr vorgemerkt.
+- Ein Leona-Paket benötigt Owner-Neuplanung, ein Mara-Paket Owner-Review.
+- Zwei frühere manuelle native Posts bleiben dokumentiert.
+- Live-Posts, externe Meta-Aufrufe, Fiverr-Aktionen, Kommentare, Likes, Follows,
+  DMs, Kosten und neue Secrets dieses Runs: jeweils 0.
+
+## Für Auswertung mit ChatGPT
+
+1. Creator Ops 1.6.4-beta läuft ohne Codex lokal weiter.
+2. 116/116 Tests und echter Restore sind grün.
+3. GitHub `main` ist ohne Force-Push synchronisiert.
+4. Der Meta-Pfad ist implementiert, aber standardmäßig vollständig aus.
+5. Lokales APPROVE ist niemals die Live-Freigabe.
+6. Jede Live-Freigabe gilt nur für ein konkretes Paket.
+7. Unsicherer Publish-Ausgang wird niemals automatisch wiederholt.
+8. Queue-Key bleibt bei Neuplanung stabil.
+9. Meta-Receipts überleben Patch- und Full-Restore.
+10. Astra ist optionaler Bonus, keine Voraussetzung.
+11. Pro Persona sind 10 reale Assets unveröffentlicht.
+12. Zwei Feedpakete stehen lokal auf 19:30 Uhr.
+13. Eine Leona-Neuplanung und eine Mara-Reviewentscheidung sind offen.
+14. Reale Analytics fehlen und dürfen nicht erfunden werden.
+15. Dieser Run führte keine externe Plattformaktion aus.

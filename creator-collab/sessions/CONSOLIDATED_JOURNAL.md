@@ -102,3 +102,30 @@ Die Belegkette umfasst alle Dateien von `2026-09-03-1330-codex.md` bis
 `2026-09-04-2230-codex.md`, chronologisch nach Dateiname. Bei Detailfragen gilt
 das jeweilige Einzeljournal; bei aktuellem Arbeitsstand gilt
 `AUTOPILOT_CHECKPOINT.md`.
+
+## 5.–6. September — Beta 1.6.4 Standalone und Live-Safety
+
+- Die neuere ausdrückliche Owner-Entscheidung hob die frühere Git-/GitHub-
+  Parkung auf. Der geprüfte Code wurde per Fast-Forward auf `main`
+  synchronisiert; es gab keinen Force-Push und kein History-Rewrite.
+- Creator Ops läuft über persönlichen Windows-Autostart und genau einen
+  Supervisor unabhängig von einem offenen Codex-Fenster auf Port 4180.
+- Scheduler, Watchdog und read-only Offline-Snapshot wurden real geprüft. Die
+  vollständigen Live-Gates blieben aus; keine externe Aktion wurde ausgelöst.
+- Der offizielle Meta-Carousel-Adapter besitzt Persona-Kontozuordnung, separaten
+  Paket-Live-Gate, native KI-Kennzeichnung, Intent/Receipt, echte ID-/Permalink-
+  Bestätigung und fail-closed Crash-Recovery.
+- Eine Astra-HIGH-Zweitprüfung fand drei P1-Grenzfälle. Stale-Publish-
+  Neuplanung, Patch-Receipt-Recovery und Full-Standalone-Recovery wurden
+  behoben, getestet und ohne offenen P0/P1-Blocker nachgeprüft.
+- Abschlussstand: 116/116 Tests, SQLite-Integrität, Runtime und echter
+  Meilenstein-Restore grün. Live-Posts und externe Requests dieses Runs: 0.
+
+## Aktuell autoritativ
+
+- Laufender Speicherstand: `../AUTOPILOT_CHECKPOINT.md`
+- Kurze Übergabe: `../CURRENT_HANDOFF.md`
+- Owner-Inbox: `../docs/HUMAN_HANDOFF.md`
+- Live-Nachweis: `../LIVE_EVIDENCE.md`
+- Die früher in diesem Journal dokumentierte Git-Parkung ist historisch und
+  durch die neuere Owner-Entscheidung ersetzt.

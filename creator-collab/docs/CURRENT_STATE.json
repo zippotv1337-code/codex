@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-05T17:37:31+00:00",
-  "app_version": "1.4.1",
+  "generated_at": "2026-09-06T06:18:22+00:00",
+  "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
-    "state": "PARKED_BY_OWNER"
+    "state": "MANAGED_OUTSIDE_RUNTIME"
   },
   "personas": [
     {
@@ -61,11 +61,12 @@
     "mock": 4,
     "manual_analytics_events": 0,
     "local_queue": {
-      "LOCAL_SCHEDULED": 3
+      "LOCAL_SCHEDULED": 2,
+      "NEEDS_RESCHEDULE_REVIEW": 1
     }
   },
   "background_runs": {
-    "COMPLETE": 2
+    "COMPLETE": 3
   },
   "engagement": {
     "real_post_proposals": 4,
@@ -86,7 +87,7 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 96,
+    "passed": 116,
     "failed": 0
   },
   "blockers": {

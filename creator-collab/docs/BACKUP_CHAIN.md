@@ -59,3 +59,17 @@ Zusätzlicher direkter SQLite-Restore-Punkt:
 - Der Snapshot entstand nach Datenreparatur und vor den rein statischen
   Abschlussdokumenten; es wurden keine Secrets oder externen Zugangsdaten
   ergänzt.
+
+## 1.6.4-beta Live-Safety-Meilenstein
+
+- `backups/Backup_Meilenstein_20260906-0809.zip`
+- SHA256:
+  `e937c16d6e80c52bc9d96ee746f6f71989d3a5687bb7cf26bd3bf553b6b41401`
+- Größe: 51.535.236 Bytes.
+- Frischer Restore:
+  `tmp/restore-check-20260906-080949/recovery/creator_ops.db`
+- Verifiziert: SQLite-Integrität `ok`, sechs Inhalte, sechs Publikationen,
+  drei Queuejobs und null `secret_reference`-Einträge.
+- Das Archiv enthält `config.toml`, Standalone-Start/Stop und alle aktuell
+  vorhandenen schema-validierten Meta-Receipts. Beim Erstellen existierten
+  noch keine Meta-Receipts, weil dieser Run keinen Live-Publish ausführte.

@@ -136,18 +136,22 @@ Enthalten sind:
 - Patch-/Meilenstein-Backup-Kette mit echter Member-Hashprüfung
 - statischer, secrets-reduzierter Offline-Snapshot unter `output/offline/`
 
-## Optionaler Standalone-Betrieb
+## Standalone-Betrieb
 
-Die vorbereitete Runtime bleibt standardmäßig **nicht installiert**. Vorschau:
+Auf diesem Arbeitsplatz ist der benutzereigene Autostart
+`CreatorOpsStandalone.cmd` bereits aktiv. Er benötigt keine Adminrechte und
+startet genau einen lokalen Supervisor. Die optionalen Windows-Aufgaben sind
+weiterhin **nicht** installiert. Vorschau:
 
 ```powershell
 .\scripts\install_runtime_tasks.ps1
 ```
 
-Nach Owner-Prüfung können drei lokale Windows-Aufgaben (Autostart, Watchdog,
-Scheduler) ausdrücklich mit `-Apply` installiert werden. Der Scheduler arbeitet
+Nach Owner-Prüfung könnten alternativ drei lokale Windows-Aufgaben (Autostart,
+Watchdog, Scheduler) ausdrücklich mit `-Apply` installiert werden. Das ist für
+den aktuellen persönlichen Autostart nicht erforderlich. Der Scheduler arbeitet
 in einzelnen, begrenzten Läufen; der Watchdog besitzt Backoff und einen
-Restart-Circuit. Der Publisher bleibt ohne konfigurierten Adapter fail-closed.
+Restart-Circuit. Der Publisher bleibt ohne alle Live-Gates fail-closed.
 
 ```powershell
 .\scripts\install_runtime_tasks.ps1 -Apply

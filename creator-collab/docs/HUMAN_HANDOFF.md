@@ -1,39 +1,50 @@
 # Human Handoff — einzige aktive Owner-Inbox
 
-Stand: 5. September 2026, 19:40 Uhr · Creator Ops 1.4.1
+Stand: 6. September 2026, 08:10 Uhr · Creator Ops 1.6.4-beta
 
 ## JETZT
 
-1. Öffne `http://127.0.0.1:4180/` und entscheide bei Mara
-   „Fünf Minuten Maschinencheck“: **APPROVE**, **CHANGE** oder **REJECT**.
-   Der zuvor tote CHANGE-/REJECT-Dialog ist repariert und im eingebetteten
-   Browser sichtbar geprüft. APPROVE ist aktiv und legt nur einen lokalen
-   Queue-Eintrag an; es wird nichts live veröffentlicht.
-2. Kontrolliere die drei bereits `LOCAL_SCHEDULED` markierten Pakete. Der
-   offizielle Instagram-Adapter ist nicht konfiguriert; lokale Terminierung ist
-   kein Beleg für einen Instagram-Post.
+1. Öffne `http://127.0.0.1:4180/`.
+2. Bei Leona „Spätsommer in Berlin“ den vorgeschlagenen neuen Termin
+   **6. September, 19:30 Uhr** übernehmen oder unverändert zur Prüfung lassen.
+   Das ändert ausschließlich die lokale Queue.
+3. Bei Mara „Fünf Minuten Maschinencheck“ **APPROVE**, **CHANGE** oder
+   **REJECT** wählen. Auch APPROVE veröffentlicht nicht live.
+
+Leona „September Roofline“ und Mara „Küchenfenster“ stehen bereits lokal auf
+6. September, 19:30 Uhr. Der aktuelle `local-mock`-Modus sendet sie nicht an
+Instagram.
+
+## NICHT DRINGEND
+
+- „Berlin Filmlook“ und „Werkstattabend“ sind ältere unvollständige Karten mit
+  je nur einem realen Asset. Sie gehören nicht zur produktiven Vier-Paket-
+  Reserve und können später bereinigt oder ergänzt werden.
+- Pro Persona sind 10 reale Assets unveröffentlicht; 9 davon liegen in den
+  zwei feedfähigen Paketen.
 
 ## SEPARATE FREIGABEN
 
-- Live-Publishing, Kommentare, Likes, Follows, DMs und Accountänderungen.
-- Installation der vorbereiteten Windows-Aufgaben. Zuerst nur ansehen:
-  `scripts/install_runtime_tasks.ps1`; tatsächliche Installation ausschließlich
-  nach bewusster Entscheidung mit `-Apply`.
-- Git/GitHub bleiben nach Owner-Anweisung geparkt.
+- Jede einzelne Live-Veröffentlichung benötigt nach lokaler Freigabe noch den
+  separaten Live-Zweiklick-Gate.
+- Meta-Credentials, öffentliche Asset-URLs und natives KI-Disclosure müssen
+  vollständig eingerichtet sein; Anleitung: `OFFICIAL_META_PUBLISHING.md`.
+- Kommentare, Likes, Follows, DMs, Fiverr, kostenpflichtige Dienste und eine
+  Änderung der GitHub-Sichtbarkeit bleiben eigene Owner-Entscheidungen.
 
 ## DANACH
 
 - Echte Instagram-Insights nach 24, 72 und 168 Stunden manuell erfassen.
-- Konkrete echte Kommentare bereitstellen, wenn individuelle Antwortentwürfe
-  gewünscht sind; ohne Quelldaten wird nichts erfunden.
-- Nächste Bildproduktion erst aus realen Signalen wählen. Dokumentierte
-  Kandidaten bleiben Leona „Gym Reset“ und Mara „Werkstatt-Feierabend“.
+- Ohne echte Kommentartexte oder Analytics wird nichts erfunden.
+- Erst danach die nächste Produktion datenbasiert auswählen.
 
-## Betrieb
+## Betrieb und Belege
 
 - Dashboard: `http://127.0.0.1:4180/`
 - Offline-Leseansicht: `output/offline/index.html`
 - Status: `docs/CURRENT_STATE.json`
-- Letztes Backup:
-  `backups/creator-ops-backup-high-autopilot-final-20260905-193722.db`
-- Verifikation: 96/96 Tests; Datenbank und Restore `ok`; Kosten 0 EUR.
+- Tests: 116/116 grün
+- Datenbank: Integrität `ok`
+- Backup: `backups/Backup_Meilenstein_20260906-0809.zip`
+- Restore: Integrität `ok`, 0 Secret-Referenzen
+- Externe Aktionen dieses Runs: 0
