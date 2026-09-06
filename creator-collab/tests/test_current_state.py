@@ -21,6 +21,7 @@ class CurrentStateTests(unittest.TestCase):
             ReviewDashboardService(pipeline).ensure_date(date(2026, 9, 9))
             runtime = root / "data"
             runtime.mkdir()
+            (root / "VERSION").write_text("1.6.4-beta\n", encoding="utf-8")
             (runtime / "REMOTE_ACCESS_CURRENT.txt").write_text(
                 "https://temporary-demo.trycloudflare.com\n", encoding="utf-8"
             )
@@ -34,6 +35,8 @@ class CurrentStateTests(unittest.TestCase):
             self.assertEqual(stored["content"]["by_stage"], {"ALLTAG": 2})
             self.assertEqual(stored["assets"]["total"], 10)
             self.assertEqual(stored["tests"]["status"], "passed")
+            self.assertEqual(stored["app_version"], "1.6.4-beta")
+            self.assertEqual(stored["git"]["state"], "MANAGED_OUTSIDE_RUNTIME")
             self.assertIn("live_publishing", stored["owner_decisions"]["red_gates"])
             self.assertTrue(stored["remote"]["active"])
             self.assertNotIn("url", stored["remote"])

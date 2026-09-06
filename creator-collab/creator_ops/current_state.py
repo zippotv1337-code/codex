@@ -10,7 +10,6 @@ from .content_mix import ContentMixPlanner
 from .database import CreatorDatabase
 
 
-APP_VERSION = "1.4.1"
 REMOTE_URL_PATTERN = re.compile(r"https://[a-z0-9-]+\.trycloudflare\.com", re.IGNORECASE)
 
 
@@ -26,9 +25,17 @@ class CurrentStateService:
         self.root = Path(root)
 
     def _git(self) -> dict[str, str]:
-        # Git/GitHub are explicitly parked by the owner. Runtime snapshots do
-        # not probe or mutate repository state.
-        return {"state": "PARKED_BY_OWNER"}
+        # The standalone runtime intentionally does not probe or mutate Git.
+        # Repository sync is handled outside the application process.
+        return {"state": "MANAGED_OUTSIDE_RUNTIME"}
+
+    def _app_version(self) -> str:
+        version_path = self.root / "VERSION"
+        try:
+            value = version_path.read_text(encoding="utf-8").strip()
+        except OSError:
+            return "unknown"
+        return value or "unknown"
 
     def _remote(self, include_url: bool) -> dict[str, object]:
         path = self.root / "data" / "REMOTE_ACCESS_CURRENT.txt"
@@ -174,7 +181,7 @@ class CurrentStateService:
 
         return {
             "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
-            "app_version": APP_VERSION,
+            "app_version": self._app_version(),
             "schema_version": self.database.schema_version(),
             "git": self._git(),
             "personas": creators,
