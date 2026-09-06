@@ -4,7 +4,7 @@ Aktueller atomarer Speicherstand für den nächsten Run.
 
 ## Zeitpunkt
 
-2026-09-06T13:37:00+02:00 · Europe/Berlin
+2026-09-06T15:10:00+02:00 · Europe/Berlin
 
 ## Letzter vollständig erledigter Task
 
@@ -16,15 +16,18 @@ Carousel-Reconciliation ist regressionsgetestet und auf GitHub synchronisiert.
 
 ## Aktuell angefangener Task
 
-Kein halbfertiger technischer oder Browser-Task. Der nächste Fortschritt hängt
-von Owner-Review, persönlichen Fiverr-Angaben oder zeitlich fälligen echten
-Analytics ab.
+Kein halbfertiger technischer oder Browser-Task. Der Resume-Check um 15:10 Uhr
+bestätigte Runtime, Datenbank und Queue als gesund. Fiverr zeigt weiterhin
+`Create your profile`; neue Reviewentscheidungen liegen nicht vor. Der nächste
+Fortschritt hängt daher von Owner-Review, persönlichen Fiverr-Angaben oder
+zeitlich fälligen echten Analytics ab.
 
 ## Exakter Fortsetzungspunkt
 
 Zuerst `CURRENT_HANDOFF.md`, `docs/HUMAN_HANDOFF.md` und dieses Checkpoint
 lesen. Health auf `http://127.0.0.1:4180/api/health` sowie SQLite-Integrität
-kurz prüfen. Wenn der Owner das Fiverr-Verkäuferprofil abgeschlossen hat, den
+kurz prüfen. Nicht erneut auf Fiverr klicken, solange der Owner nicht meldet,
+dass `Create your profile` abgeschlossen ist. Danach den
 vorbereiteten Gig in einem Formularlauf bis zur Vorschau eintragen; den finalen
 öffentlichen Publish unmittelbar bestätigen lassen. Andernfalls die lokalen
 Reviews für Leona „Gym Reset“ und Mara „Fünf Minuten Maschinencheck“
