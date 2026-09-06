@@ -1,6 +1,13 @@
 [run]
-version = "BETA_1_5"
+version = "BETA_1_6_4"
 overall_effort = "high"
+
+[selection]
+preferred_model = "gpt-6-astra"
+fallback_model = "gpt-5.6-sol"
+reasoning_effort = "high"
+preferred_required = false
+capability_based = true
 
 [[task]]
 id = "STANDALONE_RUNTIME"

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import tomllib
 from dataclasses import asdict
 from datetime import date, datetime
 from pathlib import Path
@@ -16,7 +18,11 @@ from .reconcile import ManualInstagramService
 from .recovery import RecoveryBackupService
 from .checkpoint import AutopilotCheckpointService
 from .adworks import AdWorksService
-from .publishing import PublishQueueService
+from .publishing import (
+    MetaInstagramPublishingAdapter,
+    PublishQueueService,
+    UnconfiguredInstagramAdapter,
+)
 from .morning import MorningContentFactory
 from .offline import OfflineSnapshotService
 from .review import ReviewDashboardService
@@ -34,9 +40,36 @@ def build_pipeline(database_path: Path) -> VerticalPipeline:
     )
 
 
+def live_publishing_requested(config_path: Path) -> bool:
+    settings = tomllib.loads(config_path.read_text(encoding="utf-8"))
+    publishing = settings.get("publishing", {})
+    scheduler = settings.get("scheduler", {})
+    capabilities = settings.get("capabilities", {})
+    return bool(publishing.get("live_enabled", False)) and bool(
+        scheduler.get("dispatch_live", False)
+    ) and bool(capabilities.get("official_instagram_publish", False)) and bool(
+        capabilities.get("live_external_actions", False)
+    )
+
+
+def build_publish_queue(
+    pipeline: VerticalPipeline, config_path: Path
+) -> PublishQueueService:
+    settings = tomllib.loads(config_path.read_text(encoding="utf-8"))
+    publishing = settings.get("publishing", {})
+    enabled = live_publishing_requested(config_path)
+    password_ready = len(os.environ.get("CREATOR_OPS_PASSWORD", "")) >= 12
+    if enabled and password_ready and publishing.get("adapter") == "meta-graph":
+        adapter = MetaInstagramPublishingAdapter.from_environment(pipeline.db, ROOT)
+    else:
+        adapter = UnconfiguredInstagramAdapter()
+    return PublishQueueService(pipeline.db, adapter)
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description="Creator Ops local MVP")
     result.add_argument("--db", type=Path, default=ROOT / "data" / "creator_ops.db")
+    result.add_argument("--config", type=Path, default=ROOT / "config.toml")
     subcommands = result.add_subparsers(dest="command", required=True)
     subcommands.add_parser("init", help="Initialize schema and persona seeds")
     demo = subcommands.add_parser("demo", help="Run both vertical mock pipelines")
@@ -248,13 +281,15 @@ def main() -> int:
         result = AdWorksService(pipeline.db).dry_run(args.pack)
         print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
     elif args.command == "publish-queue":
-        print(json.dumps(PublishQueueService(pipeline.db).list(), ensure_ascii=False, indent=2))
+        print(json.dumps(build_publish_queue(pipeline, args.config).list(), ensure_ascii=False, indent=2))
     elif args.command == "publish-reconcile":
-        print(json.dumps(PublishQueueService(pipeline.db).reconcile(), ensure_ascii=False, indent=2))
+        print(json.dumps(build_publish_queue(pipeline, args.config).reconcile(), ensure_ascii=False, indent=2))
     elif args.command == "publish-dispatch-due":
         print(
             json.dumps(
-                PublishQueueService(pipeline.db).dispatch_due(datetime.fromisoformat(args.at)),
+                build_publish_queue(pipeline, args.config).dispatch_due(
+                    datetime.fromisoformat(args.at)
+                ),
                 ensure_ascii=False,
                 indent=2,
             )

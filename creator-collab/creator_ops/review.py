@@ -15,6 +15,7 @@ from .models import (
     VisibilityScope,
 )
 from .pipeline import VerticalPipeline, check_compliance
+from .publishing import PublishQueueService
 from .services import AudioService
 
 
@@ -291,6 +292,23 @@ class ReviewDashboardService:
                     """,
                     (row["id"],),
                 ).fetchone()
+                live_gate = connection.execute(
+                    """
+                    SELECT action FROM review_events
+                    WHERE content_id=? AND action IN (
+                        'OWNER_LIVE_PUBLISH_APPROVED_UI',
+                        'OWNER_LIVE_PUBLISH_REVOKED_UI',
+                        'OWNER_CHANGE_REQUESTED_UI',
+                        'OWNER_REJECTED_UI'
+                    )
+                    ORDER BY id DESC LIMIT 1
+                    """,
+                    (row["id"],),
+                ).fetchone()
+                live_publish_authorized = bool(
+                    live_gate
+                    and live_gate["action"] == "OWNER_LIVE_PUBLISH_APPROVED_UI"
+                )
                 style_row = connection.execute(
                     """
                     SELECT variant, baseline_json FROM experiments
@@ -393,6 +411,30 @@ class ReviewDashboardService:
                         "suggested_at": queue_state["suggested_at"] if queue_state else None,
                         "schedule_error": queue_state["last_error"] if queue_state else None,
                         "schedule_adapter": queue_state["adapter_provider"] if queue_state else None,
+                        "live_publish_authorized": live_publish_authorized,
+                        "can_authorize_live_publish": bool(
+                            row["approved"]
+                            and queue_state
+                            and (
+                                queue_state["status"] == "LOCAL_SCHEDULED"
+                                or (
+                                    queue_state["status"] == "BLOCKED_EXTERNAL_PUBLISHING"
+                                    and PublishQueueService.is_safe_preflight_error(
+                                        queue_state["last_error"]
+                                    )
+                                )
+                            )
+                            and not live_publish_authorized
+                        ),
+                        "can_rearm_preflight": bool(
+                            row["approved"]
+                            and live_publish_authorized
+                            and queue_state
+                            and queue_state["status"] == "BLOCKED_EXTERNAL_PUBLISHING"
+                            and PublishQueueService.is_safe_preflight_error(
+                                queue_state["last_error"]
+                            )
+                        ),
                         "style_reference": style_row["variant"] if style_row else None,
                         "reference_strength": style_metadata.get("reference_strength"),
                         "reference_format": style_metadata.get("reference_format"),
@@ -407,6 +449,7 @@ class ReviewDashboardService:
                         ],
                         "review_guidance": {
                             "approve": "legt einen lokal terminierten Queue-Eintrag an; kein Live-Post",
+                            "live_authorize": "separate Freigabe für den offiziellen Live-Versand dieses Pakets",
                             "reject": "blockiert dieses Paket lokal",
                             "change": "setzt das Paket auf Änderungen erforderlich",
                         },
@@ -560,9 +603,9 @@ class ReviewDashboardService:
                 INSERT INTO publications
                     (content_id, platform_variant_id, provider, scheduled_at,
                      schedule_status, schedule_timezone, schedule_source,
-                     approval_version, status)
+                     approval_version, ai_disclosure, status)
                 VALUES (?, ?, 'mock-draft', ?, 'LOCAL_SCHEDULED',
-                        'Europe/Berlin', ?, ?, 'SCHEDULED')
+                        'Europe/Berlin', ?, ?, 1, 'SCHEDULED')
                 RETURNING id
                 """,
                 (
@@ -573,8 +616,6 @@ class ReviewDashboardService:
                     approval_version,
                 ),
             ).fetchone()[0]
-            from .publishing import PublishQueueService
-
             PublishQueueService(self.pipeline.db).enqueue_approved(
                 connection,
                 content_id=content_id,

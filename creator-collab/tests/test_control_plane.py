@@ -37,10 +37,18 @@ class ControlPlaneTests(unittest.TestCase):
         self.assertEqual(payload["contract"]["model_policy"], "stable-current-model")
         self.assertEqual(payload["contract"]["future_models"], "optional-capability-bonus")
         self.assertTrue(payload["contract"]["backward_compatible"])
+        routing = payload["contract"]["model_routing"]
+        self.assertEqual(routing["preferred_model"], "gpt-6-astra")
+        self.assertEqual(routing["fallback_model"], "gpt-5.6-sol")
+        self.assertEqual(routing["reasoning_effort"], "high")
+        self.assertFalse(routing["preferred_required"])
         enhanced = next(item for item in payload["capabilities"] if item["id"] == "generation.enhanced")
+        astra = next(item for item in payload["capabilities"] if item["id"] == "generation.astra")
         external = next(item for item in payload["capabilities"] if item["id"] == "publish.external")
         self.assertEqual(enhanced["state"], "OPTIONAL_BONUS")
         self.assertFalse(enhanced["required"])
+        self.assertEqual(astra["state"], "OPTIONAL_BONUS")
+        self.assertFalse(astra["required"])
         self.assertEqual(external["state"], "OWNER_GATE")
 
     def test_commands_are_atomic_and_pause_blocks_run(self) -> None:

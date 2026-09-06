@@ -6,6 +6,7 @@ import threading
 import unittest
 from datetime import date, datetime
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from creator_ops.cli import build_pipeline
@@ -195,6 +196,12 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertIn("card.can_approve", script)
         self.assertNotIn("window.prompt", script)
         self.assertIn("requestDecisionNote", script)
+        self.assertIn('data-action="reschedule"', script)
+        self.assertIn('data-action="live-authorize"', script)
+        self.assertIn('dataset.sensitiveConfirm = "armed"', script)
+        self.assertIn('data-action="rearm-preflight"', script)
+        self.assertNotIn("window.confirm", script)
+        self.assertIn("Neuer Termin lokal übernommen", script)
         self.assertIn('id="decision-dialog"', html)
         self.assertNotIn(".status-pill { display: none; }", styles)
         self.assertIn("Slides ausgewählt", script)
@@ -290,12 +297,53 @@ class ReviewDashboardTests(unittest.TestCase):
             with urlopen(request, timeout=5) as response:
                 approved = json.load(response)
             self.assertEqual(approved["status"], "SCHEDULED")
+            live_request = Request(
+                f"{base}/api/reviews/{content_id}/live-authorize", method="POST"
+            )
+            with self.assertRaises(HTTPError) as raised:
+                urlopen(live_request, timeout=5)
+            self.assertEqual(raised.exception.code, 403)
             with urlopen(f"{base}/api/health", timeout=5) as response:
                 health = json.load(response)
             self.assertEqual(health["status"], "ok")
             self.assertEqual(health["mode"], "local-mock")
             self.assertFalse(health["auth"])
             self.assertEqual(health["database"], "ok")
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+
+    def test_http_owner_can_accept_a_suggested_local_reschedule(self) -> None:
+        card = self.service.ensure_date(date(2026, 9, 8))[0]
+        self.service.approve(card["content_id"])
+        suggested = "2026-09-09T19:30:00+02:00"
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE publish_queue
+                SET status='NEEDS_RESCHEDULE_REVIEW', suggested_at=?,
+                    last_error='planned_slot_expired_owner_review_required'
+                WHERE content_id=?
+                """,
+                (suggested, card["content_id"]),
+            )
+        server = create_server(
+            self.database_path, port=0, asset_root=Path(self.tempdir.name)
+        )
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            base = f"http://127.0.0.1:{server.server_port}"
+            request = Request(
+                f"{base}/api/reviews/{card['content_id']}/reschedule",
+                method="POST",
+            )
+            with urlopen(request, timeout=5) as response:
+                payload = json.load(response)
+            self.assertEqual(payload["status"], "LOCAL_SCHEDULED")
+            self.assertEqual(payload["planned_at"], suggested)
+            self.assertFalse(payload["external_action"])
         finally:
             server.shutdown()
             server.server_close()

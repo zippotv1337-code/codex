@@ -80,6 +80,9 @@ function cardTemplate(card) {
     </div>`).join("");
   const approved = card.approved;
   const canApprove = card.can_approve ?? (card.ready && !approved && card.status === "READY_FOR_REVIEW");
+  const canReschedule = card.schedule_status === "NEEDS_RESCHEDULE_REVIEW" && Boolean(card.suggested_at);
+  const canAuthorizeLive = Boolean(card.can_authorize_live_publish);
+  const canRearmPreflight = Boolean(card.can_rearm_preflight);
   const status = statusMeta(card);
   const audioDetails = card.audio_options.map((option) => {
     const review = ["REVIEW_REQUIRED", "VERIFY_BEFORE_USE", "MOCK_ONLY"].includes(option.license_status)
@@ -133,7 +136,11 @@ function cardTemplate(card) {
         </dl>
       </details>
       <button class="large-preview-button" type="button" data-large-preview="${card.content_id}">Große Instagram-Vorschau</button>
-      <div class="decision-help"><b>APPROVE</b> lokale Creator-Ops-Queue · <b>CHANGE</b> Überarbeitung · <b>REJECT</b> Paket blockieren</div>
+      ${canReschedule ? `<button type="button" class="reschedule-button" data-action="reschedule" data-content-id="${card.content_id}">VORGESCHLAGENEN TERMIN ÜBERNEHMEN · nur lokal</button>` : ""}
+      ${canAuthorizeLive ? `<button type="button" class="live-authorize-button" data-action="live-authorize" data-content-id="${card.content_id}">LIVE-VERSAND SEPARAT FREIGEBEN · postet noch nicht</button>` : ""}
+      ${canRearmPreflight ? `<button type="button" class="rearm-preflight-button" data-action="rearm-preflight" data-content-id="${card.content_id}">SICHEREN PREFLIGHT ERNEUT PRÜFEN · postet noch nicht</button>` : ""}
+      ${card.live_publish_authorized ? '<p class="live-gate-status">Live-Versand für genau dieses Paket autorisiert · globale Meta-Gates bleiben maßgeblich</p>' : ""}
+      <div class="decision-help"><b>APPROVE</b> nur lokale Queue · <b>LIVE-FREIGABE</b> separat · <b>CHANGE</b> Überarbeitung · <b>REJECT</b> Paket blockieren</div>
       <div class="decision-actions">
         <button type="button" class="approve-button" data-action="approve" data-content-id="${card.content_id}" ${canApprove ? "" : "disabled"}>${approved ? "Freigegeben" : "APPROVE"}</button>
         <button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">CHANGE</button>
@@ -264,12 +271,29 @@ function closeDecisionDialog(value = null) {
 
 async function ownerDecision(contentId, action) {
   let note = "";
-  if (action !== "approve") {
+  const button = document.querySelector(`[data-action="${action}"][data-content-id="${contentId}"]`);
+  if (["live-authorize", "rearm-preflight"].includes(action)) {
+    if (button?.dataset.sensitiveConfirm !== "armed") {
+      button.dataset.sensitiveConfirm = "armed";
+      button.textContent = action === "live-authorize"
+        ? "ZWEITER KLICK: LIVE-FREIGABE BESTÄTIGEN"
+        : "ZWEITER KLICK: PREFLIGHT ERNEUT AKTIVIEREN";
+      window.setTimeout(() => {
+        if (button.dataset.sensitiveConfirm === "armed") {
+          delete button.dataset.sensitiveConfirm;
+          button.textContent = action === "live-authorize"
+            ? "LIVE-VERSAND SEPARAT FREIGEBEN · postet noch nicht"
+            : "SICHEREN PREFLIGHT ERNEUT PRÜFEN · postet noch nicht";
+        }
+      }, 8000);
+      return { cancelled: true };
+    }
+    delete button.dataset.sensitiveConfirm;
+  } else if (!["approve", "reschedule"].includes(action)) {
     const response = await requestDecisionNote(action);
     if (response === null) return { cancelled: true };
     note = response;
   }
-  const button = document.querySelector(`[data-action="${action}"][data-content-id="${contentId}"]`);
   if (button) {
     button.disabled = true;
     button.textContent = "Wird gespeichert …";
@@ -282,7 +306,13 @@ async function ownerDecision(contentId, action) {
   const payload = await response.json();
   if (!response.ok) throw new Error(payload.error || "Freigabe fehlgeschlagen");
   await loadCards();
-  showToast(action === "approve" ? "Freigabe gespeichert · Creator Ops hält den Termin lokal" : "Owner-Entscheidung lokal gespeichert");
+  const messages = {
+    approve: "Freigabe gespeichert · Creator Ops hält den Termin lokal",
+    reschedule: "Neuer Termin lokal übernommen · kein Live-Post",
+    "live-authorize": "Separate Live-Autorisierung gespeichert · noch nichts veröffentlicht",
+    "rearm-preflight": "Sicherer Preflight erneut aktiviert · noch nichts veröffentlicht",
+  };
+  showToast(messages[action] || "Owner-Entscheidung lokal gespeichert");
   return payload;
 }
 

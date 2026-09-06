@@ -1,0 +1,13 @@
+{
+  "schema": "creator-ops-meta-publish-v1",
+  "content": {
+    "CONTENT_ID": {
+      "native_ai_disclosure_confirmed": false,
+      "asset_urls": {
+        "ASSET_ID_1": "https://your-approved-public-host.example/image-1.jpg",
+        "ASSET_ID_2": "https://your-approved-public-host.example/image-2.jpg",
+        "ASSET_ID_3": "https://your-approved-public-host.example/image-3.jpg"
+      }
+    }
+  }
+}
