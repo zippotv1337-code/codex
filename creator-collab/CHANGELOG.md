@@ -1,5 +1,25 @@
 # Changelog
 
+## Owner-Gate- und Fiverr-Gig-1-Update — 2026-09-06
+
+- Instagram-/Meta-Publish und Fiverr-Gig-Publish sind nun kanalbezogen mit
+  Safety-/Rechte-/Technik-/Identity-Gates modelliert; pauschales
+  `live_publishing` ist keine rote Schranke mehr.
+- `CURRENT_STATE` trennt realen Instagram-Kanalstatus vom weiterhin fehlenden
+  Meta-Graph-Automationsbeweis.
+- Fiverr Gig 1 wurde durch den neuen Owner-Scope auf `AI Workflow Automation`
+  mit 149/349/699 USD, klaren Workflow-/Integrationsgrenzen, neun FAQ und zehn
+  sicheren Intake-Fragen aktualisiert.
+- Ein neues eigenes Gallery-Cover wurde erzeugt; der ältere Social-Content-
+  Pack bleibt als separates Creator-Ops-Angebot erhalten.
+- Das echte Verkäuferprofil und persönliche Identity-/Verification-Schritte
+  bleiben Owner-only; Gig 2/3 beginnen nicht vor verifiziertem Vorgänger.
+- Leona `Gym Reset` wurde im lokalen Dashboard freigegeben und ausschließlich
+  als `LOCAL_SCHEDULED` für den 7. September 19:30 Uhr vorgemerkt. Mara
+  `Maschinencheck` erhielt CHANGE-Feedback `ist nicht so` und danach REJECT;
+  der finale Status ist `BLOCKED`. Keine externe Plattformaktion wurde daraus
+  ausgelöst.
+
 ## Betriebsupdate — 2026-09-06
 
 - Ein owner-bestätigter nativer Leona-Carousel mit drei Bildern wurde sichtbar
@@ -16,7 +36,8 @@
   Verkäuferprofil und der finale öffentliche Publish bleiben Owner-Gates.
 - Die frühere unvollständige Leona-Demokarte wurde als vollständiges SFW-Paket
   „Gym Reset, aber echt“ mit fünf realen Kandidaten, Pose-Matrix und Top 3
-  erneuert. Es wurde nicht freigegeben oder veröffentlicht.
+  erneuert. Die spätere lokale Owner-Freigabe erzeugte nur einen
+  `LOCAL_SCHEDULED`-Queuejob und keine Live-Veröffentlichung.
 
 ## 1.6.4-beta — 2026-09-05
 

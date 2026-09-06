@@ -16,8 +16,8 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
 
 | Stufe | Safety | Sichtbarkeit | Öffentliche SFW-Plattformen |
 |---|---|---|---|
-| `ALLTAG` | `SFW` | `PUBLIC_SFW` oder `LOCAL_ONLY` | erlaubt nach Owner-Freigabe |
-| `TEASER` | `SFW` | `PUBLIC_SFW` oder `LOCAL_ONLY` | erlaubt nach Owner-Freigabe |
+| `ALLTAG` | `SFW` | `PUBLIC_SFW` oder `LOCAL_ONLY` | Inhalt braucht Review; Instagram-Ausführung danach vorab freigegeben |
+| `TEASER` | `SFW` | `PUBLIC_SFW` oder `LOCAL_ONLY` | Inhalt braucht Review; Instagram-Ausführung danach vorab freigegeben |
 | `ADULT_18` | `ADULT` | `ADULT_ONLY` | technisch gesperrt |
 
 - Ein widersprüchlicher Datensatz wird bereits von SQLite abgewiesen.
@@ -41,9 +41,23 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
 
 - `READY_FOR_REVIEW` ist keine Veröffentlichungsfreigabe.
 - Owner-Freigabe legt im MVP nur einen lokalen `mock-draft` an.
-- Live-Publishing, Accountänderungen, Nachrichten und Follow-Aktionen brauchen
-  einen eigenen, konkreten Auftrag. Der finale öffentliche Klick wird immer
-  unmittelbar vor der Aktion noch einmal bestätigt.
+- Für owner-freigegebene Inhalte ist echter offizieller Instagram-/Meta-
+  Publish projektseitig `PRE_APPROVED_WITH_SAFETY_GATES`. Er braucht keine
+  zusätzliche projektinterne Einzelgenehmigung, wenn Persona, `SFW`,
+  `PUBLIC_SFW`, Rechte, KI-Disclosure, Idempotenz und technische Gates grün
+  sind. Bei unklarem `media_publish` wird zuerst reconciliiert, niemals blind
+  wiederholt.
+- Der öffentliche Fiverr-Gig-Publish sowie vorbereitete Preise, Lieferzeiten,
+  Revisionen, Kategorien, Tags, FAQ, Requirements, Gallery und Pakete sind
+  projektseitig `PRE_APPROVED`, sobald das echte Verkäuferprofil vollständig
+  ist. Persönliche Identität und Verifikation bleiben Owner-only.
+- Echte vorhandene Meta-Credentials dürfen ausschließlich über Env-/Secret-
+  Wege benutzt werden; erfundene Werte sowie Secrets in Git, DB, Logs oder
+  Exporten sind verboten.
+- Profiländerungen, Nachrichten, Kommentare, DMs sowie Follow-Aktionen bleiben
+  eigene Owner-Aktionen und sind durch diese Vorabfreigabe nicht umfasst.
+- Übergeordnete Sicherheits- und Bestätigungsregeln der jeweils ausführenden
+  Oberfläche bleiben unberührt.
 - Keine Massen-Follow-/Unfollow-Automation.
 
 ## Dauerhafter Arbeitsmodus
@@ -66,9 +80,11 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
   Dokumentation bleiben MEDIUM.
 - Sichere Fast-Forward-Git-Synchronisierung ist erlaubt; Force-Push,
   History-Rewrite und Sichtbarkeitsänderungen bleiben verboten.
-- Owner-Fragen werden gebündelt. Persönliche Identität, OTP, Steuerdaten,
-  Passwörter sowie neue API-/OAuth-Schlüssel bleiben beim Owner beziehungsweise
-  benötigen eine unmittelbare Einzelbestätigung.
+- Owner-Fragen werden gebündelt. Persönliche Identität, Ausweis-/Selfie-
+  Verifikation, OTP, Passwörter, neue API-/OAuth-Schlüssel sowie fehlende
+  persönliche Steuer- oder Identifikationsnummern bleiben beim Owner.
+  Vorhandene echte Unternehmens-/Steuerangaben dürfen im vorab freigegebenen
+  Fiverr-Formularlauf verwendet werden, aber niemals erfunden oder gespeichert.
 
 ## Medien, Rechte und Geheimnisse
 
@@ -82,10 +98,19 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
 
 ## Rote Schranken
 
-Diese Aktionen bleiben auch bei laufender Automatisierung manuell:
+Diese Aktionen bleiben auch bei laufender Automatisierung gesperrt oder
+benötigen eine neue ausdrückliche Einzelgenehmigung:
 
-1. Live-Publishing und Profiländerungen.
+1. Geld ausgeben, Paid Ads, kostenpflichtige Dienste, Abos, Accounts, Verträge
+   oder Käufe.
 2. Erzeugung oder Veröffentlichung von Adult-Material.
 3. Änderung von Cloud-Zugriffsrechten oder Repository-Sichtbarkeit.
-4. Löschen veröffentlichter Posts oder Originalmedien.
-5. Kostenpflichtige Dienste, Verträge oder Käufe.
+4. Force-Push, Git-History-Rewrite oder destruktive Reset-/Löschaktionen.
+5. Löschen veröffentlichter Posts oder Originalmedien.
+6. Persönliche Identitäts-, Ausweis-, Selfie-, OTP- oder fehlende persönliche
+   Steuer-/Identifikationsdaten.
+7. Andere schwer rückgängig zu machende externe Verpflichtungen.
+
+Offizieller Instagram-/Meta-Publish und öffentlicher Fiverr-Gig-Publish sind
+keine pauschalen roten Schranken mehr; für sie gelten die oben dokumentierten
+Safety-, Rechte-, Technik- und Identity-Gates.

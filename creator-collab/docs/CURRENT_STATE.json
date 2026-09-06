@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-06T11:33:28+00:00",
+  "generated_at": "2026-09-06T16:57:45+00:00",
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
@@ -22,14 +22,15 @@
   "content": {
     "total": 6,
     "by_status": {
+      "BLOCKED": 1,
       "PUBLISHED": 1,
-      "READY_FOR_REVIEW": 3,
-      "SCHEDULED": 2
+      "READY_FOR_REVIEW": 1,
+      "SCHEDULED": 3
     },
     "by_stage": {
       "ALLTAG": 6
     },
-    "review_required": 3,
+    "review_required": 1,
     "mix_target_percent": {
       "ALLTAG": 40,
       "TEASER": 35,
@@ -60,12 +61,14 @@
   },
   "publications": {
     "owner_confirmed_native": 3,
-    "mock": 4,
+    "mock": 5,
     "manual_analytics_events": 0,
     "local_queue": {
-      "LOCAL_SCHEDULED": 2,
+      "LOCAL_SCHEDULED": 3,
       "PUBLISHED": 1
-    }
+    },
+    "instagram_channel_real_live": true,
+    "meta_graph_automation_proof": "not_yet_proven"
   },
   "background_runs": {
     "COMPLETE": 3
@@ -89,22 +92,33 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 117,
+    "passed": 119,
     "failed": 0
   },
   "blockers": {
-    "owner_review_required": 3,
+    "owner_review_required": 1,
     "mock_assets_remaining": 4
   },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",
+    "pre_approved_actions": {
+      "instagram_official_live_publish": "PRE_APPROVED_WITH_SAFETY_GATES",
+      "fiverr_public_gig_publish": "PRE_APPROVED_AFTER_IDENTITY_GATE"
+    },
+    "owner_only_gates": [
+      "personal_identity_or_verification",
+      "otp_or_verification_codes",
+      "missing_personal_tax_or_identification_numbers",
+      "profile_changes_messages_and_follow_actions"
+    ],
     "red_gates": [
-      "live_publishing",
+      "paid_services_or_spend",
       "adult_generation_or_publishing",
       "cloud_permission_changes",
-      "irreversible_external_actions",
-      "paid_services"
+      "repository_visibility_changes",
+      "force_push_or_history_rewrite",
+      "destructive_or_irreversible_actions"
     ]
   },
-  "publishing_mode": "human-gated local queue; official adapter available; live state depends on current owner/config gates"
+  "publishing_mode": "human-gated content review; Instagram/Fiverr live publish pre-approved with safety gates; official adapter available; live state depends on credentials, public HTTPS assets, and identity gates"
 }

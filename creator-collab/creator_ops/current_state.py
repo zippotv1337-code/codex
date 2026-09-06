@@ -210,6 +210,8 @@ class CurrentStateService:
                 "mock": mock_publications,
                 "manual_analytics_events": manual_analytics,
                 "local_queue": queue_counts,
+                "instagram_channel_real_live": bool(real_publications),
+                "meta_graph_automation_proof": "not_yet_proven",
             },
             "background_runs": background_counts,
             "engagement": {
@@ -230,17 +232,29 @@ class CurrentStateService:
             "blockers": dict(blockers),
             "owner_decisions": {
                 "source": "OWNER_DECISIONS.md",
+                "pre_approved_actions": {
+                    "instagram_official_live_publish": "PRE_APPROVED_WITH_SAFETY_GATES",
+                    "fiverr_public_gig_publish": "PRE_APPROVED_AFTER_IDENTITY_GATE",
+                },
+                "owner_only_gates": [
+                    "personal_identity_or_verification",
+                    "otp_or_verification_codes",
+                    "missing_personal_tax_or_identification_numbers",
+                    "profile_changes_messages_and_follow_actions",
+                ],
                 "red_gates": [
-                    "live_publishing",
+                    "paid_services_or_spend",
                     "adult_generation_or_publishing",
                     "cloud_permission_changes",
-                    "irreversible_external_actions",
-                    "paid_services",
+                    "repository_visibility_changes",
+                    "force_push_or_history_rewrite",
+                    "destructive_or_irreversible_actions",
                 ],
             },
             "publishing_mode": (
-                "human-gated local queue; official adapter available; "
-                "live state depends on current owner/config gates"
+                "human-gated content review; Instagram/Fiverr live publish "
+                "pre-approved with safety gates; official adapter available; "
+                "live state depends on credentials, public HTTPS assets, and identity gates"
             ),
         }
 

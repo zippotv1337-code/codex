@@ -1,6 +1,6 @@
 # Live Evidence
 
-Stand: 2026-09-06T13:34:00+02:00 · Europe/Berlin
+Stand: 2026-09-06T18:50:00+02:00 · Europe/Berlin
 
 ## Instagram
 
@@ -11,7 +11,7 @@ Stand: 2026-09-06T13:34:00+02:00 · Europe/Berlin
 - **Live in diesem Run:** 1 Carousel / 3 Bilder
 - **Lokaler Modus:** `local-mock`; der offizielle Adapter ist vorhanden, aber
   Credentials, öffentliche HTTPS-Asset-URLs und globale Live-Gates bleiben aus.
-- **Queue:** 2 × `LOCAL_SCHEDULED`, 1 × `PUBLISHED`.
+- **Queue:** 3 × `LOCAL_SCHEDULED`, 1 × `PUBLISHED`.
 
 ### Neu sichtbar bestätigter Leona-Carousel
 
@@ -46,15 +46,18 @@ Caption:
 
 ## Fiverr
 
-- **Status:** `FIVERR_LAUNCH_READY_WAITING_FOR_OWNER`
+- **Status:** `FIVERR_GIG1_CONTENT_COMPLETE_WAITING_FOR_OWNER_IDENTITY`
 - Das eingeloggte Konto zeigt `Create your profile`; ein echtes
   Verkäuferprofil existiert noch nicht.
-- Texte, FAQ, Requirements, Tags, drei Pakete, Startpreise, Lieferzeiten,
-  Revisionen und Nutzungsgrenzen sind lokal vollständig vorbereitet.
+- Aktueller Gig 1: `AI Workflow Automation`; Titel, Beschreibung, neun FAQ,
+  zehn Intake-Fragen, fünf Tags sowie die drei Pakete 149/349/699 USD sind
+  lokal vollständig vorbereitet.
+- Die früheren 45/95/175-USD-Social-Content-Packs bleiben ein separates
+  Creator-Ops-Angebot und sind nicht der aktuelle Fiverr-Gig 1.
 - Eigenes SFW-Gallery-Cover:
-  `output/fiverr-gallery/fiverr-gig-cover-ai-social-content-pack.png`
-  (`1618 × 972`, SHA256
-  `3B3AAE177961792F7F24EF6A0A4A774E78BD6D24A0C5C26475B9E7FD66E5AD57`).
+  `docs/assets/fiverr-gig-cover-ai-workflow-automation-v1.png`
+  (`1619 × 971`, SHA256
+  `3DB079745D6763248A360FFB093E7A5C7964DC0CA936A0F111AFB2700CE3EF9F`).
 - Keine Identitäts-, Steuer-, Telefon- oder Businessangabe wurde erfunden oder
   eingetragen. Kein Gig wurde öffentlich erstellt oder veröffentlicht.
 
@@ -62,19 +65,28 @@ Caption:
 
 - Leona „Gym Reset, aber echt“ · Content `1` · fünf reale SFW-Bilder.
 - Pose-Matrix vollständig; Top 3 `1 → 2 → 5`; alle Dashboard-Checks grün.
-- Status `READY_FOR_REVIEW`; weder lokal freigegeben noch extern veröffentlicht.
+- Owner-Freigabe am 6. September um 18:39 Uhr: Publication `8`, Queuejob `4`,
+  Status `LOCAL_SCHEDULED` für den 7. September 19:30 Uhr. Keine externe
+  Veröffentlichung.
 - Detailmanifest: `docs/CONTENT_PACKAGE_GYM_RESET_2026-09-06.md`.
+
+## Lokale Review-Evidenz
+
+- Mara „Fünf Minuten Maschinencheck“ · Content `4`: CHANGE um 18:39 Uhr mit
+  Hinweis `ist nicht so`, danach REJECT um 18:40 Uhr; final `BLOCKED`.
+- Beide Entscheidungen stammen aus `owner-dashboard`. Es wurde weder eine neue
+  externe Veröffentlichung noch eine neue Mara-Queue erzeugt.
 
 ## Technische Belege
 
 - Runtime: `http://127.0.0.1:4180/`, Health `ok`, Version `1.6.4-beta`.
-- SQLite: `integrity_check = ok`, 6 Inhalte, 30 Assets, 7 Publikationen,
-  3 Queuejobs.
+- SQLite: `integrity_check = ok`, 6 Inhalte, 30 Assets, 8 Publikationen,
+  4 Queuejobs.
 - Assets: 26 reale Previews und 4 Mock-Slots.
-- Tests: 117/117 grün; Python-Compilecheck grün.
+- Tests: 119/119 grün; Python-Compilecheck grün.
 - `CURRENT_STATE`: offizieller Adapter korrekt als verfügbar beschrieben;
   Live-Zustand hängt von Owner-/Konfigurations-Gates ab.
-- Recovery: `backups/Backup_Meilenstein_20260906-1337.zip`, SHA256
-  `7bde139ddede97092a9be7c57e7d8a9fc67ee13ad7d9d9b89645f7a5c4215199`,
-  225 Members und ZIP-Integrität grün.
+- Recovery: `backups/Backup_Meilenstein_20260906-1852.zip`, SHA256
+  `17df17d6c82fca6a7ca3d2b3c1df29c186c8d513ae694fda37f6695df6e03676`;
+  233 Members, ZIP-Test und Sanitized-DB-Integrität grün.
 - Kosten und neue Secrets: 0.
