@@ -310,6 +310,9 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   bleiben beim Owner. Der öffentliche Gig-Publish ist danach projektseitig
   vorab freigegeben; Status
   `FIVERR_GIG1_CONTENT_COMPLETE_WAITING_FOR_OWNER_IDENTITY`.
+- Die im gemeinsamen Worktree fehlenden lokalen Gig-1-Unterlagen wurden am
+  7. September aus dem bestätigten Angebotsscope wiederhergestellt und der
+  zugehörige Paket-Test ist wieder grün.
 - Die frühere unvollständige Leona-Demokarte ist jetzt das vollständige
   SFW-Paket „Gym Reset, aber echt“: fünf reale KI-Assets, Pose-Matrix, Top 3,
   Caption, Hook, CTA, Musik A/B/ohne und Prime Time. Der Owner gab es am
@@ -319,6 +322,28 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   `ist nicht so` und danach REJECT. Der finale Status ist `BLOCKED`; ohne
   klareres neues Owner-Signal wird es nicht automatisch neu erzeugt.
 - Abschlussstand: 119 Tests sowie Python-, Runtime- und SQLite-Prüfung grün.
+- Am 7. September wurde ein read-only Operations-Radar ergänzt:
+  `OperationsAuditService`, CLI `operations-audit`, HTTP
+  `/api/operations-audit` und eine Dashboard-Kachel. Der Audit bündelt
+  Reviewslots, Needs Attention, Story-Kits, lokale Queue, fällige echte
+  Analytics und Engagement in einer priorisierten Tagesliste, ohne externe
+  Aktionen auszuführen oder Werte zu erfinden. Abschlussstand: 133 Tests,
+  JavaScript-/Python-Checks und SQLite-Integrität grün.
+
+## Meta Graph Live-Proof (7. September 2026)
+
+- Der bestehende offizielle Meta-Carousel-Adapter wurde für den aktuellen
+  Instagram-Login-Pfad mit `graph.instagram.com` als Standard ergänzt; der
+  Facebook-Login-Host bleibt explizit auswählbar.
+- Der read-only Preflight prüft öffentliche HTTPS-JPEGs, Package-/SFW-Gates,
+  Persona-Account/Username und Content-Publishing-Quota, ohne externe POSTs.
+- 17 fokussierte Meta-/Queue-Tests sind grün; Receipt-, Publish-Intent-,
+  Duplicate-, Retry- und Unsicherheits-Sperren sind getestet.
+- Für Leona Content `1` wurden drei temporär öffentlich erreichbare JPEGs für
+  einen Proof vorbereitet. Ohne echte Meta-Credentials und abgeschlossene
+  Developer-/Professional-Account-Gates bleibt der Versand blockiert.
+- `META_GRAPH_AUTOMATION_PROOF` bleibt daher `not_yet_proven`; Details und die
+  nächsten Owner-Schritte stehen in `docs/HUMAN_HANDOFF.md`.
 
 ## Offene Projektbereiche
 
@@ -360,3 +385,40 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   `zippotv1337-code/codex` ist `public`, Standardbranch `main`. Damit sind auch
   die 20 eingecheckten Creator-Bilder öffentlich. Finale Gesamtübergabe:
   `docs/FINAL_ABSCHLUSS.md`.
+
+## Medium-Autopilot-Checkpoint (7. September 2026, 08:43 Uhr)
+
+- Lokaler Health-/Integrity-Run war grün: Dashboard-Port 4180 erreichbar,
+  SQLite `integrity_check = ok`, 7 Inhalte und 35 Assets.
+- 17 fokussierte Meta-/Queue-Tests bestanden. Die Vollsuite meldet einen
+  bekannten Worktree-Fehler, weil `docs/FIVERR_GIG_DRAFT.md` fehlt; der
+  Fehler wurde nicht durch diesen Lauf verursacht.
+- Kein Live-Publishing, keine externe Aktion und keine Secret-Verarbeitung.
+- Der fortsetzbare Stand liegt in `AUTOPILOT_CHECKPOINT.md`.
+
+## Instagram Operations Finalization Freeze (7. September 2026, 09:55 Uhr)
+
+- Interner Review-Flow abgenommen: maximal vier produktive aktive Karten,
+  blockierte/unvollständige Karten separat in Needs Attention, Published nicht
+  aktiv, nächster Reserveinhalt rückt nach.
+- Story-Reserve besitzt minimale lokale Review-/Planungsereignisse ohne
+  externe Aktion. Reels bleiben bis zum Vorhandensein echter Video-/Cover-
+  Datensätze bewusst unangelegt.
+- 26 relevante Dashboard-/Story-/Control-/Operations-Tests, JavaScript,
+  Python-Compilecheck und SQLite-Integrität grün.
+- Creator-Ops-Instagram-Core ist für diesen Ausbau eingefroren. Der Default-
+  Server bleibt loopback; passwortgeschützte LAN-Skripte sind der vorgesehene
+  Safari-/Handy-Weg.
+
+## Live-Output Leona Gym Reset (7. September 2026, 14:27 Uhr)
+
+- Leona `Gym Reset, aber echt` wurde nach direkter Owner-Bestätigung nativ als
+  Dreier-Carousel veröffentlicht:
+  `https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/`.
+- Instagram bestätigte sichtbar `Dein Beitrag wurde geteilt.`; das Leona-Profil
+  zeigte danach 8 Beiträge.
+- Creator Ops ist lokal abgeglichen: Content `1` und Queuejob `4` sind
+  `PUBLISHED`, Publication `9` enthält den Permalink, Assets `1`, `2` und `5`
+  sind `PUBLISHED`. Der alte Mock-Draft ist als Doppelpost-Risiko pausiert.
+- Story-Live bleibt separat: Der Webdialog bot in diesem Lauf keinen
+  Story-Composer.

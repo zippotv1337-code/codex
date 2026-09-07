@@ -1,6 +1,6 @@
 # Live Evidence
 
-Stand: 2026-09-06T18:50:00+02:00 · Europe/Berlin
+Stand: 2026-09-07T14:27:00+02:00 · Europe/Berlin
 
 ## Instagram
 
@@ -8,10 +8,35 @@ Stand: 2026-09-06T18:50:00+02:00 · Europe/Berlin
 - **Offizielle API-Automation:** `LIVE_READY_WAITING_FOR_OWNER_CONFIG`
 - **INSTAGRAM_AUTOMATION_PROOF:** 0/10; der Pilot lief nativ im Browser und
   ist kein Beweis für einen Meta-Graph-Autopublish.
-- **Live in diesem Run:** 1 Carousel / 3 Bilder
+- **Live in diesem Run:** 2 Carousels / 6 Bilder seit 6. September; heute
+  zusätzlich Leona `Gym Reset, aber echt`
 - **Lokaler Modus:** `local-mock`; der offizielle Adapter ist vorhanden, aber
   Credentials, öffentliche HTTPS-Asset-URLs und globale Live-Gates bleiben aus.
-- **Queue:** 3 × `LOCAL_SCHEDULED`, 1 × `PUBLISHED`.
+- **Queue:** 2 × `PUBLISHED`, 2 × `NEEDS_RESCHEDULE_REVIEW`, 0 ×
+  `LOCAL_SCHEDULED`.
+
+### Neu sichtbar bestätigter Leona-Gym-Carousel
+
+- Persona: Leona Voss · `@leonavoss.ai`
+- Content: ID `1` · „Gym Reset, aber echt“
+- Permalink: https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/
+- Instagram-Shortcode: `Dc_GwljAKU_`
+- Veröffentlichungszeit im lokalen Beleg:
+  `2026-09-07T14:19:00+02:00`
+- Reihenfolge: Asset `1` frontal → Asset `2` links 3/4 → Asset `5` candid.
+- Sichtbar geprüft: Instagram meldete „Dein Beitrag wurde geteilt.“;
+  Profilstand danach 8 Beiträge. Das KI-Label wurde vor dem Teilen aktiviert.
+- Lokale Abstimmung: Publication `9`, Provider `instagram-native-manual`,
+  Queuejob `4` und Content `1` jeweils `PUBLISHED`; der alte Mock-Draft
+  Publication `8` ist als `PAUSED_DUPLICATE_RISK` gesperrt.
+
+Caption:
+
+> Kein perfekter Trainingsplan, kein Motivationsspruch. Schuhe zu, erster
+> Satz, dann läuft’s meistens. Was bringt euch zuverlässig ins Training?
+>
+> #GymRoutine #BerlinFitness #WorkoutRealTalk #FitnessMotivationDE
+> #Trainingsalltag #VirtualCreator
 
 ### Neu sichtbar bestätigter Leona-Carousel
 
@@ -65,9 +90,9 @@ Caption:
 
 - Leona „Gym Reset, aber echt“ · Content `1` · fünf reale SFW-Bilder.
 - Pose-Matrix vollständig; Top 3 `1 → 2 → 5`; alle Dashboard-Checks grün.
-- Owner-Freigabe am 6. September um 18:39 Uhr: Publication `8`, Queuejob `4`,
-  Status `LOCAL_SCHEDULED` für den 7. September 19:30 Uhr. Keine externe
-  Veröffentlichung.
+- Owner-Freigabe am 6. September um 18:39 Uhr; am 7. September um 14:19 Uhr
+  nativ veröffentlicht und lokal reconciliiert. Publication `9`, Queuejob `4`
+  und Content `1` sind jetzt `PUBLISHED`.
 - Detailmanifest: `docs/CONTENT_PACKAGE_GYM_RESET_2026-09-06.md`.
 
 ## Lokale Review-Evidenz
@@ -80,10 +105,11 @@ Caption:
 ## Technische Belege
 
 - Runtime: `http://127.0.0.1:4180/`, Health `ok`, Version `1.6.4-beta`.
-- SQLite: `integrity_check = ok`, 6 Inhalte, 30 Assets, 8 Publikationen,
+- SQLite: `integrity_check = ok`, 7 Inhalte, 35 Assets, 9 Publikationen,
   4 Queuejobs.
-- Assets: 26 reale Previews und 4 Mock-Slots.
-- Tests: 119/119 grün; Python-Compilecheck grün.
+- Assets: 26 reale Previews und 9 Mock-Slots.
+- Tests: letzter vollständiger grüner Stand 133/133; nach dem heutigen
+  Reconcile wurde SQLite erneut mit `integrity_check = ok` geprüft.
 - `CURRENT_STATE`: offizieller Adapter korrekt als verfügbar beschrieben;
   Live-Zustand hängt von Owner-/Konfigurations-Gates ab.
 - Recovery: `backups/Backup_Meilenstein_20260906-1852.zip`, SHA256

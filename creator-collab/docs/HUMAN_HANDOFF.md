@@ -1,66 +1,82 @@
-# Human Handoff — einzige aktive Owner-Inbox
+# Human Handoff — Meta/Instagram Graph Live-Proof
 
-Stand: 6. September 2026, 18:50 Uhr · Creator Ops 1.6.4-beta
+Stand: 7. September 2026, Europe/Berlin
+
+## Aktueller Status
+
+`META_GRAPH_AUTOMATION_PROOF = not_yet_proven`.
+
+Der offizielle Meta-Carousel-Adapter ist lokal implementiert und fail-closed.
+Der Read-only-Preflight für Leona Content `1` / Publication `8` wurde ausgeführt
+und meldet derzeit `official_instagram_adapter_not_configured`.
 
 ## Erledigt
 
-- Leona-Carousel „September Roofline“ ist mit drei Bildern live:
-  https://www.instagram.com/p/Dc75xWsgEQo/
-- Instagram-KI-Label, Caption, Alt-Texte und drei Slides wurden sichtbar
-  geprüft; Creator Ops ist lokal auf `PUBLISHED` abgestimmt.
-- Fiverr Gig 1 `AI Workflow Automation` und das neue Gallery-Cover sind
-  inhaltlich publish-ready.
-- Leona „Gym Reset, aber echt“ wurde vom Owner lokal freigegeben und ist für
-  den 7. September um 19:30 Uhr `LOCAL_SCHEDULED`; es wurde nicht live
-  veröffentlicht.
-- Mara „Fünf Minuten Maschinencheck“ erhielt CHANGE-Feedback `ist nicht so`
-  und danach REJECT. Das Paket ist `BLOCKED` und wird nicht versendet.
+- Instagram-Login-Graph-Host `graph.instagram.com` als Standard konfiguriert;
+  Facebook-Login bleibt als dokumentierter Alternativpfad möglich.
+- Öffentliche JPEG-URLs für den Testdatensatz vorbereitet und anonym erreichbar
+  geprüft (temporärer Quick-Tunnel; nicht als Produktionshosting verwenden).
+- Read-only-Preflight prüft Paket, exakt drei unveröffentlichte `PUBLIC_SFW`-
+  Top-Picks, HTTPS/JPEG, Persona-Account, Username und Publishing-Quota.
+- 17 fokussierte Meta-/Queue-Tests grün.
+- Publish-Intent, Queue-Key, Receipt, bestätigte Medien-ID/Permalink und
+  Unsicherheits-/Retry-Sperre sind lokal getestet.
 
-## JETZT — nur ein notwendiger Owner-Schritt
+## Owner-Gates (vom Owner selbst im Meta-UI bzw. in lokaler Umgebung)
 
-1. Bei Fiverr `Create your profile` mit den eigenen echten Angaben abschließen.
-   Persönliche Identität, Ausweis-/Selfie-/Telefon-/OTP-Prüfung und fehlende
-   persönliche Steuer- oder Identifikationsnummern niemals an Codex erfinden
-   lassen. Danach kann Codex Titel, 149/349/699-USD-Pakete, Beschreibung, FAQ,
-   Requirements und Gallery in einem Formularlauf eintragen, prüfen und gemäß
-   der projektseitigen Vorabfreigabe veröffentlichen.
+1. Meta for Developers-Konto ist registriert. Im geöffneten Dialog steht als
+   nächster Schritt `Verify account`: Der Owner muss seine Mobilnummer eingeben
+   und den empfangenen SMS-Code selbst bestätigen.
+2. Leona als professionelles Instagram-Konto (Creator oder Business) führen.
+3. Eine Meta-App und den offiziellen Instagram-Login-Pfad mit den benötigten
+   Berechtigungen einrichten: `instagram_business_basic` und
+   `instagram_business_content_publish`.
+4. Die echte Instagram User-ID und den kurzlebigen/langlaufenden Access-Token
+   ausschließlich lokal als Umgebungsvariablen setzen. Niemals in Git, DB,
+   Journal oder Chat eintragen.
+5. Vor dem ersten echten Versand den lokalen Preflight ausführen und das
+   Ergebnis `READY_FOR_OWNER_CONFIRMATION` bzw. `READY` prüfen.
+6. Direkt vor dem öffentlichen Testpost die separate lokale
+   `OWNER_LIVE_PUBLISH_APPROVED_UI`-Freigabe für genau Content `1` erteilen.
 
-Die beiden vorher offenen Dashboard-Entscheidungen sind erledigt. Nur wenn ein
-neues Mara-Paket gewünscht ist, bitte kurz sagen, was an `Maschinencheck`
-geändert werden soll; aus `ist nicht so` wird nichts erfunden.
+## Erwartete lokale Variablen
 
-## Danach
+Siehe `.env.example`. Insbesondere werden benötigt:
 
-- Erste echte Leona-Insights frühestens nach 24 Stunden erfassen:
-  7. September ca. 13:00 Uhr; anschließend 72h und 168h.
-- Fehlende Werte bleiben `UNKNOWN`; keine Reichweite, Kommentare oder Umsätze
-  erfinden.
-- Leona „Spätsommer“, Leona „Gym Reset“ und Mara „Küchenfenster“ sind nur
-  lokal vorgemerkt. Die neue allgemeine Publish-Vorabfreigabe ersetzt keine
-  Paketprüfung und erzeugt weder fehlende Meta-Credentials noch öffentliche
-  HTTPS-Asset-URLs.
+- `META_IG_USER_ID_LEONA_VOSS`
+- `META_ACCESS_TOKEN_LEONA_VOSS`
+- `META_GRAPH_API_VERSION` (z. B. `v23.0`, passend zum Meta-Konto)
+- optional `META_GRAPH_HOST=graph.instagram.com`
+- optional `CREATOR_OPS_META_MEDIA_MANIFEST`
 
-## Nicht mehr als Owner-Schritt führen
+Keine Werte in dieses Dokument kopieren.
 
-- Keine zusätzliche generelle Instagram-Live-Publish-Erlaubnis anfragen.
-- Keine zusätzliche Freigabe für Preise, Lieferzeiten, Revisionen, Kategorien,
-  Tags, FAQ, Requirements, Gallery oder den finalen Fiverr-Gig-Publish
-  anfragen. Persönliche Identity-/Verification-Gates bleiben ausgenommen.
+## Nach dem Owner-Gate
 
-## Betrieb und Belege
+```text
+python -m creator_ops.cli --db data/review_dashboard.db --config config.toml \
+  meta-preflight --publication-id 8 --content-id 1
+```
 
-- Dashboard: `http://127.0.0.1:4180/`
-- Offline-Leseansicht: `output/offline/index.html`
-- Live-Beleg: `LIVE_EVIDENCE.md`
-- Contentmanifest: `docs/CONTENT_PACKAGE_GYM_RESET_2026-09-06.md`
-- Fiverr-Entwurf: `docs/FIVERR_GIG_DRAFT.md`
-- Fiverr-Pakete: `docs/FIVERR_GIG1_PACKAGE_CATALOG.md`
-- Fiverr-Intake: `docs/FIVERR_GIG1_INTAKE.md`
-- Status: `docs/CURRENT_STATE.json`
-- Tests: 119/119 grün
-- Datenbank: Integrität `ok`
-- Backup: `backups/Backup_Meilenstein_20260906-1852.zip`, SHA256
-  `17df17d6c82fca6a7ca3d2b3c1df29c186c8d513ae694fda37f6695df6e03676`
-- Externe Aktion dieses Abschlussabschnitts: keine; es wurden nur lokale
-  Owner-Entscheidungen gespeichert. Der früher bestätigte Leona-Carousel
-  bleibt unverändert live.
+Erst bei einem positiven Preflight und einer frischen Owner-Live-Freigabe darf
+der bestehende Queue-Dispatch genau dieses Pakets ausführen. Danach müssen
+Media-ID, Instagram-Permalink und bestätigter Status in DB/Receipt sichtbar
+sein. Bei Timeout oder unklarem Ergebnis nicht automatisch erneut senden;
+zuerst über Receipt/Graph reconciliieren.
+
+## Nicht erledigt / nicht behaupten
+
+- Kein echter Meta-Graph-Publish wurde in diesem Lauf ausgeführt.
+- Keine Credentials, Tokens oder OTPs wurden gespeichert.
+- Kein zweites Paket und kein Creator-Ops-2.0-Feature wurde begonnen.
+
+## Neuer Live-Post — 7. September 2026
+
+- Leona `Gym Reset, aber echt` wurde nativ auf Instagram veröffentlicht:
+  `https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/`
+- Sichtbare Bestätigung: Instagram meldete `Dein Beitrag wurde geteilt.`;
+  Profilstand danach 8 Beiträge.
+- Creator Ops wurde lokal abgeglichen: Publication `9`, Content `1`,
+  Queuejob `4`, Assets `1`, `2`, `5`.
+- Nächste Owner-Aufgabe: sobald verfügbar, echte Insights für diesen Post
+  erfassen und in Creator Ops eintragen. Fehlende Werte bleiben `UNKNOWN`.
