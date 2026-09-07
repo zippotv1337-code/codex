@@ -340,6 +340,9 @@ wurden nicht rückwirkend verändert.
   `https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/`
 - Sichtbar bestätigt: Instagram meldete `Dein Beitrag wurde geteilt.`;
   Leona-Profil zeigt danach 8 Beiträge.
+- Direkt am neuen Post geprüft: Caption, sechs Hashtags, sichtbares
+  `KI-Inhalte`-Label und `Insights ansehen` sind vorhanden; zum Prüfzeitpunkt
+  waren noch keine Kommentare sichtbar.
 - Veröffentlicht wurden die drei Top-Picks von Content `1`: Asset-IDs `1`,
   `2` und `5`.
 - Caption wurde vor Veröffentlichung korrigiert und nur einmal gesetzt; der

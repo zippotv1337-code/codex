@@ -30,12 +30,17 @@
 - Nach direkter Owner-Bestätigung `Teilen drücken` genau einmal auf `Teilen` geklickt.
 - Instagram bestätigte sichtbar: `Dein Beitrag wurde geteilt.`
 - Profilprüfung danach: Leona zeigt jetzt 8 Beiträge.
+- Den neuen Post direkt geöffnet und geprüft: Caption, Hashtags, sichtbares
+  `KI-Inhalte`-Label und `Insights ansehen` sind vorhanden.
 
 ## Verifiziert
 
 - Neuer öffentlicher Instagram-Link:
   `https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/`
 - Sichtbarer Profilzähler nach Publish: 8 Beiträge.
+- Direkt am Post sichtbar: `KI-Inhalte`, Caption, alle sechs Hashtags und
+  `Insights ansehen`. Zum Prüfzeitpunkt zeigte Instagram `Noch keine
+  Kommentare.`
 - Lokaler Reconcile über `reconcile-instagram` geschrieben:
   - neue Publication `9`
   - Provider `instagram-native-manual`

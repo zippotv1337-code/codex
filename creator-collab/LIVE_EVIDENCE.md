@@ -25,7 +25,9 @@ Stand: 2026-09-07T14:27:00+02:00 · Europe/Berlin
   `2026-09-07T14:19:00+02:00`
 - Reihenfolge: Asset `1` frontal → Asset `2` links 3/4 → Asset `5` candid.
 - Sichtbar geprüft: Instagram meldete „Dein Beitrag wurde geteilt.“;
-  Profilstand danach 8 Beiträge. Das KI-Label wurde vor dem Teilen aktiviert.
+  Profilstand danach 8 Beiträge. Direkt am Post sind Caption, sechs Hashtags,
+  `KI-Inhalte` und `Insights ansehen` sichtbar. Das KI-Label wurde vor dem
+  Teilen aktiviert.
 - Lokale Abstimmung: Publication `9`, Provider `instagram-native-manual`,
   Queuejob `4` und Content `1` jeweils `PUBLISHED`; der alte Mock-Draft
   Publication `8` ist als `PAUSED_DUPLICATE_RISK` gesperrt.
