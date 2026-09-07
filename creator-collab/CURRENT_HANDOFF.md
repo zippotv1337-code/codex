@@ -417,3 +417,13 @@ wurden nicht rückwirkend verändert.
 - GitHub-Connector sieht `zippotv1337-code/codex` ebenfalls nicht (`404`).
   Nächster Schritt ist daher Owner-GitHub-Auth/PAT oder ein sichtbarer
   interaktiver GitHub-Login; danach den vorbereiteten Branch pushen.
+
+## ZipoWorks Upload — 7. September 2026, 17:58 Uhr
+
+- Der konsolidierte lokale Stand liegt auf `codex/zipoworks-consolidated-20260907`.
+- Ein einmaliger Upload-Versuch wurde durchgeführt und von GitHub wegen
+  fehlender lokaler Anmeldung abgewiesen; es wurde kein weiterer Retry gestartet.
+- Das alte Repository bleibt unverändert. Eine spätere Löschung ist als
+  Owner-Aufgabe zurückgestellt und nicht Bestandteil dieses Uploads.
+- Nach GitHub-Login genügt ein Push des vorbereiteten Branches; danach kann der
+  Owner den Branch prüfen und über Merge oder spätere Löschung entscheiden.
