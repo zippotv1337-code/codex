@@ -38,6 +38,22 @@ class StoryReserveTests(unittest.TestCase):
             package = next(item for item in StoryReserveService(reviews).packages() if item["content_id"] == card["content_id"])
             self.assertNotIn(published_id, [frame["asset"]["id"] for frame in package["frames"]])
 
+    def test_story_decisions_are_local_and_do_not_change_feed_state(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            pipeline = build_pipeline(Path(folder) / "stories.db")
+            pipeline.initialize()
+            reviews = ReviewDashboardService(pipeline)
+            card = reviews.ensure_date(date(2026, 9, 5))[0]
+            before = pipeline.db.scalar("SELECT status FROM content_items WHERE id=?", (card["content_id"],))
+            result = reviews.story_decision(card["content_id"], "approve")
+            after = pipeline.db.scalar("SELECT status FROM content_items WHERE id=?", (card["content_id"],))
+            self.assertEqual(result["action"], "STORY_APPROVED_UI")
+            self.assertEqual(before, after)
+            self.assertEqual(
+                pipeline.db.scalar("SELECT action FROM review_events WHERE content_id=? ORDER BY id DESC LIMIT 1", (card["content_id"],)),
+                "STORY_APPROVED_UI",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

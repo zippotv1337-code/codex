@@ -353,6 +353,8 @@ class ReviewDashboardService:
                         "creator_slug": row["creator_slug"],
                         "display_name": row["display_name"],
                         "series": row["title"],
+                        "format": row["format"],
+                        "content_type": row["format"],
                         "niche": row["niche"],
                         "date": row["run_date"],
                         "status": row["status"],
@@ -460,12 +462,12 @@ class ReviewDashboardService:
             connection.close()
 
     def review_queue(self) -> dict:
-        """Return the actionable post-publish reserve across its planned dates."""
+        """Return active review slots plus a bounded needs-attention inbox."""
         connection = self.pipeline.db.connect()
         try:
             rows = connection.execute(
                 """
-                SELECT c.id AS content_id, r.run_date,
+                SELECT c.id AS content_id, c.status AS status, r.run_date,
                        (SELECT COUNT(*) FROM assets a
                         WHERE a.content_id=c.id AND a.generator='local-import')
                            AS real_asset_count,
@@ -478,7 +480,13 @@ class ReviewDashboardService:
                 WHERE c.run_key LIKE 'review:%'
                   AND c.status IN ('READY_FOR_REVIEW','PARTIAL_READY','BLOCKED',
                                    'OWNER_APPROVED','SCHEDULED')
-                ORDER BY r.run_date, c.id
+                ORDER BY CASE c.status
+                           WHEN 'READY_FOR_REVIEW' THEN 1
+                           WHEN 'PARTIAL_READY' THEN 2
+                           WHEN 'OWNER_APPROVED' THEN 3
+                           WHEN 'SCHEDULED' THEN 4
+                           ELSE 9 END,
+                         r.run_date, c.id
                 """
             ).fetchall()
         finally:
@@ -486,20 +494,63 @@ class ReviewDashboardService:
         productive = [
             row
             for row in rows
-            if int(row["real_asset_count"]) >= 3
+            if row["status"] != "BLOCKED"
+            and int(row["real_asset_count"]) >= 3
             and int(row["available_real_asset_count"]) >= 3
         ]
-        selected = productive or list(rows)
+        selected = productive[:4]
         selected_ids = {int(row["content_id"]) for row in selected}
-        dates = list(dict.fromkeys(row["run_date"] for row in selected))
+        legacy_selected = productive or list(rows)
+        legacy_ids = {int(row["content_id"]) for row in legacy_selected}
+        attention_rows = [
+            row for row in rows
+            if int(row["content_id"]) not in selected_ids
+            or int(row["real_asset_count"]) < 3
+            or int(row["available_real_asset_count"]) < 3
+        ][:6]
+        attention_ids = {int(row["content_id"]) for row in attention_rows}
+        active_dates = list(dict.fromkeys(
+            [row["run_date"] for row in selected]
+            + [row["run_date"] for row in attention_rows]
+        ))
+        legacy_dates = list(dict.fromkeys(row["run_date"] for row in legacy_selected))
+        all_cards = [
+            card
+            for value in active_dates
+            for card in self.cards(date.fromisoformat(value))
+        ]
+        active_cards = [card for card in all_cards if int(card["content_id"]) in selected_ids]
+        legacy_cards = [
+            card
+            for value in legacy_dates
+            for card in self.cards(date.fromisoformat(value))
+            if int(card["content_id"]) in legacy_ids
+        ]
+        needs_attention = []
+        for card in all_cards:
+            if int(card["content_id"]) not in attention_ids:
+                continue
+            attention = dict(card)
+            attention["attention_reason"] = (
+                "Paket ist blockiert und benötigt eine Owner-Entscheidung"
+                if attention["status"] == "BLOCKED"
+                else "Mindestens drei echte Assets erforderlich"
+                if attention["available_asset_count"] < 3
+                else "Owner-/Review-Entscheidung prüfen"
+            )
+            needs_attention.append(attention)
         return {
-            "dates": dates,
-            "cards": [
-                card
-                for value in dates
-                for card in self.cards(date.fromisoformat(value))
-                if int(card["content_id"]) in selected_ids
-            ],
+            # `cards`/`dates` remain backwards-compatible for existing clients;
+            # the dashboard consumes the stricter active_cards view.
+            "dates": legacy_dates,
+            "cards": legacy_cards,
+            "active_cards": active_cards,
+            "active_dates": list(dict.fromkeys(row["run_date"] for row in selected)),
+            "needs_attention": needs_attention,
+            "counts": {
+                "active": len(active_cards),
+                "needs_attention": len(needs_attention),
+            },
         }
 
     def approve(self, content_id: int) -> dict:
@@ -640,6 +691,32 @@ class ReviewDashboardService:
             "schedule_status": "LOCAL_SCHEDULED",
             "reused": False,
         }
+
+    def story_decision(self, content_id: int, action: str, note: str = "") -> dict:
+        """Record a local story review decision without changing feed state."""
+        action_map = {
+            "approve": ("STORY_APPROVED_UI", "Story lokal freigegeben"),
+            "change": ("STORY_CHANGE_REQUESTED_UI", "Story-Änderung angefordert"),
+            "reject": ("STORY_REJECTED_UI", "Story lokal abgelehnt"),
+            "plan": ("STORY_PLANNED_UI", "Story lokal zur Planung vorgemerkt"),
+        }
+        if action not in action_map:
+            raise ValueError("unsupported_story_decision")
+        event_action, default_note = action_map[action]
+        with self.pipeline.db.transaction() as connection:
+            exists = connection.execute(
+                "SELECT 1 FROM content_items WHERE id=? AND run_key LIKE 'review:%'",
+                (content_id,),
+            ).fetchone()
+            if exists is None:
+                raise KeyError("story_review_card_not_found")
+            connection.execute(
+                """INSERT INTO review_events
+                   (content_id, action, actor, note, created_at)
+                   VALUES (?, ?, 'owner-dashboard', ?, ?)""",
+                (content_id, event_action, note.strip()[:500] or default_note, utc_now()),
+            )
+        return {"content_id": content_id, "action": event_action, "external_action": False}
 
     def record_owner_decision(self, content_id: int, action: str, note: str = "") -> dict:
         actions = {

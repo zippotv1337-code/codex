@@ -184,6 +184,111 @@ class MetaPublishingTests(unittest.TestCase):
         ]
         self.assertTrue(all("is_ai_generated" not in data for data in child_payloads))
 
+    def test_queue_meta_carousel_persists_confirmation_and_dispatches_once(self) -> None:
+        self._write_manifest()
+        transport = FakeMetaTransport()
+        adapter = self._adapter(transport)
+        service = PublishQueueService(self.pipeline.db, adapter)
+        planned = datetime.fromisoformat(self.publication["scheduled_at"])
+        queue_before = self.pipeline.db.one(
+            "SELECT queue_key FROM publish_queue WHERE content_id=?",
+            (self.card["content_id"],),
+        )
+
+        first = service.dispatch_due(planned + timedelta(minutes=1))
+        calls_after_first = (len(transport.posts), len(transport.gets))
+        second = service.dispatch_due(planned + timedelta(minutes=1))
+
+        self.assertEqual(first["published"], 1)
+        self.assertEqual(first["due"], 1)
+        self.assertEqual(second["due"], 0)
+        self.assertEqual((len(transport.posts), len(transport.gets)), calls_after_first)
+
+        queue = self.pipeline.db.one(
+            """
+            SELECT status, attempts, adapter_provider, external_schedule_id,
+                   last_error
+            FROM publish_queue WHERE content_id=?
+            """,
+            (self.card["content_id"],),
+        )
+        self.assertEqual(queue["status"], PUBLISHED)
+        self.assertEqual(queue["attempts"], 1)
+        self.assertEqual(queue["adapter_provider"], adapter.provider)
+        self.assertEqual(queue["external_schedule_id"], "18000000000000123")
+        self.assertIsNone(queue["last_error"])
+
+        publication = self.pipeline.db.one(
+            """
+            SELECT provider, status, schedule_status, external_id, external_url,
+                   published_at
+            FROM publications WHERE id=?
+            """,
+            (self.publication["id"],),
+        )
+        self.assertEqual(publication["provider"], adapter.provider)
+        self.assertEqual(publication["status"], PUBLISHED)
+        self.assertEqual(publication["schedule_status"], PUBLISHED)
+        self.assertEqual(publication["external_id"], "18000000000000123")
+        self.assertEqual(
+            publication["external_url"],
+            "https://www.instagram.com/p/Confirmed123/",
+        )
+        self.assertIsNotNone(publication["published_at"])
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT status FROM content_items WHERE id=?",
+                (self.card["content_id"],),
+            ),
+            PUBLISHED,
+        )
+
+        published_assets = self.pipeline.db.all(
+            """
+            SELECT asset_id FROM assets
+            WHERE content_id=? AND is_top_pick=1 AND published_status='PUBLISHED'
+            ORDER BY asset_id
+            """,
+            (self.card["content_id"],),
+        )
+        self.assertEqual(
+            [row["asset_id"] for row in published_assets],
+            sorted(self.asset_ids),
+        )
+        self.assertEqual(len(published_assets), 3)
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                """
+                SELECT COUNT(*) FROM assets
+                WHERE content_id=? AND is_top_pick=0 AND published_status='PUBLISHED'
+                """,
+                (self.card["content_id"],),
+            ),
+            0,
+        )
+
+        attempts = self.pipeline.db.all(
+            """
+            SELECT adapter_type, provider, status, detail
+            FROM adapter_attempts WHERE content_id=? ORDER BY id
+            """,
+            (self.card["content_id"],),
+        )
+        official_attempts = [row for row in attempts if row["provider"] == adapter.provider]
+        self.assertEqual(len(official_attempts), 1)
+        self.assertEqual(official_attempts[0]["adapter_type"], "publisher")
+        self.assertEqual(official_attempts[0]["status"], PUBLISHED)
+        self.assertEqual(official_attempts[0]["detail"], "official adapter publication succeeded")
+
+        receipt = json.loads(
+            (self.receipts / f'{queue_before["queue_key"]}.json').read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(receipt["status"], "CONFIRMED")
+        self.assertEqual(receipt["external_id"], publication["external_id"])
+        self.assertEqual(receipt["external_url"], publication["external_url"])
+
     def test_missing_public_asset_url_blocks_without_external_call(self) -> None:
         self._write_manifest(omit_last=True)
         transport = FakeMetaTransport()

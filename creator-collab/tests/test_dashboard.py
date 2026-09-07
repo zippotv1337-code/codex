@@ -206,6 +206,18 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertNotIn(".status-pill { display: none; }", styles)
         self.assertIn("Slides ausgewählt", script)
 
+    def test_active_review_slots_exclude_blocked_and_expose_attention_inbox(self) -> None:
+        queue = self.service.review_queue()
+        allowed = {"READY_FOR_REVIEW", "PARTIAL_READY", "OWNER_APPROVED", "SCHEDULED"}
+        self.assertTrue(all(card["status"] in allowed for card in queue["active_cards"]))
+        self.assertTrue(all(card["status"] != "BLOCKED" for card in queue["active_cards"]))
+        self.assertIn("needs_attention", queue)
+        self.assertTrue(all("attention_reason" in card for card in queue["needs_attention"]))
+        html = (ROOT / "dashboard" / "index.html").read_text(encoding="utf-8")
+        script = (ROOT / "dashboard" / "app.js").read_text(encoding="utf-8")
+        self.assertIn('id="needs-attention"', html)
+        self.assertIn("active_cards", script)
+
     def test_preparing_same_day_is_idempotent(self) -> None:
         first = self.service.ensure_date(date(2026, 9, 4))
         second = self.service.ensure_date(date(2026, 9, 4))

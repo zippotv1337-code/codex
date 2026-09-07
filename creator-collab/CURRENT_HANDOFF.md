@@ -382,3 +382,38 @@ wurden nicht rückwirkend verändert.
   Meta-Developer-Flow gezielt eine App/Token-Konfiguration bereitstellen; erst
   danach `meta-preflight` erneut laufen lassen. Fiverr erst nach sichtbarem
   Abschluss von `Create your profile` fortsetzen.
+
+## GitHub-Sync / External Readiness — 7. September 2026, 17:37 Uhr
+
+- Medium-Autopilot wurde auf Git/GitHub-Sicherung und externe Readiness
+  fokussiert.
+- Git geprüft: kein `.git/index.lock`; Remote `origin` zeigt auf
+  `https://github.com/zippotv1337-code/codex.git`; `origin/main` ist erreichbar.
+- Lokaler Branch `master` und `origin/main` sind divergiert und nicht
+  fast-forward-kompatibel. Deshalb darf `main` nicht blind überschrieben
+  werden.
+- Sicherer GitHub-Weg für diesen Stand: aktueller Creator-Ops-Stand wird auf
+  einen neuen `codex/...`-Branch gepusht; Merge nach `main` bleibt separater
+  Review-/Owner-Schritt.
+- Neuer read-only Readiness-Block ergänzt:
+  - CLI: `external-readiness`
+  - Dashboard-API: `/api/external-readiness`
+  - Service: `creator_ops/external_readiness.py`
+- Readiness-Snapshot ist secret-frei und speichert keine Tokens, Passwörter,
+  Cookies oder Wertlängen.
+- Aktuelle Ausgabe:
+  - Meta/Instagram API: `BLOCKED`, weil Env-Werte und Live-Schalter fehlen.
+  - Fiverr: `BLOCKED`, weil `Create your profile` / persönliche Identity noch
+    Owner-Gate ist.
+  - Handoff-ZIP: lokale Datei vorhanden; Spiegel braucht Owner-Upload oder
+    eindeutig freigegebenes Ziel.
+- Verifikation: 27 fokussierte Tests grün und `docs/CURRENT_STATE.json`
+  aktualisiert.
+- Lokaler Commit erstellt: `handoff: sync creator ops working state`.
+- Lokaler Branch erstellt: `codex/creator-ops-full-sync-20260907`.
+- Push ist noch nicht auf GitHub angekommen, weil Terminal-Git keine GitHub-
+  Credentials lesen konnte. Diagnose:
+  `fatal: could not read Username for 'https://github.com': terminal prompts disabled`.
+- GitHub-Connector sieht `zippotv1337-code/codex` ebenfalls nicht (`404`).
+  Nächster Schritt ist daher Owner-GitHub-Auth/PAT oder ein sichtbarer
+  interaktiver GitHub-Login; danach den vorbereiteten Branch pushen.

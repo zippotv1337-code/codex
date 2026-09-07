@@ -33,7 +33,9 @@ class StoryReserveService:
             result.append({
                 "content_id": card["content_id"], "creator_slug": card["creator_slug"],
                 "display_name": card["display_name"], "series": card["series"],
-                "date": card["date"], "status": "READY_FOR_OWNER_REVIEW", "frames": frames,
+                "date": card["date"], "planned_at": card.get("planned_at"),
+                "status": "READY_FOR_OWNER_REVIEW", "story_type": "TEASER/POLL/FRAGE",
+                "cta": card["cta"], "highlight": None, "frames": frames,
                 "published_assets_excluded": card["excluded_published_count"],
                 "safety_note": "SFW; kein Auto-Posting; nativen KI-Hinweis vor Veröffentlichung prüfen",
             })

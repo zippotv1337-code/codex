@@ -22,6 +22,8 @@ from .asset_import import LocalAssetImportService
 from .archive import ArchiveService
 from .cli import ROOT, build_pipeline, build_publish_queue, live_publishing_requested
 from .current_state import CurrentStateService
+from .external_readiness import ExternalReadinessService
+from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .stories import StoryReserveService
 from .collections import CollectionService
@@ -379,6 +381,10 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._json({"date": target, "cards": cards})
             elif parsed.path == "/api/review-queue":
                 self._json(self.service.review_queue())
+            elif parsed.path == "/api/operations-audit":
+                self._json(OperationsAuditService(self.service, self.publishing).snapshot())
+            elif parsed.path == "/api/external-readiness":
+                self._json(ExternalReadinessService(self.asset_root).snapshot())
             elif parsed.path == "/api/status":
                 self._json(
                     CurrentStateService(
@@ -538,6 +544,15 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 content_id = int(parts[2])
                 note = self._read_form().get("note", [""])[0]
                 self._json(self.service.record_owner_decision(content_id, parts[3], note))
+                return
+            if (
+                len(parts) == 4
+                and parts[:2] == ["api", "stories"]
+                and parts[3] in {"approve", "change", "reject", "plan"}
+            ):
+                content_id = int(parts[2])
+                note = self._read_form().get("note", [""])[0]
+                self._json(self.service.story_decision(content_id, parts[3], note))
                 return
             if len(parts) == 3 and parts[:2] == ["api", "control-plane"]:
                 self._json(self.control_plane.command(parts[2]))

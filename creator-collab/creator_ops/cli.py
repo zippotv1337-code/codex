@@ -13,6 +13,7 @@ from .asset_import import LocalAssetImportService
 from .current_state import CurrentStateService
 from .evening import EveningRunCoordinator
 from .exporting import ExportBackupService
+from .external_readiness import ExternalReadinessService
 from .pipeline import VerticalPipeline
 from .reconcile import ManualInstagramService
 from .recovery import RecoveryBackupService
@@ -25,6 +26,7 @@ from .publishing import (
 )
 from .morning import MorningContentFactory
 from .offline import OfflineSnapshotService
+from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .style_reference import StyleReferenceService
 
@@ -150,6 +152,12 @@ def parser() -> argparse.ArgumentParser:
     adworks = subcommands.add_parser("adworks-dry-run", help="Run the local Pack-to-Revenue acceptance path")
     adworks.add_argument("--pack", default="creator-sfw-basic")
     subcommands.add_parser("publish-queue", help="List the durable local publishing queue")
+    meta_preflight = subcommands.add_parser(
+        "meta-preflight",
+        help="Run secret-free read-only checks for one exact Instagram package",
+    )
+    meta_preflight.add_argument("--publication-id", required=True, type=int)
+    meta_preflight.add_argument("--content-id", required=True, type=int)
     subcommands.add_parser("publish-reconcile", help="Reconcile approved posts into the local queue")
     dispatch = subcommands.add_parser(
         "publish-dispatch-due", help="Dispatch due jobs through the configured fail-closed adapter"
@@ -172,6 +180,14 @@ def parser() -> argparse.ArgumentParser:
         "offline-snapshot", help="Write a static read-only operating snapshot"
     )
     offline.add_argument("--out", type=Path, default=ROOT / "output" / "offline")
+    subcommands.add_parser(
+        "operations-audit",
+        help="Print the read-only daily operating priorities from current state",
+    )
+    subcommands.add_parser(
+        "external-readiness",
+        help="Print secret-free readiness for Meta, Fiverr, and handoff mirror lanes",
+    )
     return result
 
 
@@ -287,6 +303,21 @@ def main() -> int:
         print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
     elif args.command == "publish-queue":
         print(json.dumps(build_publish_queue(pipeline, args.config).list(), ensure_ascii=False, indent=2))
+    elif args.command == "meta-preflight":
+        adapter = MetaInstagramPublishingAdapter.from_environment(pipeline.db, ROOT)
+        if isinstance(adapter, UnconfiguredInstagramAdapter):
+            result = {
+                "schema": "creator-ops-meta-live-preflight-v1",
+                "status": "BLOCKED",
+                "provider": adapter.provider,
+                "publication_id": args.publication_id,
+                "content_id": args.content_id,
+                "checks": {"adapter": {"ok": False}},
+                "errors": ["official_instagram_adapter_not_configured"],
+            }
+        else:
+            result = adapter.preflight(args.publication_id, args.content_id)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
     elif args.command == "publish-reconcile":
         print(json.dumps(build_publish_queue(pipeline, args.config).reconcile(), ensure_ascii=False, indent=2))
     elif args.command == "publish-dispatch-due":
@@ -327,6 +358,26 @@ def main() -> int:
         print(
             json.dumps(
                 OfflineSnapshotService(pipeline.db, ROOT).build(args.out),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "operations-audit":
+        reviews = ReviewDashboardService(pipeline)
+        print(
+            json.dumps(
+                OperationsAuditService(
+                    reviews,
+                    build_publish_queue(pipeline, args.config),
+                ).snapshot(),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "external-readiness":
+        print(
+            json.dumps(
+                ExternalReadinessService(ROOT, args.config).snapshot(),
                 ensure_ascii=False,
                 indent=2,
             )

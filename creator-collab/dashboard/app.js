@@ -1,9 +1,16 @@
 const cardsRoot = document.querySelector("#cards");
 const readyCount = document.querySelector("#ready-count");
 const targetDate = document.querySelector("#target-date");
+const activeSummary = document.querySelector("#active-summary");
+const attentionRoot = document.querySelector("#needs-attention");
+const attentionSummary = document.querySelector("#attention-summary");
+const plannedRoot = document.querySelector("#planned-summary");
+const storyOpsRoot = document.querySelector("#story-ops");
+const auditRoot = document.querySelector("#operations-audit");
 const toast = document.querySelector("#toast");
 const stageFilters = document.querySelectorAll("[data-stage-filter]");
 let currentCards = [];
+let currentAttention = [];
 let activeStage = "ALL";
 let previewState = null;
 let pendingDecision = null;
@@ -98,7 +105,7 @@ function cardTemplate(card) {
           <div>
             <p class="card-kicker">${escapeHtml(card.date)} · ${escapeHtml(card.prime_time)} Uhr</p>
             <h2>${escapeHtml(card.display_name)}</h2>
-            <p class="series">${escapeHtml(card.series)}</p>
+            <p class="series">${escapeHtml(card.series)} · <span class="format-badge">${escapeHtml((card.format || "carousel").toUpperCase())}</span></p>
             ${card.style_reference ? `<span class="style-ref">Style Ref: ${escapeHtml(card.style_reference)} · ${escapeHtml(card.reference_strength)}</span>` : ""}
           </div>
         </div>
@@ -143,10 +150,18 @@ function cardTemplate(card) {
       <div class="decision-help"><b>APPROVE</b> nur lokale Queue · <b>LIVE-FREIGABE</b> separat · <b>CHANGE</b> Überarbeitung · <b>REJECT</b> Paket blockieren</div>
       <div class="decision-actions">
         <button type="button" class="approve-button" data-action="approve" data-content-id="${card.content_id}" ${canApprove ? "" : "disabled"}>${approved ? "Freigegeben" : "APPROVE"}</button>
-        <button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">CHANGE</button>
+        <button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">Bearbeiten / CHANGE</button>
         <button type="button" class="reject-button" data-action="reject" data-content-id="${card.content_id}">REJECT</button>
       </div>
     </article>`;
+}
+
+function attentionTemplate(card) {
+  const status = statusMeta(card);
+  return `<article class="attention-card">
+    <div><p class="card-kicker">${escapeHtml(card.creator_slug)} · ${escapeHtml(card.format || "carousel")}</p><h3>${escapeHtml(card.series)}</h3><p>${escapeHtml(card.attention_reason || "Prüfung erforderlich")}</p></div>
+    <div class="attention-meta"><span class="status-pill status-${status.key}">${escapeHtml(status.label)}</span><button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">Bearbeiten</button><button type="button" class="reject-button" data-action="reject" data-content-id="${card.content_id}">REJECT</button></div>
+  </article>`;
 }
 
 function renderCards() {
@@ -156,6 +171,48 @@ function renderCards() {
   cardsRoot.innerHTML = visible.length
     ? visible.map(cardTemplate).join("")
     : '<div class="empty">Für diesen Filter gibt es morgen kein Paket.</div>';
+}
+
+function renderAttention() {
+  attentionRoot.innerHTML = currentAttention.length
+    ? currentAttention.map(attentionTemplate).join("")
+    : '<div class="empty">Keine offenen Aufmerksamkeitspunkte.</div>';
+}
+
+function renderPlanned() {
+  const planned = currentCards.filter(card => ["LOCAL_SCHEDULED", "SCHEDULED", "NEEDS_RESCHEDULE_REVIEW"].includes(card.schedule_status));
+  plannedRoot.innerHTML = planned.length
+    ? planned.map(card => `<article class="planned-item"><span class="planned-dot" aria-hidden="true"></span><div><b>${escapeHtml(card.display_name)}</b><span>${escapeHtml(card.series)} · ${escapeHtml(card.format || "carousel")}</span></div><strong>${escapeHtml(card.planned_at || card.prime_time + " Uhr")}</strong></article>`).join("")
+    : '<div class="empty">Keine lokalen Veröffentlichungen geplant.</div>';
+}
+
+function renderStoryOps(items) {
+  if (!storyOpsRoot) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const visible = (items || []).filter(item => item.date === today || item.content_id === 1);
+  storyOpsRoot.innerHTML = visible.length
+    ? visible.map(item => `<article class="planned-item story-ops-item"><span class="planned-dot" aria-hidden="true"></span><div><b>${escapeHtml(item.display_name)}</b><span>${escapeHtml(item.series)} · ${item.frames?.length || 0} Frames · ${escapeHtml(item.status)}</span></div><a class="text-link" href="/stories#story-${item.content_id}">Auswählen</a></article>`).join("")
+    : '<div class="empty">Keine Story für heute vorhanden.</div>';
+}
+
+function renderAudit(audit) {
+  if (!auditRoot) return;
+  const primary = audit.next_actions?.[0] || {};
+  const stats = [
+    ["Review aktiv", audit.review?.active_count ?? 0],
+    ["Needs Attention", audit.review?.needs_attention_count ?? 0],
+    ["Story-Kits", audit.stories?.ready_package_count ?? 0],
+    ["Analytics fällig", audit.analytics?.due_count ?? 0],
+  ];
+  auditRoot.innerHTML = `
+    <article class="audit-primary">
+      <span class="audit-priority">${escapeHtml(primary.priority || "OK")}</span>
+      <div>
+        <h3>${escapeHtml(primary.action || "Kein offener Schritt")}</h3>
+        <p>${primary.blocked_by ? `Blocker: ${escapeHtml(primary.blocked_by)}` : "Lokal ohne Owner-Gate ausführbar."}</p>
+      </div>
+    </article>
+    ${stats.map(([label, value]) => `<article class="audit-stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></article>`).join("")}`;
 }
 
 function previewSlides(card) {
@@ -225,12 +282,27 @@ async function loadCards() {
     const response = await apiFetch("/api/review-queue", { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Status ${response.status}`);
     const payload = await response.json();
-    currentCards = payload.cards;
+    currentCards = payload.active_cards || payload.cards || [];
+    currentAttention = payload.needs_attention || [];
     readyCount.textContent = payload.cards.filter((card) => card.can_approve ?? (card.ready && !card.approved && card.status === "READY_FOR_REVIEW")).length;
+    activeSummary.textContent = `${currentCards.length} aktiv`;
+    attentionSummary.textContent = `${currentAttention.length} offen`;
     targetDate.textContent = payload.dates?.length
       ? payload.dates.map(value => new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit" }).format(new Date(`${value}T12:00:00`))).join(" / ")
       : "keine";
     renderCards();
+    renderAttention();
+    renderPlanned();
+    fetch("/api/operations-audit", { headers: { Accept: "application/json" } })
+      .then(response => response.ok ? response.json() : null)
+      .then(data => data ? renderAudit(data) : null)
+      .catch(() => {
+        if (auditRoot) auditRoot.innerHTML = '<div class="error">Operations-Audit konnte nicht geladen werden.</div>';
+      });
+    fetch("/api/stories", { headers: { Accept: "application/json" } })
+      .then(response => response.ok ? response.json() : { items: [] })
+      .then(data => renderStoryOps(data.items))
+      .catch(() => renderStoryOps([]));
   } catch (error) {
     cardsRoot.innerHTML = `<div class="error">Die Freigabepakete konnten nicht geladen werden. ${escapeHtml(error.message)}</div>`;
   } finally {
@@ -316,7 +388,7 @@ async function ownerDecision(contentId, action) {
   return payload;
 }
 
-cardsRoot.addEventListener("click", async (event) => {
+async function handleCardAction(event) {
   const preview = event.target.closest("[data-large-preview]");
   if (preview) {
     const card = currentCards.find(item => item.content_id === Number(preview.dataset.largePreview));
@@ -337,7 +409,10 @@ cardsRoot.addEventListener("click", async (event) => {
     showToast(error.message);
     await loadCards();
   }
-});
+}
+
+cardsRoot.addEventListener("click", handleCardAction);
+attentionRoot.addEventListener("click", handleCardAction);
 
 document.querySelector("#decision-form").addEventListener("submit", (event) => {
   event.preventDefault();

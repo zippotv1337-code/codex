@@ -422,3 +422,21 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   sind `PUBLISHED`. Der alte Mock-Draft ist als Doppelpost-Risiko pausiert.
 - Story-Live bleibt separat: Der Webdialog bot in diesem Lauf keinen
   Story-Composer.
+
+## GitHub-/Readiness-Ergänzung — 7. September 2026, 17:37 Uhr
+
+- GitHub-Remote ist per Git erreichbar, aber lokaler `master` und
+  `origin/main` sind divergiert. Kein Force-Push/History-Rewrite.
+- Aktueller Projektstand soll auf einem `codex/...`-Branch gesichert werden;
+  Merge nach `main` bleibt ein bewusster Folgeschritt.
+- Creator Ops besitzt jetzt einen secret-freien externen Readiness-Snapshot:
+  CLI `external-readiness` und Dashboard-API `/api/external-readiness`.
+- Der Snapshot zeigt aktuell: Meta/Instagram API `BLOCKED` wegen fehlender
+  Env-Werte/Live-Schalter; Fiverr `BLOCKED` wegen persönlichem
+  Verkäuferprofil-/Identity-Gate; Handoff-ZIP lokal vorhanden.
+- 27 fokussierte Tests grün; `docs/CURRENT_STATE.json` wurde aktualisiert.
+- Lokaler Git-Commit `handoff: sync creator ops working state` und Branch
+  `codex/creator-ops-full-sync-20260907` sichern den kompletten Creator-Ops-
+  Stand lokal. GitHub-Push ist noch blockiert, weil Terminal-Git keine
+  GitHub-Credentials lesen kann und der GitHub-Connector das Repo mit `404`
+  meldet.

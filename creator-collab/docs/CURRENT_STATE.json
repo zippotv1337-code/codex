@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-07T12:27:01+00:00",
+  "generated_at": "2026-09-07T15:37:58+00:00",
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
@@ -92,7 +92,7 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 133,
+    "passed": 27,
     "failed": 0
   },
   "blockers": {

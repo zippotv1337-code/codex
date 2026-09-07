@@ -39,6 +39,22 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
 
 ## Freigabe und externe Aktionen
 
+### Output-first Owner-Override — 7. September 2026
+
+- Projektbezogene, vollständige und SFW/PUBLIC_SFW-Instagram-Inhalte dürfen
+  nach den bestehenden Safety-, Rechte-, Identitäts- und Idempotenz-Gates
+  veröffentlicht, öffentlich geprüft und bei einem klaren Darstellungsfehler
+  projektbezogen korrigiert oder archiviert werden.
+- Ein zusätzlicher Einzel-Owner-Klick ist für solche Inhalte nicht erforderlich;
+  persönliche Identität, OTP/Steuerdaten, Adult-Inhalte, Geld und neue Konten
+  bleiben ausdrücklich Owner-only.
+- Fiverr Gig 1 darf nach Abschluss des persönlichen Identity-Gates mit den
+  bekannten echten Projektangaben veröffentlicht und öffentlich geprüft werden.
+- Die Freigabe ändert nicht die Regel: Ohne echte Meta-Credentials darf kein
+  API-Versand simuliert werden; native Instagram-Nutzung ist nur zulässig,
+  wenn der eingeloggte projektbezogene Account und der konkrete SFW-Entwurf
+  eindeutig verfügbar sind.
+
 - `READY_FOR_REVIEW` ist keine Veröffentlichungsfreigabe.
 - Owner-Freigabe legt im MVP nur einen lokalen `mock-draft` an.
 - Für owner-freigegebene Inhalte ist echter offizieller Instagram-/Meta-

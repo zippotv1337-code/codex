@@ -28,7 +28,17 @@
       <section class="summary" aria-label="Tagesübersicht">
         <div class="summary-stat"><strong id="ready-count">–</strong><span>Pakete bereit</span></div>
         <div class="summary-stat"><strong id="target-date">–</strong><span>Planung</span></div>
-        <p><b>Deine Aufgabe heute:</b> Je Paket Top 3 und Text prüfen, dann <b>Freigeben</b>, <b>Ändern</b> oder <b>Ablehnen</b>. Nichts geht live.</p>
+        <p><b>Deine Aufgabe heute:</b> Reviewkarten prüfen, bearbeiten oder lokal planen. Veröffentlichtes rückt automatisch aus Review; externe Posts bleiben separat geschützt.</p>
+      </section>
+
+      <section class="operations-audit" aria-labelledby="audit-heading">
+        <div>
+          <p class="eyebrow">Betriebs-Radar</p>
+          <h2 id="audit-heading">Nächster sinnvoller Schritt</h2>
+        </div>
+        <div id="operations-audit" class="audit-grid" aria-live="polite">
+          <div class="loading">Operations-Audit wird geladen …</div>
+        </div>
       </section>
 
       <nav class="stage-filters" aria-label="Content-Stufe filtern">
@@ -38,8 +48,23 @@
         <button class="stage-filter" type="button" data-stage-filter="ADULT_18">Adult 18+</button>
       </nav>
 
-      <section id="cards" class="cards" aria-live="polite" aria-busy="true">
+      <section class="workspace-section" aria-labelledby="today-heading">
+        <div class="section-heading"><div><p class="eyebrow">Heute</p><h2 id="today-heading">Aktive Reviewkarten</h2></div><span id="active-summary" class="section-count">–</span></div>
+        <section id="cards" class="cards" aria-live="polite" aria-busy="true">
         <div class="loading">Freigabepakete werden vorbereitet …</div>
+        </section>
+      </section>
+      <section class="workspace-section story-ops-section" aria-labelledby="story-ops-heading">
+        <div class="section-heading"><div><p class="eyebrow">Stories</p><h2 id="story-ops-heading">Heute auswählbare Story-Pakete</h2></div><a class="text-link" href="/stories">Story-Review öffnen</a></div>
+        <section id="story-ops" class="planned-list" aria-live="polite"><div class="loading">Story-Pakete werden geladen …</div></section>
+      </section>
+      <section class="workspace-section attention-section" aria-labelledby="attention-heading">
+        <div class="section-heading"><div><p class="eyebrow">Needs Attention</p><h2 id="attention-heading">Klären, reparieren oder bewusst ablehnen</h2></div><span id="attention-summary" class="section-count">–</span></div>
+        <section id="needs-attention" class="attention-list" aria-live="polite"><div class="loading">Wird geladen …</div></section>
+      </section>
+      <section class="workspace-section" aria-labelledby="planned-heading">
+        <div class="section-heading"><div><p class="eyebrow">Geplant</p><h2 id="planned-heading">Nächste lokale Veröffentlichungen</h2></div><a class="text-link" href="/archive">Veröffentlicht / Archiv öffnen</a></div>
+        <section id="planned-summary" class="planned-list" aria-live="polite"><div class="loading">Wird geladen …</div></section>
       </section>
 
       <footer>

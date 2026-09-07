@@ -239,3 +239,34 @@ gegen 13:00 Uhr.
      ins echte Formular übertragen.
   3. Übergabe-ZIP durch Owner direkt in ChatGPT hochladen oder einen eindeutig
      freigegebenen privaten Spiegelort bereitstellen.
+
+## GitHub-Sync Checkpoint — 7. September 2026, 17:37 Uhr
+
+- Letzter vollständig erledigter Task: secret-freier External-Readiness-
+  Snapshot für Meta/Fiverr/Handoff-ZIP ergänzt und getestet.
+- Aktuell angefangener Task: GitHub-Sicherung des kompletten Creator-Ops-
+  Projektstands ohne Datenbanken, Backups, Output-ZIPs oder Secrets.
+- Exakter Fortsetzungspunkt: lokalen Stand auf einem neuen `codex/...`-Branch
+  committen und nach GitHub pushen. `main` nicht überschreiben, weil lokaler
+  `master` und `origin/main` divergiert sind.
+- Geänderte Dateien dieses Blocks: `creator_ops/external_readiness.py`,
+  `creator_ops/cli.py`, `creator_ops/web.py`,
+  `tests/test_external_readiness.py`, `docs/CURRENT_STATE.json`,
+  `CURRENT_HANDOFF.md`, `PROJECT_RESUME.md`, `AUTOPILOT_CHECKPOINT.md`,
+  `sessions/2026-09-07-1737-codex-github-sync.md`.
+- Teststatus: 27 fokussierte Tests grün.
+- Backupstatus: kein neues Backup; ignored `data/`, `backups/` und `output/`
+  bleiben absichtlich außerhalb von Git.
+- Bekannte Blocker: Merge nach `main` braucht saubere Review/Entscheidung;
+  Meta-Credentials fehlen; Fiverr persönliches Seller-/Identity-Gate offen.
+- Owner-Gates: keine Secrets in Git, kein Force-Push, keine
+  Repository-Sichtbarkeitsänderung, keine persönlichen Verifizierungsdaten.
+- Nächste 3 priorisierte Aufgaben:
+  1. Gepushten `codex/...`-Branch auf GitHub prüfen.
+  2. Divergenz zu `origin/main` per Review/Merge sauber auflösen.
+  3. Danach Meta-Credentials/Fiverr-Identity als externe Gates bearbeiten.
+- Push-Status: noch nicht remote. Lokaler Commit
+  `handoff: sync creator ops working state`, lokaler Branch
+  `codex/creator-ops-full-sync-20260907`. Terminal-Git blockiert ohne
+  GitHub-Credentials; GitHub-Connector meldet für `zippotv1337-code/codex`
+  `404`. Kein Force-Push, kein Main-Overwrite.
