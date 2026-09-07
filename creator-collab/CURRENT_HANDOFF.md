@@ -1,5 +1,17 @@
 # Aktueller Handoff
 
+## Aktuelle Git-Auth-Korrektur — 7. September 2026, 18:57 Uhr
+
+Die späteren Aussagen in dieser Datei über fehlende lokale GitHub-Credentials
+sind überholt: Der reguläre Credential Manager kennt `zippotv1337-code`.
+Ein expliziter, nicht interaktiver Abruf des vorhandenen Zugangs und ein
+authentifizierter Repository-GET waren erfolgreich (HTTP 200,
+`permissions.push=true`). Frühere Befehle mit leerem `credential.helper`
+hatten die Anmeldung für den jeweiligen Aufruf abgeschaltet. Kein neuer
+Token nötig aufgrund der bisherigen Diagnose; kein Absturzschaden belegt.
+In diesem Diagnose-Lauf kein Push. Details und verbleibende Unsicherheit:
+`sessions/2026-09-07-1857-git-auth-diagnosis.md`.
+
 Stand: 6. September 2026, 18:50 Uhr · Creator Ops 1.6.4-beta
 
 ## Verifizierter Stand

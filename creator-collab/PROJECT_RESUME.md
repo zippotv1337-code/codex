@@ -1,5 +1,12 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+Aktuelle Korrektur (7. September 2026, 18:57 Uhr): Der lokale GitHub-Zugang
+ist vorhanden und konnte lesend authentifiziert werden (HTTP 200,
+Repository-Berechtigung `push=true`). Ältere Aussagen über fehlende
+Credentials sind nicht mehr maßgeblich. Wiederholte Fehlversuche hatten den
+Credential-Helper ausdrücklich abgeschaltet. Upload des neuen Branches
+bleibt separat zu bestätigen; Diagnose im Journal `2026-09-07-1857-git-auth-diagnosis.md`.
+
 Stand: 6. September 2026
 
 ## Ziel
