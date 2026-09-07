@@ -427,3 +427,17 @@ wurden nicht rückwirkend verändert.
   Owner-Aufgabe zurückgestellt und nicht Bestandteil dieses Uploads.
 - Nach GitHub-Login genügt ein Push des vorbereiteten Branches; danach kann der
   Owner den Branch prüfen und über Merge oder spätere Löschung entscheiden.
+
+## Analytics-Operations — 7. September 2026
+
+- Neue read-only Seite `/analytics` und API `/api/analytics` zeigen echte
+  Instagram-Publikationen, 24/72/168h-Fenster und Fiverr-/Revenue-Signale.
+- Keine Analytics-Werte wurden erfunden. Der lokale Stand hat 4 echte
+  Instagram-Publikationen, 0 manuelle Events, 5 fällige Fenster und 12
+  unbekannte Fenster.
+- Fiverr bleibt `OWNER_GATE`; reale Revenue-Events sind 0, Dry-Run-Signale
+  bleiben getrennt sichtbar.
+- Tests: Analytics 1, Dashboard 13, Operations-Audit 4; Syntaxchecks und
+  SQLite-Integrität grün.
+- Nächster operativer Schritt: echte Instagram-Insights aus den Profilen
+  manuell importieren; danach die fälligen 24h/72h/168h-Fenster erfassen.

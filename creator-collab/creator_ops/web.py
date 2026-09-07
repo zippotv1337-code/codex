@@ -20,6 +20,7 @@ from zoneinfo import ZoneInfo
 
 from .asset_import import LocalAssetImportService
 from .archive import ArchiveService
+from .analytics import AnalyticsService
 from .cli import ROOT, build_pipeline, build_publish_queue, live_publishing_requested
 from .current_state import CurrentStateService
 from .external_readiness import ExternalReadinessService
@@ -327,6 +328,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("index.html", "text/html; charset=utf-8")
             elif parsed.path == "/archive":
                 self._file("archive.html", "text/html; charset=utf-8")
+            elif parsed.path == "/analytics":
+                self._file("analytics.html", "text/html; charset=utf-8")
             elif parsed.path == "/top3":
                 self._file("top3.html", "text/html; charset=utf-8")
             elif parsed.path == "/engagement":
@@ -347,6 +350,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("app.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/archive.js":
                 self._file("archive.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/analytics.js":
+                self._file("analytics.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/top3.js":
                 self._file("top3.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/engagement.js":
@@ -401,6 +406,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                         )
                     }
                 )
+            elif parsed.path == "/api/analytics":
+                self._json(AnalyticsService(self.service.pipeline.db).snapshot())
             elif parsed.path == "/api/top3":
                 query = parse_qs(parsed.query)
                 self._json(

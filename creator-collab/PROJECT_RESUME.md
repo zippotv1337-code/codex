@@ -423,6 +423,18 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
 - Story-Live bleibt separat: Der Webdialog bot in diesem Lauf keinen
   Story-Composer.
 
+## Analytics-Operations — 7. September 2026
+
+- Read-only Analytics-Ansicht unter `/analytics` und API `/api/analytics` ergänzt.
+- Echte Instagram-Publikationen werden je 24h/72h/168h mit `WAITING`, `DUE`
+  oder `CAPTURED` geführt; fehlende Werte bleiben `UNKNOWN/NULL`.
+- Aktueller Datenstand: 4 echte lokale Instagram-Publikationen, 0 erfasste
+  Analytics-Fenster, 5 fällige Fenster und 12 unbekannte Fenster.
+- Fiverr-/Revenue-Signale bleiben getrennt; aktuell `OWNER_GATE`, keine echten
+  Fiverr-Events und keine erfundenen Werte.
+- Verifikation: Analytics-, Dashboard- und Operations-Audit-Tests grün,
+  Python-/JavaScript-Syntax grün, SQLite `integrity_check = ok`.
+
 ## GitHub-/Readiness-Ergänzung — 7. September 2026, 17:37 Uhr
 
 - GitHub-Remote ist per Git erreichbar, aber lokaler `master` und
