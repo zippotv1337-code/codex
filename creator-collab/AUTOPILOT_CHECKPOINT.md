@@ -218,3 +218,24 @@ gegen 13:00 Uhr.
   2. Wenn ein Story-Composer verfügbar ist, die zwei verbleibenden Story-Kits
      live stellen und verifizieren.
   3. Mara Needs-Attention-Karten gezielt reparieren oder archivieren.
+
+## Meta-/Fiverr-API Checkpoint — 7. September 2026, 14:40 Uhr
+
+- Letzter vollständig erledigter Task: Meta-/Fiverr-API-Readiness geprüft.
+- Aktuell angefangener Task: keiner; beide externen API-/Publish-Lanes sind
+  sauber blockiert dokumentiert.
+- Exakter Fortsetzungspunkt: Wenn der Owner echte Meta-Credentials lokal setzt,
+  `meta-preflight` für einen noch unveröffentlichten Kandidaten erneut
+  ausführen. Ohne gesetzte Variablen keine API-Erzeugung und keinen
+  Graph-Publish starten.
+- Teststatus: Preflight läuft, aber blockiert erwartungsgemäß mit
+  `official_instagram_adapter_not_configured`.
+- Bekannte Blocker: fehlende Meta-User-IDs/Tokens/API-Version/Media-Manifest;
+  Fiverr `Create your profile`; GitHub-Connector sieht das Repo nicht.
+- Nächste 3 priorisierte Aufgaben:
+  1. Meta-Developer/App/Token-Gate mit Owner-Unterstützung abschließen und
+     Variablen lokal setzen.
+  2. Fiverr-Verkäuferprofil abschließen, dann Gig 1 aus vorhandenen Dokumenten
+     ins echte Formular übertragen.
+  3. Übergabe-ZIP durch Owner direkt in ChatGPT hochladen oder einen eindeutig
+     freigegebenen privaten Spiegelort bereitstellen.

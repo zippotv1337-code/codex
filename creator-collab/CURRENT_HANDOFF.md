@@ -358,3 +358,27 @@ wurden nicht rückwirkend verändert.
 - SQLite `integrity_check = ok`; `docs/CURRENT_STATE.json` wurde aktualisiert.
 - Nächste Priorität: echte Insights für diesen Post und die älteren Live-Posts
   erfassen; Story-Kits erst bei verfügbarem Story-Composer live stellen.
+
+## Meta-/Fiverr-API-Check — 7. September 2026, 14:40 Uhr
+
+- Verfügbare Connectoren geprüft: kein Meta-/Instagram-API-Connector und kein
+  Fiverr-API-Connector verfügbar; GitHub/Gmail sind verfügbar.
+- Lokale Meta-Credentials sind weiterhin nicht gesetzt:
+  `META_IG_USER_ID_*`, `META_ACCESS_TOKEN_*`, `META_GRAPH_API_VERSION`,
+  `META_GRAPH_HOST` und `CREATOR_OPS_META_MEDIA_MANIFEST` fehlen.
+- `config.toml` steht weiter auf `[publishing] adapter = "unconfigured"` und
+  `live_enabled = false`; der offizielle Adapter-Code ist vorhanden, aber nicht
+  aktiviert.
+- Read-only `meta-preflight` für die nächsten Kandidaten blockiert mit
+  `official_instagram_adapter_not_configured`.
+- Fiverr wurde read-only geprüft und zeigt weiterhin `Create your profile`;
+  Gig 1 bleibt inhaltlich fertig, aber das Verkäuferprofil/Identity-Gate ist
+  noch nicht frei.
+- Meta Developer wurde read-only geöffnet; im sichtbaren Zustand war keine
+  lokal verwertbare App-/Token-Konfiguration vorhanden.
+- GitHub-Connector sieht `zippotv1337-code/codex` aktuell nicht (`404`), daher
+  wurde das lokale Übergabe-ZIP nicht als GitHub-Spiegel hochgeladen.
+- Exakter nächster Schritt: Meta-Credentials sicher lokal setzen oder im
+  Meta-Developer-Flow gezielt eine App/Token-Konfiguration bereitstellen; erst
+  danach `meta-preflight` erneut laufen lassen. Fiverr erst nach sichtbarem
+  Abschluss von `Create your profile` fortsetzen.
