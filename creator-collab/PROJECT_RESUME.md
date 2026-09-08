@@ -10,6 +10,12 @@ Hinweis zur neuen VENV: Python 3.14.7 bestätigt, aber eigene `tzdata` noch nich
 installiert. Tests nutzen vorhandene gebündelte Zeitzonendaten nur pro Prozess;
 der laufende Server wurde nicht verändert.
 
+**GitHub-main synchronisiert und am 08.09.2026 um 23:04 verifiziert:**
+Inhaltscommit `3ac0cb8`, Projektbaum identisch zum lokalen Snapshot `d123e99`;
+anschließender Nachweiscommit dokumentiert den Erfolg. Beide Historien bewahrt,
+kein Force-Push und keine Änderungen an fremden Root-Dateien. Alte Angaben über
+einen zurückliegenden GitHub-Spiegel sind damit für diesen Inhaltsstand überholt.
+
 ## Codex-Arbeitsgrundlage — 8. September 2026, 22:51 Europe/Berlin
 
 `AGENTS.md` bindet `docs/CODEX_ZIPPOWORKZ_LOCAL_DESKTOP_OPS_SETUP.md` für lokale

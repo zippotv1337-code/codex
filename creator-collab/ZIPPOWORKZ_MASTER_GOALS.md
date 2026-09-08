@@ -47,7 +47,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |
 | M-11 | Recovery, backup and journals | ACTIVE_FOREVER | Journal each meaningful run; pre-change backup for critical state; restore validation; no secrets. |
-| M-12 | GitHub trustworthy mirror | ACTIVE / OWNER_GATE_COMPONENT | Safe local-to-remote sync, no secrets/DB/backups, no force push. Visibility is Owner-only. |
+| M-12 | GitHub trustworthy mirror | DONE / SYNC_VERIFIED_2026_09_08 | main 3ac0cb8 externally confirmed; identical project tree, no secrets/DB/backups or force push. Evidence: sessions/2026-09-08-2255-github-sync.md. Visibility remains Owner-only; new changes may reopen normal sync. |
 | M-13 | Simple model/runtime compatibility | ACTIVE_FOREVER | Stable current model/runtime is sufficient; stronger models are optional. |
 | M-14 | Learn sellable product from demand | WAITING_REAL_SIGNALS | Learn from real inquiries, orders and fulfillment. |
 | M-15 | Keep offers separate | LATER | Gig 1 automation (149/349/699) remains separate from historical SFW content packs (45/95/175). |
