@@ -4,12 +4,15 @@
 
 - Letzter vollständiger Schritt: Bestands-/Sicherheitsprüfung und 30 Python-/4
   Frontendtests grün; fünf nur upstream vorhandene Unterlagen lokal bewahrt.
-- Aktueller Schritt: projektbezogenen Snapshot committen und main ohne
-  History-Rewrite synchronisieren. Push erst nach Remote-SHA-Prüfung als DONE.
+- **Sync DONE, 23:04:** Inhaltscommit `3ac0cb8` auf GitHub-main und Snapshot
+  `d123e99` extern bestätigt; identische Projektbäume. Aktueller letzter Schritt:
+  diesen Erfolgsnachweis ebenfalls committen/synchronisieren, danach STOP.
 - Keine DB-/Runtime-/Plattformänderung. Unversionierte Root-Fremdprojekte nicht
   anfassen. VENV-Zeitzonendaten nur im Testprozess aus vorhandenem Bestand nutzen.
 - Resume: `sessions/2026-09-08-2255-github-sync.md` lesen; dort bestätigten letzten
   Git-Schritt prüfen, keine Auth-Schleife und keine abgeschlossenen Aufgaben wiederholen.
+- Lokaler Arbeitsbranch `codex/zippoworkz-snapshot-20260908`; separate Main-Merge-
+  Linie bewahrt die vorhandenen GitHub-Root-Dateien. Keine anderen Worktrees ändern.
 
 ## AKTUELL — Codex Local Ops integriert, 2026-09-08 22:51 Europe/Berlin
 

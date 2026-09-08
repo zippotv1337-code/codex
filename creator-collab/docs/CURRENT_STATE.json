@@ -19,7 +19,13 @@
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
-    "state": "MANAGED_OUTSIDE_RUNTIME"
+    "state": "SYNC_VERIFIED",
+    "verified_content_commit": "3ac0cb8b3a290633b21a5689e5c7f2d82296b1ff",
+    "verified_at": "2026-09-08T23:04:33+02:00",
+    "remote_branch": "main",
+    "source_branch": "codex/zippoworkz-snapshot-20260908",
+    "evidence": "sessions/2026-09-08-2255-github-sync.md",
+    "scope": "creator-collab source/docs; runtime databases, secrets, backups and unrelated root files excluded"
   },
   "personas": [
     {

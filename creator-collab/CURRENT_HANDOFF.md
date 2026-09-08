@@ -12,6 +12,13 @@
 - GitHub-Abruf erfolgreich; abschließender Push-/SHA-Beleg steht im Journal
   `sessions/2026-09-08-2255-github-sync.md`. Keine DB/Backups/Secrets hochladen,
   kein Force-Push, keine Änderung der Sichtbarkeit oder fremder Root-Dateien.
+- **SYNC DONE, 23:04:** Inhaltscommit `3ac0cb8` auf GitHub-main extern bestätigt;
+  `creator-collab` ist identisch mit dem lokalen Snapshot `d123e99`. Zusätzlich
+  sicherer Branch `codex/zippoworkz-snapshot-20260908`. Aktuelles Journal/Handoff
+  folgen als kleiner Nachweiscommit; kein Merge oder Login durch den Owner nötig.
+- Für spätere Syncs: bestehender Credential Manager; bei Bedarf HTTP/1.1 und
+  16-MiB-Requestpuffer nur pro Push. Ein HTTP-408-Versuch war wirkungslos,
+  der gezielte Retest erfolgreich. Keine Auth-/Browser-Schleife wiederholen.
 
 ## AKTUELL — Nur Codex-Integration, 2026-09-08 22:51 Europe/Berlin
 
