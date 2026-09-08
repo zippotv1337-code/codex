@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import tomllib
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
@@ -64,6 +65,9 @@ class CurrentStateService:
         tests_passed: int | None = None,
         tests_failed: int | None = None,
     ) -> dict[str, object]:
+        config_path = self.root / "config.toml"
+        config = tomllib.loads(config_path.read_text(encoding="utf-8")) if config_path.is_file() else {}
+        operations = config.get("operations", {})
         creators = [
             dict(row)
             for row in self.database.all(
@@ -181,6 +185,11 @@ class CurrentStateService:
 
         return {
             "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
+            "product": {"name": "ZippoWorkz", "dashboard_path": "/", "launcher": "START_ZIPPOWORKZ.ps1",
+                        "database": config.get("runtime", {}).get("database", "data/review_dashboard.db"),
+                        "core": "Creator Ops", "legacy_databases": ["data/creator_ops.db", "data/verification.db"]},
+            "operations": {key: operations.get(key, "UNKNOWN") for key in
+                           ("meta_api_status", "fiverr_identity_status", "fiverr_gig_status")},
             "app_version": self._app_version(),
             "schema_version": self.database.schema_version(),
             "git": self._git(),

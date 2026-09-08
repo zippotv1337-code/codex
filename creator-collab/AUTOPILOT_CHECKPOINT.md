@@ -1,5 +1,155 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — GitHub-Sync, 2026-09-08 ab 22:55 Europe/Berlin
+
+- Letzter vollständiger Schritt: Bestands-/Sicherheitsprüfung und 30 Python-/4
+  Frontendtests grün; fünf nur upstream vorhandene Unterlagen lokal bewahrt.
+- Aktueller Schritt: projektbezogenen Snapshot committen und main ohne
+  History-Rewrite synchronisieren. Push erst nach Remote-SHA-Prüfung als DONE.
+- Keine DB-/Runtime-/Plattformänderung. Unversionierte Root-Fremdprojekte nicht
+  anfassen. VENV-Zeitzonendaten nur im Testprozess aus vorhandenem Bestand nutzen.
+- Resume: `sessions/2026-09-08-2255-github-sync.md` lesen; dort bestätigten letzten
+  Git-Schritt prüfen, keine Auth-Schleife und keine abgeschlossenen Aufgaben wiederholen.
+
+## AKTUELL — Codex Local Ops integriert, 2026-09-08 22:51 Europe/Berlin
+
+- Letzter vollständig erledigter Task: projektbezogene Codex-Arbeitsregeln aus
+  der Desktop-Datei übernommen und über `AGENTS.md`/Resume/Handoff auffindbar gemacht.
+- Aktuell angefangener Task: keiner. Integration abgeschlossen; kein Autostart
+  des umfangreicheren Desktop-Setup-Plans.
+- Geändert: `AGENTS.md`, `docs/CODEX_ZIPPOWORKZ_LOCAL_DESKTOP_OPS_SETUP.md`,
+  `PROJECT_RESUME.md`, `CURRENT_HANDOFF.md`, dieser Checkpoint,
+  `ZIPPOWORKZ_MASTER_GOALS.md` und `sessions/2026-09-08-2251-codex-local-ops.md`.
+- Verifiziert: Projekt-VENV Python 3.14.7, tatsächlich virtuelle Umgebung;
+  bestehende LAN-/DB-Konfiguration gelesen. Nur Dokumentation geändert, keine
+  erneute Code-Test-Suite oder DB-/Backup-Prüfung erforderlich/behauptet.
+- Backupstatus: kein neues Backup; keine DB-/Runtime-/Codeänderung. Vorhandene
+  Sicherungen nicht berührt. Blocker/Owner-Gates für diese Integration: keine.
+- Geparkt: Desktop-Steuerordner, weitere lokale Jobs/Statusausgabe, Scheduler-
+  Aktivierung, öffentliche Tunnel. Git/GitHub nur für diesen Auftrag unangetastet.
+- Nächste drei Schritte nur bei passendem Auftrag: (1) vorhandene Content-Reserve
+  nutzen, (2) unabhängige echte Analytics erfassen, (3) Fiverr-Livestatus prüfen.
+- Exakter Resume-Auftrag: „Lies AGENTS.md, PROJECT_RESUME.md, CURRENT_HANDOFF.md
+  und das neueste Journal. Codex-Local-Ops-Integration ist DONE. Nicht als offenen
+  Desktop-Setup-Run wieder aufnehmen. Für lokale Python-Jobs vorhandene .venv und
+  die integrierte Local-Ops-Referenz verwenden; danach nur die aktuelle beauftragte
+  operative Priorität aus den Master Goals bearbeiten.“
+
+## AKTUELL — Dashboard & lokaler Posting-Handoff, 2026-09-08 Europe/Berlin
+
+- Bestehendes ZippoWorkz-Dashboard weiterentwickelt, kein zweites Dashboard,
+  keine Datenbank-Neuerfindung: Marken-Command-Center plus Create → Review →
+  Schedule → Grow-Strecke.
+- Vier-Pakete-Review bleibt intakt: veröffentlichte Assets ausgeschlossen,
+  Top 1–3 sichtbar nummeriert, APPROVE / CHANGE / REJECT lokal getrennt.
+- Neue sichere Posting-Übergabe: Nach APPROVE liefert das Paket ausgewählte
+  Slides sowie kopierbare Caption/Hashtags für den vorhandenen Composer. Es
+  gibt keinen automatischen Plattform- oder Browser-Post.
+- Als finaler lokaler Schritt kann ein Owner nach sichtbar erfolgtem nativen
+  Post dessen reale URL, Zeitpunkt und verwendete Slides bestätigen. Ohne
+  diese Bestätigung bleibt der Status lokal geplant, nicht veröffentlicht.
+- Chrome/Composer nicht berührt: Automationstarget gehört zu anderer Sitzung.
+  Engagement ohne echte Texte unverändert; keine Antworten erfunden. Git und
+  GitHub nicht verwendet.
+- Lokaler passwortgeschützter LAN-Dienst nach dem Update vom vorhandenen
+  Supervisor neu geladen: `health=ok`. Für die neue Ansicht nach Anmeldung
+  lediglich neu laden; keine Plattformaktion damit verbunden.
+- Verifiziert: 16 fokussierte Python-Tests + 4 UI-Tests sowie vollständige
+  lokale Python-Testsuite 145/145 grün; Datenbankintegrität ok,
+  Fremdschlüsselprüfung leer. Vollständiger Nachweis und Nutzung:
+  `sessions/2026-09-08-dashboard-posting-handoff.md`.
+
+## AKTUELL — Lokale Leona-Carousel-Reserve, 2026-09-08 18:34 Europe/Berlin
+
+- Letzter vollständiger Task: zweiter unterbrochener Leona-Kandidat gesichert,
+  genau eine fehlende Carousel-Abschlussfolie ergänzt und Content `8`
+  `Rainy Berlin: Notes to Nightfall` lokal in die bestehende Review-Reserve
+  importiert.
+- Aktueller Zustand: `READY_FOR_REVIEW`; reale Top 1–3 = Assets `36`, `37`,
+  `38`. Vier produktive Reviewkarten sind sichtbar; veröffentlichte Assets
+  bleiben ausgeschlossen. Kein APPROVE/CHANGE/REJECT wurde automatisch gesetzt.
+- Lokale Medien: `data/media/sfw/leona-voss/2026-09-09/`.
+- Backup vor Mutation: `backups/creator-ops-backup-20260908-leona-rainy-berlin-pre-import.db`;
+  SHA-256 `6b24b5c865d33bfb1c785a4a7862954943e3ce16abc237e3655c5a3ba89aa0d8`.
+- Finaler Snapshot: `backups/creator-ops-backup-20260908-leona-rainy-berlin-final.db`;
+  SHA-256 `fd918924125d748b6aed3b73d8ef15a74c172edb731c8fb4ba17ddd043d28d6e`.
+- Verifiziert: Schema 5, `integrity_check = ok`, `foreign_key_check = 0`,
+  vollständige lokale Testsuite 144/144 grün.
+- Composer: sichtbar, aber keine sichere Automationsbindung; kein Upload,
+  Caption-Transfer oder Publish. Meta bleibt `DEFERRED_OWNER_VERIFICATION`.
+- Engagement: keine echten Kommentar-/DM-Texte; keine Antworten erzeugt.
+- Git/GitHub: in diesem Run vollständig unangetastet.
+- Exakter Resume-Auftrag: `sessions/2026-09-08-1834-leona-rainy-berlin-carousel.md`
+  lesen, lokale Karte `8` prüfen und nur mit sichtbarer, wiederhergestellter
+  Browserbindung einen Entwurf vorbereiten. Vor jeder Plattformaktion die
+  konkreten Assets, den Account und den finalen Teilen-Schritt neu prüfen.
+
+## AKTUELL — ZippoWorkz Analytics-Checkpoint, 2026-09-08 13:40 Europe/Berlin
+
+- Aktiver Workspace: `C:\Users\ZiPPo\Documents\ChatGPT\Insta baddie\creator-collab`.
+- LAN-Fortsetzung: `config.toml` ist auf `192.168.188.131:4180` eingestellt
+  und `START_CREATOR_OPS.ps1` verwendet den konfigurierten Host. Vor dem
+  Neustart muss der Owner `CREATOR_OPS_PASSWORD` mit mindestens 12 Zeichen
+  lokal setzen oder ausdrücklich einen neuen lokalen Dashboard-Code vorgeben.
+  Nicht ohne Passwort ins LAN binden.
+- LAN aktiv seit 2026-09-08 18:38 Europe/Berlin: Supervisor läuft,
+  `http://192.168.188.131:4180/` zeigt Passwort-Login und `/api/health` ist
+  `ok`. Für Handy/Safari nur im selben WLAN verwenden; keine Routerfreigabe
+  oder Tunnel ist eingerichtet.
+- **Neue verbindliche Content-Richtung, 2026-09-08 18:03 Europe/Berlin:**
+  Öffentlicher Creator-Content ist ca. 70 % glaubwürdiger Alltag, Setting,
+  Handlung und Persönlichkeit sowie ca. 30 % glamourös/sexy angedeutet,
+  immer `SFW + PUBLIC_SFW`. Leona bleibt urban/glamourös; Mara bleibt
+  rural/sportlich und wird nicht auf Werkstatt/Maschinen reduziert.
+  `ADULT_18` ist keine öffentliche Planungsquote. Diese Owner-Entscheidung
+  ersetzt den älteren 40/35/25-Plan für die öffentliche Content-Pipeline.
+- Owner-Override: `META_API = DEFERRED_OWNER_VERIFICATION`; keine Meta-/Browser-Auth-Arbeit. Ältere Resume-Aufträge unten sind historische Referenz, nicht die aktive Priorität.
+- Vollständig: gemeinsame Navigation/Produktname, Story-Editor und persistente lokale Entscheidungen im Schema-5-Eventledger; ältere Story-Reserve sichtbar; Attention-Previews/Fallbacks; primärer Launcher `START_ZIPPOWORKZ.ps1`.
+- Verifiziert: 55 relevante Python-Tests grün; 11 betroffene Tests nach letztem Guard erneut grün; 4 JS-Tests, Syntax/Compile/Launcher-Parse grün. Keine Publishes.
+- Backup: `backups/creator-ops-pre-zippoworkz-20260908-0711.db`; SHA256 `9de59b544da208e5d783529a16a7ebd109cd57b8db524a32299c3d0f8a6eab9a`.
+- Letzter vollständig erledigter Task: T-001 Runtime-Aktivierung. `RESTART_CREATOR_OPS.ps1 -NoBrowser` erfolgreich; Health `ok`; Story-Vertrag `story-review-v1`; genau ein Backendprozess. Keine produktiven Test-Freigaben und keine externen Aktionen.
+- Aktive Lanes: T-002 reale Instagram-Analytics (P0) und E-001 GoFundMe als passive Live-Beobachtung. T-002 hat zwei echte, verspätet eingelesene Leona-Snapshots: Publication 7 (13 Aufrufe / 11 Betrachter / 1 Like im 24h-Fenster) und Publication 4 (19 Aufrufe / 16 Betrachter / 2 Likes / 1 Profilbesuch im 72h-Fenster). Sie gehören zum selben Contentpaket. Die Learning-Logik zählt sie daher einmal unabhängig; Learning bleibt `OBSERVING` und Entscheidung `UNKNOWN`. T-003 Fiverr wurde am 8. September read-only geprüft: Verwaltung meldet `AKTIV 1`, öffentliche Prüfung ist wegen Plattformfehler/CAPTCHA offen. Meta bleibt `DEFERRED_OWNER_VERIFICATION`.
+- Neue Master-Steuerung: `ZIPPOWORKZ_MASTER_GOALS.md`. E-001-URL und Status dort; Spenden sind Support/Crowdfunding, nicht Kundenumsatz.
+- Nächste 3: (1) echte Instagram-Insights eines anderen Contentpakets im Dashboard importieren, speziell Mara nach bewusstem Kontowechsel; unbekannte Werte bleiben NULL, (2) Fiverr in einem normalen Browser ohne CAPTCHA öffentlich verifizieren; nicht wiederholt an derselben Sperre arbeiten, (3) GoFundMe nur bei echten Signalen auswerten.
+- Exakter Resume-Auftrag: „Lies `ZIPPOWORKZ_MASTER_GOALS.md`, den aktuellen Handoff und `sessions/2026-09-08-1340-analytics-independence-guard.md`. T-001 ist DONE — nicht erneut am Core arbeiten. T-002 hat zwei echte Leona-Snapshots, aber nur ein unabhängiges Contentpaket; der Duplicate-/Repost-Guard hält die Empfehlung deshalb auf `UNKNOWN`. Erfasse als Nächstes nur sichtbare Werte eines anderen Pakets, vorzugsweise Mara nach Kontowechsel; keine fehlenden Werte raten. Für T-003 erst den öffentlichen Fiverr-Gig ohne CAPTCHA sichtbar prüfen, bevor irgendeine Gig-Änderung erwogen wird. Meta nicht öffnen, bis es ein neues Owner-/Meta-Signal gibt.“
+- Owner-Gates: persönliche Meta-Verifizierung später. Fiverr-Identität laut Owner erledigt; der Live-Zustand ist als `AKTIV 1` in der Verwaltung sichtbar, aber wegen Plattformfehler/CAPTCHA noch ohne öffentlichen Link nachzuweisen.
+- Mara-Analytics: Die vorhandene Leona-Sitzung enthält keine sichtbare Wechseloption. Kein automatischer Logout/Login; Owner wechselt bei Bedarf selbst auf `mara.field.ai`.
+- Leona-Publish-Hand-off: Der native Composer ist im Browser geöffnet. Content `3` „Spätsommer in Berlin“ ist visuell geprüft; Uploadreihenfolge Asset `14`, `12`, `15`. Der erste Klick auf „Vom Computer auswählen“ ergab keinen zugänglichen Dateiauswahldialog; keine Uploads/Caption/Posts. Nicht erneut loopen. Für die manuelle Fortsetzung im geöffneten Composer exakt diese drei Dateien aus `data/imported-assets/leona-voss/2026-09-05/` wählen: `19d2807797b7521b1a05.png`, `f30ac0948cc7fb620d88.png`, `d8a23d363ca1bceb10a6.png`.
+- Letzter vollständiger Task: Master Goals auf „Meta deferred, lokale Reserve unblocked“ umgestellt. Danach drei neue Leona-SFW-Vorschaukandidaten generiert, aber bewusst nicht importiert/veröffentlicht. Exakter Resume: zuerst `sessions/2026-09-08-1400-endroutine.md` lesen, dann nur nach genügender Zeit die drei Kandidaten visuell QA-prüfen und selektiv importieren; keine weitere Generation ohne Auswahlentscheidung.
+- Meta-Preflight vom 8. September: `BLOCKED / official_instagram_adapter_not_configured`. Alle sechs benötigten sichere Env-Werte (Leona/Mara-IG-ID, beide Tokens, API-Version, Medienmanifest) fehlen; keine Werte wurden geloggt. Adapter/Live-Schalter bleiben unverändert. Fortsetzung nur nach echtem Owner-Signal, dass Meta-App/Accounts/Tokens eingerichtet sind.
+- Zusätzlich ist die Meta-Developer-Loginseite als Browser-Handoff offen. Der Owner muss dort einmal die sichtbare vorhandene Facebook-Profilsitzung fortsetzen; Codex-Klick plus Retest blieb wirkungslos. Keine Login-Schleife starten.
+- Git: keine Repository-Mutation in diesem Lauf; verwalteter Dateizugriff auf `.git` ist read-only.
+
+## MARKER META → ANALYSIS PACK — 2026-09-07 22:40 Europe/Berlin
+
+- Owner unterbricht Meta-Einrichtung für `CODEX_ANALYSIS_PACK_2026-09-07.zip`.
+- Letzter vollständiger Meta-Schritt: offizielle Developer-App-Verwaltung geöffnet; Weiterleitung zur Registrierung, `Register` abgeschlossen, `Verify account` unvollständig. Die Seite verlangt eine Mobilnummer/SMS-Bestätigung. Keine Eingabe/Übertragung persönlicher Daten durch Codex.
+- Exakter Owner-Fortsetzungspunkt: `https://developers.facebook.com/async/registration/dialog/` im geöffneten In-App-Browser. Der separate Chrome-Meta-Selfie-Dialog ist kein nachgewiesener Pflichtschritt für diesen Instagram-Developer-Weg; frühere allgemeine Zuordnung entsprechend einschränken.
+- Letzter verifizierter technischer Stand: keine konfigurierte Persona-API-Verbindung, kein Graph-Read/Publish-Proof. Leona/Mara beide noch nicht API-verifiziert. Keine neuen Posts/Receipts, keine Live-Schalter geändert.
+- Tests/Backup: 32 fokussierte Meta-/Queue-/Recovery-Tests und Integrität zuletzt um 22:30 grün; im folgenden UI-Check keine Code-/DB-Änderung, keine erneute Suite oder Backup nötig.
+- Angefangener neuer Task: vier Markdown-Dateien im Analyse-ZIP lesen, gegen aktuellen lokalen Stand abgleichen; erledigte Arbeiten nicht wiederholen.
+- Nächste 3: (1) NEXT/Baseline/Patch-Guide lesen, (2) höchstes sicheres echtes Delta bearbeiten, (3) fokussiert prüfen und neuen Checkpoint/Journal schreiben.
+- Resume Meta: Nach bestätigtem Abschluss der persönlichen Registrierung bestehende App prüfen, Leona sicher autorisieren und read-only testen; Mara-Proof erst nach vollständig verifiziertem Leona-Proof. Kein erneuter Gym-Reset-Post (bereits nativ live), keine globale Queue-Freischaltung.
+
+## Fiverr-Status — 2026-09-07 19:06 Europe/Berlin
+
+- Owner-Gate laut Owner erledigt: Verkäuferprofil/Verifizierung fertig.
+- Sichtbar: aktives Profil `zippoworkz`, 1 Fiverr-Gig im Status `DRAFT`.
+- Kein öffentlicher Gig-Status und keine URL als live bestätigt.
+- Fortsetzung: Draft prüfen → veröffentlichen → öffentliche URL/Status prüfen.
+
+## Aktueller Policy-Checkpoint — 2026-09-07 19:01 Europe/Berlin
+
+- Erledigt: Owner-Override synchronisiert; Git/GitHub nicht mehr geparkt.
+- Kein laufender Upload; vorherige Credential-Diagnose erfolgreich, Push unbestätigt.
+- Fortsetzung: sicheren projektbezogenen Git-Upload mit bestehendem Helper
+  durchführen, Remote-SHA verifizieren, danach operative Prioritäten fortsetzen.
+- Historische Hinweise auf fehlende Credentials/Connector-404 sind durch die
+  Diagnose von 18:57 überholt. Kein neuer Token allein aufgrund dieser Hinweise.
+- Schutzregeln: keine Secrets, kein Force-Push/History-Rewrite, keine Retry-Loops.
+- Nur Policy/Dokumentation geändert; JSON validieren, kein Runtime-/DB-Delta,
+  kein neues Backup erforderlich. Journal: `sessions/2026-09-07-1901-git-policy-resumed.md`.
+
 Aktueller atomarer Speicherstand für den nächsten Run.
 
 ## Zeitpunkt

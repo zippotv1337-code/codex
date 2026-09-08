@@ -7,6 +7,7 @@ import unittest
 from datetime import date, datetime
 from pathlib import Path
 from urllib.error import HTTPError
+from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from creator_ops.cli import build_pipeline
@@ -203,6 +204,11 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertNotIn("window.confirm", script)
         self.assertIn("Neuer Termin lokal übernommen", script)
         self.assertIn('id="decision-dialog"', html)
+        self.assertIn('id="posting-kit-dialog"', html)
+        self.assertIn('id="native-reconcile-form"', html)
+        self.assertIn("data-open-posting-kit", script)
+        self.assertIn("reconcile-native", script)
+        self.assertIn("owner-confirmed native Instagram URL", (ROOT / "creator_ops" / "web.py").read_text(encoding="utf-8"))
         self.assertNotIn(".status-pill { display: none; }", styles)
         self.assertIn("Slides ausgewählt", script)
 
@@ -356,6 +362,57 @@ class ReviewDashboardTests(unittest.TestCase):
             self.assertEqual(payload["status"], "LOCAL_SCHEDULED")
             self.assertEqual(payload["planned_at"], suggested)
             self.assertFalse(payload["external_action"])
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+
+    def test_http_reconciles_only_an_owner_confirmed_visible_native_post(self) -> None:
+        card = self.service.ensure_date(date(2026, 9, 4))[0]
+        self.service.approve(card["content_id"])
+        top_asset_ids = [asset["id"] for asset in card["assets"] if asset["top_pick"]]
+        server = create_server(
+            self.database_path, port=0, asset_root=Path(self.tempdir.name)
+        )
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            base = f"http://127.0.0.1:{server.server_port}"
+            missing_confirmation = Request(
+                f"{base}/api/reviews/{card['content_id']}/reconcile-native",
+                data=urlencode({"external_url": "https://www.instagram.com/p/VisibleNow/"}).encode(),
+                method="POST",
+            )
+            with self.assertRaises(HTTPError) as raised:
+                urlopen(missing_confirmation, timeout=5)
+            self.assertEqual(raised.exception.code, 409)
+            form = urlencode(
+                [
+                    ("confirmed_live", "yes"),
+                    ("ai_disclosure", "yes"),
+                    ("external_url", "https://www.instagram.com/p/VisibleNow/"),
+                    ("published_at", "2026-09-04T19:30:00+02:00"),
+                    *[("asset_id", str(asset_id)) for asset_id in top_asset_ids],
+                ]
+            ).encode()
+            request = Request(
+                f"{base}/api/reviews/{card['content_id']}/reconcile-native",
+                data=form,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                method="POST",
+            )
+            with urlopen(request, timeout=5) as response:
+                payload = json.load(response)
+            self.assertFalse(payload["external_action"])
+            self.assertEqual(payload["evidence"], "owner-confirmed native Instagram URL")
+            self.assertEqual(self.pipeline.db.scalar("SELECT status FROM content_items WHERE id=?", (card["content_id"],)), "PUBLISHED")
+            self.assertEqual(
+                self.pipeline.db.scalar(
+                    "SELECT COUNT(*) FROM assets WHERE content_id=? AND published_status='PUBLISHED'",
+                    (card["content_id"],),
+                ),
+                3,
+            )
         finally:
             server.shutdown()
             server.server_close()

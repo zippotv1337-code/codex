@@ -112,6 +112,16 @@ live_external_actions = true
         self.assertNotIn("secret-token-leona", serialized)
         self.assertNotIn("secret-token-mara", serialized)
 
+    def test_current_owner_policy_overrides_historical_identity_blocker(self) -> None:
+        with self.config.open('a', encoding='utf-8') as output:
+            output.write('\n[operations]\nmeta_api_status = "DEFERRED_OWNER_VERIFICATION"\nfiverr_identity_status = "OWNER_REPORTED_VERIFIED"\n')
+        (self.root / 'docs' / 'FIVERR_GIG_DRAFT.md').write_text('Known draft', encoding='utf-8')
+        snapshot = ExternalReadinessService(self.root, self.config).snapshot()
+        self.assertEqual(snapshot['meta']['status'], 'DEFERRED_OWNER_VERIFICATION')
+        self.assertEqual(snapshot['fiverr']['identity_status'], 'OWNER_REPORTED_VERIFIED')
+        self.assertEqual(snapshot['fiverr']['blockers'], [])
+        self.assertFalse(any('Meta' in action for action in snapshot['next_actions']))
+
     def test_http_endpoint_exposes_external_readiness(self) -> None:
         database = self.root / "creator_ops.db"
         pipeline = build_pipeline(database)

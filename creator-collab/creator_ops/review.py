@@ -692,17 +692,21 @@ class ReviewDashboardService:
             "reused": False,
         }
 
-    def story_decision(self, content_id: int, action: str, note: str = "") -> dict:
+    def story_decision(self, content_id: int, action: str, note: str = "", fields: dict | None = None) -> dict:
         """Record a local story review decision without changing feed state."""
         action_map = {
             "approve": ("STORY_APPROVED_UI", "Story lokal freigegeben"),
             "change": ("STORY_CHANGE_REQUESTED_UI", "Story-Änderung angefordert"),
             "reject": ("STORY_REJECTED_UI", "Story lokal abgelehnt"),
             "plan": ("STORY_PLANNED_UI", "Story lokal zur Planung vorgemerkt"),
+            "pause": ("STORY_PAUSED_UI", "Story pausiert"),
+            "edit": ("STORY_EDITED_UI", "Story bearbeitet"),
         }
         if action not in action_map:
             raise ValueError("unsupported_story_decision")
         event_action, default_note = action_map[action]
+        from .stories import StoryReserveService
+        event_note = StoryReserveService(self).decision_payload(content_id, action, note or default_note, fields)
         with self.pipeline.db.transaction() as connection:
             exists = connection.execute(
                 "SELECT 1 FROM content_items WHERE id=? AND run_key LIKE 'review:%'",
@@ -714,7 +718,7 @@ class ReviewDashboardService:
                 """INSERT INTO review_events
                    (content_id, action, actor, note, created_at)
                    VALUES (?, ?, 'owner-dashboard', ?, ?)""",
-                (content_id, event_action, note.strip()[:500] or default_note, utc_now()),
+                (content_id, event_action, event_note, utc_now()),
             )
         return {"content_id": content_id, "action": event_action, "external_action": False}
 

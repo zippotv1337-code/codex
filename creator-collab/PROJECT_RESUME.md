@@ -1,5 +1,80 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## GitHub-Spiegel — 8. September 2026
+
+Aktueller autorisierter Abgleich einschließlich Codex-Local-Ops-Integration:
+`sessions/2026-09-08-2255-github-sync.md`. Nur `creator-collab/` synchronisieren;
+Root-Fremdprojekte, laufende DBs, Backups und Secrets bleiben ausgeschlossen.
+Fünf bislang nur auf GitHub vorhandene Referenzunterlagen sind lokal bewahrt.
+Hinweis zur neuen VENV: Python 3.14.7 bestätigt, aber eigene `tzdata` noch nicht
+installiert. Tests nutzen vorhandene gebündelte Zeitzonendaten nur pro Prozess;
+der laufende Server wurde nicht verändert.
+
+## Codex-Arbeitsgrundlage — 8. September 2026, 22:51 Europe/Berlin
+
+`AGENTS.md` bindet `docs/CODEX_ZIPPOWORKZ_LOCAL_DESKTOP_OPS_SETUP.md` für lokale
+Python-/Betriebsaufgaben ein. Nur Codex-Integration: keine neue Desktop-Einrichtung
+oder Dienstaktivierung. Projekt-VENV verifiziert: Python 3.14.7. Die operative DB
+bleibt `data/review_dashboard.db`; abweichende MAIN-Bezeichnung in der Desktop-
+Quelle nicht übernehmen. Nachweis: `sessions/2026-09-08-2251-codex-local-ops.md`.
+
+## Kanonischer Stand — 8. September 2026
+
+Produkt **ZippoWorkz**, bestehender Creator-Ops-Core. Operativer Workspace:
+`C:\Users\ZiPPo\Documents\ChatGPT\Insta baddie\creator-collab`.
+Primärer Start `START_ZIPPOWORKZ.ps1`, Port 4180, DB `data/review_dashboard.db`, Schema 5.
+Gemeinsame Navigation für Operations/Stories/Archiv/Analytics/Fiverr/Health.
+Story-Text, Typ, CTA, Link, Highlight, Entscheidung und Termin werden lokal im
+bestehenden Eventledger gespeichert; ältere Reserven sind wieder sichtbar.
+Meta `DEFERRED_OWNER_VERIFICATION`; kein neuer Auth-Versuch.
+55 fokussierte Python-Tests und echte Story-Flows auf Restore-Kopie bestanden.
+Integrität ok, keine FK-Verstöße. **Aktivierung bestätigt:** Am 8. September
+wurde der vorhandene Server kontrolliert neu geladen; Health ist `ok`,
+`/api/stories` liefert `review_schema=story-review-v1`, und es läuft genau ein
+Creator-Ops-Backend. Die Story-Bedienung ist damit produktiv lokal aktiv.
+GoFundMe E-001 läuft als getrenntes, Owner-gemeldetes Support-Experiment;
+Spenden sind niemals Fiverr-/Kundenumsatz. Details: `ZIPPOWORKZ_MASTER_GOALS.md`
+und `sessions/2026-09-08-1244-runtime-activation.md`.
+Analytics-Update vom 8. September 2026: Zwei echte Leona-Messungen sind
+gespeichert: `September Roofline` / Publication 7 (13 Aufrufe, 11 Betrachter,
+1 Like; spät als 24h-Fenster erfasst) und Publication 4 (19 Aufrufe,
+16 Betrachter, 2 Likes, 1 Profilbesuch; spät als 72h-Fenster erfasst).
+Beide gehören zum selben Contentpaket. Die Learning-Logik wertet wiederholte
+Messungen eines Pakets nur einmal als unabhängigen Inhalt, damit kein falsches
+Gewinner-/`VARIATE`-Signal entsteht. Learning bleibt `OBSERVING`; ein anderes
+Paket, vorzugsweise Mara nach Kontowechsel, ist für den ersten Vergleich nötig.
+Journal: `sessions/2026-09-08-1340-analytics-independence-guard.md`.
+Ältere Abschnitte darunter sind Referenz; dieser Stand hat Vorrang.
+
+Content-Override vom 8. September 2026: Die öffentliche Planung nutzt rund
+70 % glaubwürdigen Alltag, Setting, Handlung und Persönlichkeit sowie rund
+30 % glamourös/sexy angedeuteten, weiterhin strikt `SFW + PUBLIC_SFW`-Content.
+Leona bleibt urban/glamourös; Mara bleibt ländlich/sportlich und wird nicht auf
+Werkstatt-/Maschinenmotive reduziert. Adult bleibt vollständig außerhalb der
+öffentlichen Pipeline.
+
+LAN-Update vom 8. September 2026: Der primäre Launcher verwendet jetzt den
+in `config.toml` gesetzten Runtime-Host. Für das aktuelle WLAN ist
+`192.168.188.131:4180` vorgesehen. Ein Dashboard außerhalb von Loopback wird
+nur mit lokal gesetztem Passwort gestartet; es wurden keine Routerports,
+Cloud-Tunnel oder Firewall-Ausnahmen angelegt.
+
+Der passwortgeschützte LAN-Start wurde am 8. September um 18:38 Europe/Berlin
+bestätigt: ZippoWorkz lauscht auf `192.168.188.131:4180`, der Health-Endpunkt
+meldet `ok` und die Browser-Startseite fordert die lokale Passwortanmeldung.
+
+Fiverr-Update vom 8. September 2026, 12:57 Uhr: Der Owner meldet, dass das
+Verkäuferprofil fertig und verifiziert ist. Die eingeloggte Fiverr-Verwaltung
+zeigt `AKTIV 1`. Ihre Ergebnistabelle liefert jedoch einen Plattformfehler;
+die direkte öffentliche Profilansicht wurde durch CAPTCHA blockiert. Der
+öffentliche Gig-Link bleibt deshalb bis zu einer störungsfreien Sichtprüfung
+unbestätigt; Codex hat dabei nichts veröffentlicht oder geändert.
+
+Owner-Override vom 7. September 2026, 19:01 Uhr: Git/GitHub wieder regulär
+bearbeiten; alte Park-/Ignorierregeln sind aufgehoben. Projektbezogene sichere
+Commits/Pushes sind erlaubt; Secretschutz, kein Force-Push/History-Rewrite
+und begrenzte Fehlerdiagnose bleiben Pflicht. Maßgeblich: OWNER_DECISIONS.md.
+
 Aktuelle Korrektur (7. September 2026, 18:57 Uhr): Der lokale GitHub-Zugang
 ist vorhanden und konnte lesend authentifiziert werden (HTTP 200,
 Repository-Berechtigung `push=true`). Ältere Aussagen über fehlende
@@ -198,8 +273,10 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
 - Jedes neue Fünfer-Paket besitzt feste Pose-Slots; die Top 3 werden gewichtet
   nach Qualität, Persona-Fit, Kohärenz, Stage-Fit und Neuheit ausgewählt und
   müssen pose-divers sein.
-- Der rollierende Content-Mix 40/35/25 ist eine reine Planungsempfehlung.
-  Adult-Erzeugung und Adult-Publishing bleiben manuelle Owner-Gates.
+- Der frühere rollierende Content-Mix 40/35/25 ist durch die aktuelle
+  öffentliche 70/30-SFW-Content-Richtung ersetzt. Adult-Erzeugung und
+  Adult-Publishing bleiben gesonderte Owner-Gates und sind nicht Teil der
+  öffentlichen Produktionsplanung.
 - Öffentliche JSON-Exporte enthalten nur `SFW + PUBLIC_SFW`; Adult- und
   Local-only-Daten bleiben in der lokalen Datenbank.
 - `docs/CURRENT_STATE.json` ist die maschinenlesbare Momentaufnahme; zusätzlich
@@ -283,7 +360,8 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   Ein secrets-reduzierter read-only Offline-Snapshot und sichere Standalone-
   Skripte sind vorbereitet; die Windows-Aufgaben bleiben ohne explizites
   `-Apply` uninstalliert. Abschlussstand: 96 Tests, aktiver Healthcheck und
-  echter SQLite-Restore grün; Git/GitHub sowie Live-Publishing geparkt.
+  echter SQLite-Restore grün. Die damalige Git-/GitHub-Parkregel ist aufgehoben;
+  Publishing folgt den aktuellen separaten Owner-Regeln.
 - Creator Ops 1.6.4-beta betreibt Dashboard, Watchdog, Scheduler und read-only
   Offline-Snapshot dauerhaft über genau einen lokalen Supervisor und einen
   benutzereigenen Windows-Autostart. Healthcheck auf Port 4180, SQLite-

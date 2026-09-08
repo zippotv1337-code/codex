@@ -6,9 +6,11 @@ from .models import ContentStage
 
 
 TARGET_SHARES = {
-    ContentStage.ALLTAG: 0.40,
-    ContentStage.TEASER: 0.35,
-    ContentStage.ADULT_18: 0.25,
+    # Public Instagram direction: believable everyday context first, tasteful
+    # SFW glamour second. Adult content is deliberately not planned publicly.
+    ContentStage.ALLTAG: 0.70,
+    ContentStage.TEASER: 0.30,
+    ContentStage.ADULT_18: 0.00,
 }
 
 

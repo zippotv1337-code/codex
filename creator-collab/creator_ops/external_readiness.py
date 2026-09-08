@@ -69,7 +69,8 @@ class ExternalReadinessService:
             blockers.append("live_external_actions_false")
 
         return {
-            "status": "READY_FOR_PREFLIGHT" if not blockers else "BLOCKED",
+            "status": ("DEFERRED_OWNER_VERIFICATION" if config.get("operations", {}).get("meta_api_status") == "DEFERRED_OWNER_VERIFICATION"
+                       else "READY_FOR_PREFLIGHT" if not blockers else "BLOCKED"),
             "env": env,
             "config": {
                 "adapter": publishing.get("adapter"),
@@ -129,12 +130,15 @@ class ExternalReadinessService:
         draft = self.project_root / "docs" / "FIVERR_GIG_DRAFT.md"
         catalog = self.project_root / "docs" / "FIVERR_GIG1_PACKAGE_CATALOG.md"
         blockers: list[str] = []
-        if "create your profile" in evidence or "owner_identity" in evidence:
+        identity = self._config().get("operations", {}).get("fiverr_identity_status", "UNKNOWN")
+        if identity != "OWNER_REPORTED_VERIFIED" and ("create your profile" in evidence or "owner_identity" in evidence):
             blockers.append("fiverr_waiting_for_owner_identity_or_seller_profile")
         if not draft.exists():
             blockers.append("fiverr_gig_draft_missing")
         return {
             "status": "READY_FOR_OWNER_PROFILE_CHECK" if not blockers else "BLOCKED",
+            "identity_status": identity,
+            "gig_status": self._config().get("operations", {}).get("fiverr_gig_status", "UNKNOWN"),
             "gig_draft_present": draft.exists(),
             "package_catalog_present": catalog.exists(),
             "blockers": blockers,
@@ -161,7 +165,7 @@ class ExternalReadinessService:
             actions.append(
                 "Set missing Meta env/config gates, then run meta-preflight for one exact package."
             )
-        else:
+        elif meta["status"] != "DEFERRED_OWNER_VERIFICATION":
             actions.append("Run one controlled Meta preflight; reconcile before retrying any publish.")
         if fiverr["status"] == "BLOCKED":
             actions.append("Finish Fiverr seller profile / identity gate manually, then publish Gig 1.")
