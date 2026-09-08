@@ -5,6 +5,7 @@ import hmac
 import html
 import json
 import os
+import re
 import secrets
 import threading
 import time
@@ -20,14 +21,18 @@ from zoneinfo import ZoneInfo
 
 from .asset_import import LocalAssetImportService
 from .archive import ArchiveService
+from .analytics import AnalyticsService
 from .cli import ROOT, build_pipeline, build_publish_queue, live_publishing_requested
 from .current_state import CurrentStateService
+from .external_readiness import ExternalReadinessService
+from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .stories import StoryReserveService
 from .collections import CollectionService
 from .control_plane import ControlPlaneService
 from .adworks import AdWorksService
 from .publishing import PublishQueueService
+from .reconcile import ManualInstagramService
 
 
 STATIC_ROOT = ROOT / "dashboard"
@@ -220,6 +225,23 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
     def _file(self, name: str, content_type: str) -> None:
         body = (STATIC_ROOT / name).read_bytes()
+        if content_type.startswith("text/html"):
+            # One product shell across the existing views; no second app or DB.
+            page = body.decode("utf-8").replace("Creator Ops ·", "ZippoWorkz ·").replace(">Creator Ops<", ">ZippoWorkz<")
+            links = [("/", "Heute / Review"), ("/stories", "Stories"),
+                     ("/#attention-heading", "Needs Attention"), ("/archive", "Published / Archiv"),
+                     ("/analytics", "Analytics"), ("/#planned-heading", "Planung / Queue"),
+                     ("/revenue", "Fiverr / Revenue"), ("/offer", "Angebot"),
+                     ("/control", "Betrieb / Status"), ("/collections", "Alben"),
+                     ("/top3", "Top 3"), ("/engagement", "Engagement")]
+            current = urlparse(self.path).path
+            navigation = '<nav class="main-nav" aria-label="Hauptnavigation">' + ''.join(
+                f'<a href="{url}"' + (' class="active" aria-current="page"' if url == current else '')
+                + f'>{label}</a>' for url, label in links
+            ) + '</nav>'
+            page = re.sub(r'<nav class="main-nav"[^>]*>.*?</nav>', navigation, page, flags=re.DOTALL)
+            page = page.replace('</head>', '<link rel="stylesheet" href="/studio.css"><script src="/studio.js" defer></script></head>')
+            body = page.encode("utf-8")
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
@@ -325,6 +347,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("index.html", "text/html; charset=utf-8")
             elif parsed.path == "/archive":
                 self._file("archive.html", "text/html; charset=utf-8")
+            elif parsed.path == "/analytics":
+                self._file("analytics.html", "text/html; charset=utf-8")
             elif parsed.path == "/top3":
                 self._file("top3.html", "text/html; charset=utf-8")
             elif parsed.path == "/engagement":
@@ -343,8 +367,14 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("app.css", "text/css; charset=utf-8")
             elif parsed.path == "/app.js":
                 self._file("app.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/studio.css":
+                self._file("studio.css", "text/css; charset=utf-8")
+            elif parsed.path == "/studio.js":
+                self._file("studio.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/archive.js":
                 self._file("archive.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/analytics.js":
+                self._file("analytics.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/top3.js":
                 self._file("top3.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/engagement.js":
@@ -379,6 +409,10 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._json({"date": target, "cards": cards})
             elif parsed.path == "/api/review-queue":
                 self._json(self.service.review_queue())
+            elif parsed.path == "/api/operations-audit":
+                self._json(OperationsAuditService(self.service, self.publishing).snapshot())
+            elif parsed.path == "/api/external-readiness":
+                self._json(ExternalReadinessService(self.asset_root).snapshot())
             elif parsed.path == "/api/status":
                 self._json(
                     CurrentStateService(
@@ -395,6 +429,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                         )
                     }
                 )
+            elif parsed.path == "/api/analytics":
+                self._json(AnalyticsService(self.service.pipeline.db).snapshot())
             elif parsed.path == "/api/top3":
                 query = parse_qs(parsed.query)
                 self._json(
@@ -415,7 +451,7 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                     }
                 )
             elif parsed.path == "/api/stories":
-                self._json({"items": StoryReserveService(self.service).packages(), "execution": "owner-review-only"})
+                self._json({"items": StoryReserveService(self.service).packages(), "execution": "owner-review-only", "review_schema": "story-review-v1"})
             elif parsed.path == "/api/collections":
                 query = parse_qs(parsed.query)
                 self._json({"items": CollectionService(self.service).list(query.get("persona", [None])[0])})
@@ -530,6 +566,40 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 content_id = int(parts[2])
                 self._json(self.publishing.rearm_blocked_preflight(content_id))
                 return
+            if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "reconcile-native":
+                form = self._read_form()
+                if form.get("confirmed_live", [""])[0] != "yes":
+                    raise ValueError("owner_confirmation_required_after_visible_live_post")
+                content_id = int(parts[2])
+                assets = [int(value) for value in form.get("asset_id", [])]
+                if not assets:
+                    raise ValueError("at_least_one_actually_published_asset_required")
+                creator = self.service.pipeline.db.one(
+                    """
+                    SELECT cr.slug FROM content_items c
+                    JOIN creators cr ON cr.id=c.creator_id
+                    WHERE c.id=?
+                    """,
+                    (content_id,),
+                )
+                if creator is None:
+                    raise KeyError("content_not_found")
+                result = ManualInstagramService(self.service.pipeline.db).reconcile(
+                    creator_slug=creator["slug"],
+                    content_id=content_id,
+                    external_url=form.get("external_url", [""])[0].strip(),
+                    published_at=form.get("published_at", [""])[0].strip(),
+                    ai_disclosure=form.get("ai_disclosure", ["yes"])[0] == "yes",
+                    asset_ids=assets,
+                )
+                self._json(
+                    {
+                        **result,
+                        "external_action": False,
+                        "evidence": "owner-confirmed native Instagram URL",
+                    }
+                )
+                return
             if (
                 len(parts) == 4
                 and parts[:2] == ["api", "reviews"]
@@ -538,6 +608,43 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 content_id = int(parts[2])
                 note = self._read_form().get("note", [""])[0]
                 self._json(self.service.record_owner_decision(content_id, parts[3], note))
+                return
+            if (
+                len(parts) == 4
+                and parts[:2] == ["api", "stories"]
+                and parts[3] in {"approve", "change", "reject", "plan", "pause", "edit"}
+            ):
+                content_id = int(parts[2])
+                form = self._read_form()
+                note = form.get("note", [""])[0]
+                fields = json.loads(form.get("fields", ["{}"]) [0])
+                self._json(self.service.story_decision(content_id, parts[3], note, fields))
+                return
+            if len(parts) == 4 and parts[:2] == ["api", "analytics"] and parts[3] == "capture":
+                publication_id = int(parts[2])
+                form = self._read_form()
+                window_hours = int(form.get("window_hours", [""])[0])
+                metrics: dict[str, int | float | None] = {}
+                for metric in (
+                    "reach", "views", "likes", "comments", "shares", "saves",
+                    "profile_visits", "follows", "link_clicks", "revenue",
+                ):
+                    raw = form.get(metric, [""])[0].strip()
+                    if not raw:
+                        metrics[metric] = None
+                    elif metric == "revenue":
+                        metrics[metric] = float(raw)
+                    else:
+                        metrics[metric] = int(raw)
+                if not any(value is not None for value in metrics.values()):
+                    raise ValueError("at_least_one_real_analytics_metric_required")
+                event_id = ManualInstagramService(self.service.pipeline.db).append_analytics(
+                    publication_id,
+                    window_hours,
+                    note=form.get("note", [""])[0].strip()[:500],
+                    **metrics,
+                )
+                self._json({"analytics_event_id": event_id, "source": "MANUAL_OWNER", "external_action": False})
                 return
             if len(parts) == 3 and parts[:2] == ["api", "control-plane"]:
                 self._json(self.control_plane.command(parts[2]))

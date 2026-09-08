@@ -1,4 +1,35 @@
-# Creator Collaboration Workspace
+# ZippoWorkz
+
+## Ein produktiver Einstieg — 8. September 2026
+
+Start: `START_ZIPPOWORKZ.ps1`. Dashboard: <http://127.0.0.1:4180/>.
+Der Launcher verwendet den bestehenden Standalone-/Supervisor-Weg, keine zweite Anwendung.
+
+- Operativer Workspace: `C:\Users\ZiPPo\Documents\ChatGPT\Insta baddie\creator-collab`.
+- Konfiguration: `config.toml`; operative Datenbank: `data/review_dashboard.db`, Schema 5.
+- Gemeinsame Navigation: Heute/Review, Stories, Needs Attention, Verlauf/Archiv,
+  Analytics, Planung/Queue, Fiverr/Revenue, Angebot und Health/Status.
+- Stories: Texte, Typ, CTA, Link, Highlight und Termin lokal bearbeiten;
+  Entscheidungen werden gespeichert. Kein Nachweis eines Live-Versands.
+- Meta: `DEFERRED_OWNER_VERIFICATION`. Fiverr: Identität laut Owner erledigt,
+  letzter bestätigter Gig-Zustand DRAFT, nicht als live behaupten.
+
+**Aktivierung ausstehend:** `RESTART_CREATOR_OPS.ps1 -NoBrowser` einmal in eigener
+PowerShell im Projektordner ausführen und Browser neu laden. Windows verweigert
+dem Agenten die Prozessprüfung für den Neustart. Bis dahin sperrt die Story-UI
+Änderungen und zeigt ausdrücklich „Server-Neustart erforderlich“.
+
+### LEGACY / ARCHIVED — keine konkurrierenden Produkte
+
+`data/creator_ops.db` enthält alte Mock-Demos, `data/verification.db` alte
+Mock-Verifikation. Beide bleiben unverändert, nicht mit Live-Daten vermischen.
+`run_mvp.ps1` und CLI-Demo-Beispiele unten sind historische Entwicklungswege.
+Operative CLI-Befehle immer mit `--db data/review_dashboard.db`; `demo` niemals
+gegen diese DB ausführen. Bisherige Start-/Restart-/Stop-Skripte bleiben
+kompatible Wartungshelfer; primärer täglicher Start ist `START_ZIPPOWORKZ.ps1`.
+
+Abschluss: `sessions/2026-09-08-zippo-workz-finalization.md`.
+Die folgenden MVP-Abschnitte sind historische Referenz, keine aktuellen Startaufträge.
 
 Dieser Ordner ist die gemeinsame, versionskontrollierte Übergabeschicht für
 ChatGPT und Codex.

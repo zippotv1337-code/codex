@@ -1,66 +1,54 @@
-# Human Handoff — einzige aktive Owner-Inbox
+# Human Handoff — ZippoWorkz
 
-Stand: 6. September 2026, 18:50 Uhr · Creator Ops 1.6.4-beta
+Stand: 8. September 2026, Europe/Berlin
 
-## Erledigt
+## Update aktiviert
 
-- Leona-Carousel „September Roofline“ ist mit drei Bildern live:
-  https://www.instagram.com/p/Dc75xWsgEQo/
-- Instagram-KI-Label, Caption, Alt-Texte und drei Slides wurden sichtbar
-  geprüft; Creator Ops ist lokal auf `PUBLISHED` abgestimmt.
-- Fiverr Gig 1 `AI Workflow Automation` und das neue Gallery-Cover sind
-  inhaltlich publish-ready.
-- Leona „Gym Reset, aber echt“ wurde vom Owner lokal freigegeben und ist für
-  den 7. September um 19:30 Uhr `LOCAL_SCHEDULED`; es wurde nicht live
-  veröffentlicht.
-- Mara „Fünf Minuten Maschinencheck“ erhielt CHANGE-Feedback `ist nicht so`
-  und danach REJECT. Das Paket ist `BLOCKED` und wird nicht versendet.
+Der kontrollierte Neustart ist am 8. September bestätigt. <http://127.0.0.1:4180/>
+meldet gesunden Betrieb und der Story-Vertrag ist aktiv. Der tägliche Launcher
+ist `START_ZIPPOWORKZ.ps1`. Kein Neustart und keine Meta-Arbeit nötig.
 
-## JETZT — nur ein notwendiger Owner-Schritt
+## Später, nicht in diesem Run
 
-1. Bei Fiverr `Create your profile` mit den eigenen echten Angaben abschließen.
-   Persönliche Identität, Ausweis-/Selfie-/Telefon-/OTP-Prüfung und fehlende
-   persönliche Steuer- oder Identifikationsnummern niemals an Codex erfinden
-   lassen. Danach kann Codex Titel, 149/349/699-USD-Pakete, Beschreibung, FAQ,
-   Requirements und Gallery in einem Formularlauf eintragen, prüfen und gemäß
-   der projektseitigen Vorabfreigabe veröffentlichen.
+- Meta: `DEFERRED_OWNER_VERIFICATION`. Persönliche Registrierung/SMS aktuell
+  nicht möglich. Kein erneuter Loop. API-Code bleibt vorhanden;
+  `META_GRAPH_AUTOMATION_PROOF = not_yet_proven`.
+- Fiverr-Identität laut Owner erledigt. Nicht erneut verlangen. Am 8.
+  September meldete die eingeloggte Verwaltung `AKTIV 1`; ihre Ergebnistabelle
+  zeigte aber einen Fiverr-Plattformfehler. Die direkte öffentliche
+  Profilansicht wurde von CAPTCHA blockiert. Bei nächster normaler Sitzung
+  den öffentlichen Gig einmal sichtbar verifizieren; CAPTCHA nicht lösen oder
+  umgehen und bis dahin keinen Link/keine Umsätze behaupten.
+- Instagram-Analytics: Zwei echte, transparent verspätet erfasste Leona-
+  Messungen sind vorhanden: Publication 7 (13 Aufrufe, 11 Betrachter, 1 Like)
+  und Publication 4 (19 Aufrufe, 16 Betrachter, 2 Likes, 1 Profilbesuch).
+  Beide betreffen dasselbe Contentpaket und erzeugen deshalb bewusst noch
+  keine Strategieempfehlung. Für Mara war die Insight-Ansicht in der aktiven
+  Leona-Sitzung nicht zugänglich. Erst nach bewusstem Kontowechsel weitere
+  echte Mara-Werte übertragen; nichts raten.
+- Meta-API: Ein read-only Preflight am 8. September meldete den offiziellen
+  Adapter als unkonfiguriert. Keine IG-User-ID, Access-Tokens, API-Version
+  oder Medienmanifest sind lokal gesetzt; keine Secrets wurden angezeigt oder
+  gespeichert. Owner-only: im Meta-Developer-/Instagram-Login die App und
+  Persona-Verbindungen wirklich abschließen. Erst danach erneut genau einen
+  read-only Preflight ausführen; kein Token in Chat, Git, SQLite oder Journal.
+- Meta-Browser-Handoff: `developers.facebook.com/apps/` führt zur Facebook-
+  Anmeldeseite mit einem sichtbaren gespeicherten Profil. Der automatisierte
+  Weiter-Klick zeigte nach einem Retest keine Wirkung. Owner klickt einmal
+  selbst auf „Weiter …“; keine Passwort-/OTP-Werte an Codex geben. Danach
+  nur die Developer-App-Liste und die vorhandenen Account-Verbindungen lesen.
 
-Die beiden vorher offenen Dashboard-Entscheidungen sind erledigt. Nur wenn ein
-neues Mara-Paket gewünscht ist, bitte kurz sagen, was an `Maschinencheck`
-geändert werden soll; aus `ist nicht so` wird nichts erfunden.
+Alte Anweisungen für Publication 8 / einen erneuten Gym-Reset-Testpost sind
+überholt und entfernt. Diesen bereits veröffentlichten Inhalt nicht erneut
+zum API-Test verwenden. Keine Secrets/OTPs in Chat, Git oder Handoff ablegen.
 
-## Danach
+## Historischer Live-Nachweis — 7. September 2026
 
-- Erste echte Leona-Insights frühestens nach 24 Stunden erfassen:
-  7. September ca. 13:00 Uhr; anschließend 72h und 168h.
-- Fehlende Werte bleiben `UNKNOWN`; keine Reichweite, Kommentare oder Umsätze
-  erfinden.
-- Leona „Spätsommer“, Leona „Gym Reset“ und Mara „Küchenfenster“ sind nur
-  lokal vorgemerkt. Die neue allgemeine Publish-Vorabfreigabe ersetzt keine
-  Paketprüfung und erzeugt weder fehlende Meta-Credentials noch öffentliche
-  HTTPS-Asset-URLs.
-
-## Nicht mehr als Owner-Schritt führen
-
-- Keine zusätzliche generelle Instagram-Live-Publish-Erlaubnis anfragen.
-- Keine zusätzliche Freigabe für Preise, Lieferzeiten, Revisionen, Kategorien,
-  Tags, FAQ, Requirements, Gallery oder den finalen Fiverr-Gig-Publish
-  anfragen. Persönliche Identity-/Verification-Gates bleiben ausgenommen.
-
-## Betrieb und Belege
-
-- Dashboard: `http://127.0.0.1:4180/`
-- Offline-Leseansicht: `output/offline/index.html`
-- Live-Beleg: `LIVE_EVIDENCE.md`
-- Contentmanifest: `docs/CONTENT_PACKAGE_GYM_RESET_2026-09-06.md`
-- Fiverr-Entwurf: `docs/FIVERR_GIG_DRAFT.md`
-- Fiverr-Pakete: `docs/FIVERR_GIG1_PACKAGE_CATALOG.md`
-- Fiverr-Intake: `docs/FIVERR_GIG1_INTAKE.md`
-- Status: `docs/CURRENT_STATE.json`
-- Tests: 119/119 grün
-- Datenbank: Integrität `ok`
-- Backup: `backups/Backup_Meilenstein_20260906-1852.zip`, SHA256
-  `17df17d6c82fca6a7ca3d2b3c1df29c186c8d513ae694fda37f6695df6e03676`
-- Externe Aktion dieses Abschlussabschnitts: keine; es wurden nur lokale
-  Owner-Entscheidungen gespeichert. Der früher bestätigte Leona-Carousel
-  bleibt unverändert live.
+- Leona `Gym Reset, aber echt` wurde nativ auf Instagram veröffentlicht:
+  `https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/`
+- Sichtbare Bestätigung: Instagram meldete `Dein Beitrag wurde geteilt.`;
+  Profilstand danach 8 Beiträge.
+- Creator Ops wurde lokal abgeglichen: Publication `9`, Content `1`,
+  Queuejob `4`, Assets `1`, `2`, `5`.
+- In diesem Lauf nicht erneut extern geprüft. Echte Insights können später
+  erfasst werden; fehlende Werte bleiben `UNKNOWN`.

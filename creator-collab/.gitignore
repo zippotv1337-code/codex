@@ -24,3 +24,20 @@ sessions/runtime/
 tmp/
 __pycache__/
 .pytest_cache/
+
+# Local-only runtime, databases and recovery material: never publish in Git.
+.venv/
+runtime/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.sqlite3-*
+*.zip
+*.7z
+*.pem
+*.key
+*.p12
+*.pfx
+PFAD_ZUR_DB

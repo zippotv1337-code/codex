@@ -16,7 +16,8 @@ $logDir = Join-Path $runtimeDir 'logs'
 $logPath = Join-Path $logDir 'local_server.log'
 $errorPath = Join-Path $logDir 'local_server.error.log'
 $pidPath = Join-Path $runtimeDir 'creator_ops.pid'
-$url = "http://127.0.0.1:$Port"
+$bindHost = $runtimeConfig.Host
+$url = "http://${bindHost}:$Port"
 $healthUrl = "$url/api/health"
 
 function Test-CreatorOpsHealth {
@@ -48,7 +49,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Creator Ops benötigt Python 3.10 oder neuer.' }
 
     $process = Start-Process -FilePath $python `
-        -ArgumentList @('-m','creator_ops.web','--db',('"{0}"' -f $databasePath),'--host','127.0.0.1','--port',"$Port",'--config',('"{0}"' -f $runtimeConfig.ConfigPath)) `
+        -ArgumentList @('-m','creator_ops.web','--db',('"{0}"' -f $databasePath),'--host',$bindHost,'--port',"$Port",'--config',('"{0}"' -f $runtimeConfig.ConfigPath)) `
         -WorkingDirectory $projectRoot -PassThru -WindowStyle Hidden `
         -RedirectStandardOutput $logPath -RedirectStandardError $errorPath
     Set-Content -LiteralPath $pidPath -Value $process.Id -Encoding ascii

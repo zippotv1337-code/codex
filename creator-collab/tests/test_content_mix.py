@@ -13,9 +13,8 @@ class ContentMixPlannerTests(unittest.TestCase):
         self.assertEqual(
             Counter(plan),
             {
-                ContentStage.ALLTAG: 8,
-                ContentStage.TEASER: 7,
-                ContentStage.ADULT_18: 5,
+                ContentStage.ALLTAG: 14,
+                ContentStage.TEASER: 6,
             },
         )
 
@@ -23,7 +22,7 @@ class ContentMixPlannerTests(unittest.TestCase):
         recommendation = ContentMixPlanner().recommend(
             {"ALLTAG": 8, "TEASER": 2, "ADULT_18": 5}
         )
-        self.assertEqual(recommendation.next_stage, ContentStage.TEASER)
+        self.assertEqual(recommendation.next_stage, ContentStage.ALLTAG)
 
 
 if __name__ == "__main__":

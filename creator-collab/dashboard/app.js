@@ -1,12 +1,20 @@
 const cardsRoot = document.querySelector("#cards");
 const readyCount = document.querySelector("#ready-count");
 const targetDate = document.querySelector("#target-date");
+const activeSummary = document.querySelector("#active-summary");
+const attentionRoot = document.querySelector("#needs-attention");
+const attentionSummary = document.querySelector("#attention-summary");
+const plannedRoot = document.querySelector("#planned-summary");
+const storyOpsRoot = document.querySelector("#story-ops");
+const auditRoot = document.querySelector("#operations-audit");
 const toast = document.querySelector("#toast");
 const stageFilters = document.querySelectorAll("[data-stage-filter]");
 let currentCards = [];
+let currentAttention = [];
 let activeStage = "ALL";
 let previewState = null;
 let pendingDecision = null;
+let postingKitState = null;
 
 const poseLabels = {
   FRONTAL: "Frontal",
@@ -83,6 +91,7 @@ function cardTemplate(card) {
   const canReschedule = card.schedule_status === "NEEDS_RESCHEDULE_REVIEW" && Boolean(card.suggested_at);
   const canAuthorizeLive = Boolean(card.can_authorize_live_publish);
   const canRearmPreflight = Boolean(card.can_rearm_preflight);
+  const canPrepareNativePost = approved && card.schedule_status !== "PUBLISHED";
   const status = statusMeta(card);
   const audioDetails = card.audio_options.map((option) => {
     const review = ["REVIEW_REQUIRED", "VERIFY_BEFORE_USE", "MOCK_ONLY"].includes(option.license_status)
@@ -98,7 +107,7 @@ function cardTemplate(card) {
           <div>
             <p class="card-kicker">${escapeHtml(card.date)} · ${escapeHtml(card.prime_time)} Uhr</p>
             <h2>${escapeHtml(card.display_name)}</h2>
-            <p class="series">${escapeHtml(card.series)}</p>
+            <p class="series">${escapeHtml(card.series)} · <span class="format-badge">${escapeHtml((card.format || "carousel").toUpperCase())}</span></p>
             ${card.style_reference ? `<span class="style-ref">Style Ref: ${escapeHtml(card.style_reference)} · ${escapeHtml(card.reference_strength)}</span>` : ""}
           </div>
         </div>
@@ -123,7 +132,7 @@ function cardTemplate(card) {
         ${check("Sichtbarkeit", card.checks.public_scope, card.visibility_scope)}
       </div>
       ${card.qa_reasons.length ? `<p class="qa-warning">Noch offen: ${escapeHtml(card.qa_reasons.join(", "))}</p>` : ""}
-      <details class="caption-preview" open>
+      <details class="caption-preview">
         <summary>Posting-Details</summary>
         <dl class="posting-details">
           <div><dt>Hook</dt><dd>${escapeHtml(card.hook)}</dd></div>
@@ -136,6 +145,7 @@ function cardTemplate(card) {
         </dl>
       </details>
       <button class="large-preview-button" type="button" data-large-preview="${card.content_id}">Große Instagram-Vorschau</button>
+      ${canPrepareNativePost ? `<button class="posting-kit-button" type="button" data-open-posting-kit="${card.content_id}">POSTING-PAKET ÖFFNEN · für vorhandenen Composer</button>` : ""}
       ${canReschedule ? `<button type="button" class="reschedule-button" data-action="reschedule" data-content-id="${card.content_id}">VORGESCHLAGENEN TERMIN ÜBERNEHMEN · nur lokal</button>` : ""}
       ${canAuthorizeLive ? `<button type="button" class="live-authorize-button" data-action="live-authorize" data-content-id="${card.content_id}">LIVE-VERSAND SEPARAT FREIGEBEN · postet noch nicht</button>` : ""}
       ${canRearmPreflight ? `<button type="button" class="rearm-preflight-button" data-action="rearm-preflight" data-content-id="${card.content_id}">SICHEREN PREFLIGHT ERNEUT PRÜFEN · postet noch nicht</button>` : ""}
@@ -143,10 +153,21 @@ function cardTemplate(card) {
       <div class="decision-help"><b>APPROVE</b> nur lokale Queue · <b>LIVE-FREIGABE</b> separat · <b>CHANGE</b> Überarbeitung · <b>REJECT</b> Paket blockieren</div>
       <div class="decision-actions">
         <button type="button" class="approve-button" data-action="approve" data-content-id="${card.content_id}" ${canApprove ? "" : "disabled"}>${approved ? "Freigegeben" : "APPROVE"}</button>
-        <button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">CHANGE</button>
+        <button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">Bearbeiten / CHANGE</button>
         <button type="button" class="reject-button" data-action="reject" data-content-id="${card.content_id}">REJECT</button>
       </div>
     </article>`;
+}
+
+function attentionTemplate(card) {
+  const status = statusMeta(card);
+  const preview = card.assets.find(asset => asset.preview_url && !asset.excluded);
+  const protectedPreview = card.privacy_blur || card.visibility_scope !== "PUBLIC_SFW";
+  return `<article class="attention-card">
+    <div class="attention-preview">${preview && !protectedPreview ? `<img src="${escapeHtml(preview.preview_url)}" alt="Vorschau ${escapeHtml(card.series)}" loading="lazy">` : '<span>NO PREVIEW ASSET<br>Keine öffentliche Vorschau</span>'}</div>
+    <div><p class="card-kicker">${escapeHtml(card.creator_slug)} · ${escapeHtml(card.format || "carousel")}</p><h3>${escapeHtml(card.series)}</h3><p>${escapeHtml(card.attention_reason || "Prüfung erforderlich")}</p></div>
+    <div class="attention-meta"><span class="status-pill status-${status.key}">${escapeHtml(status.label)}</span>${preview && !protectedPreview ? `<button type="button" data-large-preview="${card.content_id}">Vorschau</button>` : ''}<button type="button" class="change-button" data-action="change" data-content-id="${card.content_id}">Bearbeiten / CHANGE</button><button type="button" class="reject-button" data-action="reject" data-content-id="${card.content_id}">REJECT</button></div>
+  </article>`;
 }
 
 function renderCards() {
@@ -156,6 +177,47 @@ function renderCards() {
   cardsRoot.innerHTML = visible.length
     ? visible.map(cardTemplate).join("")
     : '<div class="empty">Für diesen Filter gibt es morgen kein Paket.</div>';
+}
+
+function renderAttention() {
+  attentionRoot.innerHTML = currentAttention.length
+    ? currentAttention.map(attentionTemplate).join("")
+    : '<div class="empty">Keine offenen Aufmerksamkeitspunkte.</div>';
+}
+
+function renderPlanned() {
+  const planned = currentCards.filter(card => ["LOCAL_SCHEDULED", "SCHEDULED", "NEEDS_RESCHEDULE_REVIEW"].includes(card.schedule_status));
+  plannedRoot.innerHTML = planned.length
+    ? planned.map(card => `<article class="planned-item"><span class="planned-dot" aria-hidden="true"></span><div><b>${escapeHtml(card.display_name)}</b><span>${escapeHtml(card.series)} · ${escapeHtml(card.format || "carousel")}</span></div><strong>${escapeHtml(card.planned_at || card.prime_time + " Uhr")}</strong></article>`).join("")
+    : '<div class="empty">Keine lokalen Veröffentlichungen geplant.</div>';
+}
+
+function renderStoryOps(items) {
+  if (!storyOpsRoot) return;
+  const visible = items || [];
+  storyOpsRoot.innerHTML = visible.length
+    ? visible.map(item => `<article class="planned-item story-ops-item"><div class="attention-preview">${item.frames?.[0]?.asset?.preview_url ? `<img src="${escapeHtml(item.frames[0].asset.preview_url)}" alt="Story ${escapeHtml(item.series)}" loading="lazy">` : '<span>NO PREVIEW ASSET</span>'}</div><div><b>${escapeHtml(item.display_name)}</b><span>${escapeHtml(item.series)} · ${item.frames?.length || 0} Frames</span><span>${escapeHtml(item.date)} · ${escapeHtml(item.status)}${item.planned_at ? ` · ${escapeHtml(item.planned_at)}` : ''}</span></div><a class="text-link" href="/stories#story-${item.content_id}">Auswählen / Bearbeiten</a></article>`).join("")
+    : '<div class="empty">Keine unveröffentlichte Story-Reserve vorhanden.</div>';
+}
+
+function renderAudit(audit) {
+  if (!auditRoot) return;
+  const primary = audit.next_actions?.[0] || {};
+  const stats = [
+    ["Review aktiv", audit.review?.active_count ?? 0],
+    ["Needs Attention", audit.review?.needs_attention_count ?? 0],
+    ["Story-Kits", audit.stories?.ready_package_count ?? 0],
+    ["Analytics fällig", audit.analytics?.due_count ?? 0],
+  ];
+  auditRoot.innerHTML = `
+    <article class="audit-primary">
+      <span class="audit-priority">${escapeHtml(primary.priority || "OK")}</span>
+      <div>
+        <h3>${escapeHtml(primary.action || "Kein offener Schritt")}</h3>
+        <p>${primary.blocked_by ? `Blocker: ${escapeHtml(primary.blocked_by)}` : "Lokal ohne Owner-Gate ausführbar."}</p>
+      </div>
+    </article>
+    ${stats.map(([label, value]) => `<article class="audit-stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></article>`).join("")}`;
 }
 
 function previewSlides(card) {
@@ -202,6 +264,77 @@ function closeLargePreview() {
   previewState = null;
 }
 
+function postText(card) {
+  return [card.hook, card.caption, card.cta, card.hashtags.map((tag) => `#${String(tag).replace(/^#/, "")}`).join(" ")]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+function localDateTimeValue(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const offset = date.getTimezoneOffset() * 60_000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
+function openPostingKit(card) {
+  const overlay = document.querySelector("#posting-kit-dialog");
+  const selected = previewSlides(card);
+  postingKitState = { card, selected };
+  document.querySelector("#posting-kit-title").textContent = `${card.display_name} · Posting-Paket`;
+  document.querySelector("#posting-kit-copy").textContent = `${card.series} · ${selected.length} ausgewählte Carousel-Slides. Der Composer bleibt vollständig in deiner Hand.`;
+  document.querySelector("#posting-kit-assets").innerHTML = selected.map((asset, index) => `
+    <label class="posting-kit-asset ${asset.preview_url ? "has-preview" : ""}" ${asset.preview_url ? `style="background-image:url('${escapeHtml(asset.preview_url)}')"` : ""}>
+      <input name="asset_id" form="native-reconcile-form" type="checkbox" value="${asset.id}" checked />
+      <span>TOP ${asset.top_pick_order || index + 1}</span>
+      <small>${escapeHtml(poseLabels[asset.pose_slot] || asset.label)} · Bild ${asset.id}</small>
+    </label>`).join("");
+  document.querySelector('#native-reconcile-form [name="published_at"]').value = localDateTimeValue(card.planned_at);
+  overlay.hidden = false;
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("posting-kit-open");
+  document.querySelector("[data-posting-kit-close]").focus();
+}
+
+function closePostingKit() {
+  const overlay = document.querySelector("#posting-kit-dialog");
+  overlay.hidden = true;
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("posting-kit-open");
+  postingKitState = null;
+}
+
+async function copyPostingText(kind) {
+  if (!postingKitState) return;
+  const value = kind === "hashtags"
+    ? postingKitState.card.hashtags.map((tag) => `#${String(tag).replace(/^#/, "")}`).join(" ")
+    : postText(postingKitState.card);
+  if (!navigator.clipboard?.writeText) throw new Error("Zwischenablage ist in diesem Browser nicht verfügbar");
+  await navigator.clipboard.writeText(value);
+  showToast(kind === "hashtags" ? "Hashtags kopiert" : "Caption kopiert");
+}
+
+async function reconcileNativePost(event) {
+  event.preventDefault();
+  if (!postingKitState) return;
+  const values = new FormData(event.currentTarget);
+  const publishedAt = String(values.get("published_at") || "");
+  const parsed = new Date(publishedAt);
+  if (Number.isNaN(parsed.getTime())) throw new Error("Bitte einen gültigen Veröffentlichungszeitpunkt angeben");
+  values.set("published_at", parsed.toISOString());
+  const response = await apiFetch(`/api/reviews/${postingKitState.card.content_id}/reconcile-native`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(values),
+  });
+  const payload = await response.json();
+  if (!response.ok) throw new Error(payload.error || "Live-Link konnte nicht gespeichert werden");
+  closePostingKit();
+  await loadCards();
+  showToast("Sichtbarer Instagram-Post lokal bestätigt · keine Plattformaktion ausgelöst");
+}
+
 async function apiFetch(url, options = {}) {
   const method = (options.method || "GET").toUpperCase();
   const response = await fetch(url, {
@@ -225,12 +358,35 @@ async function loadCards() {
     const response = await apiFetch("/api/review-queue", { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Status ${response.status}`);
     const payload = await response.json();
-    currentCards = payload.cards;
+    currentCards = payload.active_cards || payload.cards || [];
+    currentAttention = payload.needs_attention || [];
     readyCount.textContent = payload.cards.filter((card) => card.can_approve ?? (card.ready && !card.approved && card.status === "READY_FOR_REVIEW")).length;
+    activeSummary.textContent = `${currentCards.length} aktiv`;
+    attentionSummary.textContent = `${currentAttention.length} offen`;
     targetDate.textContent = payload.dates?.length
       ? payload.dates.map(value => new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit" }).format(new Date(`${value}T12:00:00`))).join(" / ")
       : "keine";
     renderCards();
+    renderAttention();
+    renderPlanned();
+    Promise.all([fetch('/api/health').then(r => r.json()), fetch('/api/external-readiness').then(r => {
+      if (!r.ok) throw new Error('Status nicht erreichbar'); return r.json();
+    })]).then(([health, readiness]) => {
+      const identity = readiness.fiverr.identity_status === 'OWNER_REPORTED_VERIFIED'
+        ? 'Verifizierung laut Owner erledigt · Gig zuletzt Entwurf, Live-Status offen'
+        : 'Profil-/Live-Status prüfen';
+      document.querySelector('#platform-status').innerHTML = `<article class="planned-item"><div><b>ZippoWorkz ${health.status === 'ok' ? 'erreichbar' : 'Status prüfen'}</b><span>Meta: ${readiness.meta.status === 'DEFERRED_OWNER_VERIFICATION' ? 'zurückgestellt · persönliche Verifizierung offen' : escapeHtml(readiness.meta.status)}</span><span>Fiverr: ${identity}</span></div><a class="text-link" href="/revenue">Fiverr / Revenue öffnen</a></article>`;
+    }).catch(() => {document.querySelector('#platform-status').textContent = 'Betriebsstatus nicht erreichbar. Unter Betrieb / Status prüfen.';});
+    fetch("/api/operations-audit", { headers: { Accept: "application/json" } })
+      .then(response => response.ok ? response.json() : null)
+      .then(data => data ? renderAudit(data) : null)
+      .catch(() => {
+        if (auditRoot) auditRoot.innerHTML = '<div class="error">Operations-Audit konnte nicht geladen werden.</div>';
+      });
+    fetch("/api/stories", { headers: { Accept: "application/json" } })
+      .then(response => response.ok ? response.json() : { items: [] })
+      .then(data => renderStoryOps(data.items))
+      .catch(() => renderStoryOps([]));
   } catch (error) {
     cardsRoot.innerHTML = `<div class="error">Die Freigabepakete konnten nicht geladen werden. ${escapeHtml(error.message)}</div>`;
   } finally {
@@ -316,11 +472,17 @@ async function ownerDecision(contentId, action) {
   return payload;
 }
 
-cardsRoot.addEventListener("click", async (event) => {
+async function handleCardAction(event) {
   const preview = event.target.closest("[data-large-preview]");
   if (preview) {
-    const card = currentCards.find(item => item.content_id === Number(preview.dataset.largePreview));
+    const card = [...currentCards, ...currentAttention].find(item => item.content_id === Number(preview.dataset.largePreview));
     if (card) openLargePreview(card);
+    return;
+  }
+  const postingKit = event.target.closest("[data-open-posting-kit]");
+  if (postingKit) {
+    const card = currentCards.find((item) => item.content_id === Number(postingKit.dataset.openPostingKit));
+    if (card) openPostingKit(card);
     return;
   }
   const reveal = event.target.closest("[data-reveal]");
@@ -337,7 +499,17 @@ cardsRoot.addEventListener("click", async (event) => {
     showToast(error.message);
     await loadCards();
   }
-});
+}
+
+cardsRoot.addEventListener("click", handleCardAction);
+attentionRoot.addEventListener("click", handleCardAction);
+for (const target of [attentionRoot, storyOpsRoot]) target.addEventListener('error', event => {
+  if (event.target.tagName === 'IMG') {
+    const fallback = document.createElement('span');
+    fallback.textContent = 'NO PREVIEW ASSET';
+    event.target.replaceWith(fallback);
+  }
+}, true);
 
 document.querySelector("#decision-form").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -346,6 +518,27 @@ document.querySelector("#decision-form").addEventListener("submit", (event) => {
 document.querySelector("[data-decision-cancel]").addEventListener("click", () => closeDecisionDialog());
 document.querySelector("#decision-dialog").addEventListener("click", (event) => {
   if (event.target.id === "decision-dialog") closeDecisionDialog();
+});
+
+document.querySelector("#posting-kit-dialog").addEventListener("click", (event) => {
+  if (event.target.id === "posting-kit-dialog" || event.target.closest("[data-posting-kit-close]")) closePostingKit();
+});
+document.querySelector("#posting-kit-dialog").addEventListener("click", async (event) => {
+  const copy = event.target.closest("[data-posting-copy]");
+  if (!copy) return;
+  try {
+    await copyPostingText(copy.dataset.postingCopy);
+  } catch (error) {
+    showToast(error.message);
+  }
+});
+document.querySelector("#native-reconcile-form").addEventListener("submit", async (event) => {
+  try {
+    await reconcileNativePost(event);
+  } catch (error) {
+    event.preventDefault();
+    showToast(error.message);
+  }
 });
 
 document.querySelector("#large-preview").addEventListener("click", (event) => {
@@ -358,6 +551,10 @@ document.querySelector("#large-preview").addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && pendingDecision) {
     closeDecisionDialog();
+    return;
+  }
+  if (event.key === "Escape" && postingKitState) {
+    closePostingKit();
     return;
   }
   if (!previewState) return;

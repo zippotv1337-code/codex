@@ -1,5 +1,87 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## GitHub-Spiegel — 8. September 2026
+
+Aktueller autorisierter Abgleich einschließlich Codex-Local-Ops-Integration:
+`sessions/2026-09-08-2255-github-sync.md`. Nur `creator-collab/` synchronisieren;
+Root-Fremdprojekte, laufende DBs, Backups und Secrets bleiben ausgeschlossen.
+Fünf bislang nur auf GitHub vorhandene Referenzunterlagen sind lokal bewahrt.
+Hinweis zur neuen VENV: Python 3.14.7 bestätigt, aber eigene `tzdata` noch nicht
+installiert. Tests nutzen vorhandene gebündelte Zeitzonendaten nur pro Prozess;
+der laufende Server wurde nicht verändert.
+
+## Codex-Arbeitsgrundlage — 8. September 2026, 22:51 Europe/Berlin
+
+`AGENTS.md` bindet `docs/CODEX_ZIPPOWORKZ_LOCAL_DESKTOP_OPS_SETUP.md` für lokale
+Python-/Betriebsaufgaben ein. Nur Codex-Integration: keine neue Desktop-Einrichtung
+oder Dienstaktivierung. Projekt-VENV verifiziert: Python 3.14.7. Die operative DB
+bleibt `data/review_dashboard.db`; abweichende MAIN-Bezeichnung in der Desktop-
+Quelle nicht übernehmen. Nachweis: `sessions/2026-09-08-2251-codex-local-ops.md`.
+
+## Kanonischer Stand — 8. September 2026
+
+Produkt **ZippoWorkz**, bestehender Creator-Ops-Core. Operativer Workspace:
+`C:\Users\ZiPPo\Documents\ChatGPT\Insta baddie\creator-collab`.
+Primärer Start `START_ZIPPOWORKZ.ps1`, Port 4180, DB `data/review_dashboard.db`, Schema 5.
+Gemeinsame Navigation für Operations/Stories/Archiv/Analytics/Fiverr/Health.
+Story-Text, Typ, CTA, Link, Highlight, Entscheidung und Termin werden lokal im
+bestehenden Eventledger gespeichert; ältere Reserven sind wieder sichtbar.
+Meta `DEFERRED_OWNER_VERIFICATION`; kein neuer Auth-Versuch.
+55 fokussierte Python-Tests und echte Story-Flows auf Restore-Kopie bestanden.
+Integrität ok, keine FK-Verstöße. **Aktivierung bestätigt:** Am 8. September
+wurde der vorhandene Server kontrolliert neu geladen; Health ist `ok`,
+`/api/stories` liefert `review_schema=story-review-v1`, und es läuft genau ein
+Creator-Ops-Backend. Die Story-Bedienung ist damit produktiv lokal aktiv.
+GoFundMe E-001 läuft als getrenntes, Owner-gemeldetes Support-Experiment;
+Spenden sind niemals Fiverr-/Kundenumsatz. Details: `ZIPPOWORKZ_MASTER_GOALS.md`
+und `sessions/2026-09-08-1244-runtime-activation.md`.
+Analytics-Update vom 8. September 2026: Zwei echte Leona-Messungen sind
+gespeichert: `September Roofline` / Publication 7 (13 Aufrufe, 11 Betrachter,
+1 Like; spät als 24h-Fenster erfasst) und Publication 4 (19 Aufrufe,
+16 Betrachter, 2 Likes, 1 Profilbesuch; spät als 72h-Fenster erfasst).
+Beide gehören zum selben Contentpaket. Die Learning-Logik wertet wiederholte
+Messungen eines Pakets nur einmal als unabhängigen Inhalt, damit kein falsches
+Gewinner-/`VARIATE`-Signal entsteht. Learning bleibt `OBSERVING`; ein anderes
+Paket, vorzugsweise Mara nach Kontowechsel, ist für den ersten Vergleich nötig.
+Journal: `sessions/2026-09-08-1340-analytics-independence-guard.md`.
+Ältere Abschnitte darunter sind Referenz; dieser Stand hat Vorrang.
+
+Content-Override vom 8. September 2026: Die öffentliche Planung nutzt rund
+70 % glaubwürdigen Alltag, Setting, Handlung und Persönlichkeit sowie rund
+30 % glamourös/sexy angedeuteten, weiterhin strikt `SFW + PUBLIC_SFW`-Content.
+Leona bleibt urban/glamourös; Mara bleibt ländlich/sportlich und wird nicht auf
+Werkstatt-/Maschinenmotive reduziert. Adult bleibt vollständig außerhalb der
+öffentlichen Pipeline.
+
+LAN-Update vom 8. September 2026: Der primäre Launcher verwendet jetzt den
+in `config.toml` gesetzten Runtime-Host. Für das aktuelle WLAN ist
+`192.168.188.131:4180` vorgesehen. Ein Dashboard außerhalb von Loopback wird
+nur mit lokal gesetztem Passwort gestartet; es wurden keine Routerports,
+Cloud-Tunnel oder Firewall-Ausnahmen angelegt.
+
+Der passwortgeschützte LAN-Start wurde am 8. September um 18:38 Europe/Berlin
+bestätigt: ZippoWorkz lauscht auf `192.168.188.131:4180`, der Health-Endpunkt
+meldet `ok` und die Browser-Startseite fordert die lokale Passwortanmeldung.
+
+Fiverr-Update vom 8. September 2026, 12:57 Uhr: Der Owner meldet, dass das
+Verkäuferprofil fertig und verifiziert ist. Die eingeloggte Fiverr-Verwaltung
+zeigt `AKTIV 1`. Ihre Ergebnistabelle liefert jedoch einen Plattformfehler;
+die direkte öffentliche Profilansicht wurde durch CAPTCHA blockiert. Der
+öffentliche Gig-Link bleibt deshalb bis zu einer störungsfreien Sichtprüfung
+unbestätigt; Codex hat dabei nichts veröffentlicht oder geändert.
+
+Owner-Override vom 7. September 2026, 19:01 Uhr: Git/GitHub wieder regulär
+bearbeiten; alte Park-/Ignorierregeln sind aufgehoben. Projektbezogene sichere
+Commits/Pushes sind erlaubt; Secretschutz, kein Force-Push/History-Rewrite
+und begrenzte Fehlerdiagnose bleiben Pflicht. Maßgeblich: OWNER_DECISIONS.md.
+
+Aktuelle Korrektur (7. September 2026, 18:57 Uhr): Der lokale GitHub-Zugang
+ist vorhanden und konnte lesend authentifiziert werden (HTTP 200,
+Repository-Berechtigung `push=true`). Ältere Aussagen über fehlende
+Credentials sind nicht mehr maßgeblich. Wiederholte Fehlversuche hatten den
+Credential-Helper ausdrücklich abgeschaltet. Upload des neuen Branches
+bleibt separat zu bestätigen; Diagnose im Journal `2026-09-07-1857-git-auth-diagnosis.md`.
+
 Stand: 6. September 2026
 
 ## Ziel
@@ -191,8 +273,10 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
 - Jedes neue Fünfer-Paket besitzt feste Pose-Slots; die Top 3 werden gewichtet
   nach Qualität, Persona-Fit, Kohärenz, Stage-Fit und Neuheit ausgewählt und
   müssen pose-divers sein.
-- Der rollierende Content-Mix 40/35/25 ist eine reine Planungsempfehlung.
-  Adult-Erzeugung und Adult-Publishing bleiben manuelle Owner-Gates.
+- Der frühere rollierende Content-Mix 40/35/25 ist durch die aktuelle
+  öffentliche 70/30-SFW-Content-Richtung ersetzt. Adult-Erzeugung und
+  Adult-Publishing bleiben gesonderte Owner-Gates und sind nicht Teil der
+  öffentlichen Produktionsplanung.
 - Öffentliche JSON-Exporte enthalten nur `SFW + PUBLIC_SFW`; Adult- und
   Local-only-Daten bleiben in der lokalen Datenbank.
 - `docs/CURRENT_STATE.json` ist die maschinenlesbare Momentaufnahme; zusätzlich
@@ -276,7 +360,8 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   Ein secrets-reduzierter read-only Offline-Snapshot und sichere Standalone-
   Skripte sind vorbereitet; die Windows-Aufgaben bleiben ohne explizites
   `-Apply` uninstalliert. Abschlussstand: 96 Tests, aktiver Healthcheck und
-  echter SQLite-Restore grün; Git/GitHub sowie Live-Publishing geparkt.
+  echter SQLite-Restore grün. Die damalige Git-/GitHub-Parkregel ist aufgehoben;
+  Publishing folgt den aktuellen separaten Owner-Regeln.
 - Creator Ops 1.6.4-beta betreibt Dashboard, Watchdog, Scheduler und read-only
   Offline-Snapshot dauerhaft über genau einen lokalen Supervisor und einen
   benutzereigenen Windows-Autostart. Healthcheck auf Port 4180, SQLite-
@@ -310,6 +395,9 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   bleiben beim Owner. Der öffentliche Gig-Publish ist danach projektseitig
   vorab freigegeben; Status
   `FIVERR_GIG1_CONTENT_COMPLETE_WAITING_FOR_OWNER_IDENTITY`.
+- Die im gemeinsamen Worktree fehlenden lokalen Gig-1-Unterlagen wurden am
+  7. September aus dem bestätigten Angebotsscope wiederhergestellt und der
+  zugehörige Paket-Test ist wieder grün.
 - Die frühere unvollständige Leona-Demokarte ist jetzt das vollständige
   SFW-Paket „Gym Reset, aber echt“: fünf reale KI-Assets, Pose-Matrix, Top 3,
   Caption, Hook, CTA, Musik A/B/ohne und Prime Time. Der Owner gab es am
@@ -319,6 +407,28 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   `ist nicht so` und danach REJECT. Der finale Status ist `BLOCKED`; ohne
   klareres neues Owner-Signal wird es nicht automatisch neu erzeugt.
 - Abschlussstand: 119 Tests sowie Python-, Runtime- und SQLite-Prüfung grün.
+- Am 7. September wurde ein read-only Operations-Radar ergänzt:
+  `OperationsAuditService`, CLI `operations-audit`, HTTP
+  `/api/operations-audit` und eine Dashboard-Kachel. Der Audit bündelt
+  Reviewslots, Needs Attention, Story-Kits, lokale Queue, fällige echte
+  Analytics und Engagement in einer priorisierten Tagesliste, ohne externe
+  Aktionen auszuführen oder Werte zu erfinden. Abschlussstand: 133 Tests,
+  JavaScript-/Python-Checks und SQLite-Integrität grün.
+
+## Meta Graph Live-Proof (7. September 2026)
+
+- Der bestehende offizielle Meta-Carousel-Adapter wurde für den aktuellen
+  Instagram-Login-Pfad mit `graph.instagram.com` als Standard ergänzt; der
+  Facebook-Login-Host bleibt explizit auswählbar.
+- Der read-only Preflight prüft öffentliche HTTPS-JPEGs, Package-/SFW-Gates,
+  Persona-Account/Username und Content-Publishing-Quota, ohne externe POSTs.
+- 17 fokussierte Meta-/Queue-Tests sind grün; Receipt-, Publish-Intent-,
+  Duplicate-, Retry- und Unsicherheits-Sperren sind getestet.
+- Für Leona Content `1` wurden drei temporär öffentlich erreichbare JPEGs für
+  einen Proof vorbereitet. Ohne echte Meta-Credentials und abgeschlossene
+  Developer-/Professional-Account-Gates bleibt der Versand blockiert.
+- `META_GRAPH_AUTOMATION_PROOF` bleibt daher `not_yet_proven`; Details und die
+  nächsten Owner-Schritte stehen in `docs/HUMAN_HANDOFF.md`.
 
 ## Offene Projektbereiche
 
@@ -360,3 +470,70 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   `zippotv1337-code/codex` ist `public`, Standardbranch `main`. Damit sind auch
   die 20 eingecheckten Creator-Bilder öffentlich. Finale Gesamtübergabe:
   `docs/FINAL_ABSCHLUSS.md`.
+
+## Medium-Autopilot-Checkpoint (7. September 2026, 08:43 Uhr)
+
+- Lokaler Health-/Integrity-Run war grün: Dashboard-Port 4180 erreichbar,
+  SQLite `integrity_check = ok`, 7 Inhalte und 35 Assets.
+- 17 fokussierte Meta-/Queue-Tests bestanden. Die Vollsuite meldet einen
+  bekannten Worktree-Fehler, weil `docs/FIVERR_GIG_DRAFT.md` fehlt; der
+  Fehler wurde nicht durch diesen Lauf verursacht.
+- Kein Live-Publishing, keine externe Aktion und keine Secret-Verarbeitung.
+- Der fortsetzbare Stand liegt in `AUTOPILOT_CHECKPOINT.md`.
+
+## Instagram Operations Finalization Freeze (7. September 2026, 09:55 Uhr)
+
+- Interner Review-Flow abgenommen: maximal vier produktive aktive Karten,
+  blockierte/unvollständige Karten separat in Needs Attention, Published nicht
+  aktiv, nächster Reserveinhalt rückt nach.
+- Story-Reserve besitzt minimale lokale Review-/Planungsereignisse ohne
+  externe Aktion. Reels bleiben bis zum Vorhandensein echter Video-/Cover-
+  Datensätze bewusst unangelegt.
+- 26 relevante Dashboard-/Story-/Control-/Operations-Tests, JavaScript,
+  Python-Compilecheck und SQLite-Integrität grün.
+- Creator-Ops-Instagram-Core ist für diesen Ausbau eingefroren. Der Default-
+  Server bleibt loopback; passwortgeschützte LAN-Skripte sind der vorgesehene
+  Safari-/Handy-Weg.
+
+## Live-Output Leona Gym Reset (7. September 2026, 14:27 Uhr)
+
+- Leona `Gym Reset, aber echt` wurde nach direkter Owner-Bestätigung nativ als
+  Dreier-Carousel veröffentlicht:
+  `https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/`.
+- Instagram bestätigte sichtbar `Dein Beitrag wurde geteilt.`; das Leona-Profil
+  zeigte danach 8 Beiträge.
+- Creator Ops ist lokal abgeglichen: Content `1` und Queuejob `4` sind
+  `PUBLISHED`, Publication `9` enthält den Permalink, Assets `1`, `2` und `5`
+  sind `PUBLISHED`. Der alte Mock-Draft ist als Doppelpost-Risiko pausiert.
+- Story-Live bleibt separat: Der Webdialog bot in diesem Lauf keinen
+  Story-Composer.
+
+## Analytics-Operations — 7. September 2026
+
+- Read-only Analytics-Ansicht unter `/analytics` und API `/api/analytics` ergänzt.
+- Echte Instagram-Publikationen werden je 24h/72h/168h mit `WAITING`, `DUE`
+  oder `CAPTURED` geführt; fehlende Werte bleiben `UNKNOWN/NULL`.
+- Aktueller Datenstand: 4 echte lokale Instagram-Publikationen, 0 erfasste
+  Analytics-Fenster, 5 fällige Fenster und 12 unbekannte Fenster.
+- Fiverr-/Revenue-Signale bleiben getrennt; aktuell `OWNER_GATE`, keine echten
+  Fiverr-Events und keine erfundenen Werte.
+- Verifikation: Analytics-, Dashboard- und Operations-Audit-Tests grün,
+  Python-/JavaScript-Syntax grün, SQLite `integrity_check = ok`.
+
+## GitHub-/Readiness-Ergänzung — 7. September 2026, 17:37 Uhr
+
+- GitHub-Remote ist per Git erreichbar, aber lokaler `master` und
+  `origin/main` sind divergiert. Kein Force-Push/History-Rewrite.
+- Aktueller Projektstand soll auf einem `codex/...`-Branch gesichert werden;
+  Merge nach `main` bleibt ein bewusster Folgeschritt.
+- Creator Ops besitzt jetzt einen secret-freien externen Readiness-Snapshot:
+  CLI `external-readiness` und Dashboard-API `/api/external-readiness`.
+- Der Snapshot zeigt aktuell: Meta/Instagram API `BLOCKED` wegen fehlender
+  Env-Werte/Live-Schalter; Fiverr `BLOCKED` wegen persönlichem
+  Verkäuferprofil-/Identity-Gate; Handoff-ZIP lokal vorhanden.
+- 27 fokussierte Tests grün; `docs/CURRENT_STATE.json` wurde aktualisiert.
+- Lokaler Git-Commit `handoff: sync creator ops working state` und Branch
+  `codex/creator-ops-full-sync-20260907` sichern den kompletten Creator-Ops-
+  Stand lokal. GitHub-Push ist noch blockiert, weil Terminal-Git keine
+  GitHub-Credentials lesen kann und der GitHub-Connector das Repo mit `404`
+  meldet.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import ipaddress
 import json
 import os
 import re
@@ -76,13 +77,139 @@ class MetaGraphError(RuntimeError):
     """Sanitized Graph API failure that never includes tokens or response bodies."""
 
 
+@dataclass(frozen=True)
+class PublicAssetProbeResult:
+    """Secret-free result of fetching one media URL without authentication."""
+
+    ok: bool
+    requested_host: str | None
+    final_host: str | None = None
+    http_status: int | None = None
+    content_type: str | None = None
+    jpeg_magic: bool = False
+    error: str | None = None
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "ok": self.ok,
+            "requested_host": self.requested_host,
+            "final_host": self.final_host,
+            "http_status": self.http_status,
+            "content_type": self.content_type,
+            "jpeg_magic": self.jpeg_magic,
+            "error": self.error,
+        }
+
+
+class PublicAssetProbe(Protocol):
+    def probe(self, url: str) -> PublicAssetProbeResult: ...
+
+
+class UrllibPublicAssetProbe:
+    """Fetch a public image anonymously and validate Meta's JPEG requirements."""
+
+    def __init__(self, *, timeout: float = 20) -> None:
+        self.timeout = timeout
+
+    @staticmethod
+    def _is_public_host(host: str | None) -> bool:
+        if not host:
+            return False
+        normalized = host.rstrip(".").lower()
+        if normalized == "localhost" or normalized.endswith((".localhost", ".local")):
+            return False
+        try:
+            return ipaddress.ip_address(normalized).is_global
+        except ValueError:
+            return "." in normalized
+
+    def probe(self, url: str) -> PublicAssetProbeResult:
+        parsed = urlparse(url)
+        requested_host = parsed.hostname
+        if (
+            parsed.scheme != "https"
+            or not self._is_public_host(requested_host)
+            or parsed.username is not None
+            or parsed.password is not None
+        ):
+            return PublicAssetProbeResult(
+                ok=False,
+                requested_host=requested_host,
+                error="public_asset_https_host_required",
+            )
+
+        request = urllib.request.Request(
+            url,
+            headers={
+                "Accept": "image/jpeg",
+                "User-Agent": "CreatorOps-Meta-Preflight/1.0",
+            },
+            method="GET",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                status = getattr(response, "status", None)
+                if status is None:
+                    status = response.getcode()
+                status = int(status)
+                final = urlparse(response.geturl())
+                final_host = final.hostname
+                raw_content_type = str(response.headers.get("Content-Type", ""))
+                content_type = raw_content_type.split(";", 1)[0].strip().lower()
+                jpeg_magic = response.read(3) == b"\xff\xd8\xff"
+                error: str | None = None
+                if not (200 <= status < 300):
+                    error = f"public_asset_http_{status}"
+                elif final.scheme != "https" or not self._is_public_host(final_host):
+                    error = "public_asset_final_https_host_required"
+                elif content_type != "image/jpeg":
+                    error = "public_asset_content_type_not_jpeg"
+                elif not jpeg_magic:
+                    error = "public_asset_magic_not_jpeg"
+                return PublicAssetProbeResult(
+                    ok=error is None,
+                    requested_host=requested_host,
+                    final_host=final_host,
+                    http_status=status,
+                    content_type=content_type or None,
+                    jpeg_magic=jpeg_magic,
+                    error=error,
+                )
+        except urllib.error.HTTPError as error:
+            return PublicAssetProbeResult(
+                ok=False,
+                requested_host=requested_host,
+                final_host=urlparse(error.geturl()).hostname,
+                http_status=error.code,
+                error=f"public_asset_http_{error.code}",
+            )
+        except (urllib.error.URLError, TimeoutError, OSError, ValueError):
+            return PublicAssetProbeResult(
+                ok=False,
+                requested_host=requested_host,
+                error="public_asset_unreachable",
+            )
+
+
 class UrllibMetaGraphTransport:
     """Small stdlib-only transport for the official Instagram Graph endpoints."""
 
-    def __init__(self, graph_version: str, access_token: str, *, timeout: float = 20) -> None:
+    ALLOWED_HOSTS = {"graph.instagram.com", "graph.facebook.com"}
+
+    def __init__(
+        self,
+        graph_version: str,
+        access_token: str,
+        *,
+        graph_host: str = "graph.instagram.com",
+        timeout: float = 20,
+    ) -> None:
         if not re.fullmatch(r"v\d+\.\d+", graph_version):
             raise ValueError("meta_graph_version_required")
-        self.base_url = f"https://graph.facebook.com/{graph_version}"
+        normalized_host = graph_host.strip().lower()
+        if normalized_host not in self.ALLOWED_HOSTS:
+            raise ValueError("meta_graph_host_invalid")
+        self.base_url = f"https://{normalized_host}/{graph_version}"
         self.access_token = access_token
         self.timeout = timeout
 
@@ -143,9 +270,11 @@ class MetaInstagramPublishingAdapter:
         *,
         account_credentials: dict[str, tuple[str, str]],
         graph_version: str,
+        graph_host: str = "graph.instagram.com",
         manifest_path: Path,
         receipt_directory: Path,
         transport: MetaGraphTransport | None = None,
+        asset_probe: PublicAssetProbe | None = None,
         poll_attempts: int = 10,
         poll_delay_seconds: float = 1,
     ) -> None:
@@ -156,11 +285,13 @@ class MetaInstagramPublishingAdapter:
             if slug.strip() and ig_user_id.strip() and access_token.strip()
         }
         self.graph_version = graph_version.strip()
+        self.graph_host = graph_host.strip().lower()
         self.manifest_path = manifest_path
         self.receipt_directory = receipt_directory
         self.poll_attempts = max(1, poll_attempts)
         self.poll_delay_seconds = max(0, poll_delay_seconds)
         self.transport = transport
+        self.asset_probe = asset_probe
 
     @classmethod
     def from_environment(
@@ -176,6 +307,9 @@ class MetaInstagramPublishingAdapter:
             if ig_user_id and access_token:
                 accounts[creator_slug] = (ig_user_id, access_token)
         graph_version = os.environ.get("META_GRAPH_API_VERSION", "").strip()
+        graph_host = os.environ.get(
+            "META_GRAPH_HOST", "graph.instagram.com"
+        ).strip().lower()
         configured_manifest = os.environ.get("CREATOR_OPS_META_MEDIA_MANIFEST", "").strip()
         manifest_path = (
             Path(configured_manifest)
@@ -189,6 +323,7 @@ class MetaInstagramPublishingAdapter:
                 database,
                 account_credentials=accounts,
                 graph_version=graph_version,
+                graph_host=graph_host,
                 manifest_path=manifest_path,
                 receipt_directory=project_root / "data" / "meta-receipts",
             )
@@ -204,6 +339,7 @@ class MetaInstagramPublishingAdapter:
                 for ig_user_id, access_token in self.account_credentials.values()
             )
             and re.fullmatch(r"v\d+\.\d+", self.graph_version)
+            and self.graph_host in UrllibMetaGraphTransport.ALLOWED_HOSTS
             and self.manifest_path.is_file()
         )
 
@@ -318,11 +454,19 @@ class MetaInstagramPublishingAdapter:
         )
         temporary.replace(destination)
 
-    def _content_payload(self, publication_id: int, content_id: int) -> dict[str, object]:
+    def _content_payload(
+        self,
+        publication_id: int,
+        content_id: int,
+        *,
+        require_live_authorization: bool = True,
+    ) -> dict[str, object]:
         publication = self.database.one(
             """
             SELECT v.caption, v.hashtags_json, p.ai_disclosure,
+                   c.approved AS content_approved, c.status AS content_status,
                    cr.slug AS creator_slug,
+                   pa.public_handle AS expected_username,
                    (
                        SELECT e.action FROM review_events e
                        WHERE e.content_id=p.content_id
@@ -338,12 +482,19 @@ class MetaInstagramPublishingAdapter:
             JOIN platform_variants v ON v.id=p.platform_variant_id
             JOIN content_items c ON c.id=p.content_id
             JOIN creators cr ON cr.id=c.creator_id
+            JOIN platform_accounts pa
+              ON pa.creator_id=cr.id AND pa.platform='instagram'
             WHERE p.id=? AND p.content_id=?
             """,
             (publication_id, content_id),
         )
         if publication is None:
             raise ValueError("publication_not_found")
+        if not publication["content_approved"] or publication["content_status"] not in {
+            "OWNER_APPROVED",
+            "SCHEDULED",
+        }:
+            raise ValueError("content_owner_approval_required")
         assets = self.database.all(
             """
             SELECT a.asset_id, COALESCE(plan.priority, 9999) AS priority
@@ -373,7 +524,10 @@ class MetaInstagramPublishingAdapter:
             raise ValueError("native_ai_disclosure_owner_confirmation_required")
         if not publication["ai_disclosure"]:
             raise ValueError("publication_ai_disclosure_required")
-        if publication["live_gate_action"] != "OWNER_LIVE_PUBLISH_APPROVED_UI":
+        live_authorized = (
+            publication["live_gate_action"] == "OWNER_LIVE_PUBLISH_APPROVED_UI"
+        )
+        if require_live_authorization and not live_authorized:
             raise ValueError("per_content_live_publish_owner_authorization_required")
         url_map = content_manifest.get("asset_urls", {})
         if not isinstance(url_map, dict):
@@ -398,9 +552,217 @@ class MetaInstagramPublishingAdapter:
             caption = f"{caption}\n\n{' '.join(normalized_hashtags)}"
         return {
             "caption": caption,
+            "asset_ids": [str(asset["asset_id"]) for asset in assets],
             "media_urls": media_urls,
             "creator_slug": publication["creator_slug"],
+            "expected_username": publication["expected_username"],
+            "live_authorized": live_authorized,
         }
+
+    @staticmethod
+    def _safe_graph_error(error: BaseException) -> str:
+        message = str(error)
+        if re.fullmatch(r"[a-z0-9_]+", message):
+            return message
+        if isinstance(error, TimeoutError):
+            return "meta_graph_timeout"
+        if isinstance(error, ConnectionError):
+            return "meta_graph_unreachable"
+        return "meta_graph_preflight_failed"
+
+    @staticmethod
+    def _publishing_limit(payload: dict[str, object]) -> dict[str, object]:
+        data = payload.get("data")
+        if not isinstance(data, list) or not data or not isinstance(data[0], dict):
+            raise ValueError("meta_content_publishing_limit_invalid")
+        first = data[0]
+        quota_usage = first.get("quota_usage")
+        if isinstance(quota_usage, bool) or not isinstance(quota_usage, (int, float)):
+            raise ValueError("meta_content_publishing_limit_invalid")
+        if quota_usage < 0:
+            raise ValueError("meta_content_publishing_limit_invalid")
+
+        result: dict[str, object] = {"quota_usage": quota_usage}
+        config = first.get("config")
+        if isinstance(config, dict):
+            quota_total = config.get("quota_total")
+            quota_duration = config.get("quota_duration")
+            if isinstance(quota_total, (int, float)) and not isinstance(quota_total, bool):
+                result["quota_total"] = quota_total
+            if isinstance(quota_duration, (int, float)) and not isinstance(
+                quota_duration, bool
+            ):
+                result["quota_duration"] = quota_duration
+        return result
+
+    def preflight(self, publication_id: int, content_id: int) -> dict[str, object]:
+        """Read-only proof that one exact approved carousel is ready for Meta.
+
+        The check performs anonymous media fetches and Graph ``GET`` requests
+        only. It does not create containers, write receipts, mutate the queue,
+        or reveal access tokens in its structured result.
+        """
+
+        result: dict[str, object] = {
+            "schema": "creator-ops-meta-live-preflight-v1",
+            "status": "BLOCKED",
+            "provider": self.provider,
+            "publication_id": publication_id,
+            "content_id": content_id,
+            "checks": {
+                "adapter": {
+                    "ok": self.available,
+                    "graph_version": self.graph_version
+                    if re.fullmatch(r"v\d+\.\d+", self.graph_version)
+                    else None,
+                    "graph_host": self.graph_host
+                    if self.graph_host in UrllibMetaGraphTransport.ALLOWED_HOSTS
+                    else None,
+                }
+            },
+            "errors": [],
+        }
+        checks = result["checks"]
+        errors = result["errors"]
+        assert isinstance(checks, dict)
+        assert isinstance(errors, list)
+
+        if not self.available:
+            errors.append("official_instagram_adapter_not_configured")
+            return result
+
+        try:
+            payload = self._content_payload(
+                publication_id,
+                content_id,
+                require_live_authorization=False,
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as error:
+            checks["package"] = {"ok": False, "error": str(error)}
+            errors.append(str(error))
+            return result
+
+        creator_slug = str(payload["creator_slug"])
+        expected_username = str(payload["expected_username"]).strip().lstrip("@")
+        live_authorized = bool(payload["live_authorized"])
+        asset_ids = [str(value) for value in payload["asset_ids"]]
+        media_urls = [str(value) for value in payload["media_urls"]]
+        checks["package"] = {
+            "ok": True,
+            "creator_slug": creator_slug,
+            "asset_ids": asset_ids,
+            "media_count": len(media_urls),
+            "native_ai_disclosure_confirmed": True,
+        }
+        checks["live_authorization"] = {
+            "ok": live_authorized,
+            "authorized": live_authorized,
+            "required_for_publish": True,
+        }
+
+        account = self.account_credentials.get(creator_slug)
+        if account is None:
+            code = f"meta_account_not_configured_for_{creator_slug}"
+            checks["account"] = {"ok": False, "error": code}
+            errors.append(code)
+            return result
+        ig_user_id, access_token = account
+
+        probe = self.asset_probe or UrllibPublicAssetProbe()
+        asset_results: list[dict[str, object]] = []
+        for asset_id, media_url in zip(asset_ids, media_urls, strict=True):
+            try:
+                probe_result = probe.probe(media_url)
+            except (ConnectionError, TimeoutError, OSError, ValueError):
+                probe_result = PublicAssetProbeResult(
+                    ok=False,
+                    requested_host=urlparse(media_url).hostname,
+                    error="public_asset_probe_failed",
+                )
+            item = {"asset_id": asset_id, **probe_result.as_dict()}
+            asset_results.append(item)
+            if probe_result.error:
+                errors.append(f"{asset_id}:{probe_result.error}")
+        checks["public_assets"] = {
+            "ok": all(bool(item["ok"]) for item in asset_results),
+            "items": asset_results,
+        }
+
+        transport = self.transport or UrllibMetaGraphTransport(
+            self.graph_version, access_token, graph_host=self.graph_host
+        )
+        try:
+            identity = transport.get(
+                ig_user_id, {"fields": "id,username,account_type"}
+            )
+            returned_id = identity.get("id")
+            username = identity.get("username")
+            account_type = str(identity.get("account_type", "")).upper()
+            returned_username = (
+                username.strip().lstrip("@") if isinstance(username, str) else ""
+            )
+            id_matches = str(returned_id or "") == ig_user_id
+            username_matches = (
+                bool(expected_username)
+                and returned_username.casefold() == expected_username.casefold()
+            )
+            professional_account = account_type in {"BUSINESS", "MEDIA_CREATOR"}
+            account_ok = id_matches and username_matches and professional_account
+            checks["account"] = {
+                "ok": account_ok,
+                "id": str(returned_id) if returned_id is not None else None,
+                "username": returned_username or None,
+                "expected_username": expected_username or None,
+                "id_matches": id_matches,
+                "username_matches": username_matches,
+                "account_type": account_type or None,
+            }
+            if not id_matches:
+                errors.append("meta_account_id_mismatch")
+            if not username_matches:
+                errors.append("meta_account_username_mismatch")
+            if not professional_account:
+                errors.append("meta_account_type_not_professional")
+        except (ConnectionError, TimeoutError, MetaGraphError) as error:
+            code = self._safe_graph_error(error)
+            checks["account"] = {"ok": False, "error": code}
+            errors.append(code)
+
+        try:
+            limit = self._publishing_limit(
+                transport.get(
+                    f"{ig_user_id}/content_publishing_limit",
+                    {"fields": "quota_usage,config"},
+                )
+            )
+            quota_total = limit.get("quota_total")
+            quota_usage = limit["quota_usage"]
+            quota_available = not (
+                isinstance(quota_total, (int, float))
+                and not isinstance(quota_total, bool)
+                and isinstance(quota_usage, (int, float))
+                and quota_usage >= quota_total
+            )
+            checks["content_publishing_limit"] = {
+                "ok": quota_available,
+                **limit,
+            }
+            if not quota_available:
+                errors.append("meta_content_publishing_quota_exhausted")
+        except (ConnectionError, TimeoutError, MetaGraphError, ValueError) as error:
+            code = (
+                str(error)
+                if isinstance(error, ValueError)
+                else self._safe_graph_error(error)
+            )
+            checks["content_publishing_limit"] = {"ok": False, "error": code}
+            errors.append(code)
+
+        if not errors:
+            result["status"] = (
+                "READY" if live_authorized else "READY_FOR_OWNER_CONFIRMATION"
+            )
+        return result
 
     def _wait_until_ready(self, transport: MetaGraphTransport, creation_id: str) -> None:
         for attempt in range(self.poll_attempts):
@@ -442,7 +804,7 @@ class MetaInstagramPublishingAdapter:
             )
         ig_user_id, access_token = account
         transport = self.transport or UrllibMetaGraphTransport(
-            self.graph_version, access_token
+            self.graph_version, access_token, graph_host=self.graph_host
         )
 
         child_ids: list[str] = []

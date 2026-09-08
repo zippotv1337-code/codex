@@ -1,5 +1,21 @@
 {
-  "generated_at": "2026-09-06T16:57:45+00:00",
+  "generated_at": "2026-09-08T16:36:37+00:00",
+  "product": {
+    "name": "ZippoWorkz",
+    "dashboard_path": "/",
+    "launcher": "START_ZIPPOWORKZ.ps1",
+    "database": "data/review_dashboard.db",
+    "core": "Creator Ops",
+    "legacy_databases": [
+      "data/creator_ops.db",
+      "data/verification.db"
+    ]
+  },
+  "operations": {
+    "meta_api_status": "DEFERRED_OWNER_VERIFICATION",
+    "fiverr_identity_status": "OWNER_REPORTED_VERIFIED",
+    "fiverr_gig_status": "DRAFT_LAST_OBSERVED_2026_09_07"
+  },
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
@@ -20,61 +36,70 @@
     }
   ],
   "content": {
-    "total": 6,
+    "total": 9,
     "by_status": {
-      "BLOCKED": 1,
-      "PUBLISHED": 1,
-      "READY_FOR_REVIEW": 1,
-      "SCHEDULED": 3
+      "BLOCKED": 2,
+      "PARTIAL_READY": 1,
+      "PUBLISHED": 2,
+      "READY_FOR_REVIEW": 2,
+      "SCHEDULED": 2
     },
     "by_stage": {
-      "ALLTAG": 6
+      "ALLTAG": 9
     },
-    "review_required": 1,
+    "review_required": 3,
     "mix_target_percent": {
-      "ALLTAG": 40,
-      "TEASER": 35,
-      "ADULT_18": 25
+      "ALLTAG_AND_SITUATIONAL_SFW": 70,
+      "GLAMOUR_TEASER_SFW": 30,
+      "ADULT_18_PUBLIC": 0
     },
-    "next_recommended_stage": "TEASER"
+    "next_recommended_stage": "PUBLIC_SFW_CONTEXTUAL_GLAMOUR",
+    "direction": {
+      "effective_date": "2026-09-08",
+      "public_scope": "SFW + PUBLIC_SFW only",
+      "principle": "70% believable everyday, setting, action and personality; 30% tasteful glamour/sexy tease with context.",
+      "leona": "urban, stylish, glamorous; city, fashion, home and occasional gym",
+      "mara": "rural, strong, sporty; farm/outdoor, gym, casual daily life and leisure",
+      "adult_public_planning": "DISABLED"
+    }
   },
   "assets": {
-    "total": 30,
-    "real": 26,
-    "mock": 4,
+    "total": 45,
+    "real": 29,
+    "mock": 16,
     "by_safety": {
-      "SFW": 30
+      "SFW": 45
     },
     "by_visibility": {
-      "PUBLIC_SFW": 30
+      "PUBLIC_SFW": 45
     }
   },
   "reserve": {
     "dates": [
-      "2026-09-04",
       "2026-09-05",
       "2026-09-06",
-      "2026-09-07"
+      "2026-09-09"
     ],
-    "days": 4,
-    "through": "2026-09-07"
+    "days": 3,
+    "through": "2026-09-09"
   },
   "publications": {
-    "owner_confirmed_native": 3,
+    "owner_confirmed_native": 4,
     "mock": 5,
-    "manual_analytics_events": 0,
+    "manual_analytics_events": 2,
     "local_queue": {
-      "LOCAL_SCHEDULED": 3,
-      "PUBLISHED": 1
+      "LOCAL_SCHEDULED": 1,
+      "NEEDS_RESCHEDULE_REVIEW": 1,
+      "PUBLISHED": 2
     },
     "instagram_channel_real_live": true,
     "meta_graph_automation_proof": "not_yet_proven"
   },
   "background_runs": {
-    "COMPLETE": 3
+    "COMPLETE": 4
   },
   "engagement": {
-    "real_post_proposals": 6,
+    "real_post_proposals": 8,
     "execution": "manual-owner-only"
   },
   "finance": {
@@ -87,17 +112,20 @@
     "paid_spend": "OWNER_GATE"
   },
   "remote": {
-    "active": false,
-    "started_at": null
+    "active": true,
+    "started_at": "2026-09-08T18:38:48+02:00",
+    "host": "192.168.188.131",
+    "port": 4180,
+    "auth": "password"
   },
   "tests": {
     "status": "passed",
-    "passed": 119,
+    "passed": 144,
     "failed": 0
   },
   "blockers": {
-    "owner_review_required": 1,
-    "mock_assets_remaining": 4
+    "owner_review_required": 3,
+    "mock_assets_remaining": 16
   },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",

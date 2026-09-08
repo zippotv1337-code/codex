@@ -1,5 +1,28 @@
 # Verbindliche Owner-Entscheidungen
 
+## Aktueller Owner-Override — 8. September 2026: ZippoWorkz
+
+- Kanonischer Produktname **ZippoWorkz**. Creator Ops bleibt der vorhandene Core, kein zweites Produkt.
+- Ein operativer Workspace `creator-collab/`, ein Einstieg `/`, primärer Launcher `START_ZIPPOWORKZ.ps1`, DB `data/review_dashboard.db` mit Schema 5.
+- `META_API = DEFERRED_OWNER_VERIFICATION`. Persönliche Verifizierung aktuell nicht möglich; keine Meta-/Auth-/Browser-Loops, keine Live-Schalter in diesem Run aktivieren. API-Code erhalten.
+- Fiverr-Identität laut Owner erledigt. Historische Profil-Gates setzen dies nicht zurück. Öffentlicher Gig ohne echten Nachweis unbestätigt.
+- Ansichten zusammenführen, Story-/Attention-Betriebsfehler gezielt beheben; kein Architektur-, Plattform- oder Persona-Neubau. Alte Mock-DBs nicht als echte Daten importieren.
+- Git-Freigabe bleibt bestehen; tatsächliche Schreibrechte der Umgebung sind maßgeblich. Keine Umgehung von Windows-/Sandbox-Schutz.
+- Lokale Story-Freigabe/Planung ist kein Live-Receipt. Keine künstlichen Posts/Analytics. Nach Prüfung, Übergabe und Journal STOP.
+
+## Aktueller Owner-Override — 7. September 2026, 19:01 Uhr
+
+- Git und GitHub sind nicht mehr geparkt oder zu ignorieren. Ältere
+  gegenteilige Run-Regeln sind aufgehoben.
+- Projektbezogene Commits, normale Branch-Pushes und sichere
+  Fast-Forward-Synchronisierung sind wieder erlaubt.
+- Bestehenden Credential Manager verwenden, nicht mit leerem Helper umgehen.
+  Bei erneutem Fehler begrenzt diagnostizieren, keine Retry-Schleifen.
+- Keine Secrets/DBs/Backups hochladen, kein Force-Push/History-Rewrite,
+  keine destruktiven Änderungen oder Änderung der Repository-Sichtbarkeit.
+- Die erfolgreiche Auth-Diagnose beweist noch keinen erfolgreichen Upload
+  und garantiert nicht, dass künftig kein technischer Fehler auftreten kann.
+
 Stand: 6. September 2026
 
 Diese Datei hält dauerhafte Produkt- und Sicherheitsregeln fest. Status und
@@ -29,8 +52,23 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
 
 ## Content-Mix und Auswahl
 
-- Planungsziel über 20 Slots: 40 % Alltag, 35 % Teaser, 25 % Adult 18+.
-- Das Verhältnis ist eine Empfehlung, kein automatischer Generierungsauftrag.
+- Öffentliche Instagram-Content-Richtung ab 8. September 2026: rund **70 %**
+  glaubwürdiger Alltag, Setting, Handlung und Persönlichkeit sowie rund
+  **30 %** glamourös/sexy angedeuteter Content. Beide Anteile bleiben strikt
+  `SFW` und `PUBLIC_SFW`; „sexy“ entsteht durch Outfit, Haltung, Licht, Blick
+  und nachvollziehbaren Kontext, nicht durch explizite Inhalte.
+- Leona bleibt urban, stilvoll und glamourös: City/Café, Fashion, Zuhause,
+  Abend und gelegentlich Gym. Mara bleibt ländlich, kräftig und bodenständig:
+  Hof/Outdoor/Arbeit, Gym, Alltag und Freizeit. Die Personas und ihre
+  Bildwelten werden nicht zusammengeführt oder neu gestaltet.
+- Richtwerte für den Vier-Wochen-Plan: Leona City/urban 40 %, Fashion/Glamour
+  25 %, Home/Alltag 20 %, Experimente 15 %; Mara Rural/Work/Outdoor 30 %, Gym
+  25 %, Casual/Alltag 25 %, Experimente/Freizeit 20 %. Sie sind eine
+  Planungsrichtung, kein automatischer Generierungsauftrag.
+- Jede Szene braucht eine erkennbare Situation oder Handlung; künstlich
+  wirkende Serien mit identischer Pose oder Blickrichtung sind zu vermeiden.
+- `ADULT_18` bleibt außerhalb aller öffentlichen Pipelines und wird weder als
+  Quote noch als Generierungsauftrag eingeplant.
 - Jedes vollständige Paket hat fünf unterschiedliche Pose-Slots:
   `FRONTAL`, `LEFT_3Q`, `RIGHT_3Q`, `FULL_BODY_ACTION`, `CANDID`.
 - Maximal zwei deutlich ähnliche Bilder je Paket.
@@ -38,6 +76,22 @@ Zahlen stehen dagegen in `docs/CURRENT_STATE.json` und den Sitzungsjournalen.
   Neuheit gewählt und müssen mindestens drei Pose-Kategorien abdecken.
 
 ## Freigabe und externe Aktionen
+
+### Output-first Owner-Override — 7. September 2026
+
+- Projektbezogene, vollständige und SFW/PUBLIC_SFW-Instagram-Inhalte dürfen
+  nach den bestehenden Safety-, Rechte-, Identitäts- und Idempotenz-Gates
+  veröffentlicht, öffentlich geprüft und bei einem klaren Darstellungsfehler
+  projektbezogen korrigiert oder archiviert werden.
+- Ein zusätzlicher Einzel-Owner-Klick ist für solche Inhalte nicht erforderlich;
+  persönliche Identität, OTP/Steuerdaten, Adult-Inhalte, Geld und neue Konten
+  bleiben ausdrücklich Owner-only.
+- Fiverr Gig 1 darf nach Abschluss des persönlichen Identity-Gates mit den
+  bekannten echten Projektangaben veröffentlicht und öffentlich geprüft werden.
+- Die Freigabe ändert nicht die Regel: Ohne echte Meta-Credentials darf kein
+  API-Versand simuliert werden; native Instagram-Nutzung ist nur zulässig,
+  wenn der eingeloggte projektbezogene Account und der konkrete SFW-Entwurf
+  eindeutig verfügbar sind.
 
 - `READY_FOR_REVIEW` ist keine Veröffentlichungsfreigabe.
 - Owner-Freigabe legt im MVP nur einen lokalen `mock-draft` an.
