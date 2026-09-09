@@ -61,15 +61,13 @@ class ExternalReadinessService:
             blockers.append("publishing_adapter_not_meta_graph")
         if not publishing.get("live_enabled", False):
             blockers.append("publishing_live_enabled_false")
-        if not scheduler.get("dispatch_live", False):
-            blockers.append("scheduler_dispatch_live_false")
         if not capabilities.get("official_instagram_publish", False):
             blockers.append("official_instagram_publish_false")
         if not capabilities.get("live_external_actions", False):
             blockers.append("live_external_actions_false")
 
         return {
-            "status": ("DEFERRED_OWNER_VERIFICATION" if config.get("operations", {}).get("meta_api_status") == "DEFERRED_OWNER_VERIFICATION"
+            "status": (config["operations"]["meta_api_status"] if config.get("operations", {}).get("meta_api_status") in {"DEFERRED_OWNER_VERIFICATION", "WAITING_SIGNAL"}
                        else "READY_FOR_PREFLIGHT" if not blockers else "BLOCKED"),
             "env": env,
             "config": {
@@ -165,7 +163,7 @@ class ExternalReadinessService:
             actions.append(
                 "Set missing Meta env/config gates, then run meta-preflight for one exact package."
             )
-        elif meta["status"] != "DEFERRED_OWNER_VERIFICATION":
+        elif meta["status"] not in {"DEFERRED_OWNER_VERIFICATION", "WAITING_SIGNAL"}:
             actions.append("Run one controlled Meta preflight; reconcile before retrying any publish.")
         if fiverr["status"] == "BLOCKED":
             actions.append("Finish Fiverr seller profile / identity gate manually, then publish Gig 1.")

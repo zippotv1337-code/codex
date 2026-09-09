@@ -49,6 +49,11 @@
   const labels={"/":"Beiträge","/stories":"Stories","/archive":"Veröffentlicht","/analytics":"Insights","/collections":"Mediathek","/top3":"Top 3","/revenue":"Übersicht & Umsatz","/offer":"Angebot & Gig","/control":"Betrieb","/engagement":query.get("view")==="messages"?"Nachrichten":"Kommentare"};
   bar.innerHTML='<button type="button" class="sidebar-toggle" aria-label="Navigation öffnen" aria-controls="studio-sidebar" aria-expanded="false">'+icon("grid")+'</button><div class="studio-breadcrumb">'+escape(section)+'<span>/</span><b>'+escape(area?"Übersicht":labels[path]||"Übersicht")+'</b></div><div class="toolbar-right"><span class="toolbar-status"><i></i> Lokal</span><span class="owner-avatar">Z</span></div>';
   main.prepend(bar);
+  const mobileBrand=document.createElement('a');
+  mobileBrand.className='studio-mobile-brand';
+  mobileBrand.href='/';
+  mobileBrand.innerHTML='Zippo<span>Workz</span>';
+  bar.querySelector('.sidebar-toggle').after(mobileBrand);
   const toggle=bar.querySelector("button");
   toggle.addEventListener("click",()=>{
     const open=document.body.classList.toggle("sidebar-open");
@@ -64,13 +69,18 @@
     main.querySelector(".intro").textContent="Gute Inhalte. Dein Stil. Alles an einem Ort.";
     const focus=document.createElement("section");
     focus.className="studio-focus";
-    focus.innerHTML='<div class="focus-copy"><p class="nav-label">DEINE CREATOR</p><h2>Die nächste Story<br>beginnt hier.</h2><p>Leona & Mara · Content prüfen, planen und vorbereiten.</p><div class="creator-chips"><span><img src="/assets/leona-voss-avatar.png" alt="">Leona Voss</span><span><img src="/assets/mara-field-avatar.png" alt="">Mara Field</span></div></div><div class="mix-panel"><div class="mix-head"><span>Instagram Content-Mix</span><span class="mix-target">Ziel</span></div><div class="mix-numbers"><div><strong>70<span>%</span></strong><small>Alltag & Persönlichkeit</small></div><div><strong>30<span>%</span></strong><small>Sexy & sinnlich</small></div></div><div class="mix-bar" role="img" aria-label="Ziel: 70 Prozent Alltag und 30 Prozent sexy, sinnlicher SFW-Teaser"><i></i><i></i></div><p>Glamour, Flirt & erotische Andeutung – öffentlich SFW.<br>Explizite Inhalte gehören in den getrennten 18+ Bereich.</p></div>';
+    focus.innerHTML='<div class="focus-copy"><p class="nav-label">DEINE CREATOR</p><h2>Die nächste Story <br>beginnt hier.</h2><p>Leona & Mara · Content prüfen, planen und vorbereiten.</p><div class="creator-chips"><span><img src="/assets/leona-voss-avatar.png" alt="">Leona Voss</span><span><img src="/assets/mara-field-avatar.png" alt="">Mara Field</span></div></div><div class="mix-panel"><div class="mix-head"><span>Instagram Content-Mix</span><span class="mix-target">Ziel</span></div><div class="mix-numbers"><div><strong>70<span>%</span></strong><small>Alltag & Persönlichkeit</small></div><div><strong>30<span>%</span></strong><small>Sexy & sinnlich</small></div></div><div class="mix-bar" role="img" aria-label="Ziel: 70 Prozent Alltag und 30 Prozent sexy, sinnlicher SFW-Teaser"><i></i><i></i></div><p>Glamour, Flirt & erotische Andeutung – öffentlich SFW.<br>Explizite Inhalte gehören in den getrennten 18+ Bereich.</p></div>';
     main.querySelector(".topbar").after(focus);
     main.querySelector("#today-heading").textContent="Bereit für deinen Blick";
     main.querySelector('#today-heading').previousElementSibling.textContent="CONTENT-RESERVE";
     main.querySelector('[data-stage-filter="TEASER"]').textContent="Sexy / Teaser · 30 %";
     main.querySelector('[data-stage-filter="ALLTAG"]').textContent="Alltag · 70 %";
     main.querySelector('[data-stage-filter="ADULT_18"]').hidden=true;
+    const feed=main.querySelector('#cards').closest('.workspace-section');
+    const audit=main.querySelector('.operations-audit');
+    feed.after(audit);
+    const platformStatus=main.querySelector('#platform-status').closest('.workspace-section');
+    main.querySelector('footer').before(platformStatus);
   }
   if(area){
     document.body.classList.add("studio-platform");

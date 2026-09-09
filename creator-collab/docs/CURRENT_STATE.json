@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-08T16:36:37+00:00",
+  "generated_at": "2026-09-09T10:14:37+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -12,20 +12,14 @@
     ]
   },
   "operations": {
-    "meta_api_status": "DEFERRED_OWNER_VERIFICATION",
+    "meta_api_status": "WAITING_SIGNAL",
     "fiverr_identity_status": "OWNER_REPORTED_VERIFIED",
     "fiverr_gig_status": "DRAFT_LAST_OBSERVED_2026_09_07"
   },
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
-    "state": "SYNC_VERIFIED",
-    "verified_content_commit": "3ac0cb8b3a290633b21a5689e5c7f2d82296b1ff",
-    "verified_at": "2026-09-08T23:04:33+02:00",
-    "remote_branch": "main",
-    "source_branch": "codex/zippoworkz-snapshot-20260908",
-    "evidence": "sessions/2026-09-08-2255-github-sync.md",
-    "scope": "creator-collab source/docs; runtime databases, secrets, backups and unrelated root files excluded"
+    "state": "MANAGED_OUTSIDE_RUNTIME"
   },
   "personas": [
     {
@@ -55,19 +49,11 @@
     },
     "review_required": 3,
     "mix_target_percent": {
-      "ALLTAG_AND_SITUATIONAL_SFW": 70,
-      "GLAMOUR_TEASER_SFW": 30,
-      "ADULT_18_PUBLIC": 0
+      "ALLTAG": 70,
+      "TEASER": 30,
+      "ADULT_18": 0
     },
-    "next_recommended_stage": "PUBLIC_SFW_CONTEXTUAL_GLAMOUR",
-    "direction": {
-      "effective_date": "2026-09-08",
-      "public_scope": "SFW + PUBLIC_SFW only",
-      "principle": "70% believable everyday, setting, action and personality; 30% tasteful glamour/sexy tease with context.",
-      "leona": "urban, stylish, glamorous; city, fashion, home and occasional gym",
-      "mara": "rural, strong, sporty; farm/outdoor, gym, casual daily life and leisure",
-      "adult_public_planning": "DISABLED"
-    }
+    "next_recommended_stage": "TEASER"
   },
   "assets": {
     "total": 45,
@@ -94,24 +80,23 @@
     "mock": 5,
     "manual_analytics_events": 2,
     "local_queue": {
-      "LOCAL_SCHEDULED": 1,
-      "NEEDS_RESCHEDULE_REVIEW": 1,
+      "NEEDS_RESCHEDULE_REVIEW": 2,
       "PUBLISHED": 2
     },
     "instagram_channel_real_live": true,
     "meta_graph_automation_proof": "not_yet_proven"
   },
   "background_runs": {
-    "COMPLETE": 4
+    "COMPLETE": 5
   },
   "engagement": {
     "real_post_proposals": 8,
     "execution": "manual-owner-only"
   },
   "finance": {
-    "cost_eur": 0.0,
-    "revenue_eur": 0.0,
-    "adworks_real_revenue_eur": 0.0,
+    "cost_eur": 0,
+    "revenue_eur": 0,
+    "adworks_real_revenue_eur": 0,
     "adworks_dry_run_revenue_eur": 123.45,
     "funnel_events_real": 0,
     "funnel_events_dry_run": 4,
@@ -119,14 +104,15 @@
   },
   "remote": {
     "active": true,
-    "started_at": "2026-09-08T18:38:48+02:00",
     "host": "192.168.188.131",
     "port": 4180,
-    "auth": "password"
+    "auth": "password",
+    "verified_at": "2026-09-09T10:14:38.078Z",
+    "scope": "LAN_ONLY"
   },
   "tests": {
     "status": "passed",
-    "passed": 144,
+    "passed": 156,
     "failed": 0
   },
   "blockers": {
@@ -154,5 +140,89 @@
       "destructive_or_irreversible_actions"
     ]
   },
-  "publishing_mode": "human-gated content review; Instagram/Fiverr live publish pre-approved with safety gates; official adapter available; live state depends on credentials, public HTTPS assets, and identity gates"
+  "publishing_mode": "human-gated content review; Instagram/Fiverr live publish pre-approved with safety gates; official adapter available; live state depends on credentials, public HTTPS assets, and identity gates",
+  "local_ops": {
+    "maintenance": {
+      "last_healthcheck": {
+        "checked_at": "2026-09-09T12:08:21+02:00",
+        "checks": {
+          "Runtime": "OK",
+          "Python": "OK",
+          "VENV": "OK",
+          "SQLite": "OK",
+          "Database": "OK",
+          "Disk": "OK"
+        },
+        "python_version": "3.14.7",
+        "sqlite_version": "3.50.4",
+        "backups": {
+          "found": 44,
+          "healthy": 43,
+          "warnings": 1
+        },
+        "overall": "HEALTHY_WITH_WARNINGS"
+      },
+      "health_date": "2026-09-09",
+      "last_weekly_backup": {
+        "status": "CURRENT",
+        "period": "KW37_2026",
+        "path": "C:\\Users\\ZiPPo\\Documents\\ChatGPT\\Insta baddie\\creator-collab\\backups\\Backup_Woche_KW37_2026_20260907-1341.zip",
+        "size": 2018747,
+        "sha256": "181fcefbc4e931ed5612cc8d8a7e276e177e307b0562a68d5c0635bba0510322",
+        "verified_at": "2026-09-09T12:08:24.310344+02:00"
+      },
+      "last_monthly_backup": {
+        "status": "CURRENT",
+        "period": "2026-09",
+        "path": "C:\\Users\\ZiPPo\\Documents\\ChatGPT\\Insta baddie\\creator-collab\\backups\\Backup_Monat_2026-09_FULL_20260904-2107.zip",
+        "size": 51361570,
+        "sha256": "6d1154028ed27968411634a854859fd4afd6c42c1640b9b38edb0bf72d121ecc",
+        "verified_at": "2026-09-09T12:08:26.331860+02:00"
+      },
+      "backup_check_date": "2026-09-09",
+      "last_run": {
+        "status": "IDLE_CLEAN",
+        "checked_at": "2026-09-09T12:13:31.878102+02:00",
+        "action": "idle",
+        "work": [],
+        "external_actions": false
+      }
+    },
+    "watchdog": {
+      "restart_attempts": [
+        "2026-09-09T06:56:14.1878678+02:00",
+        "2026-09-09T07:01:19.5034184+02:00",
+        "2026-09-09T07:06:24.8428332+02:00"
+      ],
+      "status": "HEALTHY",
+      "checked_at": "2026-09-09T12:13:30.7253839+02:00"
+    },
+    "tasks": {
+      "registered": [
+        "Creator Ops - Daily Healthcheck",
+        "CreatorOps Weekly Recovery",
+        "CreatorOps Monthly Full Recovery"
+      ],
+      "status": "REGISTERED",
+      "checked_at": "2026-09-09T12:07:15.4707758+02:00",
+      "external_actions": false,
+      "supervisor_driver": "existing_per_user_autostart"
+    },
+    "last_failure": {
+      "status": "NONE",
+      "checked_at": "2026-09-09T12:13:31.878102+02:00"
+    }
+  },
+  "autonomy": {
+    "estimate_before": 58,
+    "estimate_after": 73.25,
+    "method": "weighted operational-readiness estimate, not success rate",
+    "rubric": "docs/LOCAL_AUTONOMY.md",
+    "lanes": {
+      "A": "COMPLETE",
+      "B": "WAITING_SIGNAL",
+      "others": "WAITING_SIGNAL"
+    },
+    "meta_evidence": "2026-09-09: /apps/ redirected to public developer homepage, no verified app list; SMS pending status not freshly proven."
+  }
 }

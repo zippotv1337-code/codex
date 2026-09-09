@@ -10,6 +10,7 @@ from .review import ReviewDashboardService
 from .background import BackgroundCoordinator, WAITING_FOR_CAPACITY
 from .publishing import PublishQueueService
 from .model_routing import ModelRoutingPolicy
+from .local_ops import status_snapshot
 
 
 CONTROL_PLANE_SCHEMA = 1
@@ -180,6 +181,7 @@ class ControlPlaneService:
             },
             "state": state,
             "runtime": self.background.health(),
+            "local_ops": status_snapshot(self.state_path.parent.parent),
             "publish_queue": self.publishing.list() if self.publishing else [],
             "capabilities": self.capabilities(),
             "queue": work,

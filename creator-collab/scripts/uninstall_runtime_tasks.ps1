@@ -4,7 +4,10 @@ $ErrorActionPreference = 'Stop'
 $taskNames = @(
   'Creator Ops - Autostart',
   'Creator Ops - Watchdog',
-  'Creator Ops - Scheduler'
+  'Creator Ops - Scheduler',
+  'Creator Ops - Daily Healthcheck',
+  'CreatorOps Weekly Recovery',
+  'CreatorOps Monthly Full Recovery'
 )
 
 if (-not $Apply) {

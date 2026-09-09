@@ -1,5 +1,29 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — Autonomy Lift, 2026-09-09
+
+LANE_A = COMPLETE; LANE_B = WAITING_SIGNAL; ALL_OTHER_LANES = WAITING_SIGNAL.
+SKIP_DONE: ein Backend, vorhandene VENV, Schema 5, vorhandene Oberfläche.
+Windows-Tasks Health/Weekly/Monthly sind registriert, echte Runs jeweils Exit 0.
+Supervisor/Watchdog/Idle arbeiten ohne Codex; kein automatischer Plattformversand.
+Idle-Zweitlauf IDLE_CLEAN; Backoff/Circuit auf isolierter Fixture geprüft.
+Meta-App-Liste nicht sichtbar bestätigt; keine weiteren Onboarding-Retries.
+Details und Stop-/Disable-Wege: docs/LOCAL_AUTONOMY.md.
+Aktuelles Journal: sessions/2026-09-09-local-autonomy.md.
+
+## AKTUELL — Plattform-Dashboard dunkelblau, 2026-09-09
+
+- Owner-Designkorrektur umgesetzt: gemeinsame Seitenleiste mit Plattformen,
+  Logo oben links, Desktop-/Handy-Layout, Instagram 70/30-SFW-Ziel sichtbar.
+- 16 fokussierte Funktionsprüfungen, 4 JS-Prüfungen und 15 authentifizierte
+  produktive Seitenabrufe erfolgreich; mobile Ansicht ohne horizontalen Überlauf.
+- LAN-Dienst und Supervisor laufen wieder mit vollständiger Python-Laufzeit.
+  Passwortschutz aktiv, vier produktive Reviewkarten erhalten.
+- Journal: `sessions/2026-09-09-navy-platform-dashboard.md`.
+- Keine produktiven Testentscheidungen, Plattformposts, erfundenen Antworten
+  oder Git-/GitHub-Zugriffe.
+
+
 ## AKTUELL — GitHub-Sync, 2026-09-08 ab 22:55 Europe/Berlin
 
 - Letzter vollständiger Schritt: Bestands-/Sicherheitsprüfung und 30 Python-/4

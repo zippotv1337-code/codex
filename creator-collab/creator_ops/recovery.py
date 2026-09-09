@@ -13,7 +13,7 @@ from .database import CreatorDatabase
 
 
 SECRET_NAMES = {".env", "id_rsa", "id_ed25519", "cookies.txt"}
-SKIP_PARTS = {".git", "__pycache__", "backups", "exports", ".pytest_cache"}
+SKIP_PARTS = {".git", ".venv", "runtime", "__pycache__", "backups", "exports", ".pytest_cache", "logs", "tmp", "temp", "node_modules"}
 
 
 class RecoveryBackupService:
@@ -54,9 +54,11 @@ class RecoveryBackupService:
                 relative = path.relative_to(self.project_root)
                 if not path.is_file() or any(part in SKIP_PARTS for part in relative.parts):
                     continue
-                if path.name.lower() in SECRET_NAMES or path.suffix.lower() in {".pem", ".key"}:
+                if (path.name.lower() in SECRET_NAMES or path.name.lower().startswith('.env.')
+                    or any(word in path.name.lower() for word in ('password', 'token', 'cookie', 'secret'))
+                    or path.suffix.lower() in {".pem", ".key", ".p12", ".pfx", ".tmp", ".log", ".pid", ".zip", ".lock"}):
                     continue
-                if path.suffix.lower() in {".db", ".sqlite", ".sqlite3"}:
+                if any(suffix in path.name.lower() for suffix in (".db", ".sqlite")):
                     continue
                 if path.name in {"remote_url.txt", "cloudflared.log", "cloudflared.err.log"}:
                     continue
@@ -64,6 +66,9 @@ class RecoveryBackupService:
         files.extend(self._meta_receipt_files())
         for name in (
             "README.md",
+            "AGENTS.md",
+            "ZIPPOWORKZ_MASTER_GOALS.md",
+            "START_ZIPPOWORKZ.ps1",
             "PROJECT_RESUME.md",
             "CURRENT_HANDOFF.md",
             "OWNER_DECISIONS.md",
@@ -133,13 +138,14 @@ class RecoveryBackupService:
         destination.mkdir(parents=True, exist_ok=True)
         stamp = now.strftime("%Y%m%d-%H%M")
         if kind == "weekly":
-            filename = f"Backup_Woche_KW{now.isocalendar().week:02d}_{now.year}_{stamp}.zip"
+            filename = f"Backup_Woche_KW{now.isocalendar().week:02d}_{now.isocalendar().year}_{stamp}.zip"
         elif kind == "monthly":
             filename = f"Backup_Monat_{now:%Y-%m}_FULL_{stamp}.zip"
         else:
             filename = f"Backup_Meilenstein_{stamp}.zip"
         target = destination / filename
         if target.exists():
+            self.validate(target)
             return target
 
         with tempfile.TemporaryDirectory(prefix="creator-recovery-") as temp_name:

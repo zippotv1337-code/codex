@@ -66,10 +66,16 @@ function Resolve-CreatorOpsPython([string]$ProjectRoot) {
     (Join-Path $ProjectRoot '.venv\Scripts\python.exe'),
     (Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe')
   )
-  foreach ($candidate in $candidates) {
-    if (Test-Path -LiteralPath $candidate) { return $candidate }
-  }
   $command = Get-Command python.exe -ErrorAction SilentlyContinue
-  if ($command) { return $command.Source }
-  throw 'Python wurde nicht gefunden. config.toml ist vorhanden, aber keine lokale Python-Runtime.'
+  if ($command) { $candidates += $command.Source }
+  foreach ($candidate in $candidates) {
+    if (-not (Test-Path -LiteralPath $candidate)) { continue }
+    try {
+      # A present executable may be an incomplete venv. Check the capabilities
+      # required at startup before choosing it over the bundled runtime.
+      & $candidate -c "import tomllib, sqlite3; from zoneinfo import ZoneInfo; ZoneInfo('Europe/Berlin')" 2>$null
+      if ($LASTEXITCODE -eq 0) { return $candidate }
+    } catch { continue }
+  }
+  throw 'Keine vollständige Python-Laufzeit mit TOML, SQLite und Europe/Berlin-Zeitzonendaten gefunden.'
 }

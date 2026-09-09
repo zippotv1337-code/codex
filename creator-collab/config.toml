@@ -4,7 +4,7 @@ release = "BETA_1_6_4"
 timezone = "Europe/Berlin"
 
 [operations]
-meta_api_status = "DEFERRED_OWNER_VERIFICATION"
+meta_api_status = "WAITING_SIGNAL"
 fiverr_identity_status = "OWNER_REPORTED_VERIFIED"
 fiverr_gig_status = "DRAFT_LAST_OBSERVED_2026_09_07"
 

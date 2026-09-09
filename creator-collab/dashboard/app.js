@@ -176,7 +176,7 @@ function renderCards() {
     : currentCards.filter((card) => card.content_stage === activeStage);
   cardsRoot.innerHTML = visible.length
     ? visible.map(cardTemplate).join("")
-    : '<div class="empty">Für diesen Filter gibt es morgen kein Paket.</div>';
+    : '<div class="empty">Noch kein Paket in diesem Content-Bereich.</div>';
 }
 
 function renderAttention() {
@@ -363,9 +363,9 @@ async function loadCards() {
     readyCount.textContent = payload.cards.filter((card) => card.can_approve ?? (card.ready && !card.approved && card.status === "READY_FOR_REVIEW")).length;
     activeSummary.textContent = `${currentCards.length} aktiv`;
     attentionSummary.textContent = `${currentAttention.length} offen`;
-    targetDate.textContent = payload.dates?.length
-      ? payload.dates.map(value => new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit" }).format(new Date(`${value}T12:00:00`))).join(" / ")
-      : "keine";
+    const dates = (payload.dates || []).slice().sort();
+    targetDate.textContent = dates.length ? `${dates.length} Termine` : "Keine";
+    targetDate.title = dates.map(value => new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit" }).format(new Date(`${value}T12:00:00`))).join(" · ");
     renderCards();
     renderAttention();
     renderPlanned();

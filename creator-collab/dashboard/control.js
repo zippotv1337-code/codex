@@ -23,6 +23,13 @@ function render(payload) {
       <button data-command="${paused ? "resume" : "pause"}" class="secondary">${paused ? "Fortsetzen" : "Pausieren"}</button>
     </section>
     <p class="control-warning">Diese Steuerung verarbeitet nur lokale, reversible Aufgaben. Owner-Gates bleiben gesperrt.</p>
+    <section class="control-panel"><p class="card-kicker">Lokaler Hintergrundbetrieb</p><h2>Health &amp; Recovery</h2>
+      <p>Letzter Healthcheck: ${esc(payload.local_ops?.maintenance?.last_healthcheck?.checked_at)} · ${esc(payload.local_ops?.maintenance?.last_healthcheck?.overall)}</p>
+      <p>Wochenbackup: ${esc(payload.local_ops?.maintenance?.last_weekly_backup?.verified_at)} · Monatsbackup: ${esc(payload.local_ops?.maintenance?.last_monthly_backup?.verified_at)}</p>
+      <p>Scheduler: ${esc(payload.local_ops?.maintenance?.last_run?.status)} · zuletzt ${esc(payload.local_ops?.maintenance?.last_run?.checked_at)} · Watchdog: ${esc(payload.local_ops?.watchdog?.status)} · zuletzt ${esc(payload.local_ops?.watchdog?.checked_at)}</p>
+      <p>Datenbank: ${esc(payload.local_ops?.maintenance?.last_healthcheck?.checks?.Database)} · Runtime: ${esc(payload.local_ops?.maintenance?.last_healthcheck?.checks?.Runtime)} · Windows-Aufgaben: ${esc(payload.local_ops?.tasks?.status)}</p>
+      <p>Letzter Wartungsfehler: ${esc(payload.local_ops?.last_failure?.status)} · ${esc(payload.local_ops?.last_failure?.checked_at)}</p>
+      <small>Messzeitpunkte beachten; keine Live-Garantie. Pausieren stoppt lokale Wartung. Kein Plattformversand durch Hintergrundjobs.</small></section>
     <div class="control-grid">
       <section class="control-panel"><p class="card-kicker">Fähigkeiten</p><h2>Capability Matrix</h2><ul class="control-list">${payload.capabilities.map(capability).join("")}</ul></section>
       <section class="control-panel"><p class="card-kicker">Nächster sicherer Schritt</p><h2>Arbeitsqueue</h2><ul class="control-list">${payload.queue.length ? payload.queue.map(queueItem).join("") : "<li>Keine lokale Arbeit offen.</li>"}</ul></section>

@@ -1,5 +1,19 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Aktueller Betrieb — 9. September 2026
+
+Local Autonomy ist auf dem bestehenden Core aktiviert. Drei echte Windows-Tasks
+(Daily Healthcheck, Weekly Recovery, Monthly Full Recovery) liefen mit Result 0.
+Bestehender Supervisor: LAN-fähiger begrenzter Watchdog und rein lokaler,
+endlicher Idle-Lauf; kein externer Versand durch Scheduler. Vorhandene VENV
+Python 3.14.7 plus tzdata 2026.3 ist jetzt die verwendete Runtime.
+Schema 5 / data/review_dashboard.db bleiben erhalten. Kontrollseite /control
+zeigt reale zeitgestempelte Background-/Recovery-Zustände.
+META = WAITING_SIGNAL nach einer gezielten Sichtprüfung ohne bestätigte App-Liste.
+Fiverr, zusätzliche Inhalte/Designs und andere Plattformen sind keine aktiven Lanes.
+Gültiger Betriebs-/Stoppvertrag und Bewertungsmaßstab: docs/LOCAL_AUTONOMY.md.
+Neuester Nachweis: sessions/2026-09-09-local-autonomy.md.
+
 ## GitHub-Spiegel — 8. September 2026
 
 Aktueller autorisierter Abgleich einschließlich Codex-Local-Ops-Integration:

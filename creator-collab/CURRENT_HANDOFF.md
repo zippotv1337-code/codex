@@ -1,5 +1,35 @@
 # Aktueller Handoff
 
+## AKTUELL — Local Autonomy abgeschlossen, 9. September 2026
+
+- Maßgeblich: Owner-Auftrag AUTONOMY LIFT vom 09.09.; Lane A lokal, Lane B Meta. Alle anderen Ausführungsbereiche WAITING_SIGNAL. Frühere aktive Reihenfolgen unten sind historisch.
+- Ein Backend, Schema 5, operative DB unverändert. Vorhandene VENV Python 3.14.7 um tzdata 2026.3 ergänzt; Launcher nutzt sie jetzt erfolgreich.
+- Drei Windows-Aufgaben registriert und durch Task Scheduler ausgeführt, jeweils Result 0: Daily Healthcheck, Weekly Recovery, Monthly Full Recovery. Tägliche Fälligkeitsprüfung; Archive maximal einmal pro ISO-Woche/Kalendermonat, vorhandene Archive werden wirklich validiert.
+- Bestehender Supervisor/Benutzer-Autostart bleibt alleiniger Watchdog-/Idle-Treiber (5 Minuten). Kein zweiter Backend- oder Supervisor-Dienst. Watchdog prüft LAN-Adresse korrekt, hat Mutex, Backoff und Restart-Circuit; beschädigter Zustand blockiert.
+- Scheduler ist jetzt hart lokal: keine Publish-Dispatch-Funktion, kein Morning-Content-Generator, keine externen Aktionen selbst bei späteren Live-Flags. Idle ist endlich und liefert beim zweiten Lauf IDLE_CLEAN. Wartung respektiert PAUSED.
+- Bestehende /control zeigt Health, DB, Backup-Zeitpunkte, Scheduler, Watchdog und Aufgabenstatus. Werte sind zeitgestempelte Messungen, keine dauernde Live-Garantie.
+- Meta einmal gezielt geprüft: /apps/ leitete auf öffentliche Developer-Startseite mit „Los geht’s“ statt App-Liste. Ein Öffnen des angebotenen Einstiegs zeigte keine bestätigte Verifikation. SMS-Pending-Zustand nicht neu beweisbar. META / offizielle Analytics / Inbound = WAITING_SIGNAL. Keine App/Token/OTP/Publish-Aktion; keine Schleife. Fiverr nicht erneut geprüft.
+- 70/30 SFW, Charakter-Locks, Vier-Pakete-Review, veröffentlichte Ausschlüsse und getrennte lokale Entscheidungen bleiben erhalten. Keine neuen Content-/Analytics-Datensätze erfunden.
+- Verifikation, Stop-/Disable-Wege und begründete Autonomie-Schätzung: docs/LOCAL_AUTONOMY.md; Journal: sessions/2026-09-09-local-autonomy.md.
+- GitHub: ein abschließender projektbezogener Commit auf vorhandenem codex/zippoworkz-snapshot-20260908 vorgesehen; dessen tatsächlicher Push-Nachweis wird im Abschluss gemeldet. Kein Main-Merge, kein Force-Push, keine Änderung der Sichtbarkeit.
+- Nächster externer Schritt: Owner stellt einen sichtbar abgeschlossenen Meta-Developer-Zugang bereit. Danach Leona official read/preflight; vorher keine weitere Plattformarbeit.
+
+## AKTUELL — Dunkelblaues Plattform-Dashboard, 9. September 2026
+
+- Einheitliche Plattform-Seitenleiste und dunkelblaues Desktop-/Handy-Layout
+  auf den bestehenden Seiten aktiv. Logo oben links; Instagram-Unterpunkte
+  Beiträge, Stories, Kommentare und Nachrichten. Eigene Oberpunkte für Fiverr,
+  Meta, Fanbase, Linktree und 18+. Nicht angebundene Bereiche korrekt bezeichnet.
+- 70/30-Instagram-Ziel sichtbar: Alltag / sexy-sinnlicher SFW-Teaser; explizite
+  Inhalte separat. Vier-Pakete-Review und bestehende lokale Entscheidungen erhalten.
+- Lokaler Dienst wieder gestartet: fehlerhafte Python-Auswahl mit fehlenden
+  Berlin-Zeitzonendaten korrigiert; bestehender Supervisor aktiv, LAN-Health ok,
+  Passwortschutz aktiv. Git/GitHub und Plattformaktionen unangetastet.
+- Verifiziert: 16 Funktions- und 4 JS-Tests, visuelle Desktop-/Handy-Prüfung,
+  15 authentifizierte Seitenabrufe am produktiven Dienst. Details:
+  `sessions/2026-09-09-navy-platform-dashboard.md`.
+
+
 ## AKTUELL — GitHub-Sync, 2026-09-08 ab 22:55 Europe/Berlin
 
 - Expliziter neuer Owner-Auftrag `github sync`: die Beschränkung des vorherigen

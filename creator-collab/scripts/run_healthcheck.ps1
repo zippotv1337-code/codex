@@ -4,9 +4,5 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 . (Join-Path $PSScriptRoot 'runtime_config.ps1')
 $runtimeConfig = Get-CreatorOpsRuntimeConfig -ProjectRoot $projectRoot -ConfigPath $Config
 $python = Resolve-CreatorOpsPython -ProjectRoot $projectRoot
-# Fixed local allowlist. Configuration cannot enable platform actions here.
-Push-Location $projectRoot
-try {
-  & $python -m creator_ops.local_ops idle --config $runtimeConfig.ConfigPath
-  exit $LASTEXITCODE
-} finally { Pop-Location }
+& $python (Join-Path $PSScriptRoot 'healthcheck.py') --config $runtimeConfig.ConfigPath
+exit $LASTEXITCODE

@@ -1,59 +1,51 @@
 param([switch]$Apply,[string]$Config = '')
-
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 . (Join-Path $PSScriptRoot 'runtime_config.ps1')
 $runtimeConfig = Get-CreatorOpsRuntimeConfig -ProjectRoot $projectRoot -ConfigPath $Config
-$starter = Join-Path $projectRoot 'START_CREATOR_OPS.ps1'
-$watchdog = Join-Path $PSScriptRoot 'creator_ops_watchdog.ps1'
-$scheduler = Join-Path $PSScriptRoot 'creator_ops_scheduler.ps1'
-$standalone = Join-Path $projectRoot 'START_STANDALONE_CREATOR_OPS.ps1'
-$startupDirectory = [Environment]::GetFolderPath('Startup')
-$startupFile = Join-Path $startupDirectory 'CreatorOpsStandalone.cmd'
+$python = Resolve-CreatorOpsPython -ProjectRoot $projectRoot
 $plans = @(
-  @{ Name='Creator Ops - Autostart'; Script=$starter; Trigger='AtLogOn' },
-  @{ Name='Creator Ops - Watchdog'; Script=$watchdog; Trigger="Every$($runtimeConfig.WatchdogIntervalMinutes)Minutes" },
-  @{ Name='Creator Ops - Scheduler'; Script=$scheduler; Trigger="Every$($runtimeConfig.SchedulerIntervalMinutes)Minutes" }
+  @{ Name='Creator Ops - Daily Healthcheck'; Script=(Join-Path $PSScriptRoot 'run_healthcheck.ps1'); At='02:45' },
+  @{ Name='CreatorOps Weekly Recovery'; Script=(Join-Path $PSScriptRoot 'run_weekly_backup.ps1'); At='03:00' },
+  @{ Name='CreatorOps Monthly Full Recovery'; Script=(Join-Path $PSScriptRoot 'run_monthly_full_backup.ps1'); At='03:30' }
 )
-
+# The existing per-user CreatorOpsStandalone.cmd owns supervisor startup.
+# Do not install a second watchdog/scheduler alongside its existing single driver.
+$startupFile = Join-Path ([Environment]::GetFolderPath('Startup')) 'CreatorOpsStandalone.cmd'
+foreach ($plan in $plans) {
+  if (-not (Test-Path -LiteralPath $plan.Script)) { throw 'Task entrypoint missing' }
+  $plan.Arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$($plan.Script)`" -Config `"$($runtimeConfig.ConfigPath)`""
+}
 if (-not $Apply) {
   $plans | ForEach-Object {
-    [pscustomobject]@{
-      Task=$_.Name
-      Trigger=$_.Trigger
-      Script=$_.Script
-      Action='PREVIEW ONLY - rerun with -Apply after owner review'
-    }
+    [pscustomobject]@{ Task=$_.Name; Trigger="Daily $($_.At), period-guarded"; Command=$_.Arguments; Python=$python; Action='PREVIEW ONLY' }
   }
   return
 }
-
+# Refuse ambiguous parallel owners instead of silently deleting existing tasks.
+$legacy = @('Creator Ops - Autostart','Creator Ops - Watchdog','Creator Ops - Scheduler') |
+  ForEach-Object { Get-ScheduledTask -TaskName $_ -ErrorAction SilentlyContinue } |
+  Where-Object { $_.State -ne 'Disabled' }
+if ($legacy) { throw 'Legacy runtime tasks need explicit reconciliation before activation.' }
+$registered = @()
 try {
-  $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew `
-    -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 2) -ErrorAction Stop
+  $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
+  $principal = New-ScheduledTaskPrincipal -UserId ([Security.Principal.WindowsIdentity]::GetCurrent().Name) -LogonType Interactive -RunLevel Limited
   foreach ($plan in $plans) {
-    $arguments = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$($plan.Script)`""
-    if ($plan.Name -eq 'Creator Ops - Autostart') { $arguments += ' -NoBrowser' }
-    $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $arguments -ErrorAction Stop
-    if ($plan.Trigger -eq 'AtLogOn') {
-      $trigger = New-ScheduledTaskTrigger -AtLogOn -ErrorAction Stop
-    } else {
-      $minutes = if ($plan.Name -eq 'Creator Ops - Watchdog') { $runtimeConfig.WatchdogIntervalMinutes } else { $runtimeConfig.SchedulerIntervalMinutes }
-      $trigger = New-ScheduledTaskTrigger -Once -At ([DateTime]::Now.AddMinutes(1)) `
-        -RepetitionInterval (New-TimeSpan -Minutes $minutes) `
-        -RepetitionDuration (New-TimeSpan -Days 3650) -ErrorAction Stop
-    }
-    Register-ScheduledTask -TaskName $plan.Name -Action $action -Trigger $trigger `
-      -Settings $settings -Description 'Creator Ops local fail-closed runtime' -Force `
-      -ErrorAction Stop | Out-Null
-    Write-Host "Registered: $($plan.Name)"
+    $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $plan.Arguments -WorkingDirectory $projectRoot
+    $trigger = New-ScheduledTaskTrigger -Daily -At $plan.At
+    Register-ScheduledTask -TaskName $plan.Name -Action $action -Trigger $trigger -Settings $settings -Principal $principal -Description 'ZippoWorkz local-only maintenance; backup period guard; no platform actions' -Force | Out-Null
+    $task = Get-ScheduledTask -TaskName $plan.Name
+    if ($task.Actions.Arguments -ne $plan.Arguments) { throw 'Registered command differs from preview' }
+    $registered += $plan.Name
+    Write-Host "Registered and verified: $($plan.Name)"
   }
+  $status = 'REGISTERED'
 } catch {
-  $accessDenied = $_.Exception -is [System.UnauthorizedAccessException] -or
-    $_.Exception.Message -match 'Zugriff verweigert|Access is denied'
-  if (-not $accessDenied) { throw }
-  $command = "@echo off`r`nstart `"`" powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$standalone`" -Config `"$($runtimeConfig.ConfigPath)`" -NoBrowser`r`n"
-  Set-Content -LiteralPath $startupFile -Value $command -Encoding ascii
-  Write-Host 'Scheduled Tasks benötigen Administratorrechte.' -ForegroundColor Yellow
-  Write-Host "Installiert: sicherer Autostart-Fallback für den aktuellen Windows-Benutzer ($startupFile)." -ForegroundColor Green
+  $status = 'NOT_FULLY_REGISTERED'
+  Write-Warning 'Windows task registration failed. Existing supervisor remains the sole local driver; no elevated retry.'
+} finally {
+  @{ status=$status; checked_at=[DateTimeOffset]::Now.ToString('o'); registered=$registered; supervisor_driver='existing_per_user_autostart'; external_actions=$false } |
+    ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $projectRoot 'data/runtime_tasks_status.json') -Encoding UTF8
 }
+if ($status -ne 'REGISTERED') { exit 1 }

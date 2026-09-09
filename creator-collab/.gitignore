@@ -1,6 +1,7 @@
 data/*.db
 data/*.db-*
 data/*.pid
+data/*.lock
 data/*.json
 data/logs/
 data/meta-receipts/

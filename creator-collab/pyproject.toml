@@ -3,6 +3,7 @@ name = "creator-ops-mvp"
 version = "1.6.4b0"
 description = "Local, approval-first virtual creator operations MVP"
 requires-python = ">=3.12"
+dependencies = ["tzdata>=2026.3; sys_platform == 'win32'"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

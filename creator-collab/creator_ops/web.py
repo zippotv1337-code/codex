@@ -240,6 +240,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 + f'>{label}</a>' for url, label in links
             ) + '</nav>'
             page = re.sub(r'<nav class="main-nav"[^>]*>.*?</nav>', navigation, page, flags=re.DOTALL)
+            page = page.replace('content="#f4efe6"', 'content="#101b2d"')
             page = page.replace('</head>', '<link rel="stylesheet" href="/studio.css"><script src="/studio.js" defer></script></head>')
             body = page.encode("utf-8")
         self.send_response(HTTPStatus.OK)
@@ -272,7 +273,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
         )
         return f"""<!doctype html><html lang="de"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Creator Ops Login</title><style>
+<meta name="theme-color" content="#101b2d"><title>ZippoWorkz · Anmelden</title><style>
 *{{box-sizing:border-box}}body{{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(145deg,#f5ead7,#f7f3eb 45%,#e9efe9);color:#25231f}}
 main{{width:min(92vw,430px);background:rgba(255,255,255,.92);padding:34px;border:1px solid rgba(90,70,45,.12);border-radius:24px;box-shadow:0 24px 70px rgba(80,60,30,.12)}}
 .kicker{{margin:0 0 6px;color:#8b6b43;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.75rem}}h1{{margin:.15rem 0 .4rem;font-size:2rem}}
@@ -280,11 +281,16 @@ main{{width:min(92vw,430px);background:rgba(255,255,255,.92);padding:34px;border
 label{{display:block;margin-bottom:8px;font-weight:700}}input{{width:100%;padding:14px 15px;border:1px solid #cfc5b6;border-radius:12px;font:inherit;background:#fff}}
 button{{width:100%;margin-top:16px;padding:14px 16px;border:0;border-radius:12px;font:inherit;font-weight:800;cursor:pointer;background:#2e4035;color:#fff}}
 small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
-</style></head><body><main><p class="kicker">Private Studio</p><h1>Creator Ops</h1>{message}
+body{{color:#e5efff;background:radial-gradient(ellipse at 30% 20%,#263f644f,transparent 65%),#101b2d;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif}}
+main{{background:#192a42;border-color:#365174;border-radius:24px;box-shadow:0 24px 70px #02081355}}
+.kicker{{color:#849fc5;font-size:10px;letter-spacing:2px}}h1{{letter-spacing:-1px}}h1 span{{color:#559aff}}
+.hint,small{{color:#8fa6c5}}input{{color-scheme:dark;background:#112238;color:#e5efff;border-color:#3a5475}}input:focus{{outline:2px solid #579cff;outline-offset:2px}}
+button{{background:linear-gradient(135deg,#3386fa,#3272df);font-weight:600}}.error{{color:#f4a0a7}}
+</style></head><body><main><p class="kicker">CREATOR WORKSPACE</p><h1>Zippo<span>Workz</span></h1>{message}
 <form method="post" action="/login"><label for="password">Passwort</label>
 <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
 <button type="submit">Anmelden</button></form>
-<small>Das Passwort wird nicht in GitHub oder SQLite gespeichert.</small></main></body></html>"""
+<small>Dein privater Workspace für Leona und Mara.</small></main></body></html>"""
 
     def _auth_gate(self, *, api: bool = False) -> Session | None:
         if not self.auth.enabled:
