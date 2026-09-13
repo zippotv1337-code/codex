@@ -34,7 +34,8 @@ Das Dashboard lief auf `192.168.188.131:4180`. Die Agentenkarte zeigte
 - Frischer Workerstart mit `--model qwen3:8b` lief ohne externe Aktion; bei
   aktiver Dashboard-Bedienung wurde der Status korrekt `PAUSED`.
 - Kontrollierter Server-Neustart: Health `ok`, Datenbank `ok`, Auth aktiv.
-- Fokussierte Tests: **22/22 grün**.
+- Fokussierte Tests: **23/23 grün** (inklusive Regressionstest für den
+  Dashboard-Start mit `qwen3:8b`).
 - Python-Compilecheck für geänderte Module: grün.
 - Externe Aktionen: `NONE`.
 

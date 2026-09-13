@@ -8,7 +8,7 @@ auf `RUN`. Der Worker läuft absichtlich ohne sichtbares PowerShell-Fenster im
 Hintergrund; Status und Ergebnis erscheinen unter `/ai-ops`. Ein erfolgreicher
 Start entfernt einen veralteten Modellfehler aus der Agentenkarte. Der
 verwaltete Server wurde nach der Korrektur kontrolliert neu gestartet; Health
-bleibt `ok`.
+bleibt `ok`. Der Regressionstest für den Dashboard-Start steht bei 23/23.
 
 ## Bildquellen-Abgleich — 13. September 2026
 

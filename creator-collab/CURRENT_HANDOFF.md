@@ -15,7 +15,7 @@
   Auth aktiv. Ein Browser muss sich nach dem Neustart einmal neu anmelden.
 - Frischer qwen3-Workerlauf wurde real gestartet; bei aktiver Owner-Bedienung
   wechselt er erwartungsgemäß in `PAUSED`, ohne externe Aktion.
-- Tests: `tests.test_ai_ops` + `tests.test_control_plane` **22/22 grün**;
+- Tests: `tests.test_ai_ops` + `tests.test_control_plane` **23/23 grün**;
   Python-Compilecheck grün.
 
 ## BILDQUELLEN-ABGLEICH — 13.09.2026, 22:58
