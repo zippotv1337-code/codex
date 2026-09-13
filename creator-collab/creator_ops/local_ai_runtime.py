@@ -244,8 +244,10 @@ class LocalWorker:
             atomic_text(self.service.root / "Handoff" / "LOCAL_AI_RUN_MANIFEST.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
             return {"manifest": "LOCAL_AI_RUN_MANIFEST.json", "status": "READY"}
         if task_id == "content_pack_review":
-            kit = self.service.project / "docs" / "CONTENT_KIT_2026-09-13.md"
-            handoff_kit = self.service.root / "Handoff" / "CONTENT_KIT_2026-09-13"
+            kits = sorted(self.service.project.glob("docs/CONTENT_KIT_*.md"))
+            kit = kits[-1] if kits else self.service.project / "docs" / "CONTENT_KIT_2026-09-13.md"
+            handoff_kits = sorted(p for p in self.service.root.glob("Handoff/CONTENT_KIT_*") if p.is_dir())
+            handoff_kit = handoff_kits[-1] if handoff_kits else self.service.root / "Handoff" / "CONTENT_KIT_2026-09-13"
             images = [p for p in handoff_kit.rglob("*") if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}] if handoff_kit.is_dir() else []
             return {"kit": kit.name if kit.is_file() else None, "manual_upload_images": len(images), "personas": ["Leona", "Mara"] if kit.is_file() else [], "status": "READY_FOR_OWNER_REVIEW" if kit.is_file() and len(images) >= 6 else "MISSING_ASSETS"}
         if task_id == "fiverr_readiness":
@@ -261,7 +263,9 @@ class LocalWorker:
             atomic_text(self.service.root / "Handoff" / "LOCAL_AI_RESEARCH_BACKLOG.md", text)
             return {"status": "WAITING_OWNER_OR_BROWSER_DATA", "backlog": "LOCAL_AI_RESEARCH_BACKLOG.md", "external_actions": "NONE"}
         if task_id == "content_export":
-            payload = {"generated_at": utc_now(), "source": "docs/CONTENT_KIT_2026-09-13.md", "status": "READY_FOR_MANUAL_UPLOAD", "accounts": ["@leonavoss.ai", "@mara.field.ai"], "external_actions": "NONE"}
+            readmes = sorted(self.service.project.glob("docs/README_POSTING_*.md"))
+            source = str(readmes[-1].relative_to(self.service.project)) if readmes else "docs/CONTENT_KIT_2026-09-13.md"
+            payload = {"generated_at": utc_now(), "source": source, "status": "READY_FOR_MANUAL_UPLOAD", "accounts": ["@leonavoss.ai", "@mara.field.ai"], "external_actions": "NONE"}
             atomic_text(self.service.root / "Handoff" / "LOCAL_AI_CONTENT_EXPORT.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
             return {"status": payload["status"], "manifest": "LOCAL_AI_CONTENT_EXPORT.json", "owner_action": "manual_upload_and_record_permalink"}
         if task_id == "active_data_verification":

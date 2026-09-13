@@ -31,6 +31,10 @@ oder Analytics-Werte vor. Der Owner bestätigte den lokalen Datenaufbau.
   `active_data_verification`; externe Aktionen blieben `NONE`.
 - Übergabe, Résumé und `docs/CURRENT_STATE.json` auf den bestätigten lokalen
   Datenstand aktualisiert.
+- Kleine reversible Dashboard-/Worker-Verbesserung ergänzt: Review-Ansicht
+  aktualisiert sich im Hintergrund alle 60 Sekunden (mit Schutz während
+  Owner-Dialogen); lokale AI-Ops-Exports wählen automatisch die neueste
+  datierte Posting-README.
 
 ## Verifiziert
 
@@ -40,6 +44,8 @@ oder Analytics-Werte vor. Der Owner bestätigte den lokalen Datenaufbau.
 - Dashboard-Health `http://192.168.188.131:4180/api/health`: `status=ok`,
   Datenbank `ok`, Runtime `ok`.
 - Keine externen Instagram-/Meta-/Fiverr-Aktionen; keine Fake-Receipts.
+- Worker-Export erfolgreich aktualisiert und verweist auf
+  `docs/README_POSTING_2026-09-14.md`.
 
 ## Entscheidungen
 
@@ -71,4 +77,3 @@ oder Analytics-Werte vor. Der Owner bestätigte den lokalen Datenaufbau.
 2. Nach echter Veröffentlichung Permalink/Receipt über den bestehenden
    Reconcile-Weg eintragen.
 3. Sobald reale Insights vorliegen, 24h/72h/168h-Analytics erfassen.
-

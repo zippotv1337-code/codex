@@ -19,6 +19,11 @@ mit 21/21 Aufgaben abgeschlossen. Es wurden keine externen Aktionen
 ausgeführt; die nächste externe Handlung ist ausschließlich Owner-geführtes
 Prüfen/Veröffentlichen und das Zurücktragen echter Permalinks.
 
+Die Heute-/Review-Ansicht lädt lokale Zustandsänderungen nun automatisch alle
+60 Sekunden nach, ohne offene Owner-Dialoge oder Vorschauen zu unterbrechen.
+Der Posting-Export verwendet automatisch die neueste datierte
+`README_POSTING`-Anleitung.
+
 ## Content-Kit V2 und Local-AI-Nachweis — 13. September 2026
 
 Das erste Content-Kit wurde wegen zu ähnlicher Motive nicht weiterverwendet.

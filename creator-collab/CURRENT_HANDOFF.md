@@ -14,6 +14,11 @@
   Paket: `C:\Zippoworkz\Handoff\CONTENT_KIT_2026-09-14_READY.zip`.
 - Lokale AI-Ops-Queue mit `qwen3:8b`: **21/21 Aufgaben DONE** inklusive
   `active_data_verification`; externe Aktionen: `NONE`.
+- Kleine QoL-Automation: Die Heute-/Review-Ansicht aktualisiert sich bei
+  geänderten lokalen Daten automatisch (60-Sekunden-Intervall), pausiert aber
+  während Owner-Entscheidung, Posting-Kit oder großer Vorschau.
+- Der lokale Posting-Export wählt künftig automatisch die neueste
+  `docs/README_POSTING_*.md`; der aktuelle Export verweist auf den 14.09.-Stand.
 - Nächster Owner-Schritt: beide Karten im Dashboard prüfen und nach echter
   Veröffentlichung den öffentlichen Permalink zurücktragen. Erst dann darf
   ein Datensatz auf `PUBLISHED` wechseln; Analytics bleiben bis zu echten
