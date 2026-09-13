@@ -1,5 +1,18 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Content-Kit V2 und Local-AI-Nachweis — 13. September 2026
+
+Das erste Content-Kit wurde wegen zu ähnlicher Motive nicht weiterverwendet.
+V2 setzt bewusst auf vorhandene, deutlich andere Szenen: Leona Café/Altbau
+und Mara Traktor-/Werkstatt-Check. Eine klare manuelle Posting-README mit
+Account, Reihenfolge, Caption, CTA, Hashtags, KI-Hinweis und Statusübergängen
+liegt unter `docs/README_POSTING_2026-09-13.md`; das ZIP liegt unter
+`C:\Zippoworkz\Handoff\CONTENT_KIT_2026-09-13_V2.zip`.
+
+Die lokale AI-Ops-Seite zeigt nun den letzten Qwen-Worker-Erfolg sichtbar im
+Dashboard. Neue Bildgenerierung war wegen des aktuellen Kontingent-Limits
+nicht möglich; es wurden keine Duplikate erzwungen. Keine externen Aktionen.
+
 ## Content-Kit + AI-Ops-Folgeaufgaben — 13. September 2026
 
 Aus dem vorhandenen Bestand wurden zwei SFW-Carousels für den manuellen

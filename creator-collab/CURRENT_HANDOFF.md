@@ -1,5 +1,18 @@
 # Aktueller Handoff
 
+## CONTENT-KIT V2 + LOCAL-AI-BELEG — 13.09.2026, 23:35
+
+- Das erste Kit wurde wegen zu ähnlicher Motive verworfen; V2 nutzt bewusst
+  andere, bisher nicht verwendete Bestandsszenen (Leona Café/Altbau, Mara
+  Traktor-/Werkstatt-Check).
+- Klare manuelle README erstellt: `docs/README_POSTING_2026-09-13.md`.
+- V2-Paket: `C:\Zippoworkz\Handoff\CONTENT_KIT_2026-09-13_V2.zip`.
+- Das Bildgenerierungs-Kontingent war beim Versuch neuer Motive erschöpft;
+  deshalb wurde nichts Halbgares erzeugt und stattdessen der Bestand genutzt.
+- AI-Ops-Dashboard zeigt jetzt einen sichtbaren `Local AI / Qwen`-Beleg mit
+  Fortschritt, letztem Erfolg, letztem Task und Ergebnisordner.
+- JavaScript- und Python-Compilechecks grün. Keine externen Aktionen.
+
 ## CONTENT + AI-OPS-FOLGEAUFGABEN — 13.09.2026, 23:26
 
 - Zwei manuell postbare SFW-Carousels aus vorhandenen Assets vorbereitet:
