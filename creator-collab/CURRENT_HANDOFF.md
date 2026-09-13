@@ -1,5 +1,24 @@
 # Aktueller Handoff
 
+## LOKALER CONTENT-IMPORT + AI-OPS-VERIFIKATION — 14.09.2026, 00:08
+
+- Nach Owner-Bestätigung wurden vorhandene lokale SFW-Assets über den
+  bestehenden Importweg in die kanonische Datenbank übernommen.
+- Aktueller DB-Stand: **2 Content-Pakete**, **10 Assets**, beide Pakete
+  `READY_FOR_REVIEW` (Leona Content-ID 1, Mara Content-ID 2); keine
+  Publikationen und keine Analytics-Snapshots eingetragen.
+- Vor dem Import wurde ein SQLite-Backup erstellt:
+  `C:\Zippoworkz\backups\creator-ops-backup-pre-content-import-20260914.db`;
+  `PRAGMA integrity_check = ok`.
+- Posting-Anleitung: `docs/README_POSTING_2026-09-14.md`; kopierfertiges
+  Paket: `C:\Zippoworkz\Handoff\CONTENT_KIT_2026-09-14_READY.zip`.
+- Lokale AI-Ops-Queue mit `qwen3:8b`: **21/21 Aufgaben DONE** inklusive
+  `active_data_verification`; externe Aktionen: `NONE`.
+- Nächster Owner-Schritt: beide Karten im Dashboard prüfen und nach echter
+  Veröffentlichung den öffentlichen Permalink zurücktragen. Erst dann darf
+  ein Datensatz auf `PUBLISHED` wechseln; Analytics bleiben bis zu echten
+  Werten `UNKNOWN`/`NULL`.
+
 ## CONTENT-KIT V2 + LOCAL-AI-BELEG — 13.09.2026, 23:35
 
 - Das erste Kit wurde wegen zu ähnlicher Motive verworfen; V2 nutzt bewusst

@@ -33,6 +33,7 @@ TASKS = (
     {"id": "tiktok_analytics_plan", "title": "TikTok-Analytics-Schema lokal vorbereiten", "priority": "P2", "dependencies": ["analytics_read"]},
     {"id": "research_backlog", "title": "Sicheren Research-Backlog für Owner vorbereiten", "priority": "P2", "dependencies": ["source_refs"]},
     {"id": "content_export", "title": "Manuellen Posting-Export prüfen", "priority": "P1", "dependencies": ["content_pack_review"]},
+    {"id": "active_data_verification", "title": "Importierte Content-Daten verifizieren", "priority": "P1", "dependencies": ["content_export"]},
     {"id": "summary", "title": "Lokale KI: geprüfte Ergebnisse zusammenfassen", "priority": "P2", "dependencies": ["tests", "triage", "export_manifest"]},
 )
 

@@ -1,5 +1,24 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Kanonischer Content-Import — 14. September 2026
+
+Nach der Owner-Bestätigung wurden vorhandene lokale SFW-Assets in die
+kanonische SQLite-Datenbank `data/review_dashboard.db` importiert. Der
+operative Stand umfasst jetzt zwei Review-Pakete (`READY_FOR_REVIEW`): Leona
+Voss (Content-ID 1, „Spätsommer in Berlin“) und Mara Field (Content-ID 2,
+„Erste Runde am Morgen“) mit jeweils fünf Assets, insgesamt zehn Assets.
+Publikationen und Analytics bleiben bewusst leer, bis ein echter öffentlicher
+Permalink bzw. echte Insights vorliegen. Das Pre-Import-Backup liegt unter
+`C:\Zippoworkz\backups\creator-ops-backup-pre-content-import-20260914.db` und
+ist integritätsgeprüft. Die aktuelle manuelle Anleitung ist
+`docs/README_POSTING_2026-09-14.md`; ein fertiges Paket liegt unter
+`C:\Zippoworkz\Handoff\CONTENT_KIT_2026-09-14_READY.zip`.
+
+Die sichere lokale AI-Ops-Queue wurde mit `qwen3:8b` erneut ausgeführt und ist
+mit 21/21 Aufgaben abgeschlossen. Es wurden keine externen Aktionen
+ausgeführt; die nächste externe Handlung ist ausschließlich Owner-geführtes
+Prüfen/Veröffentlichen und das Zurücktragen echter Permalinks.
+
 ## Content-Kit V2 und Local-AI-Nachweis — 13. September 2026
 
 Das erste Content-Kit wurde wegen zu ähnlicher Motive nicht weiterverwendet.

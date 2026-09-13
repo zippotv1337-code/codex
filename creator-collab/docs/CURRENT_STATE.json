@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T20:24:40+00:00",
+  "generated_at": "2026-09-13T22:08:33+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -36,10 +36,10 @@
     }
   ],
   "content": {
-    "total": 0,
-    "by_status": {},
-    "by_stage": {},
-    "review_required": 0,
+    "total": 2,
+    "by_status": {"READY_FOR_REVIEW": 2},
+    "by_stage": {"ALLTAG": 2},
+    "review_required": 2,
     "mix_target_percent": {
       "ALLTAG": 70,
       "TEASER": 30,
@@ -48,16 +48,16 @@
     "next_recommended_stage": "ALLTAG"
   },
   "assets": {
-    "total": 0,
-    "real": 0,
+    "total": 10,
+    "real": 10,
     "mock": 0,
-    "by_safety": {},
-    "by_visibility": {}
+    "by_safety": {"SFW": 10},
+    "by_visibility": {"PUBLIC_SFW": 10}
   },
   "reserve": {
-    "dates": [],
-    "days": 0,
-    "through": null
+    "dates": ["2026-09-14"],
+    "days": 1,
+    "through": "2026-09-14"
   },
   "publications": {
     "owner_confirmed_native": 0,
@@ -201,12 +201,12 @@
         "status": "DONE",
         "updated_at": "2026-09-13T14:18:05+00:00",
         "result": {
-          "content_items": 0,
+          "content_items": 2,
           "publications": 0,
-          "assets": 0,
+          "assets": 10,
           "manual_analytics_events": 0,
           "analytics_learning": "UNKNOWN",
-          "next": "RESTORE_OPERATING_DATA",
+          "next": "OWNER_REVIEW_IMPORTED_CONTENT",
           "persona_changes": "NONE"
         },
         "agent": "local_ai",
@@ -245,17 +245,17 @@
       "updated_at": "2026-09-13T18:56:45+00:00"
     },
     "counts": {
-      "content_items": 0,
+      "content_items": 2,
       "publications": 0,
-      "assets": 0,
+      "assets": 10,
       "manual_analytics_events": 0
     },
-    "data_notice": "Kein operativer Content vorhanden. Vorherige Betriebsdatenbank/Backup fehlt.",
+    "data_notice": "Lokaler Content-Bestand importiert: 2 Review-Pakete und 10 SFW-Assets; externe Publikationen/Analytics noch nicht eingetragen.",
     "safety": "LOCAL_ONLY · keine Plattformaktionen · keine Persona-Änderungen",
     "handoff": "C:\\Zippoworkz\\Handoff\\CODEX_RUNTIME_HANDOFF.md",
     "external_actions": "NONE",
     "vps_note": "Kein externer VPS verbunden; OFFLINE bleibt ehrlich.",
     "pause_note": "Pause wird am nächsten sicheren Schritt wirksam; begrenzte Prüfungen dürfen bis zu 60 Sekunden abschließen. Resume startet keinen beendeten Prozess."
   },
-  "runtime_data_status": "INITIALIZED_EMPTY_OPERATING_HISTORY_NOT_RESTORED"
+  "runtime_data_status": "LOCAL_OPERATING_CONTENT_IMPORTED_REVIEW_PENDING"
 }

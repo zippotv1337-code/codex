@@ -264,6 +264,10 @@ class LocalWorker:
             payload = {"generated_at": utc_now(), "source": "docs/CONTENT_KIT_2026-09-13.md", "status": "READY_FOR_MANUAL_UPLOAD", "accounts": ["@leonavoss.ai", "@mara.field.ai"], "external_actions": "NONE"}
             atomic_text(self.service.root / "Handoff" / "LOCAL_AI_CONTENT_EXPORT.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
             return {"status": payload["status"], "manifest": "LOCAL_AI_CONTENT_EXPORT.json", "owner_action": "manual_upload_and_record_permalink"}
+        if task_id == "active_data_verification":
+            counts = self.service.snapshot()["counts"]
+            ready = self.service.db.scalar("SELECT COUNT(*) FROM content_items WHERE status='READY_FOR_REVIEW'")
+            return {"content_items": counts["content_items"], "assets": counts["assets"], "ready_for_review": ready, "status": "OK" if counts["content_items"] and counts["assets"] else "WARNING", "external_actions": "NONE"}
         if task_id == "summary":
             return self.summarize()
         raise ValueError("TASK_NOT_ALLOWLISTED")
