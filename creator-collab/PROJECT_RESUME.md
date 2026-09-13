@@ -1,5 +1,17 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## AI Ops / Qwen-Betrieb — 13. September 2026
+
+AI Ops ist lokal startbereit: `C:\Zippoworkz\START_ZIPPOWORKZ_AI_OPS.cmd`
+startet den bestehenden Dashboard-Core und den begrenzten Worker mit dem
+installierten Modell `qwen3:8b`. Der Lauf arbeitet ausschließlich read-only
+auf den bestehenden Schema-5-Daten, nutzt eine exklusive Lease, pausiert bei
+Owner-Aktivität und schreibt Ergebnisse nur nach `C:\Zippoworkz\Handoff`.
+Health/SQLite sind ok und die fokussierten Tests stehen bei 22/22. Der
+kanonische Datenbestand ist aktuell leer; Qwen kennzeichnet die daraus
+entstehende Zusammenfassung als unbestätigten Entwurf. Historische Inhalte
+werden erst nach einem echten Owner-Backup kontrolliert wiederhergestellt.
+
 ## Verbindlicher Runtime-Stand — 13. September 2026
 
 Neuer ausdrücklicher Root: **C:/Zippoworkz**. Das vorhandene Projekt liegt unter

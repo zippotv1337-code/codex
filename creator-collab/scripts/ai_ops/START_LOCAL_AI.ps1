@@ -1,6 +1,6 @@
 param(
     [string]$Root = 'C:\Zippoworkz',
-    [string]$Model = 'qwen2.5-coder:3b',
+    [string]$Model = 'qwen3:8b',
     [ValidateSet('Start','Pause','Resume','Stop','Status')][string]$Action = 'Start'
 )
 $ErrorActionPreference = 'Stop'

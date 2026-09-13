@@ -1,5 +1,46 @@
 # Aktueller Handoff
 
+## AI OPS / QWEN STARTBEREIT - 13.09.2026, 22:24
+
+- Qwen3:8b ist lokal installiert und als Standardmodell im AI-Ops-Starter
+  gesetzt. Kein Download, keine externe API und keine Plattformaktion.
+- Neuer eindeutiger Starter: `C:\Zippoworkz\START_ZIPPOWORKZ_AI_OPS.cmd`.
+  Das bestehende Dashboard bleibt auf `http://192.168.188.131:4180/ai-ops`.
+- Start-/Statuscheck erfolgreich; Health `ok`, SQLite-Integrität `ok`,
+  fokussierte AI-Ops-/Control-Tests `22/22` grün.
+- Der Root-Starter wurde anschließend einmal real ausgeführt (Rückgabecode 0);
+  ein kleiner Backslash-Quotingfehler in den `.cmd`-Parametern ist behoben.
+- Qwen-Ergebnis liegt unter `C:\Zippoworkz\Handoff\LOCAL_AI_ANALYSIS_DRAFT.md`
+  und ist als unbestätigter Entwurf markiert. Die kanonische DB hat aktuell
+  0 Content/Assets/Publikationen/Analytics; ohne echtes Backup wird nichts
+  rekonstruiert.
+- Externe Aktionen: `NONE`. Keine offenen Owner-Aktionen für den lokalen
+  Start; ein echtes Backup bleibt nur für historische Datenwiederherstellung
+  erforderlich.
+
+## META BUSINESS SUITE READ-ONLY - 13.09.2026, 21:48
+
+- Die geöffnete Meta-Business-Suite im Business-Portfolio `118371629931703`
+  zeigt `@leonavoss.ai` und `@mara.field.ai`.
+- „Content“ und „Erstellen“ mit Beitrag, Reel und Story sind sichtbar; native
+  Terminierung ist damit als UI-Weg vorhanden.
+- Kein Composer geöffnet und kein Planen/Veröffentlichen ausgelöst, da noch kein
+  konkretes Paket und kein Zeitpunkt ausgewählt wurde.
+- Business-Suite-Handoff: `docs/META_BUSINESS_SUITE_HANDOFF.md`.
+- Journal: `sessions/2026-09-13-2148-meta-business-suite-readonly.md`.
+- Der Graph-API-Adapter bleibt davon getrennt und in `config.toml` unconfigured;
+  `META_GRAPH_AUTOMATION_PROOF` bleibt offen.
+
+## DOKUMENTATIONSABSCHLUSS - 13.09.2026, 21:40
+
+- Owner ersetzte den GitHub-Backup-mit-DB-Auftrag durch eine vollständige Text-PDF.
+- Fertig: `output/pdf/ZippoWorkz_Gesamtchronik_2026-09-13.pdf`, 27 Seiten ohne Bilder,
+  Gesamtverlauf, belegter Ist-Stand, offene Aufgaben und 81 datierte Journalbelege.
+- Alle Seiten visuell und auf Text-/Tabellenüberlauf geprüft; keine Zugangsdaten.
+- Journal: `sessions/2026-09-13-2140-codex-gesamtchronik.md`.
+- Keine neue externe Aktion, kein DB-Upload, kein Commit/Push dieses PDF-Abschlusses.
+  Operative Fakten und Gates aus dem folgenden AI-Ops-Abschnitt bleiben unverändert.
+
 ## AKTUELL — 13.09.2026: Local AI / Dashboard aktiviert
 
 Neuester Owner-Auftrag: AI-Ops-Master-PDF umsetzen und Dashboard zeigen.

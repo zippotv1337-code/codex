@@ -1,5 +1,24 @@
 # CODEX RUNTIME HANDOFF
 
+## QWEN-START READY — 13.09.2026, 22:24 Europe/Berlin
+
+- Der offizielle lokale Starter verwendet jetzt das installierte Modell
+  `qwen3:8b` (kein Download und kein Modellwechsel erforderlich).
+- Start: `C:\Zippoworkz\START_ZIPPOWORKZ_AI_OPS.cmd` oder im Dashboard
+  `http://192.168.188.131:4180/ai-ops` den lokalen Lauf starten.
+- Ein begrenzter Start-/Statuscheck lief erfolgreich; Health ist `ok`,
+  SQLite `integrity_check = ok`, und die fokussierten AI-Ops-/Control-Tests
+  sind mit 22/22 grün.
+- Der Root-Starter wurde einmal real ausgeführt (Rückgabecode 0); er verwendet
+  den bestehenden Dashboard-Prozess und startet keinen zweiten Listener.
+- Qwen hat bereits `C:\Zippoworkz\Handoff\LOCAL_AI_ANALYSIS_DRAFT.md`
+  als ausdrücklich unbestätigten Entwurf erzeugt. Der aktuelle kanonische
+  Datenbestand ist leer (0 Content/Assets/Publikationen); historische Daten
+  werden nicht erfunden. Für eine inhaltliche Auswertung braucht der Owner
+  ein echtes Backup oder einen kontrollierten Datenimport.
+- Externe Aktionen bleiben `NONE`; VPS, Meta und Plattform-Publishing sind
+  außerhalb dieses lokalen AI-Ops-Laufs.
+
 generated_at: 2026-09-13T20:59:00+02:00
 source_repo: https://github.com/zippotv1337-code/codex
 source_commit: a6b2ef4b0738d9ce659c5a2947c2e39cf495b17c (implementation; pushed codex/ai-ops-20260913, main unchanged)
