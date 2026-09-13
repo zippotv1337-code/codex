@@ -33,6 +33,7 @@ from .control_plane import ControlPlaneService
 from .adworks import AdWorksService
 from .publishing import PublishQueueService
 from .reconcile import ManualInstagramService
+from .ai_ops import AiOpsService
 
 
 STATIC_ROOT = ROOT / "dashboard"
@@ -232,7 +233,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                      ("/#attention-heading", "Needs Attention"), ("/archive", "Published / Archiv"),
                      ("/analytics", "Analytics"), ("/#planned-heading", "Planung / Queue"),
                      ("/revenue", "Fiverr / Revenue"), ("/offer", "Angebot"),
-                     ("/control", "Betrieb / Status"), ("/collections", "Alben"),
+                     ("/ai-ops", "AI Ops"), ("/control", "Betrieb / Status"), ("/collections", "Alben"),
                      ("/top3", "Top 3"), ("/engagement", "Engagement")]
             current = urlparse(self.path).path
             navigation = '<nav class="main-nav" aria-label="Hauptnavigation">' + ''.join(
@@ -359,6 +360,12 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("collections.html", "text/html; charset=utf-8")
             elif parsed.path == "/control":
                 self._file("control.html", "text/html; charset=utf-8")
+            elif parsed.path == "/ai-ops":
+                self._file("ai-ops.html", "text/html; charset=utf-8")
+            elif parsed.path == "/ai-ops.js":
+                self._file("ai-ops.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/ai-ops.css":
+                self._file("ai-ops.css", "text/css; charset=utf-8")
             elif parsed.path == "/revenue":
                 self._file("revenue.html", "text/html; charset=utf-8")
             elif parsed.path == "/offer":
@@ -457,6 +464,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._json({"items": CollectionService(self.service).list(query.get("persona", [None])[0])})
             elif parsed.path == "/api/control-plane":
                 self._json(self.control_plane.snapshot())
+            elif parsed.path == "/api/ai-ops":
+                self._json(self.ai_ops.snapshot())
             elif parsed.path == "/api/adworks":
                 self._json(self.adworks.dashboard())
             elif parsed.path == "/api/publish-queue":
@@ -536,6 +545,17 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
 
             if session is not None and not self._csrf_valid(session):
                 self._json({"error": "csrf_failed"}, HTTPStatus.FORBIDDEN)
+                return
+
+            if len(parts) == 3 and parts[:2] == ["api", "ai-ops"]:
+                if parts[2] == "start":
+                    if not self.auth.enabled:
+                        self._json({"error": "password_required_for_worker_start"}, HTTPStatus.FORBIDDEN)
+                        return
+                    self.ai_ops.start_local_worker()
+                    self._json(self.ai_ops.snapshot())
+                else:
+                    self._json(self.ai_ops.command(parts[2]))
                 return
 
             if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "approve":
@@ -708,6 +728,7 @@ def create_server(
             "control_plane": control_plane,
             "adworks": adworks,
             "publishing": publishing,
+            "ai_ops": AiOpsService(pipeline.db, asset_root),
         },
     )
     return ThreadingHTTPServer((host, port), handler)

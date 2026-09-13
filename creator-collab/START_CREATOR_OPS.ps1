@@ -6,6 +6,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $env:CREATOR_OPS_PASSWORD) {
+    $env:CREATOR_OPS_PASSWORD = [Environment]::GetEnvironmentVariable('CREATOR_OPS_PASSWORD', 'User')
+}
 $projectRoot = $PSScriptRoot
 . (Join-Path $projectRoot 'scripts\runtime_config.ps1')
 $runtimeConfig = Get-CreatorOpsRuntimeConfig -ProjectRoot $projectRoot -ConfigPath $Config

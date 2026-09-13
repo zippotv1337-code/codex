@@ -1,5 +1,21 @@
 # Aktueller Handoff
 
+## AKTUELL — 13.09.2026: Local AI / Dashboard aktiviert
+
+Neuester Owner-Auftrag: AI-Ops-Master-PDF umsetzen und Dashboard zeigen.
+**Diese Fakten ersetzen die untenstehenden Laufzeitangaben vom 8. September.**
+
+- Bestehendes Projekt jetzt `C:/Zippoworkz/Workspace/codex_ingest/creator-collab`.
+- Dashboard gestartet auf **http://192.168.188.131:4180/ai-ops**, echte Anzeige im Browser geprüft, Navigation links „AI Ops“.
+- Root-Starter `C:/Zippoworkz/START_ZIPPOWORKZ.cmd` und alte Ingest-Einstiege verwenden nun denselben begrenzten lokalen Worker. Kein Löschen/Ersetzen des Workspace, kein unbeschränkter ZIP-/Ollama-CLI-Aufruf.
+- 4/4 lokale Tasks erledigt: Integrity, fokussierte Tests, Daten-Triage, lokaler KI-Analyseentwurf. Modell nicht nachinstalliert: bereits vorhandenes Qwen3:8b; danach entladen.
+- Start/Pause/Resume/Stop, persistente Checkpoints, Singleton-Lease, Aktivitäts-Pause und Aufgaben-Allowlist implementiert. Keine freie modellgenerierte Shell-Ausführung. Worker endet bei erledigter Queue.
+- Wichtig: der übernommene GitHub-Stand enthält **keine operative DB**. Am kanonischen Pfad läuft deshalb ein initialisiertes Schema 5 ohne Content-/Publikationsdaten. Frühere Counts sind historisch, nicht aktuell.
+- VPS ist OFFLINE; kein VPS-Zugang oder sicherer Transport vorhanden. Nicht als laufender Remote-Agent darstellen.
+- Tests: 55 fokussierte Python- und 4 bestehende Frontendtests grün; initialer 409 in einem historischen Scheduling-Test durch veraltetes Datum erklärt und nur Testfixture korrigiert.
+- Ausführbare nächste Übergabe: **C:/Zippoworkz/Handoff/CODEX_RUNTIME_HANDOFF.md**. Local AI schreibt ausschließlich sein LOCAL_AI_RESULT.md/Analyseentwurf und lokale Logs.
+- Plattformen/Personas/Live-Gates unverändert. Kein Post, keine Nachricht, keine Ausgabe von Credentials.
+
 ## AKTUELL — GitHub-Sync, 2026-09-08 ab 22:55 Europe/Berlin
 
 - Expliziter neuer Owner-Auftrag `github sync`: die Beschränkung des vorherigen

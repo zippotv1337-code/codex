@@ -1,6 +1,22 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-08 — Meta is a deferred external lane; local content reserve is the next unblocked operating task.
+Last consolidated: 2026-09-13 — AI Ops local runtime activated; historical operating data missing from new root.
+
+## Current Owner delta — AI-Ops-Masterauftrag, 13 September
+
+Root C:/Zippoworkz; reuse Workspace/codex_ingest/creator-collab.
+Older business/live counts below are historical; current DB has no operating content.
+
+| ID | Goal | Status | Evidence / exit |
+|---|---|---|---|
+| T-007 | Bounded Local-AI start + safe local fallback | DONE | Old destructive unbounded ZIP path replaced; four tasks executed, model unloaded. |
+| T-008 | AI Ops in existing dashboard | DONE | /ai-ops visible in browser; persistent pause/reload/resume and auth/CSRF tests. |
+| T-009 | Restore previous operating data | OWNER_GATE | Owner supplies actual DB/backup; never reconstruct receipts from handoff text. |
+| T-010 | Connect actual VPS watcher | OWNER_GATE | Requires concrete VPS and authenticated transport; no remote heartbeat observed. |
+
+Local worker's fixed initial queue is DONE. It must stop, not invent further tasks.
+M-01 activation smoke is complete for the new runtime, **not** proof of data recovery.
+M-02/M-07 operation is waiting for T-009 in this root. M-03 Meta remains deferred.
 
 ## Purpose and precedence
 

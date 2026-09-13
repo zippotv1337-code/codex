@@ -1,5 +1,23 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Verbindlicher Runtime-Stand — 13. September 2026
+
+Neuer ausdrücklicher Root: **C:/Zippoworkz**. Das vorhandene Projekt liegt unter
+`Workspace/codex_ingest/creator-collab`; keinen zusätzlichen Workspace erzeugen.
+Primärer Desktop-Starter: `C:/Zippoworkz/START_ZIPPOWORKZ.cmd`. Er startet denselben
+Core auf `192.168.188.131:4180` und einen begrenzten sicheren Local-AI-Lauf.
+AI Ops ist Teil des vorhandenen Dashboards: `/ai-ops`, linke Navigation.
+State/Tasks nutzen runtime_events und die vorhandene Lease in Schema 5.
+
+Die frühere DB/VENV fehlen im übernommenen Archiv. Vorhandene gebündelte Python-
+Runtime mit Zeitzonendaten verwendet; keine globale Installation. Kanonischer
+DB-Pfad bleibt data/review_dashboard.db, initialisiert ohne operative Inhalte.
+**Historische Posts/Analytics unten sind keine aktuellen lokalen Datensätze.**
+Wiederherstellung erfordert ein tatsächliches Owner-Backup.
+P0-Startfehler behoben: kein unbeschränkter ZIP-Download, kein Workspace-Replace.
+Policy/Worker in scripts/ai_ops und creator_ops/local_ai_runtime.py; rootseitige
+Wrapper unter _system. Folgeauftrag über Handoff/CODEX_RUNTIME_HANDOFF.md.
+
 ## GitHub-Spiegel — 8. September 2026
 
 Aktueller autorisierter Abgleich einschließlich Codex-Local-Ops-Integration:

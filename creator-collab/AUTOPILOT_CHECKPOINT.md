@@ -1,5 +1,21 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — 13.09.2026, AI Ops Activation (ältere Abschnitte historisch)
+
+- Root: `C:\Zippoworkz`; Projekt **Workspace/codex_ingest/creator-collab**, kein Workspace/codex.
+- Letzter atomarer Schritt: 4/4 sichere lokale Tasks wirklich ausgeführt; Qwen3:8b lieferte einen gekennzeichneten Analyseentwurf, anschließend kein Modell geladen.
+- Angefangen: keiner nach Abschluss. Git-Metadaten im gleichen Bestand sicher angeknüpft; finale Sicherung/Handoff vorhanden.
+- Dashboard aktiv: `http://192.168.188.131:4180/ai-ops`; Health ok, Passwortschutz aktiv.
+- Neue Dateien: creator_ops/ai_ops.py, local_ai_runtime.py, dashboard/ai-ops.*, scripts/ai_ops/*, tests/test_ai_ops.py.
+- Geändert: web.py, studio.js, START_CREATOR_OPS.ps1, ein abgelaufenes Testdatum in test_dashboard.py (keine Scheduling-Logik geändert).
+- Tests: 39 AI-Ops/Auth/Lease/Control + 16 Dashboard/Standalone grün; 4 bestehende Frontendtests grün; JS-Syntax grün. Keine Full Suite behauptet.
+- Backup: ursprüngliche Starter/Web-Dateien unter C:/Zippoworkz/backups/ai-ops-prechange-20260913 erhalten; ai-ops-verified-20260913.db gesichert und Restore integrity=ok geprüft.
+- Daten-Gate: Im neuen Root fehlen die frühere operative DB und Backups. Standard-Schema 5 am kanonischen Pfad initialisiert, **0 Content/Assets/Publikationen/echte Analytics**. Keine Wiederherstellung behaupten.
+- VPS: nicht verbunden; keine Remote-Ausführung behaupten. GitHub-main read-only geprüft: 7db1cb5d803d7cde6cc0c65b1cab5731a842f48f.
+- Pause/Resume: im echten UI gespeichert und Reload-geprüft. Prozesse geben Lease frei; DONE-Tasks werden nicht erneut ausgeführt. Keine Plattformaktionen.
+- Nächste 3: früheres Datenbackup vom Owner → kontrollierter Daten-Restore → VPS-Zugang/Transport erst nach konkreter Angabe. Ohne Signal STOP.
+- Resume: „Lies den obersten aktuellen Block und Handoff/CODEX_RUNTIME_HANDOFF.md. AI Ops ist lokal aktiviert. Keine ZIP-Downloads/Workspace-Ersetzung. Vier DONE-Tasks überspringen. Fehlende Daten nicht aus historischen Counts rekonstruieren. Nur das dokumentierte nächste Gate bearbeiten.“
+
 ## AKTUELL — GitHub-Sync, 2026-09-08 ab 22:55 Europe/Berlin
 
 - Letzter vollständiger Schritt: Bestands-/Sicherheitsprüfung und 30 Python-/4

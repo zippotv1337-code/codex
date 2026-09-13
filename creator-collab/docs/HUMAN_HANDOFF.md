@@ -1,5 +1,14 @@
 # Human Handoff — ZippoWorkz
 
+## Aktuell: 13.09.2026
+
+1. **Frühere Betriebsdatenbank/Backup bereitstellen.** Im Root C:/Zippoworkz und am früher ausdrücklich genannten Projektpfad fehlt die operative DB. Ohne die Originaldaten können alte Posts, Freigaben und Analytics nicht wiederhergestellt werden. Bitte die Backup-Datei bzw. ihren genauen Pfad nennen.
+2. **Nur wenn VPS gewünscht:** genauen VPS/Installationspfad und bereits vorgesehenen sicheren Transport nennen. Keine Ports/Tunnel/Zugänge automatisch öffnen.
+
+Dashboard läuft unter http://192.168.188.131:4180/ai-ops mit vorhandenem Passwort.
+Keine erneute allgemeine Freigabe für die erledigte lokale Implementierung nötig.
+Nachfolgende Gates vom 8. September sind historischer Kontext, kein Auftrag zu neuem Login-/Plattform-Loop.
+
 Stand: 8. September 2026, Europe/Berlin
 
 ## Update aktiviert

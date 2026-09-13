@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#15221e"><title>ZippoWorkz · AI Ops</title>
+<link rel="stylesheet" href="/app.css"><link rel="stylesheet" href="/ai-ops.css"></head>
+<body><main class="shell">
+<header class="topbar"><div class="brand-block"><span class="season-mark">Z</span><div><p class="eyebrow">ZippoWorkz · Local Intelligence</p><h1>AI Ops.</h1><p class="intro">Dein System arbeitet. Du behältst die Kontrolle.</p></div></div><div class="mode">Nur lokal · keine Plattformaktionen</div></header>
+<nav class="main-nav" aria-label="Hauptnavigation"></nav>
+<section class="ops-command"><div><p class="eyebrow">Kontrollzentrum</p><h2>Ein Arbeitsplatz. Drei klare Rollen.</h2><p>Codex integriert. Local AI prüft. VPS beobachtet – sobald verbunden.</p></div>
+<div class="ops-buttons"><button data-command="start">Lokalen Lauf starten</button><button data-command="pause" class="secondary">Pausieren</button><button data-command="resume" class="secondary">Fortsetzen</button><button data-command="stop" class="secondary">Beenden</button></div></section>
+<p id="ops-feedback" role="status" aria-live="polite">Status wird geladen …</p>
+<section id="ops-notice" class="ops-notice" hidden></section>
+<section id="ops-agents" class="ops-agents" aria-label="Agentenstatus"></section>
+<section class="ops-panel"><div class="ops-section-head"><div><p class="eyebrow">Begrenzt statt endlos</p><h2>Lokale Aufgaben</h2></div><span id="ops-progress"></span></div><div id="ops-queue"></div></section>
+<section class="ops-bottom"><div class="ops-panel"><p class="eyebrow">Quelle & Sicherheit</p><h2>Dein Bestand bleibt erhalten.</h2><p id="ops-source"></p><p>Kein ZIP-Austausch, kein Löschen des Workspace, keine automatischen Commits. Fehlende Online-Verbindung → lokaler Fallback.</p></div><div class="ops-panel"><p class="eyebrow">Übergabe & Fortsetzung</p><h2>Kein verlorener Arbeitsstand.</h2><p id="ops-handoff"></p><p id="ops-pause"></p></div></section>
+<footer><span id="ops-updated">Noch nicht geprüft</span><span>Schema 5 · bestehender Dashboard-Core</span></footer>
+</main><script src="/ai-ops.js" defer></script></body></html>

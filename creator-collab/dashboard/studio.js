@@ -36,7 +36,7 @@
   sidebar.id = "studio-sidebar";
   sidebar.innerHTML = '<a class="studio-brand" href="/" aria-label="ZippoWorkz Startseite"><span class="studio-emblem">'+emblem+'</span><span>Zippo<span class="brand-blue">Workz</span><small>CREATOR WORKSPACE</small></span></a>'+
     '<div class="studio-workspace"><span class="workspace-avatar">Z</span><span>Mein Workspace<small>Leona & Mara</small></span><span class="workspace-local">Lokal</span></div>'+
-    '<nav aria-label="Plattformen"><p class="nav-label">WORKSPACE</p><a class="sidebar-overview" href="/">'+icon("grid")+'<span>Übersicht</span></a><p class="nav-label">PLATTFORMEN</p>'+
+    '<nav aria-label="Plattformen"><p class="nav-label">WORKSPACE</p><a class="sidebar-overview" href="/">'+icon("grid")+'<span>Übersicht</span></a><a class="sidebar-overview" href="/ai-ops">'+icon("settings")+'<span>AI Ops</span></a><p class="nav-label">PLATTFORMEN</p>'+
     groups.map(group=>'<details class="platform-group" '+(group.selected?'open':'')+'><summary>'+icon(group.key)+'<span>'+group.name+'</span>'+icon("arrow")+'</summary><div class="platform-children">'+group.children.map(([href,label])=>{
       const active=href===selectedHref || (path==="/engagement" && !location.search && label==="Kommentare");
       return '<a href="'+href+'"'+(active?' class="selected" aria-current="page"':'')+'>'+label+'</a>';
@@ -57,8 +57,13 @@
   document.addEventListener("keydown",event=>{
     if(event.key==="Escape"){document.body.classList.remove("sidebar-open");toggle.setAttribute("aria-expanded","false");}
   });
+  if(path==="/ai-ops") {
+    bar.querySelector(".studio-breadcrumb b").textContent="AI Ops";
+    sidebar.querySelector('a[href="/ai-ops"]').setAttribute("aria-current","page");
+  }
   const title=main.querySelector("h1");
   if(title) title.textContent=labels[path]||"Workspace";
+  if(title && path==="/ai-ops") title.textContent="AI Ops";
   if(path==="/" && !area){
     document.body.classList.add("studio-feed");
     main.querySelector(".intro").textContent="Gute Inhalte. Dein Stil. Alles an einem Ort.";

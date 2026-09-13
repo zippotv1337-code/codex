@@ -1,0 +1,20 @@
+{
+  "protocol_version": "ai-ops-v1",
+  "root": "C:\\Zippoworkz",
+  "mode": "LOCAL_SAFE_ONLY",
+  "outside_root_access": false,
+  "task_allowlist": ["health", "tests", "triage", "summary"],
+  "model_generated_commands": false,
+  "platform_actions": false,
+  "persona_changes": false,
+  "git_push": false,
+  "git_worktree_replace": false,
+  "paid_services": false,
+  "secrets_in_results": false,
+  "maximum_attempts": 2,
+  "maximum_heavy_models": 1,
+  "num_ctx": 4096,
+  "keep_alive": 0,
+  "owner_activity_pause_seconds": 30,
+  "maximum_watch_seconds": 3600
+}

@@ -4,7 +4,7 @@ import json
 import tempfile
 import threading
 import unittest
-from datetime import date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.parse import urlencode
@@ -335,7 +335,8 @@ class ReviewDashboardTests(unittest.TestCase):
     def test_http_owner_can_accept_a_suggested_local_reschedule(self) -> None:
         card = self.service.ensure_date(date(2026, 9, 8))[0]
         self.service.approve(card["content_id"])
-        suggested = "2026-09-09T19:30:00+02:00"
+        # This HTTP contract checks a future suggestion, not a fixed historical date.
+        suggested = (datetime.now(UTC) + timedelta(days=2)).replace(microsecond=0).isoformat()
         with self.pipeline.db.transaction() as connection:
             connection.execute(
                 """
