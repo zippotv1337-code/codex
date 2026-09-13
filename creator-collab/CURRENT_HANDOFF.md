@@ -1,5 +1,23 @@
 # Aktueller Handoff
 
+## AI-OPS-START KORRIGIERT — 13.09.2026, 22:51
+
+- Ursache des „es passiert nichts“-Eindrucks: Der Dashboard-Button startet
+  bewusst einen unsichtbaren Hintergrundprozess; zusätzlich hielt ein alter
+  Worker mit `qwen2.5-coder:3b` die Lease und der Steuerzustand stand auf
+  `STOPPED`.
+- Dashboard-Start nutzt jetzt `qwen3:8b`, setzt bei ausdrücklichem Start
+  `STOPPED`/`PAUSED` auf `RUN` und zeigt in der UI klar, dass kein PowerShell-
+  Fenster geöffnet wird.
+- Bekannter Alt-Fehler `LOCAL_MODEL_NOT_INSTALLED` wird bei einem neuen
+  `ONLINE`-Start bzw. erfolgreichem Idle-Lauf entfernt.
+- Kontrollierter Server-Neustart erfolgreich: Health `ok`, Datenbank `ok`,
+  Auth aktiv. Ein Browser muss sich nach dem Neustart einmal neu anmelden.
+- Frischer qwen3-Workerlauf wurde real gestartet; bei aktiver Owner-Bedienung
+  wechselt er erwartungsgemäß in `PAUSED`, ohne externe Aktion.
+- Tests: `tests.test_ai_ops` + `tests.test_control_plane` **22/22 grün**;
+  Python-Compilecheck grün.
+
 ## BILDQUELLEN-ABGLEICH — 13.09.2026, 22:58
 
 - Im scoped Workspace wurden 20 Contentbilder (10 Leona, 10 Mara), 2 Avatare

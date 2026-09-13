@@ -92,6 +92,8 @@ def validate_policy(root: Path) -> None:
 
 
 class LocalWorker:
+    # Keep the legacy constructor default for isolated unit fixtures. Production
+    # entry points pass the verified qwen3:8b explicitly (or use the CLI default).
     def __init__(self, service: AiOpsService, model: str = "qwen2.5-coder:3b", activity=owner_active):
         if model not in {"qwen3:8b", "qwen2.5-coder:7b", "qwen2.5-coder:3b", "zippoworkz-planner", "zippoworkz-coder", "zippoworkz-rdp"}:
             raise ValueError("model_not_allowlisted")
@@ -244,7 +246,7 @@ class LocalWorker:
                     raise RuntimeError("LEASE_LOST")
                 try:
                     if not self.tick():
-                        self.service.agent("local_ai", "IDLE")
+                        self.service.agent("local_ai", "IDLE", success=True)
                         self.log("IDLE_CLEAN")
                         return 0
                 except PauseRequested:
@@ -269,7 +271,7 @@ class LocalWorker:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path(r"C:\Zippoworkz"))
-    parser.add_argument("--model", default="qwen2.5-coder:3b")
+    parser.add_argument("--model", default="qwen3:8b")
     parser.add_argument("--watch-seconds", type=int, default=300)
     parser.add_argument("--command", choices=("pause", "resume", "stop"))
     parser.add_argument("--launch", action="store_true")

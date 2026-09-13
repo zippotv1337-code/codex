@@ -28,7 +28,7 @@ document.querySelector('.ops-buttons').addEventListener('click',async event=>{
   try{
     render(await api(`/api/ai-ops/${button.dataset.command}`,'POST'));
     if(button.dataset.command==='resume') await api('/api/ai-ops/start','POST');
-    document.querySelector('#ops-feedback').textContent={start:'Start angefordert. Aktive Bedienung pausiert schwere Arbeit automatisch.',pause:'Pause angefordert. Der laufende sichere Schritt wird zuerst abgeschlossen.',resume:'Fortsetzung am gespeicherten Schritt angefordert.',stop:'Beenden angefordert. Queue und Ergebnisse bleiben erhalten.'}[button.dataset.command];
+    document.querySelector('#ops-feedback').textContent={start:'Start angefordert. Der lokale Worker läuft im Hintergrund – deshalb öffnet sich kein PowerShell-Fenster. Status und Ergebnis erscheinen hier.',pause:'Pause angefordert. Der laufende sichere Schritt wird zuerst abgeschlossen.',resume:'Fortsetzung am gespeicherten Schritt angefordert.',stop:'Beenden angefordert. Queue und Ergebnisse bleiben erhalten.'}[button.dataset.command];
     await load();
   }catch(error){document.querySelector('#ops-feedback').textContent=error.message;}
   finally{pending=false;document.querySelectorAll('[data-command]').forEach(b=>b.disabled=false);}

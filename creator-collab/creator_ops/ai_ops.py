@@ -73,8 +73,13 @@ class AiOpsService:
     def control(self) -> str:
         return self.read("control", {"mode": "RUN"})["mode"]
 
-    def start_local_worker(self, model: str = "qwen2.5-coder:3b") -> None:
+    def start_local_worker(self, model: str = "qwen3:8b") -> None:
         # No user-supplied command/paths. The durable lease rejects duplicate workers.
+        # "Lokalen Lauf starten" is an explicit start action, so clear a prior
+        # STOPPED/PAUSED control state before checking/spawning the lease owner.
+        # The separate Fortsetzen button still remains useful for a paused run.
+        if self.control() in {"STOPPED", "PAUSED"}:
+            self.write("control", {"mode": "RUN"})
         lease = self.db.one("SELECT expires_at FROM run_leases WHERE lease_name='zippoworkz-local-ai'")
         if lease and datetime.fromisoformat(lease[0]) > datetime.now(UTC):
             return
@@ -97,7 +102,9 @@ class AiOpsService:
         self.write("agent." + name, {
             "id": name, "status": status, "task": task, "heartbeat": utc_now(),
             "last_success": utc_now() if success else old.get("last_success"),
-            "last_error": error if error is not None else old.get("last_error"),
+            # A completed run supersedes an earlier transient error; keeping it
+            # visible makes a healthy worker look permanently blocked in AI Ops.
+            "last_error": None if (success or (status == "ONLINE" and error is None)) else (error if error is not None else old.get("last_error")),
         })
 
     def task(self, task_id: str, status: str, **fields) -> None:

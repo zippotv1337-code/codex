@@ -1,5 +1,15 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## AI-Ops-Start korrigiert — 13. September 2026
+
+Der Dashboard-Start verwendet jetzt den lokal installierten Worker `qwen3:8b`
+und setzt einen alten `STOPPED`-/`PAUSED`-Zustand beim ausdrücklichen Start
+auf `RUN`. Der Worker läuft absichtlich ohne sichtbares PowerShell-Fenster im
+Hintergrund; Status und Ergebnis erscheinen unter `/ai-ops`. Ein erfolgreicher
+Start entfernt einen veralteten Modellfehler aus der Agentenkarte. Der
+verwaltete Server wurde nach der Korrektur kontrolliert neu gestartet; Health
+bleibt `ok`.
+
 ## Bildquellen-Abgleich — 13. September 2026
 
 Der lokale Creator-Ops-Bestand wurde mit dem öffentlichen GitHub-Spiegel und
