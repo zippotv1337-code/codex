@@ -15,6 +15,7 @@ Older business/live counts below are historical; current DB has no operating con
 | T-010 | Connect actual VPS watcher | OWNER_GATE | Requires concrete VPS and authenticated transport; no remote heartbeat observed. |
 
 Local worker's fixed initial queue is DONE. It must stop, not invent further tasks.
+M-12: current AI-Ops implementation mirrored on codex/ai-ops-20260913 (a6b2ef4), push confirmed; main deliberately unchanged. Evidence: sessions/2026-09-13-2057-codex-ai-ops.md.
 M-01 activation smoke is complete for the new runtime, **not** proof of data recovery.
 M-02/M-07 operation is waiting for T-009 in this root. M-03 Meta remains deferred.
 

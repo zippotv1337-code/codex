@@ -2,7 +2,7 @@
 
 generated_at: 2026-09-13T20:59:00+02:00
 source_repo: https://github.com/zippotv1337-code/codex
-source_commit: base 7db1cb5d803d7cde6cc0c65b1cab5731a842f48f + local AI Ops delta; see final project journal for commit
+source_commit: a6b2ef4b0738d9ce659c5a2947c2e39cf495b17c (implementation; pushed codex/ai-ops-20260913, main unchanged)
 protocol_version: ai-ops-v1
 
 ## GLOBAL RULES
