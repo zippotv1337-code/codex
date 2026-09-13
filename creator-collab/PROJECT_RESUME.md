@@ -1,5 +1,16 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Bildquellen-Abgleich — 13. September 2026
+
+Der lokale Creator-Ops-Bestand wurde mit dem öffentlichen GitHub-Spiegel und
+den dokumentierten Instagram-Referenzen abgeglichen. Es gibt 20 Contentbilder
+(10 Leona, 10 Mara), 2 Persona-Avatare und 1 Fiverr-Cover. GitHub `main`
+enthält dieselben 23 Bilddateien (23/23 Blob-SHA-Matches). Instagram liefert
+12 öffentliche Referenzlinks; die externen Originale wurden nicht geladen und
+bleiben rechteunklar. Ein eindeutiger projektbezogener `@workz`-Bildkanal
+wurde nicht gefunden. Details: `docs/IMAGE_SOURCE_INVENTORY.md` und
+`docs/IMAGE_SOURCE_INVENTORY.json`.
+
 ## AI Ops / Qwen-Betrieb — 13. September 2026
 
 AI Ops ist lokal startbereit: `C:\Zippoworkz\START_ZIPPOWORKZ_AI_OPS.cmd`

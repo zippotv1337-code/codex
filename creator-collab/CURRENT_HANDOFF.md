@@ -1,5 +1,21 @@
 # Aktueller Handoff
 
+## BILDQUELLEN-ABGLEICH — 13.09.2026, 22:58
+
+- Im scoped Workspace wurden 20 Contentbilder (10 Leona, 10 Mara), 2 Avatare
+  und 1 Fiverr-Cover gefunden.
+- Der öffentliche GitHub-Stand `zippotv1337-code/codex`/`main` enthält dieselben
+  23 Bilddateien; read-only Blob-Abgleich: 23/23 identisch.
+- Instagram ist mit 12 dokumentierten öffentlichen Referenzen vertreten
+  (je 6 pro Persona). Es wurden keine externen Bilder heruntergeladen oder
+  als neue Masterdateien importiert; Rechte der älteren Referenzen bleiben
+  `UNKNOWN`.
+- Für `@workz` wurde kein eindeutiger projektbezogener Account/Bildbestand im
+  Workspace oder in der öffentlichen Suche verifiziert. Status:
+  `NOT_FOUND_IN_SCOPED_WORKSPACE`.
+- Inventar: `docs/IMAGE_SOURCE_INVENTORY.md` und
+  `docs/IMAGE_SOURCE_INVENTORY.json`.
+
 ## AI OPS / QWEN STARTBEREIT - 13.09.2026, 22:24
 
 - Qwen3:8b ist lokal installiert und als Standardmodell im AI-Ops-Starter

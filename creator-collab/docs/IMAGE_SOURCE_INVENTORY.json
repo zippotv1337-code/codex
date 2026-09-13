@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-09-13T22:58:00+02:00",
+  "scope": "C:/Zippoworkz/Workspace/codex_ingest/creator-collab",
+  "local_master_images": {
+    "total": 23,
+    "content": 20,
+    "avatars": 2,
+    "fiverr_cover": 1,
+    "leona_content": 10,
+    "mara_content": 10
+  },
+  "github": {
+    "repository": "https://github.com/zippotv1337-code/codex",
+    "branch": "main",
+    "visibility": "public",
+    "image_blob_matches": 23,
+    "image_blob_differences": 0,
+    "source_role": "mirror"
+  },
+  "instagram": {
+    "reference_count": 12,
+    "leona_count": 6,
+    "mara_count": 6,
+    "downloaded": false,
+    "rights_status": "UNKNOWN_FOR_EXTERNAL_REFERENCES",
+    "urls": [
+      "https://www.instagram.com/leonavoss.ai/p/Dc0mbMAgE1M/",
+      "https://www.instagram.com/leonavoss.ai/p/Dc0oRg7APVa/",
+      "https://www.instagram.com/leonavoss.ai/p/Dc0pXtAgBJY/",
+      "https://www.instagram.com/leonavoss.ai/p/Dc0pc2sgDUd/",
+      "https://www.instagram.com/leonavoss.ai/p/Dc0pf8NAAnG/",
+      "https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/",
+      "https://www.instagram.com/mara.field.ai/p/Dc0mATVAF2u/",
+      "https://www.instagram.com/mara.field.ai/p/Dc0oGuxgBWl/",
+      "https://www.instagram.com/mara.field.ai/p/Dc0pmnQAKHP/",
+      "https://www.instagram.com/mara.field.ai/p/Dc0ppmtAPJy/",
+      "https://www.instagram.com/mara.field.ai/p/Dc0pslwgH7R/",
+      "https://www.instagram.com/mara.field.ai/p/Dc3d7CHgO3S/"
+    ]
+  },
+  "workz": {
+    "status": "NOT_FOUND_IN_SCOPED_WORKSPACE",
+    "exact_url": null,
+    "imported": false,
+    "note": "No unambiguous project-owned @workz source was verified."
+  },
+  "policy": {
+    "external_downloads": false,
+    "external_publish": false,
+    "use_local_masters_first": true
+  }
+}
