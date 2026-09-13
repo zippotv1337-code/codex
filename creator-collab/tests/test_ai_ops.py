@@ -93,6 +93,15 @@ class AiOpsTests(unittest.TestCase):
         finally:
             worker.coordinator._release(token)
 
+    def test_dashboard_start_resets_stopped_and_uses_verified_model(self):
+        self.service.command('stop')
+        with patch('creator_ops.ai_ops.subprocess.Popen') as popen:
+            self.service.start_local_worker()
+        self.assertEqual(self.service.control(), 'RUN')
+        args = popen.call_args.args[0]
+        self.assertIn('--model', args)
+        self.assertEqual(args[args.index('--model') + 1], 'qwen3:8b')
+
     def test_stale_heartbeat_is_offline(self):
         self.service.agent('codex', 'WORKING', task='integration')
         state = self.service.snapshot(datetime.now(UTC) + timedelta(minutes=3))
