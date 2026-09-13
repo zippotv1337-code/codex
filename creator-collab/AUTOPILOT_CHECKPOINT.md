@@ -1,5 +1,39 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — CONTENT-IMPORT BESTÄTIGT, 14.09.2026 00:08 Europe/Berlin
+
+- Letzter vollständig erledigter Task: vorhandene lokale SFW-Assets in die
+  kanonische Datenbank `data/review_dashboard.db` importiert und verifiziert.
+- Aktuell angefangener Task: keiner. Content-Import und lokale AI-Ops-
+  Verifikation sind abgeschlossen.
+- Exakter Fortsetzungspunkt: Owner öffnet die Reviewkarten für Leona (ID 1)
+  und Mara (ID 2), prüft die Vorschau und veröffentlicht bei Bedarf manuell;
+  danach den echten öffentlichen Permalink über den bestehenden Reconcile-
+  Weg eintragen. Keine Fake-Receipts erzeugen.
+- Geänderte Dateien: `docs/CURRENT_STATE.json`, `CURRENT_HANDOFF.md`,
+  `PROJECT_RESUME.md`, `docs/README_POSTING_2026-09-14.md`,
+  `creator_ops/ai_ops.py`, `creator_ops/local_ai_runtime.py`,
+  `scripts/ai_ops/PERMISSIONS_POLICY.json` und das datierte Journal.
+- Teststatus: `tests.test_ai_ops` + `tests.test_control_plane` **23/23 grün**;
+  Python-Compilecheck grün; `PRAGMA integrity_check = ok`; Dashboard-Health
+  `http://192.168.188.131:4180/api/health` = `ok`.
+- Backupstatus: Pre-Import-Backup vorhanden und integritätsgeprüft:
+  `C:\Zippoworkz\backups\creator-ops-backup-pre-content-import-20260914.db`.
+- Datenstand: 2 `READY_FOR_REVIEW`-Pakete, 10 lokale SFW-Assets, 0
+  Publikationen, 0 Analytics-Snapshots, 0 Queue-Einträge.
+- Bekannte Blocker: Meta-API-Konfiguration ist lokal nicht gesetzt
+  (User-IDs/Tokens/API-Version fehlen); keine externe API-Aktion ausgeführt.
+- Owner-Gates: Review/öffentliche Veröffentlichung und später echte
+  Analytics-Werte; Credentials niemals in Chat, Git oder DB eintragen.
+- Geparkt: Meta-API-Setup bis zu echten Credentials, Fiverr-Statusprüfung,
+  externe Plattformaktionen und neue Bildgenerierung.
+- Nächste 3 Aufgaben: (1) Owner-Review Leona/Mara, (2) echten Permalink
+  zurücktragen, (3) fällige 24h/72h/168h-Insights erfassen.
+- Exakter Resume-Auftrag: „Lies diesen aktuellen Block, CURRENT_HANDOFF.md
+  und das Journal. Prüfe die zwei `READY_FOR_REVIEW`-Karten. Führe nur nach
+  Owner-Entscheid bzw. echter Plattformbestätigung einen Reconcile-Schritt
+  aus; bis dahin keine externe Aktion und keine neue Architektur.“
+
 ## AKTUELL — 13.09.2026, AI Ops Activation (ältere Abschnitte historisch)
 
 - Root: `C:\Zippoworkz`; Projekt **Workspace/codex_ingest/creator-collab**, kein Workspace/codex.
