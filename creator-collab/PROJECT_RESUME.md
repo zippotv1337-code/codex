@@ -1,5 +1,20 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Content-Kit + AI-Ops-Folgeaufgaben — 13. September 2026
+
+Aus dem vorhandenen Bestand wurden zwei SFW-Carousels für den manuellen
+Upload vorbereitet: Leona „Berlin Golden Hour“ und Mara „Kaffee vor dem Hof“.
+Jeweils drei unterschiedliche Slides, Caption, Hook, CTA, Hashtags,
+Musikoptionen, Alt-Text und Upload-Checkliste stehen in
+`docs/CONTENT_KIT_2026-09-13.md`; das kopierfertige ZIP liegt unter
+`C:\Zippoworkz\Handoff\CONTENT_KIT_2026-09-13.zip`.
+
+Nach dem abgeschlossenen 15er-Lauf wurden fünf lokale Folgeaufgaben für
+Content-Review, Fiverr-Readiness, TikTok-Analytics, Research-Backlog und
+Posting-Export ergänzt und mit `qwen3:8b` ausgeführt. Damit sind 20/20 lokale
+AI-Ops-Aufgaben DONE. Plattformen wurden nicht kontaktiert; externe Daten
+bleiben Owner-/Browser-Signal und werden nicht erfunden.
+
 ## AI-Ops-15er-Lauf abgeschlossen — 13. September 2026
 
 Der lokale AI-Ops-Lauf hat alle 15 begrenzten Aufgaben mit `qwen3:8b`

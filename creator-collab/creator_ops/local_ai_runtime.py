@@ -243,6 +243,27 @@ class LocalWorker:
             payload = {"generated_at": utc_now(), "project": "ZippoWorkz", "scope": "local-safe-only", "external_actions": "NONE", "next": "Owner review or provide new local data"}
             atomic_text(self.service.root / "Handoff" / "LOCAL_AI_RUN_MANIFEST.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
             return {"manifest": "LOCAL_AI_RUN_MANIFEST.json", "status": "READY"}
+        if task_id == "content_pack_review":
+            kit = self.service.project / "docs" / "CONTENT_KIT_2026-09-13.md"
+            handoff_kit = self.service.root / "Handoff" / "CONTENT_KIT_2026-09-13"
+            images = [p for p in handoff_kit.rglob("*") if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp"}] if handoff_kit.is_dir() else []
+            return {"kit": kit.name if kit.is_file() else None, "manual_upload_images": len(images), "personas": ["Leona", "Mara"] if kit.is_file() else [], "status": "READY_FOR_OWNER_REVIEW" if kit.is_file() and len(images) >= 6 else "MISSING_ASSETS"}
+        if task_id == "fiverr_readiness":
+            draft = self.service.project / "docs" / "FIVERR_GIG_DRAFT.md"
+            package = self.service.project / "docs" / "FIVERR_GIG1_PACKAGE_CATALOG.md"
+            return {"draft_present": draft.is_file(), "package_catalog_present": package.is_file(), "status": "OWNER_GATE_PUBLIC_PROFILE" if draft.is_file() else "MISSING_LOCAL_DRAFT", "external_actions": "NONE"}
+        if task_id == "tiktok_analytics_plan":
+            payload = {"generated_at": utc_now(), "status": "WAITING_OWNER_DATA", "metrics": ["views", "reach", "likes", "comments", "shares", "saves", "profile_visits", "follows", "link_clicks"], "windows_hours": [24, 72, 168], "source": "manual_or_official_export_only", "external_actions": "NONE"}
+            atomic_text(self.service.root / "Handoff" / "LOCAL_AI_TIKTOK_ANALYTICS_PLAN.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+            return {"status": payload["status"], "manifest": "LOCAL_AI_TIKTOK_ANALYTICS_PLAN.json", "invented_values": False}
+        if task_id == "research_backlog":
+            text = "# Local AI Research Backlog\n\nStatus: WAITING_OWNER_OR_BROWSER_DATA\n\n- Instagram Insights: echte 24/72/168h-Werte exportieren.\n- TikTok: nur offizielle Analytics-Exporte/Owner-Daten verwenden.\n- Fiverr: Gig-Status und öffentliche URL manuell verifizieren.\n- Trend-Research: Quellen und Datum dokumentieren; keine ungeprüften Trends behaupten.\n\nExternal actions: NONE\n"
+            atomic_text(self.service.root / "Handoff" / "LOCAL_AI_RESEARCH_BACKLOG.md", text)
+            return {"status": "WAITING_OWNER_OR_BROWSER_DATA", "backlog": "LOCAL_AI_RESEARCH_BACKLOG.md", "external_actions": "NONE"}
+        if task_id == "content_export":
+            payload = {"generated_at": utc_now(), "source": "docs/CONTENT_KIT_2026-09-13.md", "status": "READY_FOR_MANUAL_UPLOAD", "accounts": ["@leonavoss.ai", "@mara.field.ai"], "external_actions": "NONE"}
+            atomic_text(self.service.root / "Handoff" / "LOCAL_AI_CONTENT_EXPORT.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+            return {"status": payload["status"], "manifest": "LOCAL_AI_CONTENT_EXPORT.json", "owner_action": "manual_upload_and_record_permalink"}
         if task_id == "summary":
             return self.summarize()
         raise ValueError("TASK_NOT_ALLOWLISTED")

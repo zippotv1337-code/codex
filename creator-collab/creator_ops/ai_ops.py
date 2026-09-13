@@ -28,6 +28,11 @@ TASKS = (
     {"id": "queue_audit", "title": "Queue- und Review-Zustände prüfen", "priority": "P1", "dependencies": ["health"]},
     {"id": "docs_consistency", "title": "Handoff-Dokumente auf Konsistenz prüfen", "priority": "P2", "dependencies": ["source_refs", "content_metadata"]},
     {"id": "export_manifest", "title": "Lokalen Ergebnis-Manifest vorbereiten", "priority": "P2", "dependencies": ["asset_hashes", "analytics_learning", "backup_integrity", "docs_consistency", "queue_audit"]},
+    {"id": "content_pack_review", "title": "Postbare Content-Kits lokal prüfen", "priority": "P1", "dependencies": ["inventory", "content_metadata"]},
+    {"id": "fiverr_readiness", "title": "Fiverr-Gig lokal auf Veröffentlichung vorbereiten", "priority": "P1", "dependencies": ["docs_consistency"]},
+    {"id": "tiktok_analytics_plan", "title": "TikTok-Analytics-Schema lokal vorbereiten", "priority": "P2", "dependencies": ["analytics_read"]},
+    {"id": "research_backlog", "title": "Sicheren Research-Backlog für Owner vorbereiten", "priority": "P2", "dependencies": ["source_refs"]},
+    {"id": "content_export", "title": "Manuellen Posting-Export prüfen", "priority": "P1", "dependencies": ["content_pack_review"]},
     {"id": "summary", "title": "Lokale KI: geprüfte Ergebnisse zusammenfassen", "priority": "P2", "dependencies": ["tests", "triage", "export_manifest"]},
 )
 
