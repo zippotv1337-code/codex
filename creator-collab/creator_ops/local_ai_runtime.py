@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import sqlite3
 import subprocess
 import sys
 import threading
@@ -184,6 +185,64 @@ class LocalWorker:
         if task_id == "triage":
             counts = self.service.snapshot()["counts"]
             return {**counts, "analytics_learning": "UNKNOWN" if not counts["manual_analytics_events"] else "REQUIRES_REAL_SNAPSHOT_REVIEW", "next": "RESTORE_OPERATING_DATA" if not counts["content_items"] else "OWNER_REVIEW_EXISTING_CONTENT", "persona_changes": "NONE"}
+        if task_id == "inventory":
+            roots = (self.service.project / "assets", self.service.project / "dashboard" / "assets", self.service.project / "docs" / "assets")
+            files = [p for root in roots if root.is_dir() for p in root.rglob("*") if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp", ".gif"}]
+            payload = {"generated_at": utc_now(), "count": len(files), "leona": sum("leona" in p.as_posix().lower() for p in files), "mara": sum("mara" in p.as_posix().lower() for p in files), "files": [p.relative_to(self.service.project).as_posix() for p in files]}
+            atomic_text(self.service.root / "Handoff" / "LOCAL_AI_ASSET_INVENTORY.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+            return {"assets": len(files), "leona": payload["leona"], "mara": payload["mara"], "manifest": "LOCAL_AI_ASSET_INVENTORY.json"}
+        if task_id == "asset_hashes":
+            source = self.service.root / "Handoff" / "LOCAL_AI_ASSET_INVENTORY.json"
+            inventory = json.loads(source.read_text(encoding="utf-8")) if source.is_file() else {"files": []}
+            rows, seen = [], {}
+            for rel in inventory.get("files", []):
+                path = self.service.project / rel
+                if not path.is_file():
+                    continue
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                rows.append({"path": rel, "sha256": digest, "duplicate_of": seen.get(digest)})
+                seen.setdefault(digest, rel)
+            atomic_text(self.service.root / "Handoff" / "LOCAL_AI_ASSET_HASHES.json", json.dumps({"generated_at": utc_now(), "files": rows}, ensure_ascii=False, indent=2) + "\n")
+            return {"hashed": len(rows), "duplicates": sum(bool(row["duplicate_of"]) for row in rows), "manifest": "LOCAL_AI_ASSET_HASHES.json"}
+        if task_id == "source_refs":
+            path = self.service.project / "docs" / "IMAGE_SOURCE_INVENTORY.json"
+            data = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+            instagram = data.get("instagram", {})
+            github = data.get("github", {})
+            return {"instagram_references": instagram.get("reference_count", 0), "github": github.get("repository", "UNKNOWN"), "github_blob_matches": github.get("image_blob_matches", "UNKNOWN"), "workz": data.get("workz", {}).get("status", "UNKNOWN")}
+        if task_id == "content_metadata":
+            counts = self.service.snapshot()["counts"]
+            return {"content_items": counts["content_items"], "assets": counts["assets"], "missing_operational_data": not bool(counts["content_items"]), "rights_unknown_external": True}
+        if task_id == "analytics_read":
+            count = self.service.db.scalar("SELECT COUNT(*) FROM manual_analytics_events")
+            return {"manual_analytics_events": count, "status": "UNKNOWN" if not count else "AVAILABLE_FOR_REVIEW", "missing_values": "NULL/UNKNOWN"}
+        if task_id == "analytics_learning":
+            count = self.service.db.scalar("SELECT COUNT(*) FROM manual_analytics_events")
+            return {"recommendation": "UNKNOWN" if not count else "REVIEW_REAL_SNAPSHOTS", "basis_events": count, "invented_values": False}
+        if task_id == "backup_check":
+            backup_dir = self.service.root / "backups"
+            files = [p for p in backup_dir.rglob("*") if p.is_file() and p.suffix.lower() == ".db"] if backup_dir.is_dir() else []
+            latest = max(files, key=lambda p: p.stat().st_mtime) if files else None
+            return {"backup_count": len(files), "latest": str(latest) if latest else None, "status": "CURRENT" if latest else "DUE"}
+        if task_id == "backup_integrity":
+            backup_dir = self.service.root / "backups"
+            files = [p for p in backup_dir.rglob("*") if p.is_file() and p.suffix.lower() == ".db"] if backup_dir.is_dir() else []
+            if not files:
+                return {"status": "UNKNOWN", "reason": "NO_BACKUP_FOUND"}
+            latest = max(files, key=lambda p: p.stat().st_mtime)
+            with sqlite3.connect(latest) as connection:
+                integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+            return {"status": "OK" if integrity == "ok" else "WARNING", "integrity": integrity, "backup": str(latest)}
+        if task_id == "queue_audit":
+            return {"publish_queue": self.service.db.scalar("SELECT COUNT(*) FROM publish_queue"), "content_items": self.service.db.scalar("SELECT COUNT(*) FROM content_items"), "external_actions": "NONE"}
+        if task_id == "docs_consistency":
+            required = ("PROJECT_RESUME.md", "CURRENT_HANDOFF.md", "docs/CURRENT_STATE.json", "docs/IMAGE_SOURCE_INVENTORY.md")
+            missing = [name for name in required if not (self.service.project / name).is_file()]
+            return {"required_documents": len(required), "missing": missing, "status": "OK" if not missing else "WARNING"}
+        if task_id == "export_manifest":
+            payload = {"generated_at": utc_now(), "project": "ZippoWorkz", "scope": "local-safe-only", "external_actions": "NONE", "next": "Owner review or provide new local data"}
+            atomic_text(self.service.root / "Handoff" / "LOCAL_AI_RUN_MANIFEST.json", json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+            return {"manifest": "LOCAL_AI_RUN_MANIFEST.json", "status": "READY"}
         if task_id == "summary":
             return self.summarize()
         raise ValueError("TASK_NOT_ALLOWLISTED")

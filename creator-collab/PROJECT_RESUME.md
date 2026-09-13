@@ -10,6 +10,17 @@ Start entfernt einen veralteten Modellfehler aus der Agentenkarte. Der
 verwaltete Server wurde nach der Korrektur kontrolliert neu gestartet; Health
 bleibt `ok`. Der Regressionstest für den Dashboard-Start steht bei 23/23.
 
+## AI-Ops-Aufgaben erweitert — 13. September 2026
+
+Die lokale, sichere Queue umfasst jetzt **15** begrenzte Aufgaben. Zusätzlich
+zu Health, Tests, Triage und Zusammenfassung prüft sie Assets/Hashes,
+Instagram-/GitHub-Referenzen, Content-Metadaten, Analytics/Learning,
+Backup-Status/-Integrität, Queue/Review-Zustände, Dokumentkonsistenz und einen
+lokalen Ergebnis-Manifest. Alle Schritte bleiben read-only bzw. schreiben nur
+secret-freie Handoff-Dateien; Plattformaktionen und Git-Push sind weiterhin
+verboten. Beim Start werden 4 bereits erledigte Schritte übersprungen, 11
+neue Schritte stehen auf `NEXT`.
+
 ## Bildquellen-Abgleich — 13. September 2026
 
 Der lokale Creator-Ops-Bestand wurde mit dem öffentlichen GitHub-Spiegel und
@@ -28,7 +39,7 @@ startet den bestehenden Dashboard-Core und den begrenzten Worker mit dem
 installierten Modell `qwen3:8b`. Der Lauf arbeitet ausschließlich read-only
 auf den bestehenden Schema-5-Daten, nutzt eine exklusive Lease, pausiert bei
 Owner-Aktivität und schreibt Ergebnisse nur nach `C:\Zippoworkz\Handoff`.
-Health/SQLite sind ok und die fokussierten Tests stehen bei 22/22. Der
+Health/SQLite sind ok und die fokussierten Tests stehen bei 23/23. Der
 kanonische Datenbestand ist aktuell leer; Qwen kennzeichnet die daraus
 entstehende Zusammenfassung als unbestätigten Entwurf. Historische Inhalte
 werden erst nach einem echten Owner-Backup kontrolliert wiederhergestellt.

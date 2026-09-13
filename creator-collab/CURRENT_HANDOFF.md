@@ -1,5 +1,20 @@
 # Aktueller Handoff
 
+## AI-OPS-QUEUE ERWEITERT — 13.09.2026, 23:13
+
+- Die sichere lokale AI-Ops-Queue enthält jetzt **15** klar begrenzte Aufgaben:
+  Health, Tests, Triage, Asset-Inventar/Hashes, Quellenabgleich,
+  Content-Metadaten, Analytics/Learning, Backup-Check/-Integrität,
+  Queue-Audit, Dokumentkonsistenz, Ergebnis-Manifest und Zusammenfassung.
+- Persistierter Stand nach dem Start: **4 DONE**, **11 NEXT**. Der Worker läuft
+  mit `qwen3:8b` und bleibt bei Owner-Aktivität automatisch pausiert.
+- Neue lokale Ergebnisse werden nur unter `C:\Zippoworkz\Handoff` geschrieben;
+  keine Plattformaktionen, keine Git-/GitHub-Aktion und keine Secrets.
+- Dashboard muss nach dem Neustart einmal neu geladen und angemeldet werden,
+  damit die 15 Karten sichtbar sind.
+- Tests nach Erweiterung: `tests.test_ai_ops` + `tests.test_control_plane`
+  **23/23 grün**, Policy-Validierung und Python-Compilecheck grün.
+
 ## AI-OPS-START KORRIGIERT — 13.09.2026, 22:51
 
 - Ursache des „es passiert nichts“-Eindrucks: Der Dashboard-Button startet

@@ -47,6 +47,13 @@ protocol_version: ai-ops-v1
 
 ## LOCAL AI — EXECUTABLE NEXT TASKS
 
+Die lokale Queue ist auf 15 begrenzte, sichere Schritte erweitert. Persistierte
+`DONE`-Schritte werden nicht wiederholt; aktuell sind 4 erledigt und 11 als
+`NEXT` vorgemerkt. Die zusätzlichen Schritte prüfen lokal Assets/Hashes,
+Quellen, Metadaten, Analytics/Learning, Backups, Queue und Dokumente und legen
+ein Ergebnis-Manifest im Handoff ab. Es gibt weiterhin keine Plattformaktionen,
+keine modellgenerierten Shell-Befehle und keinen Git-Push.
+
 mode: LOCAL_SAFE_ONLY
 entry: C:/Zippoworkz/START_ZIPPOWORKZ.cmd or dashboard /ai-ops
 queue_source: creator_ops/ai_ops.py TASKS + persisted runtime_events

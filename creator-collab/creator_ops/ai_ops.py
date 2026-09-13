@@ -17,7 +17,18 @@ TASKS = (
     {"id": "health", "title": "Systemgesundheit und Datenbestand prüfen", "priority": "P0", "dependencies": []},
     {"id": "tests", "title": "Fokussierte lokale Runtime-Tests", "priority": "P1", "dependencies": ["health"]},
     {"id": "triage", "title": "Vorhandene Content-/Analytics-Lücken zuordnen", "priority": "P1", "dependencies": ["health"]},
-    {"id": "summary", "title": "Lokale KI: geprüfte Ergebnisse zusammenfassen", "priority": "P2", "dependencies": ["tests", "triage"]},
+    {"id": "inventory", "title": "Lokalen Asset-Bestand inventarisieren", "priority": "P1", "dependencies": ["health"]},
+    {"id": "asset_hashes", "title": "Bild-Hashes und Duplikate prüfen", "priority": "P1", "dependencies": ["inventory"]},
+    {"id": "source_refs", "title": "Instagram-/GitHub-Referenzen abgleichen", "priority": "P1", "dependencies": ["inventory"]},
+    {"id": "content_metadata", "title": "Content-Metadaten auf Vollständigkeit prüfen", "priority": "P1", "dependencies": ["inventory"]},
+    {"id": "analytics_read", "title": "Lokale Analytics-Daten prüfen", "priority": "P1", "dependencies": ["health"]},
+    {"id": "analytics_learning", "title": "Learning-Signale aus echten Daten ableiten", "priority": "P2", "dependencies": ["analytics_read"]},
+    {"id": "backup_check", "title": "Backup-Status prüfen", "priority": "P1", "dependencies": ["health"]},
+    {"id": "backup_integrity", "title": "Letzten Backup-Restore prüfen", "priority": "P1", "dependencies": ["backup_check"]},
+    {"id": "queue_audit", "title": "Queue- und Review-Zustände prüfen", "priority": "P1", "dependencies": ["health"]},
+    {"id": "docs_consistency", "title": "Handoff-Dokumente auf Konsistenz prüfen", "priority": "P2", "dependencies": ["source_refs", "content_metadata"]},
+    {"id": "export_manifest", "title": "Lokalen Ergebnis-Manifest vorbereiten", "priority": "P2", "dependencies": ["asset_hashes", "analytics_learning", "backup_integrity", "docs_consistency", "queue_audit"]},
+    {"id": "summary", "title": "Lokale KI: geprüfte Ergebnisse zusammenfassen", "priority": "P2", "dependencies": ["tests", "triage", "export_manifest"]},
 )
 
 
