@@ -612,3 +612,10 @@ async function registerWebMcp() {
 
 installLogoutButton();
 loadCards().then(registerWebMcp);
+
+// Keep the daily workspace current when a local worker/import changes state.
+// Never refresh while the owner is making a decision or viewing a preview.
+window.setInterval(() => {
+  if (document.hidden || pendingDecision || postingKitState || previewState) return;
+  loadCards();
+}, 60000);
