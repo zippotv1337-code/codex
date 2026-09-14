@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T22:08:33+00:00",
+  "generated_at": "2026-09-14T05:17:59+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -37,38 +37,50 @@
   ],
   "content": {
     "total": 2,
-    "by_status": {"READY_FOR_REVIEW": 2},
-    "by_stage": {"ALLTAG": 2},
-    "review_required": 2,
+    "by_status": {
+      "SCHEDULED": 2
+    },
+    "by_stage": {
+      "ALLTAG": 2
+    },
+    "review_required": 0,
     "mix_target_percent": {
       "ALLTAG": 70,
       "TEASER": 30,
       "ADULT_18": 0
     },
-    "next_recommended_stage": "ALLTAG"
+    "next_recommended_stage": "TEASER"
   },
   "assets": {
     "total": 10,
     "real": 10,
     "mock": 0,
-    "by_safety": {"SFW": 10},
-    "by_visibility": {"PUBLIC_SFW": 10}
+    "by_safety": {
+      "SFW": 10
+    },
+    "by_visibility": {
+      "PUBLIC_SFW": 10
+    }
   },
   "reserve": {
-    "dates": ["2026-09-14"],
+    "dates": [
+      "2026-09-14"
+    ],
     "days": 1,
     "through": "2026-09-14"
   },
   "publications": {
     "owner_confirmed_native": 0,
-    "mock": 0,
+    "mock": 2,
     "manual_analytics_events": 0,
-    "local_queue": {},
+    "local_queue": {
+      "LOCAL_SCHEDULED": 2
+    },
     "instagram_channel_real_live": false,
     "meta_graph_automation_proof": "not_yet_proven"
   },
   "background_runs": {
-    "COMPLETE": 2
+    "COMPLETE": 4
   },
   "engagement": {
     "real_post_proposals": 0,
@@ -89,12 +101,26 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 55,
-    "failed": 0,
-    "frontend_passed": 4,
-    "scope": "focused only; not full suite"
+    "passed": 25,
+    "failed": 0
   },
-  "blockers": {},
+  "blockers": {
+    "meta_owner_verification_or_credentials": 1,
+    "vps_connection_config_missing": 1
+  },
+  "ai_ops": {
+    "protocol_version": "ai-ops-v1",
+    "control": "RUN",
+    "tasks_done": 27,
+    "tasks_total": 27,
+    "local_ai_last_success": "2026-09-14T05:16:03+00:00",
+    "local_ai_runtime_status": "OFFLINE_AFTER_CLEAN_COMPLETION",
+    "model": "qwen3:8b",
+    "scheduled_packages_preflight": 2,
+    "scheduled_packages_ready_local_only": 2,
+    "external_actions": "NONE",
+    "vps_status": "WAITING_OWNER_CONFIG"
+  },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",
     "pre_approved_actions": {
@@ -117,145 +143,5 @@
     ]
   },
   "publishing_mode": "human-gated content review; Instagram/Fiverr live publish pre-approved with safety gates; official adapter available; live state depends on credentials, public HTTPS assets, and identity gates",
-  "ai_ops": {
-    "protocol_version": "ai-ops-v1",
-    "control": "RUN",
-    "agents": [
-      {
-        "id": "codex",
-        "status": "IDLE",
-        "task": null,
-        "heartbeat": "2026-09-13T18:56:45+00:00",
-        "last_success": "2026-09-13T18:56:45+00:00",
-        "last_error": null,
-        "updated_at": "2026-09-13T18:56:45+00:00"
-      },
-      {
-        "id": "local_ai",
-        "status": "OFFLINE",
-        "task": null,
-        "heartbeat": "2026-09-13T20:24:40+00:00",
-        "last_success": "2026-09-13T14:23:21+00:00",
-        "last_error": null,
-        "updated_at": "2026-09-13T20:24:40+00:00"
-      },
-      {
-        "id": "vps",
-        "status": "OFFLINE",
-        "heartbeat": null,
-        "task": null,
-        "last_success": null,
-        "last_error": null
-      }
-    ],
-    "tasks": [
-      {
-        "id": "health",
-        "title": "Systemgesundheit und Datenbestand prüfen",
-        "priority": "P0",
-        "dependencies": [],
-        "attempts": 1,
-        "checkpoint": "COMPLETE",
-        "status": "DONE",
-        "updated_at": "2026-09-13T14:17:59+00:00",
-        "result": {
-          "integrity": "ok",
-          "schema": 5,
-          "content_count": 0,
-          "historical_data_restored": false
-        },
-        "agent": "local_ai",
-        "source": "CODEX_RUNTIME_HANDOFF.md",
-        "project": "ZippoWorkz",
-        "owner_gate": false
-      },
-      {
-        "id": "tests",
-        "title": "Fokussierte lokale Runtime-Tests",
-        "priority": "P1",
-        "dependencies": [
-          "health"
-        ],
-        "attempts": 1,
-        "checkpoint": "COMPLETE",
-        "status": "DONE",
-        "updated_at": "2026-09-13T14:18:05+00:00",
-        "result": {
-          "exit_code": 0,
-          "selection": "test_ai_ops + test_control_plane"
-        },
-        "agent": "local_ai",
-        "source": "CODEX_RUNTIME_HANDOFF.md",
-        "project": "ZippoWorkz",
-        "owner_gate": false
-      },
-      {
-        "id": "triage",
-        "title": "Vorhandene Content-/Analytics-Lücken zuordnen",
-        "priority": "P1",
-        "dependencies": [
-          "health"
-        ],
-        "attempts": 1,
-        "checkpoint": "COMPLETE",
-        "status": "DONE",
-        "updated_at": "2026-09-13T14:18:05+00:00",
-        "result": {
-          "content_items": 2,
-          "publications": 0,
-          "assets": 10,
-          "manual_analytics_events": 0,
-          "analytics_learning": "UNKNOWN",
-          "next": "OWNER_REVIEW_IMPORTED_CONTENT",
-          "persona_changes": "NONE"
-        },
-        "agent": "local_ai",
-        "source": "CODEX_RUNTIME_HANDOFF.md",
-        "project": "ZippoWorkz",
-        "owner_gate": false
-      },
-      {
-        "id": "summary",
-        "title": "Lokale KI: geprüfte Ergebnisse zusammenfassen",
-        "priority": "P2",
-        "dependencies": [
-          "tests",
-          "triage"
-        ],
-        "attempts": 2,
-        "checkpoint": "COMPLETE",
-        "status": "DONE",
-        "updated_at": "2026-09-13T20:24:40+00:00",
-        "result": {
-          "draft": "LOCAL_AI_ANALYSIS_DRAFT.md",
-          "model": "qwen3:8b",
-          "review_required": true
-        },
-        "agent": "local_ai",
-        "source": "CODEX_RUNTIME_HANDOFF.md",
-        "project": "ZippoWorkz",
-        "owner_gate": false
-      }
-    ],
-    "sync": {
-      "status": "DEGRADED",
-      "source_commit": "7db1cb5d803d7cde6cc0c65b1cab5731a842f48f",
-      "source_fingerprint": "sha256:69a33bc68de7b4f905bca5af4f104d29125a1e30b2777f4068eeb08d8e54d3cd",
-      "reason": "LOCAL_CHANGES_PRESERVED",
-      "updated_at": "2026-09-13T18:56:45+00:00"
-    },
-    "counts": {
-      "content_items": 2,
-      "publications": 0,
-      "assets": 10,
-      "manual_analytics_events": 0
-    },
-    "data_notice": "Lokaler Content-Bestand importiert: 2 Review-Pakete und 10 SFW-Assets; externe Publikationen/Analytics noch nicht eingetragen.",
-    "safety": "LOCAL_ONLY · keine Plattformaktionen · keine Persona-Änderungen",
-    "handoff": "C:\\Zippoworkz\\Handoff\\CODEX_RUNTIME_HANDOFF.md",
-    "external_actions": "NONE",
-    "vps_note": "Kein externer VPS verbunden; OFFLINE bleibt ehrlich.",
-    "pause_note": "Pause wird am nächsten sicheren Schritt wirksam; begrenzte Prüfungen dürfen bis zu 60 Sekunden abschließen. Resume startet keinen beendeten Prozess."
-  },
-  "runtime_data_status": "LOCAL_OPERATING_CONTENT_IMPORTED_REVIEW_PENDING"
+  "runtime_data_status": "TWO_OWNER_APPROVED_PACKAGES_LOCAL_SCHEDULED_NOT_LIVE"
 }

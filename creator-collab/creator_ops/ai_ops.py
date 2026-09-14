@@ -34,6 +34,12 @@ TASKS = (
     {"id": "research_backlog", "title": "Sicheren Research-Backlog für Owner vorbereiten", "priority": "P2", "dependencies": ["source_refs"]},
     {"id": "content_export", "title": "Manuellen Posting-Export prüfen", "priority": "P1", "dependencies": ["content_pack_review"]},
     {"id": "active_data_verification", "title": "Importierte Content-Daten verifizieren", "priority": "P1", "dependencies": ["content_export"]},
+    {"id": "scheduled_package_preflight", "title": "Freigegebene Pakete vor Veröffentlichung prüfen", "priority": "P0", "dependencies": ["active_data_verification"]},
+    {"id": "external_readiness_refresh", "title": "Meta- und Fiverr-Bereitschaft sicher prüfen", "priority": "P1", "dependencies": ["scheduled_package_preflight"]},
+    {"id": "analytics_due_windows", "title": "Fällige echte Analytics-Fenster bestimmen", "priority": "P1", "dependencies": ["analytics_read"]},
+    {"id": "approval_backup", "title": "Freigabestand als SQLite-Backup sichern", "priority": "P1", "dependencies": ["scheduled_package_preflight"]},
+    {"id": "vps_readiness", "title": "VPS-Verbindungsbereitschaft ohne Zugriffsdaten prüfen", "priority": "P1", "dependencies": ["health"]},
+    {"id": "operations_summary", "title": "Lokale KI: neuen Betriebsstand zusammenfassen", "priority": "P2", "dependencies": ["external_readiness_refresh", "analytics_due_windows", "approval_backup", "vps_readiness"]},
     {"id": "summary", "title": "Lokale KI: geprüfte Ergebnisse zusammenfassen", "priority": "P2", "dependencies": ["tests", "triage", "export_manifest"]},
 )
 

@@ -1,5 +1,34 @@
 # Aktueller Handoff
 
+## LOCAL-AI-AUTORUN ABGESCHLOSSEN — 14.09.2026, 07:16
+
+- Die sichere AI-Ops-Queue wurde um sechs konkrete Betriebsaufgaben erweitert
+  und real durch den lokalen Worker ausgeführt: **27/27 Aufgaben DONE**.
+- Qwen `qwen3:8b` erstellte nach einem begrenzten Timeout-Fix erfolgreich
+  `C:\Zippoworkz\Handoff\LOCAL_AI_OPERATIONS_SUMMARY.md`; anschließend wurde
+  das Modell entladen und der Worker sauber beendet.
+- Leona Content-ID 1 und Mara Content-ID 2 sind owner-freigegeben,
+  `SCHEDULED` und in der Queue `LOCAL_SCHEDULED` für 19:30 Europe/Berlin.
+  Beide Pakete bestanden den lokalen SFW-/Rechte-/Datei-/Doppelpost-Preflight.
+  **Sie sind nicht live**: Provider ist `mock-draft`, der offizielle Adapter
+  bleibt unconfigured und es existieren weder externe ID noch Permalink.
+- Ergebnisdateien: `LOCAL_AI_SCHEDULED_PREFLIGHT.json`,
+  `LOCAL_AI_EXTERNAL_READINESS.json`, `LOCAL_AI_ANALYTICS_DUE.json`,
+  `LOCAL_AI_VPS_READINESS.json` und `LOCAL_AI_OPERATIONS_SUMMARY.md` unter
+  `C:\Zippoworkz\Handoff`.
+- Freigabestand gesichert und geprüft:
+  `C:\Zippoworkz\backups\creator-ops-backup-ai-ops-approved-20260914.db`;
+  `integrity_check = ok`.
+- Meta: `DEFERRED_OWNER_VERIFICATION`; Fiverr:
+  `READY_FOR_OWNER_PROFILE_CHECK`; reale Publikationen/Analytics: 0/0.
+- VPS wurde bewusst nicht vorgetäuscht: `WAITING_OWNER_CONFIG`, kein
+  Verbindungsversuch und kein Heartbeat. Für den nächsten sicheren Test fehlen
+  Host/IP, Benutzername, Port und Transport/Authentifizierungsmethode.
+- Verifiziert: 25 fokussierte Tests grün, Policy gültig, Python-Compile grün,
+  SQLite-Integrität ok, Foreign-Key-Check leer und Dashboard-Health über
+  `http://192.168.188.131:4180/api/health` = `ok`.
+- Externe Aktionen: `NONE`.
+
 ## LOKALER CONTENT-IMPORT + AI-OPS-VERIFIKATION — 14.09.2026, 00:08
 
 - Nach Owner-Bestätigung wurden vorhandene lokale SFW-Assets über den

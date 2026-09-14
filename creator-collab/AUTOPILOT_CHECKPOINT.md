@@ -1,5 +1,44 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — LOCAL AI AUTORUN DONE, 14.09.2026 07:16 Europe/Berlin
+
+- Letzter vollständig erledigter Task: lokaler Qwen-Betriebsreport nach fünf
+  verifizierten Betriebschecks; AI-Ops steht bei **27/27 DONE**.
+- Aktuell angefangener Task: keiner. Worker und Modell wurden nach sauberem
+  Abschluss beendet/entladen; `control=RUN` bleibt für einen späteren Batch.
+- Exakter Fortsetzungspunkt: keine weitere lokale Aufgabe künstlich erzeugen.
+  Bei echtem neuen Signal entweder (a) offiziellen/native Instagram-Publish
+  der zwei lokalen 19:30-Pakete durchführen und extern bestätigen oder (b)
+  mit vollständiger VPS-Konfiguration einen read-only Verbindungstest machen.
+- Geänderte Dateien: `creator_ops/ai_ops.py`,
+  `creator_ops/local_ai_runtime.py`, `scripts/ai_ops/PERMISSIONS_POLICY.json`,
+  `tests/test_ai_ops.py`, `docs/CURRENT_STATE.json`, `CURRENT_HANDOFF.md`,
+  `PROJECT_RESUME.md`, dieser Checkpoint und das datierte Journal.
+- Teststatus: 25 fokussierte AI-Ops-/Control-Tests grün; Python-Compile und
+  Policy-Validierung grün; Dashboard-Health `ok`; SQLite `integrity_check=ok`;
+  Foreign-Key-Check 0.
+- Backupstatus: `C:\Zippoworkz\backups\creator-ops-backup-ai-ops-approved-20260914.db`
+  vorhanden und integritätsgeprüft.
+- Datenstand: 2 owner-freigegebene Pakete, 10 echte SFW-Assets, 2 lokale
+  Draft-Publikationen, 2 `LOCAL_SCHEDULED`-Queuejobs, 0 extern bestätigte
+  Publikationen, 0 echte Analytics.
+- Bekannte Blocker: Meta `DEFERRED_OWNER_VERIFICATION`; VPS
+  `WAITING_OWNER_CONFIG`; Fiverr benötigt nur noch die reale Profil-/Gig-
+  Zustandsprüfung. Keiner dieser Punkte wird lokal erfunden.
+- Owner-Gates: VPS-Host/IP, Benutzer, Port und sichere Transport-/Auth-Methode;
+  Meta-Freigabe/Credentials außerhalb von Chat/Git/DB; öffentliche Zustände
+  nur nach sichtbarer Bestätigung.
+- Geparkt: neue Contentproduktion, API-Umbau, externe Plattformaktionen und
+  VPS-Verbindung bis zu einem echten Signal.
+- Nächste 3 priorisierte Aufgaben: (1) zwei lokalen Pakete extern sicher
+  veröffentlichen und Permalinks reconciliieren, (2) Fiverr-Gig-Livestatus
+  prüfen, (3) VPS read-only verbinden, sobald Konfiguration vorliegt.
+- Exakter Resume-Auftrag: „Lies diesen obersten Block und das Journal
+  `sessions/2026-09-14-0717-codex-local-ai-autorun.md`. Überspringe die 27
+  DONE-Aufgaben. Arbeite nur das höchste neue reale Signal ab; keine Fake-
+  Publikation, keine erfundenen Analytics und kein VPS-ONLINE ohne echten
+  Heartbeat.“
+
 ## AKTUELL — CONTENT-IMPORT BESTÄTIGT, 14.09.2026 00:08 Europe/Berlin
 
 - Letzter vollständig erledigter Task: vorhandene lokale SFW-Assets in die

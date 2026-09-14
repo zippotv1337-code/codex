@@ -1,5 +1,26 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Local-AI-Autorun und VPS-Readiness — 14. September 2026
+
+Der begrenzte lokale Betriebsworker hat jetzt **27/27** allowlist-basierte
+Aufgaben abgeschlossen. Neu verifiziert wurden die beiden owner-freigegebenen
+Leona-/Mara-Pakete, die secret-freie Meta-/Fiverr-Bereitschaft, echte
+Analytics-Fälligkeiten, ein Approval-Backup und die VPS-Bereitschaft. Qwen
+`qwen3:8b` erstellte die aktuelle, ausdrücklich als KI-Entwurf markierte
+Betriebszusammenfassung unter
+`C:\Zippoworkz\Handoff\LOCAL_AI_OPERATIONS_SUMMARY.md` und wurde danach
+entladen.
+
+Die zwei Pakete stehen lokal auf `SCHEDULED`/`LOCAL_SCHEDULED` (19:30
+Europe/Berlin), sind aber ohne externe ID/URL **nicht live**. Meta bleibt
+`DEFERRED_OWNER_VERIFICATION`; echte Publikationen und Analytics bleiben null.
+Der VPS ist nicht verbunden: ohne Host, Benutzer, Port und sicheren Transport
+wurde weder ein Verbindungsversuch noch ein Heartbeat erfunden. Der gesicherte
+Freigabestand liegt in
+`C:\Zippoworkz\backups\creator-ops-backup-ai-ops-approved-20260914.db` und ist
+integritätsgeprüft. 25 fokussierte Tests, Policy-Validierung, Python-Compile,
+SQLite-Integrität und Dashboard-Health sind grün; externe Aktionen: `NONE`.
+
 ## Kanonischer Content-Import — 14. September 2026
 
 Nach der Owner-Bestätigung wurden vorhandene lokale SFW-Assets in die

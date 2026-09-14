@@ -143,6 +143,27 @@ class AiOpsTests(unittest.TestCase):
         self.assertEqual(self.db.scalar('SELECT COUNT(*) FROM run_leases'), 0)
         self.assertEqual(self.service.snapshot()['agents'][1]['status'], 'OFFLINE')
 
+    def test_new_operations_tasks_remain_local_and_report_unknown_data(self):
+        worker = LocalWorker(self.service, activity=lambda: False)
+        analytics = worker.execute('analytics_due_windows')
+        vps = worker.execute('vps_readiness')
+        readiness = worker.execute('external_readiness_refresh')
+        self.assertEqual(analytics['real_publications'], 0)
+        self.assertEqual(analytics['due_count'], 0)
+        self.assertEqual(vps['status'], 'WAITING_OWNER_CONFIG')
+        self.assertFalse(vps['connection_attempted'])
+        self.assertIn(readiness['meta'], {'BLOCKED', 'DEFERRED_OWNER_VERIFICATION'})
+        self.assertFalse(json.loads((self.root / 'Handoff' / 'LOCAL_AI_VPS_READINESS.json').read_text())['heartbeat_claimed'])
+
+    def test_approval_backup_is_idempotent_and_verified(self):
+        worker = LocalWorker(self.service, activity=lambda: False)
+        first = worker.execute('approval_backup')
+        second = worker.execute('approval_backup')
+        self.assertEqual(first['status'], 'CREATED')
+        self.assertEqual(second['status'], 'CURRENT')
+        self.assertEqual(second['integrity'], 'ok')
+        self.assertTrue(Path(second['backup']).is_file())
+
     def test_policy_fails_closed(self):
         folder = self.root / '_system'
         folder.mkdir()
