@@ -5,12 +5,12 @@
       "display_name": "Milo der Zug",
       "kind": "AI_CREATOR_BRAND",
       "disclosure": "Fiktive, KI-generierte Creator-Marke",
-      "identity_status": "LOCAL_DEFINITION_ONLY",
+      "identity_status": "CHARACTER_REFERENCE_LOCKED",
       "accounts": [
         {
           "platform": "instagram",
-          "public_handle": null,
-          "connection_status": "NOT_CONNECTED",
+          "public_handle": "miloderzug",
+          "connection_status": "PUBLIC_PROFILE_CONFIRMED",
           "default_publish_mode": "APPROVAL"
         },
         {
@@ -22,21 +22,36 @@
       ],
       "formats": {
         "instagram": ["FEED", "REEL", "STORY"],
-        "tiktok": ["VIDEO_9_16"]
+        "tiktok": ["IMAGE_9_16", "VIDEO_9_16"]
       },
       "starter_drafts": [
         {
           "draft_id": "milo-intro-001",
           "platform": "tiktok",
-          "format": "VIDEO_9_16",
-          "title": "Milo stellt sich vor",
-          "hook": "Ein erster kurzer Blick in Milos Welt.",
-          "caption": "Lokaler Metadatenentwurf – noch nicht zur Veröffentlichung freigegeben.",
-          "asset_path": null,
+          "format": "IMAGE_9_16",
+          "title": "Milos erste Fahrt am Morgen",
+          "hook": "Aufstehen, einsteigen: Milo fährt los! 🚂",
+          "caption": "Die Sonne geht auf – und Milo ist schon unterwegs. 🚂☀️ Welches Ziel soll er als Nächstes entdecken?\n\nMilo der Zug ist eine fiktive, KI-generierte Figur.",
+          "cta": "Schreibt Milos nächstes Reiseziel in die Kommentare.",
+          "hashtags": [
+            "#MiloDerZug",
+            "#ZugAbenteuer",
+            "#Kinderwelt",
+            "#Familienzeit",
+            "#KIgeneriert"
+          ],
+          "asset_path": "assets/generated/milo-der-zug/2026-09-14/milo-intro-001/01-morning-station-9x16.png",
+          "character_reference_path": "assets/references/milo-der-zug/milo-character-reference-instagram-20260914.jpg",
+          "character_lock": "MILO_REFERENCE_2026_09_14_V1",
+          "source": "AI_GENERATED_FROM_OWNER_REFERENCE",
+          "rights_status": "AI_GENERATED",
+          "safety_class": "PUBLIC_SFW",
+          "native_ai_label_required": true,
+          "crosspost_targets": ["TIKTOK_PHOTO", "INSTAGRAM_STORY", "INSTAGRAM_REEL_COVER"],
           "aspect_ratio": "9:16",
           "approval_status": "OWNER_REVIEW_REQUIRED",
           "upload_mode": "DRAFT_UPLOAD",
-          "status": "NEEDS_ASSET"
+          "status": "READY_FOR_REVIEW"
         }
       ]
     }

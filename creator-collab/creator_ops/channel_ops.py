@@ -5,6 +5,7 @@ import re
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 
 ALLOWED_DECISIONS = {"approve", "change", "reject"}
@@ -12,6 +13,12 @@ ALLOWED_UPLOAD_MODES = {"DRAFT_UPLOAD", "DIRECT_POST"}
 ALLOWED_METRICS = {
     "views", "likes", "comments", "shares", "saves", "profile_visits",
     "follows", "link_clicks",
+}
+ASSET_MIME_TYPES = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
 }
 
 
@@ -145,12 +152,24 @@ class ChannelOpsService:
         self._write(state)
         return event
 
-    def _asset_exists(self, draft: dict[str, Any]) -> bool:
+    def _resolved_asset(self, draft: dict[str, Any]) -> tuple[Path, str] | None:
         value = draft.get("asset_path")
         if not value:
-            return False
+            return None
         path = (self.project_root / str(value)).resolve()
-        return path.is_relative_to(self.project_root) and path.is_file()
+        content_type = ASSET_MIME_TYPES.get(path.suffix.lower())
+        if not path.is_relative_to(self.project_root) or not path.is_file() or content_type is None:
+            return None
+        return path, content_type
+
+    def _asset_exists(self, draft: dict[str, Any]) -> bool:
+        return self._resolved_asset(draft) is not None
+
+    def asset_preview(self, slug: str, draft_id: str) -> tuple[Path, str] | None:
+        drafts = self._drafts(slug)
+        if draft_id not in drafts:
+            raise KeyError("draft_not_found")
+        return self._resolved_asset(drafts[draft_id])
 
     def _present_draft(self, slug: str, draft: dict[str, Any]) -> dict[str, Any]:
         account = next(
@@ -160,6 +179,12 @@ class ChannelOpsService:
         asset_ready = self._asset_exists(draft)
         owner_approved = draft.get("approval_status") == "OWNER_APPROVED"
         connected = account.get("connection_status") == "CONNECTED"
+        asset_url = (
+            f"/api/channels/{quote(slug, safe='')}/drafts/"
+            f"{quote(str(draft.get('draft_id', '')), safe='')}/asset"
+            if asset_ready
+            else None
+        )
         return {
             **draft,
             "asset_ready": asset_ready,
@@ -178,7 +203,7 @@ class ChannelOpsService:
             "preview": {
                 "aspect_ratio": "9:16",
                 "asset_available": asset_ready,
-                "asset_url": None,
+                "asset_url": asset_url,
             },
         }
 

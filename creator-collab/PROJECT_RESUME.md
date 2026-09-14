@@ -1,5 +1,30 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Meta-Preflight + referenzgebundener Milo-Fallback — 14. September 2026
+
+Der angeforderte P0 wurde fail-closed abgeschlossen. Der echte offizielle
+Meta-Publish ist weiterhin nicht bewiesen: Der lokale Secret-Provider ist
+einsatzbereit, enthält aber 0 konfigurierte Projekt-Aliase; der read-only
+Preflight für Publication 1/Content 1 meldet deshalb reproduzierbar `BLOCKED`
+mit `official_instagram_adapter_not_configured`. Es wurde weder eine externe
+Anfrage noch ein Publish- oder Retry-Versuch ausgelöst.
+
+Als vorgesehener Fallback wurde ein echtes 9:16-Milo-Paket erstellt. Das vom
+Owner gelieferte Instagram-Bild ist jetzt die autoritative Charakterreferenz:
+kleine runde blaue Dampflok, hellblaues Gesicht, große glänzende Augen,
+gelbe Front/Details und rotes Dach. Der erste unpassende moderne Zug wurde
+verworfen und nie importiert. Der neue Entwurf `Milos erste Fahrt am Morgen`
+ist `PUBLIC_SFW`, transparent als KI-generiert gekennzeichnet und im
+ZippoWorkz-Kanal-Dashboard als echtes PNG mit sicherer 9:16-Vorschau sichtbar.
+Das Instagram-Profil `miloderzug` ist öffentlich bestätigt, aber technisch
+nicht als Publish-Transport verbunden; daher bleibt Direct Post korrekt
+gesperrt.
+
+Die Runtime wurde auf `192.168.188.131:4180` kontrolliert neu gestartet. Der
+Live-Smoke-Test lieferte Health `ok`, Preview HTTP 200 `image/png` und einen
+vollständigen Reviewvertrag. 179/179 Tests, JavaScript-Syntax, Python-Compile,
+SQLite-Integrität und Foreign Keys sind grün. Externe Aktionen: `NONE`.
+
 ## Security/Handoff + Milo/TikTok P0 — 14. September 2026
 
 Das Paket `ZIPPOWORKZ_CODEX_PACKAGE_20260914.zip` ist umgesetzt. Die zentrale

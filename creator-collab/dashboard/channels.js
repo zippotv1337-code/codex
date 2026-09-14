@@ -40,15 +40,21 @@ function draftTemplate(brand, draft) {
   const blockers = draft.direct_post_blockers.length
     ? draft.direct_post_blockers.map(item => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")
     : "<li>Alle lokalen Gates erfüllt</li>";
+  const preview = draft.asset_ready && draft.preview.asset_url
+    ? `<div class="vertical-screen has-asset"><img src="${esc(draft.preview.asset_url)}" alt="9:16-Vorschau: ${esc(draft.title)}" /><span>9:16 · PUBLIC SFW</span></div>`
+    : `<div class="vertical-screen"><span>9:16</span><b>Noch kein echtes Video/Bild</b><small>${esc(draft.title)}</small></div>`;
+  const hashtags = Array.isArray(draft.hashtags) ? draft.hashtags.join(" ") : "—";
   return `<article class="channel-draft" data-brand="${esc(brand.slug)}" data-draft="${esc(draft.draft_id)}">
     <div class="vertical-preview">
-      <div class="vertical-screen"><span>9:16</span><b>${draft.asset_ready ? "Asset bereit" : "Noch kein echtes Video/Bild"}</b><small>${esc(draft.title)}</small></div>
+      ${preview}
     </div>
     <div class="channel-draft-copy">
       <p class="card-kicker">${esc(draft.platform)} · ${esc(draft.format)}</p>
       <h2>${esc(draft.title)}</h2>
       <p><b>Hook:</b> ${esc(draft.hook)}</p>
       <p>${esc(draft.caption)}</p>
+      <p><b>CTA:</b> ${esc(draft.cta || "—")}</p>
+      <p class="channel-hashtags">${esc(hashtags)}</p>
       <div class="channel-badges"><span>${esc(draft.status)}</span><span>${esc(draft.approval_status)}</span><span>${esc(draft.upload_mode)}</span></div>
       <label>Review-Hinweis<input data-review-note maxlength="500" placeholder="Optionaler Änderungsgrund" value="${esc(draft.review_note || "")}" /></label>
       <div class="channel-review-actions">

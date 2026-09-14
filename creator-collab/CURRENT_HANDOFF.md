@@ -1,5 +1,34 @@
 # Aktueller Handoff
 
+## META BLOCKED / MILO 9:16 FALLBACK DONE — 14.09.2026, 17:17
+
+- Meta-Credential-Preflight wurde exakt einmal read-only ausgeführt. Ergebnis:
+  `BLOCKED`, Provider `instagram-official-unconfigured`, Fehler
+  `official_instagram_adapter_not_configured`. Der Composite-Secret-Provider
+  ist bereit, aber 0/10 bekannte Aliase sind konfiguriert; Secret-Werte wurden
+  nicht ausgegeben.
+- Keine Meta-Anfrage, kein Publish, kein blinder Retry und kein Fake-Receipt.
+- Milo ist jetzt an die Owner-Referenz gebunden. Autoritative Referenz:
+  `assets/references/milo-der-zug/milo-character-reference-instagram-20260914.jpg`.
+- Der erste generische moderne Zug wurde verworfen und nicht in ZippoWorkz
+  importiert. Finales 9:16-Asset:
+  `assets/generated/milo-der-zug/2026-09-14/milo-intro-001/01-morning-station-9x16.png`.
+- Entwurf `milo-intro-001` / `Milos erste Fahrt am Morgen` ist
+  `READY_FOR_REVIEW`, `PUBLIC_SFW`, transparent KI-gekennzeichnet und durch
+  `MILO_REFERENCE_2026_09_14_V1` charaktergesperrt.
+- Instagram-Handle `miloderzug` ist als öffentlich bestätigtes Profil erfasst,
+  nicht als technischer Publish-Transport. Direct Post bleibt wegen
+  `platform_account_not_connected` und fehlender Entwurfsfreigabe gesperrt.
+- Runtime kontrolliert neu gestartet. Live verifiziert:
+  `http://192.168.188.131:4180/channels`, Asset-Preview HTTP 200 `image/png`,
+  Health `ok`.
+- Verifiziert: 179/179 Tests, JS-Syntax, Python-Compile, SQLite
+  `integrity_check=ok`, Foreign-Key-Check `ok`.
+- Genau eine Owner-Aktion bleibt für Meta: vorhandene Meta-Zugangsdaten im
+  sicheren Secret-Provider unter den vorhandenen Aliasen hinterlegen. Erst
+  danach den read-only Preflight erneut ausführen.
+- Externe Aktionen dieses Runs: `NONE`.
+
 ## SECURITY/HANDOFF + MILO/TIKTOK P0 DONE — 14.09.2026, 12:48
 
 - Paket-Hash geprüft: `5A5A084912A597927324B7D7AE3813467DABBE3910B21EEBF60A208EB49B65AE`.

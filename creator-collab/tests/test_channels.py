@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import base64
 import tempfile
 import threading
 import unittest
@@ -39,6 +40,20 @@ class ChannelOpsTests(unittest.TestCase):
         self.assertEqual(draft["preview"]["aspect_ratio"], "9:16")
         self.assertFalse(draft["asset_ready"])
         self.assertIn("real_9_16_asset_missing", draft["direct_post_blockers"])
+
+    def test_real_milo_asset_gets_safe_preview_url_and_mime_type(self) -> None:
+        draft = self.service.snapshot()["brands"][0]["drafts"][0]
+        target = self.root / draft["asset_path"]
+        target.parent.mkdir(parents=True)
+        target.write_bytes(base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+        ))
+        refreshed = self.service.snapshot()["brands"][0]["drafts"][0]
+        self.assertTrue(refreshed["asset_ready"])
+        self.assertTrue(refreshed["preview"]["asset_url"].endswith("/asset"))
+        preview = self.service.asset_preview("milo-der-zug", "milo-intro-001")
+        self.assertIsNotNone(preview)
+        self.assertEqual(preview[1], "image/png")
 
     def test_direct_post_is_separate_and_fails_closed_at_every_gate(self) -> None:
         with self.assertRaisesRegex(ValueError, "owner_approval_required"):
@@ -80,6 +95,13 @@ class ChannelOpsTests(unittest.TestCase):
         self.assertEqual(self.service.snapshot()["external_actions"], "NONE")
 
     def test_http_dashboard_exposes_value_free_channel_and_security_status(self) -> None:
+        configured = self.service.snapshot()["brands"][0]["drafts"][0]
+        target = self.root / configured["asset_path"]
+        target.parent.mkdir(parents=True)
+        expected = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+        )
+        target.write_bytes(expected)
         database = self.root / "review.db"
         server = create_server(database, port=0, asset_root=self.root)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -93,6 +115,10 @@ class ChannelOpsTests(unittest.TestCase):
             with urlopen(base + "/api/channels", timeout=5) as response:
                 channels = json.load(response)
             self.assertEqual(channels["external_actions"], "NONE")
+            asset_url = channels["brands"][0]["drafts"][0]["preview"]["asset_url"]
+            with urlopen(base + asset_url, timeout=5) as response:
+                self.assertEqual(response.headers.get_content_type(), "image/png")
+                self.assertEqual(response.read(), expected)
             with urlopen(base + "/api/security", timeout=5) as response:
                 security = json.load(response)
             self.assertFalse(security["secret_provider"]["values_exposed"])

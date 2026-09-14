@@ -16,7 +16,7 @@ from http import HTTPStatus
 from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 from zoneinfo import ZoneInfo
 
 from .asset_import import LocalAssetImportService
@@ -410,6 +410,16 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 "/assets/mara-field-avatar.png",
             }:
                 self._file(parsed.path.lstrip("/"), "image/png")
+            elif parsed.path.startswith("/api/channels/") and parsed.path.endswith("/asset"):
+                parts = [unquote(item) for item in parsed.path.strip("/").split("/")]
+                if len(parts) != 6 or parts[:2] != ["api", "channels"] or parts[3] != "drafts":
+                    self._json({"error": "asset_preview_not_found"}, HTTPStatus.NOT_FOUND)
+                else:
+                    preview = self.channels.asset_preview(parts[2], parts[4])
+                    if preview is None:
+                        self._json({"error": "asset_preview_not_found"}, HTTPStatus.NOT_FOUND)
+                    else:
+                        self._binary(*preview)
             elif parsed.path.startswith("/api/assets/") and parsed.path.endswith("/preview"):
                 asset_id = int(parsed.path.split("/")[3])
                 preview = LocalAssetImportService(

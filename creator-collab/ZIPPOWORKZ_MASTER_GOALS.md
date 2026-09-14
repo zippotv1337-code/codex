@@ -1,16 +1,16 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-14 — security/handoff and Milo/TikTok P0 verified.
+Last consolidated: 2026-09-14 — Meta blocker proven; reference-locked Milo 9:16 fallback ready.
 
 ## Current operating delta — 14 September
 
-Security package P0 is complete: central policy v2.1, provider-neutral secret
-boundary, alias-only audit/handoff, pre-push leak gate and the shared handoff
-schema are active. The Local-AI worker retains a separate stricter
-`LOCAL_SAFE_ONLY` policy. Milo der Zug is locally visible as a transparent AI
-creator brand with separate Instagram/TikTok states, 9:16 preview and gated
-Draft Upload/Direct Post. Accounts remain honestly `NOT_CONNECTED`; there was
-no external action. Runtime activation is proven and 178/178 tests are green.
+Security package P0 is complete. The requested Meta live-proof preflight is
+reproducibly `BLOCKED` because no Meta aliases are configured; no external
+request or retry occurred. The fallback is complete: Milo der Zug is locked to
+the Owner-provided canonical character image, a real PUBLIC_SFW 9:16 asset is
+review-ready, and the live dashboard serves its PNG preview. Instagram handle
+`miloderzug` is publicly confirmed but not represented as a connected publish
+transport. Runtime activation is proven and 179/179 tests are green.
 
 Root C:/Zippoworkz; reuse Workspace/codex_ingest/creator-collab.
 Canonical DB: `data/review_dashboard.db`. It currently contains three
@@ -29,6 +29,7 @@ remain historical evidence only.
 | T-011 | Approval-backup restore + fail-closed schedule proof | DONE — 2026-09-14 | Fresh restore matched all core counts; 2/2 simulated due jobs blocked without adapter, second dispatch sent 0, no fake receipts, canonical DB hash unchanged. |
 | T-012 | Cloud image content + Local-AI/VPS handoffs | DONE — 2026-09-14 | Mara 5-shot reference package imported as Content 3; two secret-free hash-verified agent ZIPs created. |
 | T-013 | Security/handoff + Milo/TikTok P0 | DONE — 2026-09-14 | Policy v2.1, SecretProvider/Broker, leak hook, shared handoff schema and local gated Milo/TikTok UI active; 178 tests and runtime smoke green, external actions NONE. |
+| T-014 | Meta credentials → live-proof, Milo 9:16 fallback on blocker | DONE — FALLBACK PATH 2026-09-14 | Meta preflight blocked before any external call; reference-locked Milo PNG is PUBLIC_SFW, previewed live and review-ready; 179 tests green. |
 
 Local worker's current 27-task allowlist is DONE. It must stop, not invent further tasks.
 M-12: current AI-Ops implementation mirrored on codex/ai-ops-20260913 (a6b2ef4), push confirmed; main deliberately unchanged. Evidence: sessions/2026-09-13-2057-codex-ai-ops.md.
@@ -85,7 +86,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-13 | Simple model/runtime compatibility | ACTIVE_FOREVER | Stable current model/runtime is sufficient; stronger models are optional. |
 | M-14 | Learn sellable product from demand | WAITING_REAL_SIGNALS | Learn from real inquiries, orders and fulfillment. |
 | M-15 | Keep offers separate | LATER | Gig 1 automation (149/349/699) remains separate from historical SFW content packs (45/95/175). |
-| M-16 | Expand channels after proof | PARTIAL / LOCAL_P0 | Milo/TikTok local review, 9:16 preview and honest gating exist; real account/transport remains signal-driven. Threads, link page, video engine and remixes stay later. |
+| M-16 | Expand channels after proof | PARTIAL / LOCAL_CONTENT_READY | Canonical Milo character reference, real 9:16 PUBLIC_SFW starter asset, local review and live preview exist. Instagram handle is confirmed but publish transport remains signal-driven. Threads, link page, video engine and remixes stay later. |
 | M-17 | Adult/Paid lane separate | LATER / OWNER_GATE | Public channels remain SFW; no adult work without explicit authorization. |
 | M-18 | Long-term productization | LATER | No early multi-tenant SaaS or broad platform build. |
 

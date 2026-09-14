@@ -1,5 +1,32 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — META BLOCKED / MILO FALLBACK DONE, 14.09.2026 17:17 Europe/Berlin
+
+- Letzter vollständig erledigter Task: Meta-Credential-/Adapter-Preflight
+  fail-closed belegt und den angeordneten Milo-9:16-Fallback mit echter
+  Owner-Referenz fertiggestellt und live im Dashboard aktiviert.
+- Aktuell angefangener Task: keiner.
+- Exakter Fortsetzungspunkt: keine weitere Meta-Schleife. Erst nach sicher
+  hinterlegten Meta-Aliasen genau einen neuen read-only Preflight starten.
+- Geänderte Bereiche: Channel-Konfiguration, sicherer lokaler Asset-Preview-
+  Endpunkt, Milo-9:16-Dashboardkarte, Referenz/finales Asset, Tests und
+  aktuelle Betriebsdokumente.
+- Teststatus: 179/179 grün; JavaScript und Python-Compile grün.
+- Runtime/DB: `192.168.188.131:4180` gesund; Preview HTTP 200 `image/png`;
+  Schema 5; SQLite-Integrität und Foreign Keys `ok`.
+- Backupstatus: keine operative DB-Mutation; kein zusätzliches Backup nötig.
+- Blocker: Meta-Aliase 0/10 konfiguriert; Milo-Plattformtransport nicht
+  verbunden. Keine lokalen Defekte.
+- Owner-Gate: vorhandene Meta-Credentials einmalig im sicheren Provider
+  hinterlegen. Keine Werte in Chat, Git, DB, Journal oder Handoff kopieren.
+- Geparkt: Live-Publish und Analytics bis zu einem echten externen Signal.
+- Nächste drei: (1) Meta-Aliase sicher konfigurieren, (2) read-only Preflight,
+  (3) nur bei `READY` einen kontrollierten Live-Proof ausführen.
+- Resume: „Lies diesen Block und
+  `sessions/2026-09-14-1717-codex-meta-blocked-milo-fallback.md`. Milo-Fallback
+  und lokale Preview sind DONE. Meta nicht erneut versuchen, bevor die
+  Secret-Aliase wirklich konfiguriert sind.“
+
 ## AKTUELL — SECURITY/HANDOFF + MILO/TIKTOK P0 DONE, 14.09.2026 12:48 Europe/Berlin
 
 - Letzter vollständig erledigter Task: Paket

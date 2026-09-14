@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T10:47:32+00:00",
+  "generated_at": "2026-09-14T15:17:40+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -170,19 +170,19 @@
       "git_hook_path": "creator-collab/.githooks",
       "active": true
     },
-    "owner_action": "Choose and connect one password manager or Windows Credential Manager entry set."
+    "owner_action": "Einen primären Secret-Provider auswählen und die Projekt-Aliase einmalig hinterlegen."
   },
   "channels": {
     "schema": "zippoworkz-channel-ops-v1",
     "brands": [
       {
         "slug": "milo-der-zug",
-        "identity_status": "LOCAL_DEFINITION_ONLY",
+        "identity_status": "CHARACTER_REFERENCE_LOCKED",
         "accounts": [
           {
             "platform": "instagram",
-            "public_handle": null,
-            "connection_status": "NOT_CONNECTED",
+            "public_handle": "miloderzug",
+            "connection_status": "PUBLIC_PROFILE_CONFIRMED",
             "default_publish_mode": "APPROVAL"
           },
           {
@@ -199,7 +199,7 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 178,
+    "passed": 179,
     "failed": 0
   },
   "blockers": {
