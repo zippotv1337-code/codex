@@ -15,8 +15,8 @@
         },
         {
           "platform": "tiktok",
-          "public_handle": null,
-          "connection_status": "NOT_CONNECTED",
+          "public_handle": "miloderzug",
+          "connection_status": "NATIVE_SESSION_CONFIRMED",
           "default_publish_mode": "DRAFT_UPLOAD"
         }
       ],

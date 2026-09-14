@@ -1,20 +1,30 @@
 # Human Handoff — ZippoWorkz
 
-Stand: 14.09.2026, 17:17 Europe/Berlin
+Stand: 14.09.2026, 18:48 Europe/Berlin
 
 Meta wurde read-only geprüft und ist wegen fehlender sicher hinterlegter
 Projekt-Credentials ehrlich blockiert. Der referenzgebundene Milo-9:16-
 Fallback ist lokal vollständig umgesetzt, getestet und in der laufenden
 ZippoWorkz-Runtime sichtbar.
 
-## Genau eine Owner-Aktion
+## Genau eine dringende Owner-Aktion
 
-Die bereits vorhandenen Meta-Zugangsdaten einmalig im sicheren Secret-Provider
-(empfohlen: Windows-Anmeldeinformationsverwaltung) unter den im Dashboard
-angezeigten `secret://meta/...`-Aliasen hinterlegen.
+Das im Chat offengelegte TikTok-Kundengeheimnis im TikTok Developer Portal
+rotieren. Den neuen Wert nicht im Chat senden, sondern ausschließlich unter dem
+vorhandenen `secret://tiktok/client_secret`-Alias im sicheren Secret-Provider
+hinterlegen.
 
 Keine Secret-Werte in Chat, Git, Markdown, SQLite, Logs oder Handoffs kopieren.
 Bis zur Einrichtung bleiben alle externen Adapter bewusst fail-closed.
+
+## Neuer Live-Beleg
+
+- Milo TikTok-Fotopost:
+  <https://www.tiktok.com/@miloderzug/photo/7685433578976709911>
+- Medien-ID: `7685433578976709911`
+- Sichtbar: Caption, Hashtags und natives KI-generiert-Label
+- Veröffentlicht über: offizielle eingeloggte TikTok-Weboberfläche
+- TikTok API: weiterhin nicht als User-Publish-Pfad bewiesen
 
 ## Bereits erledigt
 

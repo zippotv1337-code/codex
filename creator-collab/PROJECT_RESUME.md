@@ -1,5 +1,22 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Milo TikTok-Testpost live — 14. September 2026
+
+Der referenzgebundene Milo-Entwurf `Milos erste Fahrt am Morgen` wurde nach
+expliziter Owner-Bestätigung über die bereits eingeloggte offizielle TikTok-
+Weboberfläche im richtigen Konto `@miloderzug` veröffentlicht. TikTok vergab
+die Medien-ID `7685433578976709911`; der Fotopost ist unter
+<https://www.tiktok.com/@miloderzug/photo/7685433578976709911> sichtbar.
+Titel, Caption, Hashtags und die native Kennzeichnung als KI-generierter Inhalt
+sind öffentlich verifiziert. Der lokale Channel-State enthält Post-ID,
+Permalink, Zeitpunkt und Transport; es wurde kein zweiter Upload ausgelöst.
+
+Der Publish lief bewusst nativ und nicht über die TikTok API. Clientschlüssel
+und Kundengeheimnis allein ersetzen keine Nutzer-OAuth-Freigabe mit Access
+Token und Posting-Scope. Das im Chat offengelegte Kundengeheimnis wurde weder
+in Git, SQLite, Konfiguration, Journal noch Logs übernommen und sollte im
+Developer Portal rotiert werden.
+
 ## Meta-Preflight + referenzgebundener Milo-Fallback — 14. September 2026
 
 Der angeforderte P0 wurde fail-closed abgeschlossen. Der echte offizielle

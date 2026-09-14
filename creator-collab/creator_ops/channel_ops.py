@@ -229,7 +229,7 @@ class ChannelOpsService:
             "brands": brands,
             "analytics": state.get("analytics", []),
             "errors": state.get("errors", []),
-            "external_actions": "NONE",
+            "external_actions": state.get("external_actions", "NONE"),
             "transport": {
                 "draft_upload": "SEPARATE_NOT_CONNECTED",
                 "direct_post": "SEPARATE_OWNER_AND_CONNECTION_GATED",

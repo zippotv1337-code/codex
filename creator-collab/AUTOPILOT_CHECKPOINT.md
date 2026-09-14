@@ -1,5 +1,27 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — MILO TIKTOK LIVE, 14.09.2026 18:48 Europe/Berlin
+
+- Letzter vollständig erledigter Task: referenzgebundenen Milo-9:16-Testpost
+  nach Owner-Bestätigung nativ auf TikTok veröffentlicht, den konkreten
+  Permalink öffentlich geprüft und den Receipt lokal gespeichert.
+- Aktuell angefangener Task: keiner.
+- Exakter Fortsetzungspunkt: keine erneute Veröffentlichung. Für Analytics erst
+  nach fälligem 24h-Fenster echte Werte erfassen; fehlende Werte bleiben NULL.
+- Live-Beleg: `https://www.tiktok.com/@miloderzug/photo/7685433578976709911`,
+  Medien-ID `7685433578976709911`, KI-Label sichtbar.
+- Lokaler State: `milo-intro-001=PUBLISHED`, Transport
+  `TIKTOK_NATIVE_WEB`, Privacy `PUBLIC_VISIBLE`.
+- Blocker: TikTok API nicht autorisiert; Meta weiterhin ohne sichere Aliase.
+- Owner-Gate: das im Chat exponierte TikTok-Kundengeheimnis im Developer Portal
+  rotieren und den neuen Wert ausschließlich im Secret-Provider hinterlegen.
+- Nächste drei: (1) Secret rotieren, (2) nach 24h echte TikTok-Werte erfassen,
+  (3) API-OAuth nur in einem eigenen, sicheren Run konfigurieren.
+- Resume: „Lies diesen Block und
+  `sessions/2026-09-14-1848-codex-milo-tiktok-live.md`. Der Testpost ist LIVE;
+  nicht erneut senden. Erst Analytics-Fenster oder neues Owner-Signal
+  bearbeiten.“
+
 ## AKTUELL — META BLOCKED / MILO FALLBACK DONE, 14.09.2026 17:17 Europe/Berlin
 
 - Letzter vollständig erledigter Task: Meta-Credential-/Adapter-Preflight

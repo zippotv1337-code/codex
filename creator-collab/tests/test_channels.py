@@ -94,6 +94,32 @@ class ChannelOpsTests(unittest.TestCase):
         self.assertEqual(event["code"], "ACCOUNT_UNAVAILABLE_UNSAFE_DETAIL")
         self.assertEqual(self.service.snapshot()["external_actions"], "NONE")
 
+    def test_confirmed_external_action_is_reported_from_local_state(self) -> None:
+        state_path = self.root / "data" / "channel_ops.json"
+        state_path.parent.mkdir(parents=True, exist_ok=True)
+        state_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": "1.0",
+                    "drafts": {},
+                    "analytics": [],
+                    "errors": [],
+                    "external_actions": [
+                        {
+                            "platform": "tiktok",
+                            "action": "PUBLISH_PHOTO",
+                            "status": "CONFIRMED_VISIBLE",
+                            "external_post_id": "1234567890",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        actions = self.service.snapshot()["external_actions"]
+        self.assertEqual(actions[0]["status"], "CONFIRMED_VISIBLE")
+        self.assertEqual(actions[0]["external_post_id"], "1234567890")
+
     def test_http_dashboard_exposes_value_free_channel_and_security_status(self) -> None:
         configured = self.service.snapshot()["brands"][0]["drafts"][0]
         target = self.root / configured["asset_path"]

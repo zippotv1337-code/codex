@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T15:17:40+00:00",
+  "generated_at": "2026-09-14T16:52:58+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -38,13 +38,12 @@
   "content": {
     "total": 3,
     "by_status": {
-      "READY_FOR_REVIEW": 1,
-      "SCHEDULED": 2
+      "SCHEDULED": 3
     },
     "by_stage": {
       "ALLTAG": 3
     },
-    "review_required": 1,
+    "review_required": 0,
     "mix_target_percent": {
       "ALLTAG": 70,
       "TEASER": 30,
@@ -73,16 +72,16 @@
   },
   "publications": {
     "owner_confirmed_native": 0,
-    "mock": 2,
+    "mock": 3,
     "manual_analytics_events": 0,
     "local_queue": {
-      "LOCAL_SCHEDULED": 2
+      "LOCAL_SCHEDULED": 3
     },
     "instagram_channel_real_live": false,
     "meta_graph_automation_proof": "not_yet_proven"
   },
   "background_runs": {
-    "COMPLETE": 4
+    "COMPLETE": 6
   },
   "engagement": {
     "real_post_proposals": 0,
@@ -187,24 +186,34 @@
           },
           {
             "platform": "tiktok",
-            "public_handle": null,
-            "connection_status": "NOT_CONNECTED",
+            "public_handle": "miloderzug",
+            "connection_status": "NATIVE_SESSION_CONFIRMED",
             "default_publish_mode": "DRAFT_UPLOAD"
           }
         ],
         "draft_count": 1
       }
     ],
-    "external_actions": "NONE"
+    "external_actions": [
+      {
+        "platform": "tiktok",
+        "account": "miloderzug",
+        "action": "PUBLISH_PHOTO",
+        "status": "CONFIRMED_VISIBLE",
+        "draft_id": "milo-intro-001",
+        "external_post_id": "7685433578976709911",
+        "permalink": "https://www.tiktok.com/@miloderzug/photo/7685433578976709911",
+        "occurred_at": "2026-09-14T16:48:22+00:00",
+        "transport": "TIKTOK_NATIVE_WEB"
+      }
+    ]
   },
   "tests": {
     "status": "passed",
-    "passed": 179,
+    "passed": 180,
     "failed": 0
   },
-  "blockers": {
-    "owner_review_required": 1
-  },
+  "blockers": {},
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",
     "pre_approved_actions": {

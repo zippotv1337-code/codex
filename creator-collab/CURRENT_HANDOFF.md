@@ -1,5 +1,27 @@
 # Aktueller Handoff
 
+## MILO TIKTOK TESTPOST LIVE — 14.09.2026, 18:48
+
+- Nach expliziter Owner-Bestätigung wurde genau ein PUBLIC_SFW-Fotopost über
+  die eingeloggte offizielle TikTok-Weboberfläche im Konto `@miloderzug`
+  veröffentlicht.
+- Öffentlicher Link:
+  <https://www.tiktok.com/@miloderzug/photo/7685433578976709911>.
+- TikTok-Medien-ID: `7685433578976709911`; der sichtbare Post zeigt Milo,
+  Titel/Caption/Hashtags sowie die native Kennzeichnung
+  „Von Creator*in als KI-generiert gekennzeichnet“.
+- Der anfängliche Studiozustand „Inhalt wird überprüft / Nur ich“ wurde nicht
+  blind wiederholt. Der konkrete Permalink wurde separat geöffnet und der
+  vollständige Post dort sichtbar bestätigt.
+- Der lokale Channel-State wurde auf `PUBLISHED` gesetzt und enthält Post-ID,
+  Permalink, Zeitpunkt, Privacy-Status und nativen Web-Transport.
+- TikTok API bleibt unbewiesen: App-Zugangsdaten allein reichen nicht für
+  User-Publishing; Nutzer-OAuth/Access-Token und Posting-Scope fehlen.
+- Das im Chat offengelegte Kundengeheimnis wurde nicht gespeichert oder
+  verwendet. Owner-Aktion: im TikTok Developer Portal rotieren und einen neuen
+  Wert nur im sicheren Secret-Provider hinterlegen.
+- Keine zweite Veröffentlichung, kein Retry und keine sonstige Plattformaktion.
+
 ## META BLOCKED / MILO 9:16 FALLBACK DONE — 14.09.2026, 17:17
 
 - Meta-Credential-Preflight wurde exakt einmal read-only ausgeführt. Ergebnis:
