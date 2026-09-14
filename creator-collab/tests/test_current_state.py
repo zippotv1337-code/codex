@@ -6,12 +6,16 @@ import unittest
 from datetime import date
 from pathlib import Path
 
-from creator_ops.cli import build_pipeline
+from creator_ops.cli import ROOT, build_pipeline, parser
 from creator_ops.current_state import CurrentStateService
 from creator_ops.review import ReviewDashboardService
 
 
 class CurrentStateTests(unittest.TestCase):
+    def test_cli_defaults_to_canonical_operational_database(self) -> None:
+        arguments = parser().parse_args(["status"])
+        self.assertEqual(arguments.db, ROOT / "data" / "review_dashboard.db")
+
     def test_snapshot_is_dynamic_and_secret_free_by_default(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             root = Path(tempdir)

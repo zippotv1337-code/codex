@@ -70,7 +70,10 @@ def build_publish_queue(
 
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description="Creator Ops local MVP")
-    result.add_argument("--db", type=Path, default=ROOT / "data" / "creator_ops.db")
+    # ZippoWorkz has one canonical operational database. Keeping the CLI on
+    # the former empty creator_ops.db silently produced false zero-content
+    # status reports whenever --db was omitted.
+    result.add_argument("--db", type=Path, default=ROOT / "data" / "review_dashboard.db")
     result.add_argument("--config", type=Path, default=ROOT / "config.toml")
     subcommands = result.add_subparsers(dest="command", required=True)
     subcommands.add_parser("init", help="Initialize schema and persona seeds")

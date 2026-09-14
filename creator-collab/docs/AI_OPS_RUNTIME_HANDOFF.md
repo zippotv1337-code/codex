@@ -1,5 +1,26 @@
 # CODEX RUNTIME HANDOFF
 
+## AKTUELL — LOCAL AI 27/27 DONE, 14.09.2026, 07:16 Europe/Berlin
+
+- Kanonische DB: `data/review_dashboard.db`, Schema 5, zwei
+  owner-freigegebene Contentpakete, zehn reale SFW-Assets, zwei lokale
+  Queuejobs. Der alte leere `data/creator_ops.db`-Pfad ist nicht operativ.
+- Local AI hat 27/27 allowlist-basierte Aufgaben abgeschlossen. Qwen
+  `qwen3:8b` schrieb `C:\Zippoworkz\Handoff\LOCAL_AI_OPERATIONS_SUMMARY.md`,
+  wurde anschließend entladen und der Worker beendete sich sauber.
+- Beide Pakete bestanden den lokalen Safety-/Rechte-/Datei-/Doppelpost-
+  Preflight. Status ist `LOCAL_SCHEDULED`, nicht extern `PUBLISHED`.
+- Approval-Backup:
+  `C:\Zippoworkz\backups\creator-ops-backup-ai-ops-approved-20260914.db`,
+  Integrität `ok`.
+- VPS bleibt `WAITING_OWNER_CONFIG`; kein Verbindungsversuch und kein
+  erfundener Heartbeat. Meta bleibt `DEFERRED_OWNER_VERIFICATION`.
+- Wenn kein neues externes Signal oder neue echte lokale Daten vorliegen:
+  `IDLE_CLEAN` und beenden. Keine DONE-Aufgaben erneut ausführen.
+
+Die folgenden Abschnitte sind historische Implementierungsdetails und dürfen
+den aktuellen Block nicht überschreiben.
+
 ## QWEN-START READY — 13.09.2026, 22:24 Europe/Berlin
 
 - Der offizielle lokale Starter verwendet jetzt das installierte Modell

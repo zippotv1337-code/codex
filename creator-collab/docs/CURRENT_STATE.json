@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T05:17:59+00:00",
+  "generated_at": "2026-09-14T05:38:33+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -101,26 +101,10 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 25,
+    "passed": 27,
     "failed": 0
   },
-  "blockers": {
-    "meta_owner_verification_or_credentials": 1,
-    "vps_connection_config_missing": 1
-  },
-  "ai_ops": {
-    "protocol_version": "ai-ops-v1",
-    "control": "RUN",
-    "tasks_done": 27,
-    "tasks_total": 27,
-    "local_ai_last_success": "2026-09-14T05:16:03+00:00",
-    "local_ai_runtime_status": "OFFLINE_AFTER_CLEAN_COMPLETION",
-    "model": "qwen3:8b",
-    "scheduled_packages_preflight": 2,
-    "scheduled_packages_ready_local_only": 2,
-    "external_actions": "NONE",
-    "vps_status": "WAITING_OWNER_CONFIG"
-  },
+  "blockers": {},
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",
     "pre_approved_actions": {
@@ -142,6 +126,5 @@
       "destructive_or_irreversible_actions"
     ]
   },
-  "publishing_mode": "human-gated content review; Instagram/Fiverr live publish pre-approved with safety gates; official adapter available; live state depends on credentials, public HTTPS assets, and identity gates",
-  "runtime_data_status": "TWO_OWNER_APPROVED_PACKAGES_LOCAL_SCHEDULED_NOT_LIVE"
+  "publishing_mode": "human-gated content review; Instagram/Fiverr live publish pre-approved with safety gates; official adapter available; live state depends on credentials, public HTTPS assets, and identity gates"
 }

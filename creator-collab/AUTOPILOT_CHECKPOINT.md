@@ -1,5 +1,30 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — CLI-DATENKONSISTENZ DONE, 14.09.2026 07:38 Europe/Berlin
+
+- Letzter vollständig erledigter Task: CLI-Standarddatenbank auf die
+  kanonische `data/review_dashboard.db` korrigiert und den früheren falschen
+  0-Content-Status ausgeschlossen.
+- Aktuell angefangener Task: keiner. Der lokale sichere Betriebsbacklog ist
+  abgearbeitet; keine künstliche Ersatzaufgabe beginnen.
+- Verifiziert: Standard-Status ohne `--db` meldet 2 Contentpakete, 10 Assets
+  und 2 `LOCAL_SCHEDULED`-Jobs; 27 fokussierte Tests sowie Python-Compile
+  grün; Diff-Check sauber.
+- Geänderte Dateien: `creator_ops/cli.py`, `tests/test_current_state.py`,
+  `docs/CURRENT_STATE.json`, `docs/HUMAN_HANDOFF.md`,
+  `docs/AI_OPS_RUNTIME_HANDOFF.md`, `CURRENT_HANDOFF.md`,
+  `PROJECT_RESUME.md`, dieser Checkpoint und das datierte Journal.
+- Daten/Backup: keine DB-Mutation; das bereits geprüfte Approval-Backup
+  `C:\Zippoworkz\backups\creator-ops-backup-ai-ops-approved-20260914.db`
+  bleibt aktuell.
+- Exakter Fortsetzungspunkt: erst bei echtem Signal weiterarbeiten — nutzbare
+  Instagram/Meta-Verbindung, sichtbarer Fiverr-Gig-Status oder vollständige
+  VPS-Konfiguration. Bis dahin `IDLE_CLEAN`.
+- Exakter Resume-Auftrag: „Lies diesen Block und
+  `sessions/2026-09-14-0738-codex-cli-database-consistency.md`. Der CLI-
+  Datenbankpfad ist DONE. Keine lokale Feature-Suche; nur ein neues echtes
+  externes Signal oder neue operative Daten bearbeiten.“
+
 ## AKTUELL — LOCAL AI AUTORUN DONE, 14.09.2026 07:16 Europe/Berlin
 
 - Letzter vollständig erledigter Task: lokaler Qwen-Betriebsreport nach fünf

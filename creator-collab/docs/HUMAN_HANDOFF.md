@@ -1,9 +1,27 @@
 # Human Handoff — ZippoWorkz
 
-## Aktuell: 13.09.2026
+## Aktuell: 14.09.2026
 
-1. **Frühere Betriebsdatenbank/Backup bereitstellen.** Im Root C:/Zippoworkz und am früher ausdrücklich genannten Projektpfad fehlt die operative DB. Ohne die Originaldaten können alte Posts, Freigaben und Analytics nicht wiederhergestellt werden. Bitte die Backup-Datei bzw. ihren genauen Pfad nennen.
-2. **Nur wenn VPS gewünscht:** genauen VPS/Installationspfad und bereits vorgesehenen sicheren Transport nennen. Keine Ports/Tunnel/Zugänge automatisch öffnen.
+Die Meldung „operative Datenbank fehlt“ ist erledigt und darf nicht mehr als
+Owner-Aufgabe erscheinen. Die kanonische Datenbank
+`data/review_dashboard.db` enthält zwei owner-freigegebene Pakete, zehn reale
+SFW-Assets und zwei lokale Terminierungen für 19:30. Das geprüfte Approval-
+Backup liegt unter
+`C:\Zippoworkz\backups\creator-ops-backup-ai-ops-approved-20260914.db`.
+
+Aktuelle echte Owner-/Extern-Gates:
+
+1. **Instagram/Meta:** Die zwei Pakete sind nur `LOCAL_SCHEDULED`, nicht live.
+   Für externe Veröffentlichung wird eine nutzbare offizielle Konfiguration
+   oder eingeloggte kontrollierbare Upload-Session benötigt. Erst nach echter
+   Media-ID/Permalink darf `PUBLISHED` gespeichert werden.
+2. **Nur wenn VPS gewünscht:** Host/IP, Benutzername, Port und bereits
+   vorgesehene sichere Transport-/Authentifizierungsmethode nennen. Keine
+   privaten Schlüssel in Chat/Journal kopieren und keine Ports automatisch
+   öffnen.
+3. **Fiverr:** Identität ist owner-gemeldet verifiziert. Den öffentlichen
+   Gig-Status und die echte URL einmal sichtbar prüfen; keine CAPTCHA-
+   Umgehung und keinen Live-Status raten.
 
 Dashboard läuft unter http://192.168.188.131:4180/ai-ops mit vorhandenem Passwort.
 Keine erneute allgemeine Freigabe für die erledigte lokale Implementierung nötig.
@@ -17,7 +35,7 @@ Der kontrollierte Neustart ist am 8. September bestätigt. <http://127.0.0.1:418
 meldet gesunden Betrieb und der Story-Vertrag ist aktiv. Der tägliche Launcher
 ist `START_ZIPPOWORKZ.ps1`. Kein Neustart und keine Meta-Arbeit nötig.
 
-## Später, nicht in diesem Run
+## Historischer Kontext vom 8. September
 
 - Meta: `DEFERRED_OWNER_VERIFICATION`. Persönliche Registrierung/SMS aktuell
   nicht möglich. Kein erneuter Loop. API-Code bleibt vorhanden;

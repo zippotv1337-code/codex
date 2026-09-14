@@ -1,5 +1,24 @@
 # Aktueller Handoff
 
+## KANONISCHER CLI-DATENBANKPFAD KORRIGIERT — 14.09.2026, 07:38
+
+- Ein reproduzierbarer lokaler Restfehler ist behoben: Der allgemeine
+  `creator_ops.cli`-Einstieg verwendete ohne `--db` noch die alte leere
+  `data/creator_ops.db` und konnte deshalb fälschlich 0 Content melden.
+- Standard ist jetzt wie Dashboard, Worker und `config.toml` konsequent
+  `data/review_dashboard.db`.
+- Standard-Statuslauf ohne Sonderparameter bestätigt: 2 Contentpakete,
+  10 Assets und 2 `LOCAL_SCHEDULED`-Queuejobs.
+- Human-Handoff und AI-Ops-Runtime-Handoff melden nicht länger, dass die
+  operative Datenbank fehle; der historische alte Pfad bleibt nur als
+  Legacy-Referenz dokumentiert.
+- Verifiziert: 27 fokussierte Tests grün, Python-Compile grün und
+  `git diff --check` ohne Fehler. Keine Datenbankmutation, kein Publish und
+  keine andere externe Aktion.
+- Nach diesem Fix sind keine weiteren sinnvollen unblocked lokalen
+  Betriebsaufgaben bekannt. Offen bleiben ausschließlich Instagram/Meta,
+  Fiverr-Livestatus und optional VPS-Konfiguration.
+
 ## LOCAL-AI-AUTORUN ABGESCHLOSSEN — 14.09.2026, 07:16
 
 - Die sichere AI-Ops-Queue wurde um sechs konkrete Betriebsaufgaben erweitert

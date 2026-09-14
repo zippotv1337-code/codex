@@ -1,5 +1,16 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Kanonischer CLI-Datenbankpfad — 14. September 2026
+
+Der letzte lokale Datenkonsistenzfehler ist behoben: `creator_ops.cli` nutzt
+ohne explizites `--db` jetzt `data/review_dashboard.db` statt der historischen
+leeren `data/creator_ops.db`. Damit zeigen Status-, Export- und andere
+CLI-basierte Betriebswege denselben kanonischen Bestand wie Dashboard und
+Local AI. Ein Standard-Statuslauf bestätigte 2 Contentpakete, 10 Assets und
+2 lokale Queuejobs. Die veraltete Human-Handoff-Forderung nach einer fehlenden
+Betriebsdatenbank wurde entfernt. 27 fokussierte Tests und Python-Compile sind
+grün; keine externe Aktion und keine operative Datenmutation.
+
 ## Local-AI-Autorun und VPS-Readiness — 14. September 2026
 
 Der begrenzte lokale Betriebsworker hat jetzt **27/27** allowlist-basierte
