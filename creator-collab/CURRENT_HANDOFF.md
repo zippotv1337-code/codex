@@ -2,6 +2,11 @@
 
 ## RECOVERY- UND PUBLISH-SAFETY-PROOF — 14.09.2026, 07:43
 
+- GitHub-Spiegel anschließend sicher fast-forward aktualisiert: Branch
+  `codex/ai-ops-20260913`, Remote-Stand bestätigt auf
+  `0b0647bcb20bee01316b664342f816a441835f54`. Kein Force-Push, kein Main-
+  Rewrite und keine Runtime-DB/Backups hochgeladen.
+
 - Das aktuelle Approval-Backup wurde vollständig in eine frische temporäre
   Datenbank zurückgespielt. Schema 5, Integrität und Foreign Keys sind gesund;
   alle sechs Kernzählungen entsprechen der kanonischen DB.

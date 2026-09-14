@@ -2,6 +2,10 @@
 
 ## AKTUELL — RECOVERY/PUBLISH SAFETY PROVEN, 14.09.2026 07:43 Europe/Berlin
 
+- GitHub-Branch `codex/ai-ops-20260913` wurde danach per Fast-Forward bis
+  Commit `0b0647bcb20bee01316b664342f816a441835f54` gespiegelt und per
+  `ls-remote` bestätigt. Main blieb unangetastet.
+
 - Letzter vollständig erledigter Task: Approval-Backup auf temporärer Kopie
   restored und den fail-closed Publish-/Duplicate-Schutz für beide lokalen
   Queuejobs operativ bewiesen.

@@ -27,6 +27,8 @@ weiterhin nicht verfügbar.
 - SHA-256 der echten kanonischen DB vor und nach dem vollständigen Proof
   verglichen.
 - Bericht, Master Goals, Résumé, Handoff und Checkpoint aktualisiert.
+- Den bestehenden GitHub-Branch nach Ancestry-Prüfung einmalig per sicherem
+  Fast-Forward synchronisiert.
 
 ## Verifiziert
 
@@ -42,7 +44,10 @@ weiterhin nicht verfügbar.
   `C705EB48C0408B9A25AD313B29ED653A439FC484868D28DF34C1DF5663344A32`.
 - 15 Tests (`test_publishing_queue` + `test_recovery_chain`) grün;
   Skript-Compile grün; Dashboard-Health und DB `ok`.
-- Externe Aktionen: `NONE`.
+- Instagram-/Meta-/Fiverr-/VPS-Aktionen: `NONE`.
+- GitHub-Branch `codex/ai-ops-20260913` extern bestätigt auf
+  `0b0647bcb20bee01316b664342f816a441835f54`; kein Force-Push und keine
+  Änderung an `main`.
 
 ## Entscheidungen
 
@@ -64,6 +69,7 @@ weiterhin nicht verfügbar.
 | T-011 | neu | DONE | Restore + 2/2 fail-closed + 0 Retry-Duplikate | keiner |
 | M-11 | Backup integritätsgeprüft | Restore und Queueverhalten bewiesen | Proof-Bericht + Tests | Prozess fortführen |
 | T-009 | historischer Daten-Gate | aktueller Betriebsbestand vorhanden | 2 Pakete / 10 Assets | historische Receipts nicht rekonstruieren |
+| M-12 | neue lokale Commits | Branch-Spiegel aktualisiert | Remote-SHA `0b0647b` | Main nur auf ausdrücklichen Auftrag |
 
 ## Nächster Agent
 
