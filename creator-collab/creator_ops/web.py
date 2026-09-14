@@ -35,6 +35,8 @@ from .publishing import PublishQueueService
 from .reconcile import ManualInstagramService
 from .ai_ops import AiOpsService
 from .channel_ops import ALLOWED_METRICS, ChannelOpsService
+from .channel_operations import ChannelOperations
+from .meta_push import MetaPushService
 from .security_status import SecurityStatusService
 
 
@@ -487,6 +489,10 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._json(self.security_status.snapshot())
             elif parsed.path == "/api/channels":
                 self._json(self.channels.snapshot())
+            elif parsed.path == "/api/channel-operations":
+                self._json(self.channel_operations.snapshot())
+            elif parsed.path == "/api/meta-push":
+                self._json(self.meta_push.snapshot())
             elif parsed.path == "/api/ai-ops":
                 self._json(self.ai_ops.snapshot())
             elif parsed.path == "/api/adworks":
@@ -579,6 +585,37 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                     self._json(self.ai_ops.snapshot())
                 else:
                     self._json(self.ai_ops.command(parts[2]))
+                return
+
+            if parsed.path == "/api/channel-operations/sync":
+                if not self.auth.enabled:
+                    self._json({"error": "password_required_for_account_sync"}, HTTPStatus.FORBIDDEN)
+                    return
+                form = self._read_form()
+                self._json(self.channel_operations.sync(form.get("account_id", [""])[0]))
+                return
+            if parsed.path == "/api/channel-operations/metrics":
+                form = self._read_form()
+                metrics = {key: int(form[key][0]) if form.get(key, [""])[0].strip() else None for key in ALLOWED_METRICS}
+                result = self.channel_operations.capture(form.get("post_id", [""])[0], int(form.get("hours", ["0"])[0]), metrics)
+                self._json({"result": result, "external_publish": False})
+                return
+
+            if parsed.path in {"/api/meta-push/preflight", "/api/meta-push/push-one"}:
+                if not self.auth.enabled:
+                    self._json({"error": "password_protected_dashboard_required_for_meta_push"}, HTTPStatus.FORBIDDEN)
+                    return
+                form = self._read_form()
+                raw_content_id = form.get("content_id", [""])[0].strip()
+                if not raw_content_id.isdigit() or int(raw_content_id) <= 0:
+                    raise ValueError("positive_content_id_required")
+                content_id = int(raw_content_id)
+                result = (
+                    self.meta_push.preflight(content_id)
+                    if parsed.path.endswith("/preflight")
+                    else self.meta_push.push_one(content_id)
+                )
+                self._json(result)
                 return
 
             if (
@@ -789,6 +826,8 @@ def create_server(
             "publishing": publishing,
             "ai_ops": AiOpsService(pipeline.db, asset_root),
             "channels": ChannelOpsService(asset_root),
+            "channel_operations": ChannelOperations(pipeline.db, asset_root),
+            "meta_push": MetaPushService(pipeline.db, asset_root),
             "security_status": SecurityStatusService(asset_root),
         },
     )

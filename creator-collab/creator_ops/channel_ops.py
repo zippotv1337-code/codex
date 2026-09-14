@@ -77,6 +77,8 @@ class ChannelOpsService:
         if draft_id not in drafts:
             raise KeyError("draft_not_found")
         draft = dict(drafts[draft_id])
+        if draft.get("status") == "PUBLISHED" or draft.get("external_post_id"):
+            raise ValueError("published_content_is_read_only")
         draft["approval_status"] = {
             "approve": "OWNER_APPROVED",
             "change": "CHANGES_REQUESTED",
@@ -97,6 +99,8 @@ class ChannelOpsService:
         if draft_id not in drafts:
             raise KeyError("draft_not_found")
         draft = dict(drafts[draft_id])
+        if draft.get("status") == "PUBLISHED" or draft.get("external_post_id"):
+            raise ValueError("published_content_is_read_only")
         if mode == "DIRECT_POST" and draft.get("approval_status") != "OWNER_APPROVED":
             raise ValueError("owner_approval_required_for_direct_post")
         if mode == "DIRECT_POST" and not self._asset_exists(draft):
@@ -179,6 +183,7 @@ class ChannelOpsService:
         asset_ready = self._asset_exists(draft)
         owner_approved = draft.get("approval_status") == "OWNER_APPROVED"
         connected = account.get("connection_status") == "CONNECTED"
+        published = draft.get("status") == "PUBLISHED" or bool(draft.get("external_post_id"))
         asset_url = (
             f"/api/channels/{quote(slug, safe='')}/drafts/"
             f"{quote(str(draft.get('draft_id', '')), safe='')}/asset"
@@ -189,11 +194,13 @@ class ChannelOpsService:
             **draft,
             "asset_ready": asset_ready,
             "account_connected": connected,
-            "draft_upload_ready": asset_ready and connected,
-            "direct_post_ready": asset_ready and connected and owner_approved,
+            "read_only": published,
+            "draft_upload_ready": asset_ready and connected and not published,
+            "direct_post_ready": asset_ready and connected and owner_approved and not published,
             "direct_post_blockers": [
                 reason
                 for condition, reason in (
+                    (published, "already_published_no_retry"),
                     (not asset_ready, "real_9_16_asset_missing"),
                     (not connected, "platform_account_not_connected"),
                     (not owner_approved, "owner_approval_missing"),

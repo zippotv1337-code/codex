@@ -1,5 +1,63 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — META-PFAD ABSCHLUSSVERIFIZIERT, 14.09.2026 23:31 Europe/Berlin
+
+- Letzter vollständig erledigter Task: Policy-/Runtime-/Testabschluss für den
+  geschützten Meta-Einzelpaketweg.
+- Aktuell angefangener Task: keiner; der Stand ist sicher gespeichert.
+- Exakter Fortsetzungspunkt: im angemeldeten Dashboard `/channels` zuerst
+  `GET /api/meta-push` prüfen; danach nur nach Owner-Credential- und
+  HTTPS-Manifest-Gates einen read-only Preflight für eine Content-ID starten.
+- Teststatus: 95 fokussierte Tests grün, Python-Compile und JavaScript-Syntax
+  grün, SQLite `integrity_check=ok`.
+- Runtime: `http://192.168.188.131:4180/api/health` → `ok`.
+- Bekannte Blocker: echte Instagram-User-Tokens/IDs/Scopes sowie drei
+  öffentliche HTTPS-JPEGs; `cloudflared` ist nicht installiert.
+- Geparkt: kein externer Publish, kein Tunnel, kein Scheduler-Autopublish.
+- Nächste drei: Credentials rotieren/sicher hinterlegen; HTTPS-JPEG-Manifest
+  bereitstellen; genau einen Dashboard-Preflight und nur bei `READY` senden.
+- Resume-Auftrag: „Lies diesen Block und
+  `sessions/2026-09-14-2331-codex-meta-finalization.md`. Keine Secrets aus dem
+  Chat übernehmen. Bei Timeout zuerst Reconciliation, niemals blind retry.“
+
+## AKTUELL — META-EINZELPAKET-PFAD VERDRAHTET, 14.09.2026 23:20 Europe/Berlin
+
+- Letzter vollständig erledigter Task: den bestehenden Meta-/Instagram-
+  Adapter sicher in den passwortgeschützten Dashboard-Weg eingebunden und
+  einen lokalen, begrenzten JPEG-Media-Origin samt Runbook ergänzt.
+- Aktuell angefangener Task: keiner; der Code- und Runtime-Stand ist in einem
+  sicheren Zustand.
+- Exakter Fortsetzungspunkt: zuerst `GET /api/meta-push` im angemeldeten
+  Dashboard prüfen. Danach für eine einzelne Content-ID
+  `POST /api/meta-push/preflight`; nur bei `READY` `POST
+  /api/meta-push/push-one` ausführen.
+- Geänderte Dateien: `creator_ops/meta_push.py`, `creator_ops/web.py`,
+  `creator_ops/publishing.py`, `creator_ops/public_media.py`,
+  `dashboard/channels.html`, `dashboard/channels.js`, `dashboard/app.css`,
+  `scripts/ai_ops/PERMISSIONS_POLICY.json` sowie die zugehörigen Tests und
+  Runbooks.
+- Teststatus: fokussierte Meta-/Channel-/Media-/Queue-/AI-Ops-Tests grün;
+  Python-Compile und JavaScript-Syntax grün. SQLite `integrity_check=ok`.
+- Runtime: kontrollierter Neustart erfolgreich; `http://192.168.188.131:4180`
+  meldet Health `ok`; der globale Scheduler bleibt `dispatch_live=false`.
+- Backupstatus: bestehende geprüfte Approval-/Recovery-Backups bleiben
+  unverändert; in diesem UI-/Adapter-Delta keine neue DB-Migration.
+- Bekannte Blocker: Meta-Nutzer-Token, passende Nutzer-IDs/Berechtigungen,
+  drei öffentliche HTTPS-JPEGs und ein separater Tunnel fehlen; `cloudflared`
+  ist nicht installiert. `META_GRAPH_AUTOMATION_PROOF=NOT_PROVEN`.
+- Owner-Gates: exponierte App-Schlüssel rotieren; neue Credentials nur über
+  den sicheren Secret-Provider hinterlegen. Keine Werte in Chat, Git, DB,
+  Logs oder Handoff kopieren.
+- Geparkt: kein Live-Post, kein Tunnel, kein TikTok-Repost, keine automatische
+  Scheduler-Aktivierung und keine neue Plattform.
+- Nächste drei: (1) Credentials/Scopes sicher konfigurieren, (2) JPEG-
+  Manifest über öffentlichen HTTPS-Origin bereitstellen, (3) genau ein
+  Dashboard-Preflight und anschließend ggf. ein kontrollierter Proof.
+- Resume-Auftrag: „Lies diesen Block und
+  `sessions/2026-09-14-2320-codex-meta-dashboard.md`. Prüfe zuerst die
+  Credentials-/Manifest-Gates. Niemals blind erneut senden; bei Timeout zuerst
+  die vorhandene Reconciliation verwenden.“
+
 ## AKTUELL — MILO TIKTOK LIVE, 14.09.2026 18:48 Europe/Berlin
 
 - Letzter vollständig erledigter Task: referenzgebundenen Milo-9:16-Testpost

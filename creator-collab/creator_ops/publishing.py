@@ -1218,7 +1218,7 @@ class PublishQueueService:
                     reschedule += 1
         return {"created": created, "needs_reschedule_review": reschedule}
 
-    def dispatch_due(self, now: datetime | None = None) -> dict[str, int]:
+    def dispatch_due(self, now: datetime | None = None, *, queue_id: int | None = None) -> dict[str, int]:
         current = self._as_utc(now)
         summary = {
             "due": 0,
@@ -1238,6 +1238,8 @@ class PublishQueueService:
             (LOCAL_SCHEDULED,),
         )
         for candidate in candidates:
+            if queue_id is not None and candidate["id"] != queue_id:
+                continue
             planned = self._as_utc(datetime.fromisoformat(candidate["planned_at"]))
             if planned > current:
                 continue

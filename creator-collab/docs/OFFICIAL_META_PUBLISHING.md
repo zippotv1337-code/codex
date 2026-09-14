@@ -24,6 +24,28 @@ The adapter is fail-closed until all of these are true:
 - Graph identity and content-publishing quota pass read-only preflight.
 - A separate per-content live gate is present immediately before dispatch.
 
+## Dashboard single-package path
+
+The channel dashboard now exposes a value-free `Meta Graph · kontrollierter
+Einzelversand` card. `Einzelpaket prüfen` calls a fresh read-only preflight for
+the selected content ID. `Dieses Paket senden` is deliberately scoped to that
+one queue item, records the existing per-content live gate, and dispatches
+through the existing idempotent queue. It never enables the global scheduler or
+retries an item with an external ID. A missing token, account mapping, manifest,
+public asset, permission or quota remains a visible blocked result.
+
+The endpoints are:
+
+```text
+GET  /api/meta-push
+POST /api/meta-push/preflight   (content_id=<positive integer>)
+POST /api/meta-push/push-one    (content_id=<positive integer>)
+```
+
+All POST routes require the password-protected dashboard and its CSRF token.
+The final status is only `PUBLISHED` when Meta returns and the adapter verifies
+both a media ID and an Instagram permalink.
+
 The local preflight command is read-only and never creates a Graph media
 container or changes the database:
 

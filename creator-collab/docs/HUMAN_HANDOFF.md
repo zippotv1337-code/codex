@@ -1,6 +1,34 @@
 # Human Handoff — ZippoWorkz
 
-Stand: 14.09.2026, 18:48 Europe/Berlin
+Stand: 14.09.2026, 23:20 Europe/Berlin
+
+## Meta-Dashboard-Pfad (fertig verdrahtet, noch nicht live bewiesen)
+
+Unter `/channels` stehen jetzt pro Queue-Paket die Aktionen **Einzelpaket
+prüfen** und **Dieses Paket senden**. Der Versand ist auf genau eine
+Content-ID begrenzt, führt vorab einen frischen read-only Preflight aus und
+schreibt nur nach bestätigter externer Media-ID plus Instagram-Permalink auf
+`PUBLISHED`. Der globale Scheduler wird dabei nicht aktiviert.
+
+Der lokale Media-Origin (`creator_ops.public_media`) kann drei explizit
+ausgewählte JPEG-Derivate loopback-only und zeitbegrenzt bereitstellen. Für Meta
+fehlen noch ein öffentlicher HTTPS-Origin und ein separater Tunnel; `cloudflared`
+ist auf diesem Rechner nicht vorhanden und wurde nicht installiert.
+
+### Noch nötige Owner-/Umgebungsaktionen für den echten Proof
+
+1. Die im Chat offengelegten Meta-/TikTok-Schlüssel im jeweiligen Developer
+   Portal rotieren. Werte nicht erneut im Chat senden.
+2. Für Leona oder Mara einen echten Instagram-Nutzer-Token, die passende
+   Nutzer-ID und die benötigten Content-Publishing-Berechtigungen über den
+   sicheren Secret-Provider hinterlegen. Eine App-ID bzw. ein App-Geheimcode
+   allein ist kein Nutzerzugang.
+3. Drei eindeutige JPEG-Derivate eines freigegebenen `SFW`/`PUBLIC_SFW`-
+   Pakets auf einem öffentlichen HTTPS-Origin bereitstellen und dessen
+   Manifestpfad lokal konfigurieren.
+4. Im Dashboard `Einzelpaket prüfen` ausführen. Nur bei `READY` den kontrollierten
+   Einzelversand starten; bei Timeout zuerst Reconciliation, niemals blind
+   erneut senden.
 
 Meta wurde read-only geprüft und ist wegen fehlender sicher hinterlegter
 Projekt-Credentials ehrlich blockiert. Der referenzgebundene Milo-9:16-
@@ -40,7 +68,8 @@ Bis zur Einrichtung bleiben alle externen Adapter bewusst fail-closed.
 - Draft Upload und Direct Post getrennt; Direct Post dreifach gegated
 - Analytics `UNKNOWN/NULL`, solange keine echten Werte existieren
 - Meta-Preflight reproduzierbar fail-closed; keine externe Anfrage
-- 179/179 Tests, Runtime-Health und SQLite-Integrität grün
+- fokussierte Meta-/Channel-/Media-/Queue-/AI-Ops-Tests, Runtime-Health und
+  SQLite-Integrität grün
 
 - Dashboard: <http://192.168.188.131:4180/>
 - Milo/TikTok: <http://192.168.188.131:4180/channels>

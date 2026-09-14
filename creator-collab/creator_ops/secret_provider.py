@@ -22,6 +22,10 @@ DEFAULT_ALIAS_ENV: dict[str, str] = {
     "secret://tiktok/client_secret": "TIKTOK_CLIENT_SECRET",
     "secret://tiktok/client-key": "TIKTOK_CLIENT_KEY",
     "secret://tiktok/client-secret": "TIKTOK_CLIENT_SECRET",
+    "secret://tiktok/milo-der-zug/access-token": "TIKTOK_MILO_ACCESS_TOKEN",
+    "secret://tiktok/milo-der-zug/open-id": "TIKTOK_MILO_OPEN_ID",
+    "secret://runway/api-key": "RUNWAY_API_KEY",
+    "secret://stability/api-key": "STABILITY_API_KEY",
     "secret://github/token": "GITHUB_TOKEN",
 }
 

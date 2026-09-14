@@ -1,5 +1,39 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Meta-Pfad final geprüft — 14. September 2026, 23:31 Europe/Berlin
+
+Der passwort- und CSRF-geschützte Einzelpaketweg in `/channels` ist lokal
+verifiziert. Preflight bleibt read-only; `push-one` akzeptiert nur ein genau
+ausgewähltes, freigegebenes Paket und bewahrt Queue-Key, Publish-Intent,
+Receipt- und Reconciliation-Schutz. Die Produktions-Policy meldet `POLICY=OK`.
+95 fokussierte Tests, Python-/JavaScript-Prüfungen und SQLite-Integrität sind
+grün. Der echte Meta-Graph-Publish ist weiterhin nicht bewiesen, solange keine
+sicheren User-Credentials, Scopes und öffentlich erreichbaren HTTPS-JPEGs
+vorliegen. Es wurden keine Secrets oder externen Aktionen ausgeführt.
+
+## Meta-Einzelpaketweg und Media-Origin — 14. September 2026
+
+Der bestehende Instagram-Graph-Adapter hat jetzt einen getesteten,
+passwortgeschützten Dashboard-Weg für genau ein ausgewähltes Paket:
+`/api/meta-push/preflight` (read-only) und `/api/meta-push/push-one`.
+Vor jedem Versand wird der Preflight frisch ausgeführt; der globale Scheduler
+bleibt deaktiviert. Queue-Key, Publish-Intent, Receipt und die Regel
+`PUBLISHED` nur nach bestätigter Media-ID plus Instagram-Permalink bleiben
+unverändert aktiv. Die Kanalansicht `/channels` zeigt diese Aktionen neben
+Accounts und Analytics.
+
+`creator_ops.public_media` stellt für ein freigegebenes SFW/PUBLIC_SFW-Paket
+exakt drei geprüfte JPEGs loopback-only und zeitlich begrenzt bereit. Ein
+öffentlicher HTTPS-Origin und ein separater Tunnel müssen vom Owner bzw. der
+Umgebung bereitgestellt werden; `cloudflared` ist lokal nicht installiert und
+wurde nicht automatisch aktiviert.
+
+Der echte Meta-Live-Proof ist deshalb weiterhin **nicht bewiesen**. Aktuell
+fehlen echte Instagram-Nutzer-Tokens/Nutzer-IDs, Berechtigungen und öffentlich
+erreichbare JPEG-URLs. App-ID und App-Geheimcode allein ersetzen keinen
+Nutzerzugang. Die neuen Dateien und Tests enthalten keine Secrets; offengelegte
+Schlüssel sollten im Developer Portal rotiert werden.
+
 ## Milo TikTok-Testpost live — 14. September 2026
 
 Der referenzgebundene Milo-Entwurf `Milos erste Fahrt am Morgen` wurde nach

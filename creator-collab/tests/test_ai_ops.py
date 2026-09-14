@@ -204,6 +204,38 @@ class AiOpsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'POLICY_FORBIDDEN_CAPABILITY'):
             validate_policy(self.root)
 
+    def test_legacy_central_policy_is_accepted_only_when_fully_deny_listed(self):
+        folder = self.root / '_system'
+        folder.mkdir()
+        (folder / 'PERMISSIONS_POLICY.json').write_text(json.dumps({
+            'version': 2,
+            'default': 'deny_external',
+            'allowed_root': str(self.root),
+            'allow_read': [str(self.root)],
+            'allow_write': [str(self.root / 'Handoff')],
+            'denied_actions': [
+                'purchase', 'subscription', 'create_account', 'private_account_use',
+                'live_post', 'dm', 'message', 'comment', 'public_profile_change',
+                'identity', 'kyc', 'otp', 'password', 'token', 'secret_export',
+                'force_push', 'history_rewrite', 'destructive_db', 'delete_outside_root',
+            ],
+        }))
+        role = {
+            'root': str(self.root), 'mode': 'LOCAL_SAFE_ONLY',
+            'task_allowlist': [task['id'] for task in TASKS],
+            'outside_root_access': False, 'model_generated_commands': False,
+            'platform_actions': False, 'persona_changes': False,
+            'git_push': False, 'git_worktree_replace': False,
+            'paid_services': False, 'secrets_in_results': False,
+        }
+        (folder / 'LOCAL_AI_PERMISSIONS_POLICY.json').write_text(json.dumps(role))
+        validate_policy(self.root)
+        central = json.loads((folder / 'PERMISSIONS_POLICY.json').read_text())
+        central['denied_actions'].remove('live_post')
+        (folder / 'PERMISSIONS_POLICY.json').write_text(json.dumps(central))
+        with self.assertRaisesRegex(ValueError, 'POLICY_FORBIDDEN_CAPABILITY'):
+            validate_policy(self.root)
+
     def test_stop_before_work_releases_and_preserves_queue(self):
         self.service.command('stop')
         worker = LocalWorker(self.service, activity=lambda: False)

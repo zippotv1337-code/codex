@@ -41,6 +41,7 @@ TASKS = (
     {"id": "vps_readiness", "title": "VPS-Verbindungsbereitschaft ohne Zugriffsdaten prüfen", "priority": "P1", "dependencies": ["health"]},
     {"id": "operations_summary", "title": "Lokale KI: neuen Betriebsstand zusammenfassen", "priority": "P2", "dependencies": ["external_readiness_refresh", "analytics_due_windows", "approval_backup", "vps_readiness"]},
     {"id": "summary", "title": "Lokale KI: geprüfte Ergebnisse zusammenfassen", "priority": "P2", "dependencies": ["tests", "triage", "export_manifest"]},
+    {"id": "milo_master_brief", "title": "Qwen: Milo analysieren und Video-/Musikbrief vorbereiten", "priority": "P1", "dependencies": ["health"]},
 )
 
 

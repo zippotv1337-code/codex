@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T16:52:58+00:00",
+  "generated_at": "2026-09-14T21:31:00+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -78,7 +78,26 @@
       "LOCAL_SCHEDULED": 3
     },
     "instagram_channel_real_live": false,
-    "meta_graph_automation_proof": "not_yet_proven"
+    "meta_graph_automation_proof": "not_yet_proven",
+    "meta_single_package_dashboard_path": "READY_FOR_OWNER_CREDENTIALS",
+    "meta_single_package_route": "/api/meta-push/push-one",
+    "automatic_publish": false
+  },
+  "public_media": {
+    "status": "LOCAL_JPEG_ORIGIN_READY_TUNNEL_NOT_INSTALLED",
+    "scope": "exactly_three_selected_top_picks",
+    "dashboard_port_excluded": true,
+    "manifest_requires_public_https_origin": true,
+    "cloudflared_present": false,
+    "last_verification": "2026-09-14T21:31:00+00:00"
+  },
+  "verification": {
+    "focused_tests": 95,
+    "python_compile": "ok",
+    "javascript_syntax": "ok",
+    "sqlite_integrity_check": "ok",
+    "runtime_health": "ok",
+    "external_actions": "NONE"
   },
   "background_runs": {
     "COMPLETE": 6

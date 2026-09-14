@@ -3,7 +3,7 @@
   "root": "C:\\Zippoworkz",
   "mode": "LOCAL_SAFE_ONLY",
   "outside_root_access": false,
-  "task_allowlist": ["health", "tests", "triage", "inventory", "asset_hashes", "source_refs", "content_metadata", "analytics_read", "analytics_learning", "backup_check", "backup_integrity", "queue_audit", "docs_consistency", "export_manifest", "content_pack_review", "fiverr_readiness", "tiktok_analytics_plan", "research_backlog", "content_export", "active_data_verification", "scheduled_package_preflight", "external_readiness_refresh", "analytics_due_windows", "approval_backup", "vps_readiness", "operations_summary", "summary"],
+  "task_allowlist": ["health", "tests", "triage", "inventory", "asset_hashes", "source_refs", "content_metadata", "analytics_read", "analytics_learning", "backup_check", "backup_integrity", "queue_audit", "docs_consistency", "export_manifest", "content_pack_review", "fiverr_readiness", "tiktok_analytics_plan", "research_backlog", "content_export", "active_data_verification", "scheduled_package_preflight", "external_readiness_refresh", "analytics_due_windows", "approval_backup", "vps_readiness", "operations_summary", "summary", "milo_master_brief"],
   "model_generated_commands": false,
   "platform_actions": false,
   "persona_changes": false,

@@ -1,5 +1,65 @@
 # Aktueller Handoff
 
+## ABSCHLUSSVERIFIKATION — 14.09.2026, 23:31 Europe/Berlin
+
+- Der Meta-/Instagram-Einzelpaketweg ist lokal fertig verdrahtet und geprüft;
+  die kanonische Runtime meldet `ok` auf
+  `http://192.168.188.131:4180/api/health`.
+- 95 fokussierte Tests, Python-Compile, JavaScript-Syntax und SQLite-
+  `integrity_check` sind grün.
+- Die Produktions-Policy validiert mit `POLICY=OK`; die versionierte
+  Projektrolle wird gegenüber einem alten externen Rollenfile bevorzugt.
+- Es gab in diesem Run keinen externen Publish, keinen Tunnel und keinen
+  Receipt. `META_GRAPH_AUTOMATION_PROOF` bleibt `NOT_PROVEN`.
+- Neuer Journalbeleg:
+  `sessions/2026-09-14-2331-codex-meta-finalization.md`.
+
+Die verbleibenden Schritte sind ausschließlich echte Owner-/Umgebungs-Gates:
+rotierte App-Schlüssel, sicher hinterlegte Instagram-User-Tokens/IDs/Scopes
+und ein öffentlicher HTTPS-Origin für drei JPEG-Derivate.
+
+## META SINGLE-PACKAGE DASHBOARD PATH — 14.09.2026, 23:20
+
+- Der bestehende offizielle Meta-Adapter ist jetzt über einen klar begrenzten
+  Dashboard-Weg erreichbar: `GET /api/meta-push`, `POST
+  /api/meta-push/preflight` und `POST /api/meta-push/push-one`.
+- `push-one` arbeitet ausschließlich auf der übergebenen Content-ID. Vor dem
+  Versand erfolgt ein frischer read-only Preflight; der globale Scheduler wird
+  nicht aktiviert. Queue-Key, bestehende Publish-Intent-/Receipt-Logik und
+  Reconciliation bleiben unverändert maßgeblich.
+- Der Versand-Endpunkt ist nur im passwortgeschützten Dashboard verfügbar und
+  benötigt den vorhandenen CSRF-Schutz. `PUBLISHED` wird weiterhin erst nach
+  bestätigter externer Medien-ID **und** validiertem Instagram-Permalink gesetzt.
+- Die Kanalansicht `/channels` zeigt jetzt Accounts, echte/fehlende Analytics,
+  Medien-Bereitschaft und pro Paket die Aktionen „Einzelpaket prüfen“ und
+  „Dieses Paket senden“. Bereits veröffentlichte Inhalte bleiben read-only.
+- Ein lokaler, loopback-only Media-Origin für exakt drei ausgewählte JPEG-
+  Top-Picks ist vorhanden (`creator_ops.public_media`). Er stellt weder das
+  Dashboard noch Tokens bereit, startet keinen Tunnel und läuft spätestens nach
+  sechs Stunden aus. `cloudflared` ist auf diesem Rechner nicht installiert;
+  deshalb wurde kein öffentlicher Tunnel vorgetäuscht.
+- Runbook: `docs/META_MEDIA_RUNBOOK.md`; offizieller Adapter-Weg:
+  `docs/OFFICIAL_META_PUBLISHING.md`.
+- Verifiziert: Python-Compile, JavaScript-Syntax sowie die fokussierten
+  Meta-/Channel-/Media-/Queue-/AI-Ops-Tests grün; SQLite `integrity_check=ok`.
+  Die kanonische Runtime wurde danach kontrolliert neu gestartet und meldet
+  Health `ok` auf `http://192.168.188.131:4180/api/health`.
+- Meta-Live-Proof bleibt **nicht bewiesen**: Es fehlen weiterhin echte
+  Instagram-Nutzer-Tokens, passende Nutzer-IDs, veröffentlichte HTTPS-JPEGs
+  und die verifizierte Kontoberechtigung. App-ID/App-Geheimcode allein genügen
+  nicht. Im Chat offengelegte Schlüssel nicht verwenden; Owner sollte sie
+  rotieren und nur über den sicheren Secret-Provider hinterlegen.
+- Keine externe Plattformaktion, kein Live-Post und kein Tunnel in diesem Run.
+
+### Nächste Owner-Aktion
+
+1. Exponierte App-Schlüssel rotieren.
+2. Für Leona oder Mara einen echten Instagram-Nutzer-Token samt Nutzer-ID und
+   den benötigten Berechtigungen sicher hinterlegen.
+3. Drei explizite JPEG-Derivate über einen öffentlichen HTTPS-Origin bereitstellen,
+   dann im Dashboard zuerst „Einzelpaket prüfen“ und erst bei `READY` den
+   Einzelversand ausführen.
+
 ## MILO TIKTOK TESTPOST LIVE — 14.09.2026, 18:48
 
 - Nach expliziter Owner-Bestätigung wurde genau ein PUBLIC_SFW-Fotopost über
