@@ -115,12 +115,13 @@ class HandoffService:
         # complete within the same second.
         stamp = datetime.now(UTC).strftime("%Y%m%d-%H%M%S-%f")
         if markdown_path.is_file():
-            archived = archive / f"CODEX_HANDOFF_{stamp}.md"
+            archived = archive / f"CODEX_HANDOFF_{stamp}-previous.md"
             self._atomic_write(archived, markdown_path.read_text(encoding="utf-8"))
         markdown = self._markdown(payload)
         serialized = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
         self._atomic_write(markdown_path, markdown)
         self._atomic_write(json_path, serialized)
+        self._atomic_write(archive / f"CODEX_HANDOFF_{stamp}.md", markdown)
         self._atomic_write(archive / f"CODEX_HANDOFF_{stamp}.json", serialized)
         return {"current_markdown": str(markdown_path), "current_json": str(json_path)}
 
