@@ -1,5 +1,25 @@
 # Aktueller Handoff
 
+## RECOVERY- UND PUBLISH-SAFETY-PROOF — 14.09.2026, 07:43
+
+- Das aktuelle Approval-Backup wurde vollständig in eine frische temporäre
+  Datenbank zurückgespielt. Schema 5, Integrität und Foreign Keys sind gesund;
+  alle sechs Kernzählungen entsprechen der kanonischen DB.
+- Auf der isolierten Restore-Kopie wurden beide lokalen 19:30-Jobs als fällig
+  simuliert. Ohne offiziellen Adapter wurden 2/2 sicher
+  `BLOCKED_EXTERNAL_PUBLISHING`, 0 veröffentlicht und 0 Fake-Receipts erzeugt.
+- Der zweite Dispatch erzeugte 0 weitere Versuche; Queueanzahl und Queue-
+  Schlüssel blieben unverändert. Reconciliation erzeugte 0 neue Jobs.
+- Die echte kanonische DB blieb unangetastet; SHA-256 vor/nach dem Proof ist
+  identisch: `C705EB48C0408B9A25AD313B29ED653A439FC484868D28DF34C1DF5663344A32`.
+- Wiederholbares Tool: `scripts/validate_scheduled_recovery.py`.
+  Bericht: `docs/SCHEDULED_RECOVERY_PROOF_2026-09-14.md`.
+- Verifiziert: 15 Publishing-/Recovery-Tests grün, Skript-Compile grün,
+  Dashboard-Health/DB `ok`, Queue weiterhin 2. Externe Aktionen: `NONE`.
+- Master Goals korrigiert: operative Daten sind vorhanden; ältere Leona-
+  Analytics bleiben historische Dokumentation und wurden nicht als aktuelle
+  Messwerte rekonstruiert.
+
 ## KANONISCHER CLI-DATENBANKPFAD KORRIGIERT — 14.09.2026, 07:38
 
 - Ein reproduzierbarer lokaler Restfehler ist behoben: Der allgemeine

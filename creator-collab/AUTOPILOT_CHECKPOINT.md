@@ -1,5 +1,25 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — RECOVERY/PUBLISH SAFETY PROVEN, 14.09.2026 07:43 Europe/Berlin
+
+- Letzter vollständig erledigter Task: Approval-Backup auf temporärer Kopie
+  restored und den fail-closed Publish-/Duplicate-Schutz für beide lokalen
+  Queuejobs operativ bewiesen.
+- Aktuell angefangener Task: keiner. Das Prüfskript ist wiederholbar; die
+  temporäre DB wurde entfernt und die echte DB blieb bytegleich.
+- Teststatus: 15 Publishing-/Recovery-Tests grün; Skript-Compile grün;
+  Dashboard-Health und Datenbank `ok`.
+- Backupstatus: aktuelles Approval-Backup vollständig restore-validiert.
+- Exakter Fortsetzungspunkt: auf ein reales externes Signal warten. Kein
+  weiterer lokaler Scheduler-Test nötig, sofern kein reproduzierbarer Defekt
+  oder neuer Queuezustand auftaucht.
+- Nächste drei echte Aufgaben: (1) Instagram-Publish + Permalink,
+  (2) Fiverr-Gig-Link verifizieren, (3) VPS-Konfiguration bei Bedarf liefern.
+- Exakter Resume-Auftrag: „Lies diesen Block und
+  `sessions/2026-09-14-0743-codex-recovery-publish-proof.md`. Recovery und
+  fail-closed Scheduling sind DONE. Nur bei neuem externen Signal oder
+  reproduzierbarem Defekt weiterarbeiten; sonst `IDLE_CLEAN`."
+
 ## AKTUELL — CLI-DATENKONSISTENZ DONE, 14.09.2026 07:38 Europe/Berlin
 
 - Letzter vollständig erledigter Task: CLI-Standarddatenbank auf die

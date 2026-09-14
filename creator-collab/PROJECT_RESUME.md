@@ -1,5 +1,22 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Recovery- und Fail-Closed-Publish-Nachweis — 14. September 2026
+
+Das aktuelle Approval-Backup wurde erfolgreich in eine frische temporäre
+SQLite-Datenbank zurückgespielt. Schema 5, Integrität, Foreign Keys und sechs
+Kernzählungen stimmen mit der kanonischen DB überein. Auf dieser isolierten
+Kopie wurden die zwei lokalen 19:30-Jobs als fällig simuliert: Ohne offiziellen
+Adapter wurden beide sicher blockiert, kein Inhalt als `PUBLISHED` markiert,
+keine externen IDs/URLs erzeugt und bei einem zweiten Dispatch kein weiterer
+Send-Versuch gestartet. Queue-Schlüssel blieben erhalten.
+
+Das wiederholbare, ausschließlich lokale Prüfwerkzeug ist
+`scripts/validate_scheduled_recovery.py`; der Nachweis steht in
+`docs/SCHEDULED_RECOVERY_PROOF_2026-09-14.md`. Der SHA-256 der echten
+kanonischen Datenbank war vor und nach dem Proof identisch. 15 relevante
+Publishing-/Recovery-Tests, Skript-Compile und Dashboard-Health sind grün;
+externe Aktionen: `NONE`.
+
 ## Kanonischer CLI-Datenbankpfad — 14. September 2026
 
 Der letzte lokale Datenkonsistenzfehler ist behoben: `creator_ops.cli` nutzt

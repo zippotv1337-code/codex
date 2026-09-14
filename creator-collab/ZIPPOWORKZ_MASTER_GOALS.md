@@ -1,23 +1,29 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-13 — AI Ops local runtime activated; historical operating data missing from new root.
+Last consolidated: 2026-09-14 — canonical operating data active; approval-backup restore and fail-closed scheduling proven.
 
-## Current Owner delta — AI-Ops-Masterauftrag, 13 September
+## Current operating delta — 14 September
 
 Root C:/Zippoworkz; reuse Workspace/codex_ingest/creator-collab.
-Older business/live counts below are historical; current DB has no operating content.
+Canonical DB: `data/review_dashboard.db`. It currently contains two
+owner-approved packages, ten real SFW assets, two local draft publications
+and two `LOCAL_SCHEDULED` jobs. There are no externally confirmed current
+publications or real analytics in this DB; older business/live counts below
+remain historical evidence only.
 
 | ID | Goal | Status | Evidence / exit |
 |---|---|---|---|
 | T-007 | Bounded Local-AI start + safe local fallback | DONE | Old destructive unbounded ZIP path replaced; four tasks executed, model unloaded. |
 | T-008 | AI Ops in existing dashboard | DONE | /ai-ops visible in browser; persistent pause/reload/resume and auth/CSRF tests. |
-| T-009 | Restore previous operating data | OWNER_GATE | Owner supplies actual DB/backup; never reconstruct receipts from handoff text. |
+| T-009 | Restore usable operating data | DONE — 2026-09-14 | Current local assets were imported through the canonical path: 2 packages / 10 assets. Historical receipts were not reconstructed. |
 | T-010 | Connect actual VPS watcher | OWNER_GATE | Requires concrete VPS and authenticated transport; no remote heartbeat observed. |
+| T-011 | Approval-backup restore + fail-closed schedule proof | DONE — 2026-09-14 | Fresh restore matched all core counts; 2/2 simulated due jobs blocked without adapter, second dispatch sent 0, no fake receipts, canonical DB hash unchanged. |
 
-Local worker's fixed initial queue is DONE. It must stop, not invent further tasks.
+Local worker's current 27-task allowlist is DONE. It must stop, not invent further tasks.
 M-12: current AI-Ops implementation mirrored on codex/ai-ops-20260913 (a6b2ef4), push confirmed; main deliberately unchanged. Evidence: sessions/2026-09-13-2057-codex-ai-ops.md.
 M-01 activation smoke is complete for the new runtime, **not** proof of data recovery.
-M-02/M-07 operation is waiting for T-009 in this root. M-03 Meta remains deferred.
+M-07 has usable local content. M-02 waits for a real externally confirmed
+publication/insight signal. M-03 Meta remains deferred.
 
 ## Purpose and precedence
 
@@ -54,7 +60,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | ID | Goal | Status | Evidence / exit condition |
 |---|---|---|---|
 | M-01 | One canonical ZippoWorkz surface | DONE | One visible product, primary launcher, dashboard and operational DB; runtime contract verified 2026-09-08. |
-| M-02 | Real Instagram analytics in ZippoWorkz | ACTIVE — OBSERVING | Zwei echte Leona-Messungen sind gespeichert: Publication 7 (13 Aufrufe, 11 Betrachter, 1 Like; spät als 24h-Fenster erfasst) und Publication 4 (19 Aufrufe, 16 Betrachter, 2 Likes, 1 Profilbesuch; spät als 72h-Fenster erfasst). Beide gehören zum selben Contentpaket; die Learning-Logik zählt sie bewusst nur als einen unabhängigen Inhalt. Complete when real 24h/72h/168h snapshots create the first evidenced learning cycle. |
+| M-02 | Real Instagram analytics in ZippoWorkz | ACTIVE — WAITING_REAL_PUBLICATION | Current canonical DB has 0 externally confirmed publications and 0 real analytics. Older Leona measurements remain historical evidence and were not reconstructed. Complete when real 24h/72h/168h snapshots create the first evidenced learning cycle. |
 | M-03 | Official Meta/Instagram API proof | DEFERRED — EXTERNAL_SIGNAL_ONLY | Preserve the adapter; do not let Meta configuration block local content, analytics or revenue work. Resume only after a confirmed Developer-App/account-linkage signal; Leona read-only → one controlled publish → receipt/reconcile → Mara. |
 | M-04 | Fiverr Gig 1 live: AI Workflow Automation | ACTIVE / VERIFY | Die eingeloggte Verwaltung zeigte am 2026-09-08 `AKTIV 1`; Fiverr lieferte in der Tabelle einen Fehler und die öffentliche Ansicht war CAPTCHA-blockiert. Exit: öffentlicher Gig-Link störungsfrei sichtbar und dokumentiert. Basic $149, Standard $349, Premium $699. |
 | M-05 | First real lead, order and revenue | BLOCKED_BY_M-04 | A genuine inquiry, order, fulfillment and revenue record; dry runs never count. |
@@ -63,7 +69,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-08 | Stories as a first-class lane | PARTIAL / LOCAL_IMPLEMENTED | Local preview/edit/approve/change/reject/pause/plan persistent and honest; official Story publishing waits for supported proof. |
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |
-| M-11 | Recovery, backup and journals | ACTIVE_FOREVER | Journal each meaningful run; pre-change backup for critical state; restore validation; no secrets. |
+| M-11 | Recovery, backup and journals | ACTIVE_FOREVER | Approval backup restored and checked 2026-09-14; core counts matched and canonical DB hash stayed unchanged. Continue journal + restore validation discipline; no secrets. |
 | M-12 | GitHub trustworthy mirror | DONE / SYNC_VERIFIED_2026_09_08 | main 3ac0cb8 externally confirmed; identical project tree, no secrets/DB/backups or force push. Evidence: sessions/2026-09-08-2255-github-sync.md. Visibility remains Owner-only; new changes may reopen normal sync. |
 | M-13 | Simple model/runtime compatibility | ACTIVE_FOREVER | Stable current model/runtime is sufficient; stronger models are optional. |
 | M-14 | Learn sellable product from demand | WAITING_REAL_SIGNALS | Learn from real inquiries, orders and fulfillment. |
@@ -77,7 +83,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | ID | Goal | Status | Exit condition |
 |---|---|---|---|
 | T-001 | Verify newest ZippoWorkz runtime after restart | DONE — 2026-09-08 | Health `ok`, `review_schema=story-review-v1`, one active backend process. Evidence: session journal. |
-| T-002 | Build real Instagram analytics capture and dashboard statistics | ACTIVE — TWO_REAL_SNAPSHOTS / ONE_INDEPENDENT_PACKAGE | Two real Leona snapshots stored without duplicate learning influence; next: a different content package, preferably Mara after account switch. Exit: traceable first learning cycle. |
+| T-002 | Build real Instagram analytics capture and dashboard statistics | ACTIVE — WAITING_REAL_PUBLICATION | Capture/dashboard path exists, but current canonical DB has no real externally confirmed publication. Next: publish one prepared package, reconcile its real permalink, then collect 24h/72h/168h values. |
 | T-003 | Verify/publish Fiverr Gig 1 | ACTIVE — PUBLIC_VERIFY_BLOCKED | Verwaltung meldet `AKTIV 1`; öffentlicher Link ist wegen Plattformfehler/CAPTCHA nicht belegt. Exit: öffentlicher Gig-Link sichtbar und dokumentiert. |
 | T-004 | Resume Meta API proof | DEFERRED — EXTERNAL_SIGNAL_ONLY | No active work or blocker hunting. Resume only after a confirmed Meta Developer-App/account-linkage signal. |
 
