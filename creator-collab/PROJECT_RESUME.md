@@ -1,5 +1,49 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Security/Handoff + Milo/TikTok P0 — 14. September 2026
+
+Das Paket `ZIPPOWORKZ_CODEX_PACKAGE_20260914.zip` ist umgesetzt. Die zentrale
+Policy v2.1 und das gemeinsame Handoff-Schema sind unter `C:\Zippoworkz`
+installiert und als versionierte Projektkonfiguration gespiegelt. Ein
+provider-neutraler `SecretProvider` unterstützt Windows Credential Manager,
+einen expliziten Runtime-Environment-Fallback und fail-closed Betrieb. Der
+`SecretBroker` protokolliert ausschließlich Alias, Zeit, Agent und Treffer;
+Secret-Werte werden weder im Dashboard noch im Audit ausgegeben. Ein lokaler
+Pre-Push-Hook blockiert wahrscheinliche Klartext-Secrets.
+
+Die neue zentrale Policy erweitert die Local AI nicht: Qwen benötigt weiterhin
+seine eigene `LOCAL_SAFE_ONLY`-Rollenpolicy mit fester Aufgaben-Allowlist und
+ohne Plattform-, Git-, Persona-, Kosten- oder modellgenerierte Befehle.
+
+`Milo der Zug` ist transparent als fiktive KI-Creator-Marke im bestehenden
+ZippoWorkz-Dashboard integriert. Instagram und TikTok sind lokal getrennt,
+noch nicht verbunden und führen keine externen Aktionen aus. Die TikTok-
+Vorbereitung zeigt eine 9:16-Preview, trennt `DRAFT_UPLOAD` von `DIRECT_POST`,
+erzwingt Asset-, Account- und Owner-Gates und hält Analytics-Fehlwerte als
+`UNKNOWN`/`NULL`. Ein reales Plattformkonto oder Handle wurde nicht erfunden.
+
+Der Server wurde kontrolliert auf `192.168.188.131:4180` neu gestartet.
+Dashboard-Health, Policy-/Rollenvalidierung, SQLite-Integrität und Foreign Keys
+sind grün. Die vollständige Suite umfasst 178/178 grüne Tests; JavaScript-
+Syntax und Python-Compile sind ebenfalls grün. Externe Aktionen: `NONE`.
+
+## Cloud-Content + Agentenübergaben — 14. September 2026
+
+Ein vollständiges neues Mara-Paket `Hofladen am Sonntag` wurde über einen
+bereits verbundenen Cloud-Bilddienst mit dem bestehenden Mara-Avatar als
+Identitätsreferenz erzeugt. Alle fünf unterschiedlichen 3:4-Shots wurden
+lokal gespeichert und visuell auf Identität, Hände, Logos, SFW und
+Pose-Diversität geprüft. Top 3: Asset `14 → 12 → 15`; Content `3` ist
+`READY_FOR_REVIEW`, vollständig und im Dashboard freigabefähig. Die
+kanonische DB umfasst nun 3 Pakete und 15 reale `SFW + PUBLIC_SFW`-Assets.
+
+Zwei getrennte, secret-freie Übergaben wurden erstellt: eine für den lokalen
+Qwen-Worker inklusive Bildern und begrenzter QA-Aufgaben sowie eine für den
+VPS mit einem one-shot read-only Prüfskript. Beide ZIPs enthalten weder DB
+noch Backups oder Credentials. Paket-Hashes sind vollständig geprüft; der
+VPS-Selbsttest meldet ohne konfigurierte HTTPS-URL ehrlich
+`NOT_CONFIGURED`. Kein Publish und keine sonstige Plattformaktion.
+
 ## Recovery- und Fail-Closed-Publish-Nachweis — 14. September 2026
 
 Das aktuelle Approval-Backup wurde erfolgreich in eine frische temporäre

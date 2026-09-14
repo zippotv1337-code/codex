@@ -34,6 +34,8 @@ from .adworks import AdWorksService
 from .publishing import PublishQueueService
 from .reconcile import ManualInstagramService
 from .ai_ops import AiOpsService
+from .channel_ops import ALLOWED_METRICS, ChannelOpsService
+from .security_status import SecurityStatusService
 
 
 STATIC_ROOT = ROOT / "dashboard"
@@ -133,6 +135,8 @@ class DashboardHandler(BaseHTTPRequestHandler):
     control_plane: ControlPlaneService
     adworks: AdWorksService
     publishing: PublishQueueService
+    channels: ChannelOpsService
+    security_status: SecurityStatusService
     asset_root: Path = ROOT
     auth: DashboardAuth = DashboardAuth(None)
 
@@ -231,9 +235,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
             page = body.decode("utf-8").replace("Creator Ops ·", "ZippoWorkz ·").replace(">Creator Ops<", ">ZippoWorkz<")
             links = [("/", "Heute / Review"), ("/stories", "Stories"),
                      ("/#attention-heading", "Needs Attention"), ("/archive", "Published / Archiv"),
-                     ("/analytics", "Analytics"), ("/#planned-heading", "Planung / Queue"),
+                     ("/analytics", "Analytics"), ("/channels", "Milo / TikTok"),
+                     ("/#planned-heading", "Planung / Queue"),
                      ("/revenue", "Fiverr / Revenue"), ("/offer", "Angebot"),
-                     ("/ai-ops", "AI Ops"), ("/control", "Betrieb / Status"), ("/collections", "Alben"),
+                     ("/ai-ops", "AI Ops"), ("/control", "Betrieb / Security"), ("/collections", "Alben"),
                      ("/top3", "Top 3"), ("/engagement", "Engagement")]
             current = urlparse(self.path).path
             navigation = '<nav class="main-nav" aria-label="Hauptnavigation">' + ''.join(
@@ -360,6 +365,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("collections.html", "text/html; charset=utf-8")
             elif parsed.path == "/control":
                 self._file("control.html", "text/html; charset=utf-8")
+            elif parsed.path == "/channels":
+                self._file("channels.html", "text/html; charset=utf-8")
             elif parsed.path == "/ai-ops":
                 self._file("ai-ops.html", "text/html; charset=utf-8")
             elif parsed.path == "/ai-ops.js":
@@ -392,6 +399,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("collections.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/control.js":
                 self._file("control.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/channels.js":
+                self._file("channels.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/revenue.js":
                 self._file("revenue.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/offer.js":
@@ -464,6 +473,10 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._json({"items": CollectionService(self.service).list(query.get("persona", [None])[0])})
             elif parsed.path == "/api/control-plane":
                 self._json(self.control_plane.snapshot())
+            elif parsed.path == "/api/security":
+                self._json(self.security_status.snapshot())
+            elif parsed.path == "/api/channels":
+                self._json(self.channels.snapshot())
             elif parsed.path == "/api/ai-ops":
                 self._json(self.ai_ops.snapshot())
             elif parsed.path == "/api/adworks":
@@ -556,6 +569,42 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                     self._json(self.ai_ops.snapshot())
                 else:
                     self._json(self.ai_ops.command(parts[2]))
+                return
+
+            if (
+                len(parts) == 6
+                and parts[:2] == ["api", "channels"]
+                and parts[3] == "drafts"
+            ):
+                slug, draft_id, action = parts[2], parts[4], parts[5]
+                form = self._read_form()
+                if action in {"approve", "change", "reject"}:
+                    result = self.channels.decide(
+                        slug,
+                        draft_id,
+                        action,
+                        form.get("note", [""])[0],
+                    )
+                elif action == "mode":
+                    result = self.channels.set_upload_mode(
+                        slug,
+                        draft_id,
+                        form.get("mode", [""])[0],
+                    )
+                elif action == "analytics":
+                    metrics: dict[str, int | None] = {}
+                    for metric in ALLOWED_METRICS:
+                        raw = form.get(metric, [""])[0].strip()
+                        metrics[metric] = int(raw) if raw else None
+                    result = self.channels.append_analytics(
+                        slug,
+                        draft_id,
+                        metrics,
+                        source=form.get("source", ["MANUAL_OWNER"])[0],
+                    )
+                else:
+                    raise ValueError("unsupported_channel_action")
+                self._json({"result": result, "external_action": False})
                 return
 
             if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "approve":
@@ -729,6 +778,8 @@ def create_server(
             "adworks": adworks,
             "publishing": publishing,
             "ai_ops": AiOpsService(pipeline.db, asset_root),
+            "channels": ChannelOpsService(asset_root),
+            "security_status": SecurityStatusService(asset_root),
         },
     )
     return ThreadingHTTPServer((host, port), handler)

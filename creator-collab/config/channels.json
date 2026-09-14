@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "brands": {
+    "milo-der-zug": {
+      "display_name": "Milo der Zug",
+      "kind": "AI_CREATOR_BRAND",
+      "disclosure": "Fiktive, KI-generierte Creator-Marke",
+      "identity_status": "LOCAL_DEFINITION_ONLY",
+      "accounts": [
+        {
+          "platform": "instagram",
+          "public_handle": null,
+          "connection_status": "NOT_CONNECTED",
+          "default_publish_mode": "APPROVAL"
+        },
+        {
+          "platform": "tiktok",
+          "public_handle": null,
+          "connection_status": "NOT_CONNECTED",
+          "default_publish_mode": "DRAFT_UPLOAD"
+        }
+      ],
+      "formats": {
+        "instagram": ["FEED", "REEL", "STORY"],
+        "tiktok": ["VIDEO_9_16"]
+      },
+      "starter_drafts": [
+        {
+          "draft_id": "milo-intro-001",
+          "platform": "tiktok",
+          "format": "VIDEO_9_16",
+          "title": "Milo stellt sich vor",
+          "hook": "Ein erster kurzer Blick in Milos Welt.",
+          "caption": "Lokaler Metadatenentwurf – noch nicht zur Veröffentlichung freigegeben.",
+          "asset_path": null,
+          "aspect_ratio": "9:16",
+          "approval_status": "OWNER_REVIEW_REQUIRED",
+          "upload_mode": "DRAFT_UPLOAD",
+          "status": "NEEDS_ASSET"
+        }
+      ]
+    }
+  }
+}

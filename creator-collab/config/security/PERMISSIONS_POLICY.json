@@ -1,0 +1,80 @@
+{
+  "version": "2.1",
+  "project": "Zippoworkz",
+  "root": "C:\\Zippoworkz",
+  "mode": "AUTONOMOUS_WITH_OWNER_GATES",
+  "default_behavior": [
+    "DO",
+    "TEST",
+    "VERIFY",
+    "LOG",
+    "CONTINUE"
+  ],
+  "local_files": {
+    "read": true,
+    "create": true,
+    "modify": true,
+    "move": true,
+    "delete": true,
+    "delete_requires_backup": true
+  },
+  "github": {
+    "read": true,
+    "commit": true,
+    "push": true,
+    "branches": true,
+    "pull_requests": true,
+    "delete_repository": false
+  },
+  "code": {
+    "implement": true,
+    "refactor": true,
+    "test": true,
+    "repair": true,
+    "document": true
+  },
+  "api": {
+    "read": true,
+    "write": true,
+    "respect_external_action_gates": true
+  },
+  "social": {
+    "project_accounts_only": true,
+    "read": true,
+    "draft": true,
+    "preview": true,
+    "schedule": true,
+    "publish_owner_approved_content": true,
+    "auto_low_risk_engagement": true,
+    "sensitive_requires_owner": true
+  },
+  "new_platforms": {
+    "research": true,
+    "prepare_setup": true,
+    "registration_until_final_confirmation": true
+  },
+  "spending": {
+    "allowed_without_owner": false
+  },
+  "secrets": {
+    "provider_required_for_automation": true,
+    "aliases_only_in_logs_and_handoffs": true,
+    "allow_plaintext_git": false,
+    "allow_plaintext_logs": false,
+    "allow_plaintext_markdown": false,
+    "leak_check_before_push": true,
+    "runtime_env_fallback_only": true
+  },
+  "password_changes": {
+    "normal_requires_owner": true,
+    "incident_rotation_allowed": true,
+    "incident_requires_immediate_handoff": true
+  },
+  "safe_mode": {
+    "external_writes": false,
+    "purchases": false,
+    "publishing": false,
+    "account_changes": false,
+    "local_work": true
+  }
+}

@@ -29,6 +29,9 @@ from .offline import OfflineSnapshotService
 from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .style_reference import StyleReferenceService
+from .channel_ops import ChannelOpsService
+from .handoff import HandoffService
+from .security_status import SecurityStatusService
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -191,6 +194,19 @@ def parser() -> argparse.ArgumentParser:
         "external-readiness",
         help="Print secret-free readiness for Meta, Fiverr, and handoff mirror lanes",
     )
+    subcommands.add_parser(
+        "security-status",
+        help="Print policy, provider, handoff and leak-check readiness without secret values",
+    )
+    subcommands.add_parser(
+        "channels-status",
+        help="Print local Milo/TikTok preparation state without platform actions",
+    )
+    handoff_validate = subcommands.add_parser(
+        "handoff-validate",
+        help="Validate one JSON handoff against the shared secret-free schema",
+    )
+    handoff_validate.add_argument("path", type=Path)
     return result
 
 
@@ -385,6 +401,29 @@ def main() -> int:
                 indent=2,
             )
         )
+    elif args.command == "security-status":
+        print(
+            json.dumps(
+                SecurityStatusService(ROOT).snapshot(),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "channels-status":
+        print(
+            json.dumps(
+                ChannelOpsService(ROOT).snapshot(),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "handoff-validate":
+        payload = json.loads(args.path.read_text(encoding="utf-8"))
+        HandoffService(
+            ROOT / "config" / "security" / "HANDOFF_SCHEMA.json",
+            ROOT / "data" / "handoff-validation",
+        ).validate(payload)
+        print(json.dumps({"status": "VALID", "path": str(args.path)}, ensure_ascii=False, indent=2))
     return 0
 
 

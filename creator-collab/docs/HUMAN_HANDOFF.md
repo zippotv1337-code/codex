@@ -1,81 +1,35 @@
 # Human Handoff — ZippoWorkz
 
-## Aktuell: 14.09.2026
+Stand: 14.09.2026, 12:48 Europe/Berlin
 
-Die Meldung „operative Datenbank fehlt“ ist erledigt und darf nicht mehr als
-Owner-Aufgabe erscheinen. Die kanonische Datenbank
-`data/review_dashboard.db` enthält zwei owner-freigegebene Pakete, zehn reale
-SFW-Assets und zwei lokale Terminierungen für 19:30. Das geprüfte Approval-
-Backup liegt unter
-`C:\Zippoworkz\backups\creator-ops-backup-ai-ops-approved-20260914.db`.
+Das Security-/Handoff- und Milo/TikTok-Paket ist lokal vollständig umgesetzt,
+getestet und in der laufenden ZippoWorkz-Runtime aktiviert.
 
-Aktuelle echte Owner-/Extern-Gates:
+## Genau eine Owner-Aktion
 
-1. **Instagram/Meta:** Die zwei Pakete sind nur `LOCAL_SCHEDULED`, nicht live.
-   Für externe Veröffentlichung wird eine nutzbare offizielle Konfiguration
-   oder eingeloggte kontrollierbare Upload-Session benötigt. Erst nach echter
-   Media-ID/Permalink darf `PUBLISHED` gespeichert werden.
-2. **Nur wenn VPS gewünscht:** Host/IP, Benutzername, Port und bereits
-   vorgesehene sichere Transport-/Authentifizierungsmethode nennen. Keine
-   privaten Schlüssel in Chat/Journal kopieren und keine Ports automatisch
-   öffnen.
-3. **Fiverr:** Identität ist owner-gemeldet verifiziert. Den öffentlichen
-   Gig-Status und die echte URL einmal sichtbar prüfen; keine CAPTCHA-
-   Umgehung und keinen Live-Status raten.
+Einen primären Secret-Provider auswählen (empfohlen: Windows-
+Anmeldeinformationsverwaltung) und die bereits vorhandenen Zugangsdaten der
+ZippoWorkz-Projektkonten einmalig unter den im Dashboard angezeigten
+`secret://...`-Aliasen hinterlegen.
 
-Dashboard läuft unter http://192.168.188.131:4180/ai-ops mit vorhandenem Passwort.
-Keine erneute allgemeine Freigabe für die erledigte lokale Implementierung nötig.
-Nachfolgende Gates vom 8. September sind historischer Kontext, kein Auftrag zu neuem Login-/Plattform-Loop.
+Keine Secret-Werte in Chat, Git, Markdown, SQLite, Logs oder Handoffs kopieren.
+Bis zur Einrichtung bleiben alle externen Adapter bewusst fail-closed.
 
-Stand: 8. September 2026, Europe/Berlin
+## Bereits erledigt
 
-## Update aktiviert
+- zentrale Policy v2.1 und gemeinsames Handoff-Schema installiert
+- strengere Local-AI-Rollenpolicy erhalten und validiert
+- SecretProvider/Broker und alias-only Audit implementiert
+- Pre-Push-Secret-Check aktiviert
+- Milo der Zug als fiktive KI-Marke lokal sichtbar
+- Instagram/TikTok getrennt und ehrlich `NOT_CONNECTED`
+- 9:16-Preview sowie lokales APPROVE/CHANGE/REJECT vorhanden
+- Draft Upload und Direct Post getrennt; Direct Post dreifach gegated
+- Analytics `UNKNOWN/NULL`, solange keine echten Werte existieren
+- 178/178 Tests, Runtime-Health und SQLite-Integrität grün
 
-Der kontrollierte Neustart ist am 8. September bestätigt. <http://127.0.0.1:4180/>
-meldet gesunden Betrieb und der Story-Vertrag ist aktiv. Der tägliche Launcher
-ist `START_ZIPPOWORKZ.ps1`. Kein Neustart und keine Meta-Arbeit nötig.
+- Dashboard: <http://192.168.188.131:4180/>
+- Milo/TikTok: <http://192.168.188.131:4180/channels>
+- Security: <http://192.168.188.131:4180/control>
 
-## Historischer Kontext vom 8. September
-
-- Meta: `DEFERRED_OWNER_VERIFICATION`. Persönliche Registrierung/SMS aktuell
-  nicht möglich. Kein erneuter Loop. API-Code bleibt vorhanden;
-  `META_GRAPH_AUTOMATION_PROOF = not_yet_proven`.
-- Fiverr-Identität laut Owner erledigt. Nicht erneut verlangen. Am 8.
-  September meldete die eingeloggte Verwaltung `AKTIV 1`; ihre Ergebnistabelle
-  zeigte aber einen Fiverr-Plattformfehler. Die direkte öffentliche
-  Profilansicht wurde von CAPTCHA blockiert. Bei nächster normaler Sitzung
-  den öffentlichen Gig einmal sichtbar verifizieren; CAPTCHA nicht lösen oder
-  umgehen und bis dahin keinen Link/keine Umsätze behaupten.
-- Instagram-Analytics: Zwei echte, transparent verspätet erfasste Leona-
-  Messungen sind vorhanden: Publication 7 (13 Aufrufe, 11 Betrachter, 1 Like)
-  und Publication 4 (19 Aufrufe, 16 Betrachter, 2 Likes, 1 Profilbesuch).
-  Beide betreffen dasselbe Contentpaket und erzeugen deshalb bewusst noch
-  keine Strategieempfehlung. Für Mara war die Insight-Ansicht in der aktiven
-  Leona-Sitzung nicht zugänglich. Erst nach bewusstem Kontowechsel weitere
-  echte Mara-Werte übertragen; nichts raten.
-- Meta-API: Ein read-only Preflight am 8. September meldete den offiziellen
-  Adapter als unkonfiguriert. Keine IG-User-ID, Access-Tokens, API-Version
-  oder Medienmanifest sind lokal gesetzt; keine Secrets wurden angezeigt oder
-  gespeichert. Owner-only: im Meta-Developer-/Instagram-Login die App und
-  Persona-Verbindungen wirklich abschließen. Erst danach erneut genau einen
-  read-only Preflight ausführen; kein Token in Chat, Git, SQLite oder Journal.
-- Meta-Browser-Handoff: `developers.facebook.com/apps/` führt zur Facebook-
-  Anmeldeseite mit einem sichtbaren gespeicherten Profil. Der automatisierte
-  Weiter-Klick zeigte nach einem Retest keine Wirkung. Owner klickt einmal
-  selbst auf „Weiter …“; keine Passwort-/OTP-Werte an Codex geben. Danach
-  nur die Developer-App-Liste und die vorhandenen Account-Verbindungen lesen.
-
-Alte Anweisungen für Publication 8 / einen erneuten Gym-Reset-Testpost sind
-überholt und entfernt. Diesen bereits veröffentlichten Inhalt nicht erneut
-zum API-Test verwenden. Keine Secrets/OTPs in Chat, Git oder Handoff ablegen.
-
-## Historischer Live-Nachweis — 7. September 2026
-
-- Leona `Gym Reset, aber echt` wurde nativ auf Instagram veröffentlicht:
-  `https://www.instagram.com/leonavoss.ai/p/Dc_GwljAKU_/`
-- Sichtbare Bestätigung: Instagram meldete `Dein Beitrag wurde geteilt.`;
-  Profilstand danach 8 Beiträge.
-- Creator Ops wurde lokal abgeglichen: Publication `9`, Content `1`,
-  Queuejob `4`, Assets `1`, `2`, `5`.
-- In diesem Lauf nicht erneut extern geprüft. Echte Insights können später
-  erfasst werden; fehlende Werte bleiben `UNKNOWN`.
+Externe Aktionen dieses Runs: `NONE`.

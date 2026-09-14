@@ -1,5 +1,65 @@
 # Aktueller Handoff
 
+## SECURITY/HANDOFF + MILO/TIKTOK P0 DONE — 14.09.2026, 12:48
+
+- Paket-Hash geprüft: `5A5A084912A597927324B7D7AE3813467DABBE3910B21EEBF60A208EB49B65AE`.
+- Zentrale Policy v2.1 und Handoff-Schema sind unter
+  `C:\Zippoworkz\_system` installiert; Policy-Dokumente liegen unter
+  `C:\Zippoworkz\Context`. Der frühere Stand wurde vor der Installation nach
+  `C:\Zippoworkz\archive\policy\20260914-before-security-handoff-v2`
+  gesichert.
+- Provider-neutraler Secret-Zugriff ist vorhanden: Windows Credential Manager,
+  Runtime-Environment-Fallback und fail-closed `none`. Secret-Werte werden
+  nicht serialisiert, angezeigt oder protokolliert; Audit und Handoff führen
+  nur `secret://...`-Aliase.
+- Git verwendet lokal `creator-collab/.githooks`; der Pre-Push-Scanner meldet
+  ausschließlich Pfad/Zeile/Fundtyp und nie gefundene Werte.
+- Local AI bleibt trotz zentraler Autonomie strikt `LOCAL_SAFE_ONLY`; die
+  Rollenpolicy wurde separat nach `C:\Zippoworkz\_system\LOCAL_AI_PERMISSIONS_POLICY.json`
+  installiert und erfolgreich gegen die feste Task-Allowlist geprüft.
+- `Milo der Zug` ist im bestehenden Dashboard unter `/channels` als fiktive,
+  KI-generierte Creator-Marke angelegt. Instagram + TikTok stehen ehrlich auf
+  `NOT_CONNECTED`; 9:16-Preview und lokaler Review sind aktiv. `DRAFT_UPLOAD`
+  und `DIRECT_POST` sind getrennt; Direct Post verlangt reales Asset,
+  verbundenen Projektaccount und `OWNER_APPROVED`.
+- Analytics akzeptiert nur mindestens einen echten Messwert; fehlende Werte
+  bleiben `NULL`. Lokales Errorlog ist sanitisiert. Plattformtransport und
+  externe Aktionen bleiben `NONE`.
+- Runtime neu gestartet und live geprüft:
+  `http://192.168.188.131:4180/`, `/api/health=ok`, Security-Policy geladen,
+  Milo-Brand sichtbar, Secret-Werte exponiert=`false`, Leak-Hook aktiv.
+- Verifiziert: 178/178 Tests grün, JS-Syntax grün, Python-Compile grün,
+  SQLite `integrity_check=ok`, Foreign-Key-Verstöße 0.
+- Genau eine Owner-Aktion bleibt: einen primären Secret-Provider auswählen und
+  vorhandene Projekt-Credentials einmalig unter den angezeigten Aliasen
+  hinterlegen. Bis dahin bleibt jeder externe Adapter fail-closed.
+
+## CLOUD-CONTENT + LOCAL-AI/VPS-HANDOFF — 14.09.2026, 09:59
+
+- Neues vollständiges Mara-Paket: Content `3`, `Hofladen am Sonntag`, fünf
+  reale Cloud-generierte Referenzbild-Shots, `SFW + PUBLIC_SFW`, Status
+  `READY_FOR_REVIEW` und `can_approve=true`.
+- Visuelle QA grün: fünf Pose-Slots, keine Hash-Dubletten, plausible Hände,
+  keine sichtbaren Marken/Wasserzeichen. Empfohlene Carousel-Reihenfolge:
+  Asset `14` (Kiste tragen) → `12` (Äpfel sortieren) → `15` (Notizbuch).
+- Bestehender Cloud-Generator kann die künftige Bildproduktion mit Persona-
+  Referenz übernehmen; Codex muss die Bilder nicht manuell bearbeiten. Der
+  zweite verbundene Bilddienst bleibt Reserve. Kein Plugin-Neuinstall nötig.
+- Kanonischer DB-Stand: 3 Contentpakete, 15 reale Assets, davon ein Paket
+  offen für Review; die zwei älteren Pakete bleiben nur lokal terminiert.
+- Vor Import gesichert:
+  `C:\Zippoworkz\backups\creator-ops-backup-pre-mara-hofladen-cloud-20260914.db`.
+- Local-AI-ZIP:
+  `C:\Zippoworkz\Handoff\ZIPPOWORKZ_LOCAL_AI_NEXT_2026-09-14_FINAL.zip`.
+- VPS-ZIP:
+  `C:\Zippoworkz\Handoff\ZIPPOWORKZ_VPS_NEXT_2026-09-14_FINAL.zip`.
+- Beide Übergaben sind secret-/DB-/backup-frei, hashgeprüft und enthalten
+  einen klaren `00_START_HERE.md`. VPS bleibt bis zu einem echten Lauf
+  `OFFLINE`; Zugangsdaten werden nicht im Paket gespeichert.
+- Verifiziert: 18 fokussierte Python-Tests + 4 Frontendtests grün,
+  SQLite `integrity_check=ok`, Foreign-Key-Verstöße 0. Externe Aktionen:
+  `NONE`.
+
 ## RECOVERY- UND PUBLISH-SAFETY-PROOF — 14.09.2026, 07:43
 
 - GitHub-Spiegel anschließend sicher fast-forward aktualisiert: Branch

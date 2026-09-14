@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "required": [
+    "run_id",
+    "agent",
+    "timestamp",
+    "objective",
+    "inputs",
+    "changes",
+    "tests",
+    "external_actions",
+    "secret_aliases_used",
+    "blockers",
+    "owner_actions",
+    "next_agent",
+    "next_step",
+    "status"
+  ],
+  "status_values": [
+    "DONE",
+    "PAUSED",
+    "NEEDS_OWNER_ACTION",
+    "FAILED_SAFE"
+  ],
+  "rules": {
+    "secret_values_forbidden": true,
+    "external_action_ids_required_when_available": true,
+    "checkpoint_before_current_overwrite": true
+  }
+}

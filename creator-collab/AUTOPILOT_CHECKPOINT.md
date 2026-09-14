@@ -1,5 +1,65 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — SECURITY/HANDOFF + MILO/TIKTOK P0 DONE, 14.09.2026 12:48 Europe/Berlin
+
+- Letzter vollständig erledigter Task: Paket
+  `ZIPPOWORKZ_CODEX_PACKAGE_20260914.zip` umgesetzt, alle Policy-, Secret-,
+  Handoff- und Milo/TikTok-Gates getestet und in der laufenden Runtime aktiviert.
+- Aktuell angefangener Task: keiner.
+- Fortsetzungspunkt: nur nach neuem Owner-/Plattformsignal. Keine Milo-Assets,
+  Konten oder Handles erfinden; kein Direct Post ohne alle drei Gates.
+- Security: zentrale Policy `AUTONOMOUS_WITH_OWNER_GATES`; Local AI separat
+  `LOCAL_SAFE_ONLY`; Secret-Werte exponiert=`false`; Pre-Push-Hook aktiv.
+- Channel Ops: Milo/Instagram/TikTok lokal sichtbar; ein 9:16-Metadatenentwurf
+  `NEEDS_ASSET`; Accounts `NOT_CONNECTED`; externe Aktionen `NONE`.
+- Tests: 178/178 grün; JavaScript und Python-Compile grün.
+- Runtime/DB: `192.168.188.131:4180` gesund; Schema 5;
+  `integrity_check=ok`; Foreign-Key-Verstöße 0.
+- Backup: vorherige zentrale Policy separat archiviert; operative DB wurde
+  durch diesen P0 nicht verändert.
+- Blocker: keine lokale P0-Arbeit blockiert. Externe Adapter bleiben ohne
+  eingerichtete Secret-Aliase bewusst fail-closed.
+- Owner-Gate (genau eins): primären Secret-Provider auswählen und bestehende
+  Projekt-Credentials einmalig unter den Dashboard-Aliasen hinterlegen.
+- Nächste drei: (1) Owner-Provider-Setup bei Bereitschaft, (2) erst danach
+  read-only Adapter-Preflight, (3) Milo-Asset/Account nur nach echtem Signal.
+- Resume: „Lies diesen Block und
+  `sessions/2026-09-14-1248-codex-security-milo-p0.md`. P0 ist DONE. Keine
+  Sicherheits- oder Milo-Architektur neu bauen; auf ein echtes Signal warten.“
+
+## AKTUELL — CLOUD-CONTENT UND AGENTENPAKETE DONE, 14.09.2026 09:59 Europe/Berlin
+
+- Letzter vollständig erledigter Task: Mara `Hofladen am Sonntag` mit fünf
+  Cloud-generierten, referenzgestützten Bildern erzeugt, visuell geprüft und
+  als Content `3` in die kanonische DB importiert.
+- Aktuell angefangener Task: keiner. Das Paket wartet auf Owner-Review; keine
+  Live-Veröffentlichung wurde ausgelöst.
+- Exakter Fortsetzungspunkt: Dashboard öffnen, Content `3` prüfen und bewusst
+  APPROVE/CHANGE/REJECT wählen. Erst nach echter Plattformbestätigung einen
+  Permalink reconciliieren.
+- Datenstand: 3 Contentpakete, 15 reale `SFW + PUBLIC_SFW`-Assets, 1
+  `READY_FOR_REVIEW`, 2 `SCHEDULED`/lokal terminiert.
+- Top 3: Asset `14 → 12 → 15`. Paketdoku:
+  `docs/MARA_HOFLADEN_SONNTAG_2026-09-14.md`.
+- Cloud-Pipeline: verbundener Referenzbilddienst praktisch bewiesen; keine
+  manuelle Retusche und kein Zukauf. Video im kostenlosen Workspace nicht
+  verfügbar und nicht erzwungen.
+- Backupstatus: Pre-Import-Backup vorhanden; DB nach Import Integrität `ok`,
+  Foreign-Key-Check 0.
+- Teststatus: 18 fokussierte Python-Tests + 4 Frontendtests grün.
+- Übergaben: `ZIPPOWORKZ_LOCAL_AI_NEXT_2026-09-14_FINAL.zip` und
+  `ZIPPOWORKZ_VPS_NEXT_2026-09-14_FINAL.zip` unter `C:\Zippoworkz\Handoff`.
+  Beide ohne DB, Backups oder Secrets; Hashprüfung grün.
+- Owner-Gates: VPS-ZIP auf dem Zielsystem entpacken und Credentials nur dort
+  sicher setzen; Local-AI-Paket ist reine begrenzte lokale QA. Kein VPS-
+  ONLINE ohne echten erfolgreichen Lauf.
+- Nächste drei: (1) Owner-Review Content `3`, (2) Local-AI-QA-Paket ausführen,
+  (3) VPS one-shot Check nach sicherer Zielkonfiguration.
+- Resume: „Lies diesen Block und das Journal
+  `sessions/2026-09-14-0959-codex-cloud-content-agent-handoffs.md`. Das neue
+  Mara-Paket und beide ZIPs sind DONE. Keine Bilder neu erzeugen; zuerst
+  Review-/Agentenergebnisse verarbeiten.“
+
 ## AKTUELL — RECOVERY/PUBLISH SAFETY PROVEN, 14.09.2026 07:43 Europe/Berlin
 
 - GitHub-Branch `codex/ai-ops-20260913` wurde danach per Fast-Forward bis

@@ -84,8 +84,7 @@ def owner_active() -> bool:
     return elapsed < 30_000
 
 
-def validate_policy(root: Path) -> None:
-    policy = json.loads((root / "_system" / "PERMISSIONS_POLICY.json").read_text(encoding="utf-8"))
+def _validate_local_role_policy(root: Path, policy: dict) -> None:
     if Path(policy.get("root", "")).resolve() != root.resolve() or policy.get("mode") != "LOCAL_SAFE_ONLY":
         raise ValueError("POLICY_ROOT_OR_MODE_MISMATCH")
     denied = ("outside_root_access", "model_generated_commands", "platform_actions", "persona_changes", "git_push", "git_worktree_replace", "paid_services", "secrets_in_results")
@@ -93,6 +92,41 @@ def validate_policy(root: Path) -> None:
         raise ValueError("POLICY_FORBIDDEN_CAPABILITY")
     if set(policy.get("task_allowlist", [])) != {t["id"] for t in TASKS}:
         raise ValueError("POLICY_TASKS_MISMATCH")
+
+
+def validate_policy(root: Path) -> None:
+    """Validate central policy plus the deliberately narrower Local-AI role.
+
+    Older installs used the Local-AI policy as the only root policy. Version
+    2.1 introduces a central rights matrix, but it must never broaden the Qwen
+    worker. The worker therefore continues to require its own LOCAL_SAFE_ONLY
+    overlay and fails closed when that overlay is absent or permissive.
+    """
+    root = root.resolve()
+    central_path = root / "_system" / "PERMISSIONS_POLICY.json"
+    policy = json.loads(central_path.read_text(encoding="utf-8"))
+    if policy.get("mode") == "LOCAL_SAFE_ONLY":
+        _validate_local_role_policy(root, policy)
+        return
+    if (
+        Path(policy.get("root", "")).resolve() != root
+        or policy.get("mode") != "AUTONOMOUS_WITH_OWNER_GATES"
+        or policy.get("spending", {}).get("allowed_without_owner") is not False
+        or policy.get("secrets", {}).get("allow_plaintext_git") is not False
+        or policy.get("secrets", {}).get("leak_check_before_push") is not True
+    ):
+        raise ValueError("POLICY_ROOT_OR_MODE_MISMATCH")
+    role_candidates = (
+        root / "_system" / "LOCAL_AI_PERMISSIONS_POLICY.json",
+        root / "Workspace" / "codex_ingest" / "creator-collab" / "scripts" / "ai_ops" / "PERMISSIONS_POLICY.json",
+    )
+    role_path = next((path for path in role_candidates if path.is_file()), None)
+    if role_path is None:
+        raise ValueError("LOCAL_AI_ROLE_POLICY_MISSING")
+    _validate_local_role_policy(
+        root,
+        json.loads(role_path.read_text(encoding="utf-8")),
+    )
 
 
 class LocalWorker:

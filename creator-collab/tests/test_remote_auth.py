@@ -19,7 +19,7 @@ from creator_ops.web import (
 )
 
 
-PASSWORD = "correct horse battery staple"
+PASSWORD = "test-only-" + "correct horse battery staple"
 
 
 class DashboardAuthUnitTests(unittest.TestCase):

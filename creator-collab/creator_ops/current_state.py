@@ -9,6 +9,8 @@ from pathlib import Path
 
 from .content_mix import ContentMixPlanner
 from .database import CreatorDatabase
+from .channel_ops import ChannelOpsService
+from .security_status import SecurityStatusService
 
 
 REMOTE_URL_PATTERN = re.compile(r"https://[a-z0-9-]+\.trycloudflare\.com", re.IGNORECASE)
@@ -183,6 +185,36 @@ class CurrentStateService:
         if tests_failed:
             tests["status"] = "failed"
 
+        try:
+            security = SecurityStatusService(self.root).snapshot()
+        except (OSError, ValueError, json.JSONDecodeError):
+            security = {
+                "schema": "zippoworkz-security-status-v1",
+                "policy": {"installed": False, "mode": "MISSING"},
+                "secret_provider": {"ready": False, "values_exposed": False},
+            }
+        try:
+            channel_snapshot = ChannelOpsService(self.root).snapshot()
+            channels = {
+                "schema": channel_snapshot["schema"],
+                "brands": [
+                    {
+                        "slug": brand["slug"],
+                        "identity_status": brand["identity_status"],
+                        "accounts": brand["accounts"],
+                        "draft_count": len(brand["drafts"]),
+                    }
+                    for brand in channel_snapshot["brands"]
+                ],
+                "external_actions": channel_snapshot["external_actions"],
+            }
+        except (OSError, KeyError, ValueError, json.JSONDecodeError):
+            channels = {
+                "schema": "zippoworkz-channel-ops-v1",
+                "brands": [],
+                "external_actions": "NONE",
+            }
+
         return {
             "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
             "product": {"name": "ZippoWorkz", "dashboard_path": "/", "launcher": "START_ZIPPOWORKZ.ps1",
@@ -237,6 +269,8 @@ class CurrentStateService:
                 "paid_spend": "OWNER_GATE",
             },
             "remote": self._remote(include_remote_url),
+            "security": security,
+            "channels": channels,
             "tests": tests,
             "blockers": dict(blockers),
             "owner_decisions": {

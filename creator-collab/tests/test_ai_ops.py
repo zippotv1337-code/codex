@@ -172,6 +172,38 @@ class AiOpsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'POLICY_FORBIDDEN_CAPABILITY'):
             validate_policy(self.root)
 
+    def test_central_policy_never_broadens_local_ai_role(self):
+        folder = self.root / '_system'
+        folder.mkdir()
+        (folder / 'PERMISSIONS_POLICY.json').write_text(json.dumps({
+            'root': str(self.root),
+            'mode': 'AUTONOMOUS_WITH_OWNER_GATES',
+            'spending': {'allowed_without_owner': False},
+            'secrets': {
+                'allow_plaintext_git': False,
+                'leak_check_before_push': True,
+            },
+        }))
+        role = {
+            'root': str(self.root),
+            'mode': 'LOCAL_SAFE_ONLY',
+            'task_allowlist': [task['id'] for task in TASKS],
+            'outside_root_access': False,
+            'model_generated_commands': False,
+            'platform_actions': False,
+            'persona_changes': False,
+            'git_push': False,
+            'git_worktree_replace': False,
+            'paid_services': False,
+            'secrets_in_results': False,
+        }
+        (folder / 'LOCAL_AI_PERMISSIONS_POLICY.json').write_text(json.dumps(role))
+        validate_policy(self.root)
+        role['platform_actions'] = True
+        (folder / 'LOCAL_AI_PERMISSIONS_POLICY.json').write_text(json.dumps(role))
+        with self.assertRaisesRegex(ValueError, 'POLICY_FORBIDDEN_CAPABILITY'):
+            validate_policy(self.root)
+
     def test_stop_before_work_releases_and_preserves_queue(self):
         self.service.command('stop')
         worker = LocalWorker(self.service, activity=lambda: False)

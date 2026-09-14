@@ -1,13 +1,22 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-14 — canonical operating data active; approval-backup restore and fail-closed scheduling proven.
+Last consolidated: 2026-09-14 — security/handoff and Milo/TikTok P0 verified.
 
 ## Current operating delta — 14 September
 
+Security package P0 is complete: central policy v2.1, provider-neutral secret
+boundary, alias-only audit/handoff, pre-push leak gate and the shared handoff
+schema are active. The Local-AI worker retains a separate stricter
+`LOCAL_SAFE_ONLY` policy. Milo der Zug is locally visible as a transparent AI
+creator brand with separate Instagram/TikTok states, 9:16 preview and gated
+Draft Upload/Direct Post. Accounts remain honestly `NOT_CONNECTED`; there was
+no external action. Runtime activation is proven and 178/178 tests are green.
+
 Root C:/Zippoworkz; reuse Workspace/codex_ingest/creator-collab.
-Canonical DB: `data/review_dashboard.db`. It currently contains two
-owner-approved packages, ten real SFW assets, two local draft publications
-and two `LOCAL_SCHEDULED` jobs. There are no externally confirmed current
+Canonical DB: `data/review_dashboard.db`. It currently contains three
+packages, fifteen real SFW assets, two local draft publications and two
+`LOCAL_SCHEDULED` jobs. Mara `Hofladen am Sonntag` is the one new
+`READY_FOR_REVIEW` package. There are no externally confirmed current
 publications or real analytics in this DB; older business/live counts below
 remain historical evidence only.
 
@@ -18,6 +27,8 @@ remain historical evidence only.
 | T-009 | Restore usable operating data | DONE — 2026-09-14 | Current local assets were imported through the canonical path: 2 packages / 10 assets. Historical receipts were not reconstructed. |
 | T-010 | Connect actual VPS watcher | OWNER_GATE | Requires concrete VPS and authenticated transport; no remote heartbeat observed. |
 | T-011 | Approval-backup restore + fail-closed schedule proof | DONE — 2026-09-14 | Fresh restore matched all core counts; 2/2 simulated due jobs blocked without adapter, second dispatch sent 0, no fake receipts, canonical DB hash unchanged. |
+| T-012 | Cloud image content + Local-AI/VPS handoffs | DONE — 2026-09-14 | Mara 5-shot reference package imported as Content 3; two secret-free hash-verified agent ZIPs created. |
+| T-013 | Security/handoff + Milo/TikTok P0 | DONE — 2026-09-14 | Policy v2.1, SecretProvider/Broker, leak hook, shared handoff schema and local gated Milo/TikTok UI active; 178 tests and runtime smoke green, external actions NONE. |
 
 Local worker's current 27-task allowlist is DONE. It must stop, not invent further tasks.
 M-12: current AI-Ops implementation mirrored on codex/ai-ops-20260913 (a6b2ef4), push confirmed; main deliberately unchanged. Evidence: sessions/2026-09-13-2057-codex-ai-ops.md.
@@ -65,7 +76,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-04 | Fiverr Gig 1 live: AI Workflow Automation | ACTIVE / VERIFY | Die eingeloggte Verwaltung zeigte am 2026-09-08 `AKTIV 1`; Fiverr lieferte in der Tabelle einen Fehler und die öffentliche Ansicht war CAPTCHA-blockiert. Exit: öffentlicher Gig-Link störungsfrei sichtbar und dokumentiert. Basic $149, Standard $349, Premium $699. |
 | M-05 | First real lead, order and revenue | BLOCKED_BY_M-04 | A genuine inquiry, order, fulfillment and revenue record; dry runs never count. |
 | M-06 | Standardize fulfillment from first order | LATER | Learn recurring requests, revisions, integrations and boundaries. Gig 2 only after Gig 1 proof. |
-| M-07 | Maintain real content cadence | ACTIVE | Verbindliche öffentliche Richtung seit 2026-09-08: ca. 70 % glaubwürdiger Alltag/Setting/Handlung und 30 % glamourös/sexy angedeutet, stets `SFW + PUBLIC_SFW`. Leona bleibt urban/glamourös, Mara rural/sportlich; reale Analytics steuern Varianten, veröffentlichte Top-Picks werden nicht recycelt. |
+| M-07 | Maintain real content cadence | ACTIVE | Verbindliche öffentliche Richtung seit 2026-09-08: ca. 70 % glaubwürdiger Alltag/Setting/Handlung und 30 % glamourös/sexy angedeutet, stets `SFW + PUBLIC_SFW`. Neues Mara-Paket `Hofladen am Sonntag` ist mit fünf referenzgestützten Cloud-Bildern review-ready; Leona bleibt urban/glamourös, Mara rural/sportlich. |
 | M-08 | Stories as a first-class lane | PARTIAL / LOCAL_IMPLEMENTED | Local preview/edit/approve/change/reject/pause/plan persistent and honest; official Story publishing waits for supported proof. |
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |
@@ -74,7 +85,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-13 | Simple model/runtime compatibility | ACTIVE_FOREVER | Stable current model/runtime is sufficient; stronger models are optional. |
 | M-14 | Learn sellable product from demand | WAITING_REAL_SIGNALS | Learn from real inquiries, orders and fulfillment. |
 | M-15 | Keep offers separate | LATER | Gig 1 automation (149/349/699) remains separate from historical SFW content packs (45/95/175). |
-| M-16 | Expand channels after proof | LATER | TikTok, Threads, link page, video and remixes wait for stable operations plus real signals. |
+| M-16 | Expand channels after proof | PARTIAL / LOCAL_P0 | Milo/TikTok local review, 9:16 preview and honest gating exist; real account/transport remains signal-driven. Threads, link page, video engine and remixes stay later. |
 | M-17 | Adult/Paid lane separate | LATER / OWNER_GATE | Public channels remain SFW; no adult work without explicit authorization. |
 | M-18 | Long-term productization | LATER | No early multi-tenant SaaS or broad platform build. |
 
@@ -142,7 +153,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 
 ## Next operational sequence
 
-1. M-07: build one complete, lokale `PUBLIC_SFW`-Reservepaket nach der 70/30-Content-Richtung; zuerst Leona urban/glamourös oder Mara rural/sportlich, nie Adult und ohne externe Veröffentlichung.
+1. M-07: Owner-Review für Mara Content `3` `Hofladen am Sonntag`; keine erneute Generierung vor dieser Entscheidung.
 2. T-002/M-02: make real Instagram metrics visible and useful when an independent real post/account insight is available.
 3. T-003/M-04: publish and verify Fiverr Gig 1 in a dedicated output run when the public page is reachable.
 4. Collect real data; review E-001 only after a meaningful signal. Meta remains deferred unless a confirmed external signal arrives.

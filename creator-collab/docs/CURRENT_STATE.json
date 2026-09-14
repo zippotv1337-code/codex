@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T05:38:33+00:00",
+  "generated_at": "2026-09-14T10:47:32+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -36,14 +36,15 @@
     }
   ],
   "content": {
-    "total": 2,
+    "total": 3,
     "by_status": {
+      "READY_FOR_REVIEW": 1,
       "SCHEDULED": 2
     },
     "by_stage": {
-      "ALLTAG": 2
+      "ALLTAG": 3
     },
-    "review_required": 0,
+    "review_required": 1,
     "mix_target_percent": {
       "ALLTAG": 70,
       "TEASER": 30,
@@ -52,22 +53,23 @@
     "next_recommended_stage": "TEASER"
   },
   "assets": {
-    "total": 10,
-    "real": 10,
+    "total": 15,
+    "real": 15,
     "mock": 0,
     "by_safety": {
-      "SFW": 10
+      "SFW": 15
     },
     "by_visibility": {
-      "PUBLIC_SFW": 10
+      "PUBLIC_SFW": 15
     }
   },
   "reserve": {
     "dates": [
-      "2026-09-14"
+      "2026-09-14",
+      "2026-09-20"
     ],
-    "days": 1,
-    "through": "2026-09-14"
+    "days": 2,
+    "through": "2026-09-20"
   },
   "publications": {
     "owner_confirmed_native": 0,
@@ -99,12 +101,110 @@
     "active": false,
     "started_at": null
   },
+  "security": {
+    "schema": "zippoworkz-security-status-v1",
+    "policy": {
+      "installed": true,
+      "version": "2.1",
+      "mode": "AUTONOMOUS_WITH_OWNER_GATES",
+      "source": "C:\\Zippoworkz\\_system\\PERMISSIONS_POLICY.json",
+      "secret_values_exposed": false
+    },
+    "secret_provider": {
+      "provider": "composite",
+      "ready": true,
+      "configured_count": 0,
+      "known_alias_count": 10,
+      "aliases": [
+        {
+          "alias": "secret://meta/access_token",
+          "configured": false
+        },
+        {
+          "alias": "secret://meta/leona-voss/ig-user-id",
+          "configured": false
+        },
+        {
+          "alias": "secret://meta/leona-voss/access-token",
+          "configured": false
+        },
+        {
+          "alias": "secret://meta/mara-field/ig-user-id",
+          "configured": false
+        },
+        {
+          "alias": "secret://meta/mara-field/access-token",
+          "configured": false
+        },
+        {
+          "alias": "secret://tiktok/client_key",
+          "configured": false
+        },
+        {
+          "alias": "secret://tiktok/client_secret",
+          "configured": false
+        },
+        {
+          "alias": "secret://tiktok/client-key",
+          "configured": false
+        },
+        {
+          "alias": "secret://tiktok/client-secret",
+          "configured": false
+        },
+        {
+          "alias": "secret://github/token",
+          "configured": false
+        }
+      ],
+      "values_exposed": false
+    },
+    "handoff": {
+      "schema_installed": true,
+      "schema_version": "1.0",
+      "required_fields": 14
+    },
+    "leak_check": {
+      "script_installed": true,
+      "hook_file_installed": true,
+      "git_hook_path": "creator-collab/.githooks",
+      "active": true
+    },
+    "owner_action": "Choose and connect one password manager or Windows Credential Manager entry set."
+  },
+  "channels": {
+    "schema": "zippoworkz-channel-ops-v1",
+    "brands": [
+      {
+        "slug": "milo-der-zug",
+        "identity_status": "LOCAL_DEFINITION_ONLY",
+        "accounts": [
+          {
+            "platform": "instagram",
+            "public_handle": null,
+            "connection_status": "NOT_CONNECTED",
+            "default_publish_mode": "APPROVAL"
+          },
+          {
+            "platform": "tiktok",
+            "public_handle": null,
+            "connection_status": "NOT_CONNECTED",
+            "default_publish_mode": "DRAFT_UPLOAD"
+          }
+        ],
+        "draft_count": 1
+      }
+    ],
+    "external_actions": "NONE"
+  },
   "tests": {
     "status": "passed",
-    "passed": 27,
+    "passed": 178,
     "failed": 0
   },
-  "blockers": {},
+  "blockers": {
+    "owner_review_required": 1
+  },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",
     "pre_approved_actions": {

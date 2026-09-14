@@ -9,7 +9,14 @@ function showToast(message) { toast.textContent = message; toast.classList.add("
 function capability(item) { return `<li><span><b>${esc(item.label)}</b><small>${esc(item.id)}</small></span><em class="cap-${esc(item.state.toLowerCase())}">${esc(item.state.replaceAll("_", " "))}</em></li>`; }
 function queueItem(item) { return `<li><span><b>${esc(item.persona)}</b><small>${esc(item.series)}</small></span><em>${esc(item.status.replaceAll("_", " "))}</em></li>`; }
 
-function render(payload) {
+function securityPanel(security) {
+  const aliases = security.secret_provider.aliases.map(item => `<li><span><b>${esc(item.alias)}</b><small>Aliasstatus, niemals Secret-Wert</small></span><em class="cap-${item.configured ? "available" : "blocked"}">${item.configured ? "KONFIGURIERT" : "FEHLT"}</em></li>`).join("");
+  return `<section class="control-panel security-panel"><p class="card-kicker">Security</p><h2>Policy &amp; Secret Provider</h2>
+    <div class="security-summary"><span><b>Policy</b>${esc(security.policy.mode)} · v${esc(security.policy.version)}</span><span><b>Provider</b>${esc(security.secret_provider.provider)} · ${security.secret_provider.ready ? "bereit" : "nicht verbunden"}</span><span><b>Leak-Check</b>${security.leak_check.active ? "Pre-Push aktiv" : "noch nicht aktiv"}</span><span><b>Handoff</b>Schema ${esc(security.handoff.schema_version || "fehlt")}</span></div>
+    <ul class="control-list">${aliases}</ul><p class="control-warning">Secret-Werte werden in dieser API und Oberfläche grundsätzlich nicht ausgegeben.</p></section>`;
+}
+
+function render(payload, security) {
   const s = payload.state;
   const paused = s.status === "PAUSED";
   root.innerHTML = `
@@ -27,7 +34,8 @@ function render(payload) {
       <section class="control-panel"><p class="card-kicker">Fähigkeiten</p><h2>Capability Matrix</h2><ul class="control-list">${payload.capabilities.map(capability).join("")}</ul></section>
       <section class="control-panel"><p class="card-kicker">Nächster sicherer Schritt</p><h2>Arbeitsqueue</h2><ul class="control-list">${payload.queue.length ? payload.queue.map(queueItem).join("") : "<li>Keine lokale Arbeit offen.</li>"}</ul></section>
     </div>
-    <section class="control-panel owner-gates"><p class="card-kicker">Nie automatisch</p><h2>Owner-Gates</h2><p>${payload.owner_gates.map(esc).join(" · ")}</p><small>Letzter Befehl: ${esc(s.last_command)} · Läufe: ${esc(s.run_count)} · Checkpoint: ${esc(s.checkpoint_at)}</small></section>`;
+    <section class="control-panel owner-gates"><p class="card-kicker">Nie automatisch</p><h2>Owner-Gates</h2><p>${payload.owner_gates.map(esc).join(" · ")}</p><small>Letzter Befehl: ${esc(s.last_command)} · Läufe: ${esc(s.run_count)} · Checkpoint: ${esc(s.checkpoint_at)}</small></section>
+    ${securityPanel(security)}`;
   root.setAttribute("aria-busy", "false");
 }
 
@@ -41,12 +49,12 @@ async function api(url, options = {}) {
   return payload;
 }
 
-async function load() { try { render(await api("/api/control-plane")); } catch (error) { root.innerHTML = `<div class="error">${esc(error.message)}</div>`; } }
+async function load() { try { const [control, security] = await Promise.all([api("/api/control-plane"), api("/api/security")]); render(control, security); } catch (error) { root.innerHTML = `<div class="error">${esc(error.message)}</div>`; } }
 root.addEventListener("click", async (event) => {
   const button = event.target.closest("[data-command]");
   if (!button) return;
   button.disabled = true;
-  try { render(await api(`/api/control-plane/${button.dataset.command}`, { method: "POST" })); showToast("Lokaler Speicherstand aktualisiert"); }
+  try { await api(`/api/control-plane/${button.dataset.command}`, { method: "POST" }); showToast("Lokaler Speicherstand aktualisiert"); await load(); }
   catch (error) { showToast(error.message); await load(); }
 });
 load();

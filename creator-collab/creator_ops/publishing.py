@@ -18,6 +18,7 @@ from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
 from .database import CreatorDatabase, utc_now
+from .secret_provider import SecretBroker, create_secret_provider
 
 
 LOCAL_SCHEDULED = "LOCAL_SCHEDULED"
@@ -295,15 +296,31 @@ class MetaInstagramPublishingAdapter:
 
     @classmethod
     def from_environment(
-        cls, database: CreatorDatabase, project_root: Path
+        cls,
+        database: CreatorDatabase,
+        project_root: Path,
+        *,
+        secret_broker: SecretBroker | None = None,
     ) -> MetaInstagramPublishingAdapter | UnconfiguredInstagramAdapter:
+        broker = secret_broker or SecretBroker(
+            create_secret_provider(),
+            project_root / "data" / "logs" / "secret-access.jsonl",
+        )
         accounts: dict[str, tuple[str, str]] = {}
-        for creator_slug, suffix in (
-            ("leona-voss", "LEONA_VOSS"),
-            ("mara-field", "MARA_FIELD"),
+        for creator_slug in (
+            "leona-voss",
+            "mara-field",
         ):
-            ig_user_id = os.environ.get(f"META_IG_USER_ID_{suffix}", "").strip()
-            access_token = os.environ.get(f"META_ACCESS_TOKEN_{suffix}", "").strip()
+            id_value = broker.get(
+                f"secret://meta/{creator_slug}/ig-user-id",
+                agent="meta-instagram-adapter",
+            )
+            token_value = broker.get(
+                f"secret://meta/{creator_slug}/access-token",
+                agent="meta-instagram-adapter",
+            )
+            ig_user_id = id_value.reveal().strip() if id_value else ""
+            access_token = token_value.reveal().strip() if token_value else ""
             if ig_user_id and access_token:
                 accounts[creator_slug] = (ig_user_id, access_token)
         graph_version = os.environ.get("META_GRAPH_API_VERSION", "").strip()
