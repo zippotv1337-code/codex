@@ -11,9 +11,10 @@ function queueItem(item) { return `<li><span><b>${esc(item.persona)}</b><small>$
 
 function securityPanel(security) {
   const aliases = security.secret_provider.aliases.map(item => `<li><span><b>${esc(item.alias)}</b><small>Aliasstatus, niemals Secret-Wert</small></span><em class="cap-${item.configured ? "available" : "blocked"}">${item.configured ? "KONFIGURIERT" : "FEHLT"}</em></li>`).join("");
+  const providerState = `${security.secret_provider.configured_count}/${security.secret_provider.known_alias_count} Aliase konfiguriert`;
   return `<section class="control-panel security-panel"><p class="card-kicker">Security</p><h2>Policy &amp; Secret Provider</h2>
-    <div class="security-summary"><span><b>Policy</b>${esc(security.policy.mode)} · v${esc(security.policy.version)}</span><span><b>Provider</b>${esc(security.secret_provider.provider)} · ${security.secret_provider.ready ? "bereit" : "nicht verbunden"}</span><span><b>Leak-Check</b>${security.leak_check.active ? "Pre-Push aktiv" : "noch nicht aktiv"}</span><span><b>Handoff</b>Schema ${esc(security.handoff.schema_version || "fehlt")}</span></div>
-    <ul class="control-list">${aliases}</ul><p class="control-warning">Secret-Werte werden in dieser API und Oberfläche grundsätzlich nicht ausgegeben.</p></section>`;
+    <div class="security-summary"><span><b>Policy</b>${esc(security.policy.mode)} · v${esc(security.policy.version)}</span><span><b>Provider</b>${esc(security.secret_provider.provider)} · ${esc(providerState)}</span><span><b>Leak-Check</b>${security.leak_check.active ? "Pre-Push aktiv" : "noch nicht aktiv"}</span><span><b>Handoff</b>Schema ${esc(security.handoff.schema_version || "fehlt")}</span></div>
+    <ul class="control-list">${aliases}</ul><p class="control-warning">Secret-Werte werden in dieser API und Oberfläche grundsätzlich nicht ausgegeben.${security.owner_action ? ` Nächster Owner-Schritt: ${esc(security.owner_action)}` : ""}</p></section>`;
 }
 
 function render(payload, security) {

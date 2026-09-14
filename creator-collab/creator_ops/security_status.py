@@ -95,6 +95,6 @@ class SecurityStatusService:
             "owner_action": (
                 None
                 if provider.ready and any(item["configured"] for item in aliases)
-                else "Choose and connect one password manager or Windows Credential Manager entry set."
+                else "Einen primären Secret-Provider auswählen und die Projekt-Aliase einmalig hinterlegen."
             ),
         }
