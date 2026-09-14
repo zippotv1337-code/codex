@@ -27,7 +27,9 @@
 - Genau eine Owner-Aktion bleibt für Meta: vorhandene Meta-Zugangsdaten im
   sicheren Secret-Provider unter den vorhandenen Aliasen hinterlegen. Erst
   danach den read-only Preflight erneut ausführen.
-- Externe Aktionen dieses Runs: `NONE`.
+- Plattformaktionen dieses Runs: `NONE`. Der geprüfte, secret-freie Stand
+  wurde per normalem Fast-Forward auf `codex/ai-ops-20260913` gespiegelt;
+  kein Force-Push und kein Main-Rewrite.
 
 ## SECURITY/HANDOFF + MILO/TIKTOK P0 DONE — 14.09.2026, 12:48
 
