@@ -1,5 +1,18 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## GitHub-Abschlusspaket — 15. September 2026
+
+Der geprüfte ZippoWorkz-Meta-/Dashboard-Stand liegt als secret-freies Git-
+Archiv unter `releases/ZIPPOWORKZ_META_DASHBOARD_GITHUB_2026-09-15.zip`.
+Das ZIP wurde direkt aus dem getrackten Projektbaum erzeugt und enthält 388
+Einträge bei 49,17 MiB. SQLite-Datenbanken, Backups, Laufzeitdateien, Logs,
+`output/`, `.env` und Secrets sind ausgeschlossen. SHA-256:
+`143DB29DBE88F438583AEC5639581688A3AFCE23952F10B7DEFA06B0C582584D`.
+
+Der lokale Meta-Einzelpaketpfad bleibt unverändert bereit. Für den externen
+Live-Proof fehlen weiterhin echte Instagram-User-Tokens/Nutzer-IDs/Scopes und
+drei öffentlich erreichbare HTTPS-JPEGs.
+
 ## Meta-Pfad final geprüft — 14. September 2026, 23:31 Europe/Berlin
 
 Der passwort- und CSRF-geschützte Einzelpaketweg in `/channels` ist lokal

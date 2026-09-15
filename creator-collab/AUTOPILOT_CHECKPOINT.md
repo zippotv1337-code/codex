@@ -1,5 +1,18 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELL — GITHUB-ZIP BEREIT, 15.09.2026 06:54 Europe/Berlin
+
+- Letzter vollständig erledigter Task: secret-freies GitHub-ZIP aus dem
+  getrackten ZippoWorkz-Projektbaum erzeugt und inhaltlich geprüft.
+- Aktuell angefangener Task: keiner.
+- Paket: `releases/ZIPPOWORKZ_META_DASHBOARD_GITHUB_2026-09-15.zip`.
+- SHA-256:
+  `143DB29DBE88F438583AEC5639581688A3AFCE23952F10B7DEFA06B0C582584D`.
+- Archivprüfung: 388 Einträge, 49,17 MiB, 0 verbotene Einträge.
+- Meta-Blocker: User-Token/Nutzer-ID/Scopes und drei öffentliche HTTPS-JPEGs.
+- Resume: erst bei neuem Meta-Credential-/Asset-Signal weiterarbeiten; keinen
+  Publish ohne grünen Preflight und keinen blinden Retry ausführen.
+
 ## AKTUELL — META-PFAD ABSCHLUSSVERIFIZIERT, 14.09.2026 23:31 Europe/Berlin
 
 - Letzter vollständig erledigter Task: Policy-/Runtime-/Testabschluss für den

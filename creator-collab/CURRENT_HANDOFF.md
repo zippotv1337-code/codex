@@ -1,5 +1,18 @@
 # Aktueller Handoff
 
+## GITHUB-ZIP — 15.09.2026, 06:54 Europe/Berlin
+
+- Secret-freies Projektpaket erstellt:
+  `releases/ZIPPOWORKZ_META_DASHBOARD_GITHUB_2026-09-15.zip`.
+- Größe: 49,17 MiB; 388 Einträge; 0 verbotene Einträge.
+- SHA-256:
+  `143DB29DBE88F438583AEC5639581688A3AFCE23952F10B7DEFA06B0C582584D`.
+- Enthalten sind ausschließlich getrackte Projektdateien. Datenbanken,
+  Backups, Logs, `output/`, lokale Runtime und Secrets sind ausgeschlossen.
+- Journal: `sessions/2026-09-15-0654-codex-github-zip.md`.
+- Meta-Live-Gates bleiben User-Token/Nutzer-ID/Scopes und drei öffentliche
+  HTTPS-JPEG-URLs. Das Paket enthält keine Zugangsdaten.
+
 ## ABSCHLUSSVERIFIKATION — 14.09.2026, 23:31 Europe/Berlin
 
 - Der Meta-/Instagram-Einzelpaketweg ist lokal fertig verdrahtet und geprüft;

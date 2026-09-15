@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T21:31:00+00:00",
+  "generated_at": "2026-09-15T04:54:00+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -98,6 +98,16 @@
     "sqlite_integrity_check": "ok",
     "runtime_health": "ok",
     "external_actions": "NONE"
+  },
+  "github_package": {
+    "path": "releases/ZIPPOWORKZ_META_DASHBOARD_GITHUB_2026-09-15.zip",
+    "size_bytes": 51554794,
+    "entries": 388,
+    "sha256": "143DB29DBE88F438583AEC5639581688A3AFCE23952F10B7DEFA06B0C582584D",
+    "forbidden_entries": 0,
+    "contains_secrets": false,
+    "contains_database": false,
+    "contains_backups": false
   },
   "background_runs": {
     "COMPLETE": 6
