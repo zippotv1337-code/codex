@@ -1,5 +1,64 @@
 # AUTOPILOT CHECKPOINT
 
+## ABSCHLUSS-CHECKPOINT — Instagram API, 20. September 2026, 16:53 Europe/Berlin
+
+- Auftrag gestoppt wie vom Owner gewünscht: keine weitere Bildgenerierung und
+  kein weiterer Content-Ausbau in diesem Lauf.
+- ZippoWorkz wurde kontrolliert gestartet und ist unter
+  `http://192.168.188.131:4180/` erreichbar. Verifiziert:
+  `health=ok`, Datenbank `ok`, Passwortschutz aktiv, Supervisor läuft.
+- Die aktuell eingebundene operative DB war beim Start leer. Sie wurde mit dem
+  bestehenden Schema/Persona-Seed initialisiert. Aktueller Stand:
+  2 Contentkarten, 10 Assets, davon 3 reale Leona-Assets und 7 Mock-Slots.
+- Leona `Rainy Berlin Afterwork` ist als exaktes Drei-Slide-Paket lokal
+  `SCHEDULED / LOCAL_SCHEDULED`, Top 3 sind ausschließlich reale Assets,
+  Safety `SFW + PUBLIC_SFW`, KI-Offenlegung vorhanden, Prime Time 19:30.
+- Separate Live-Freigabe für exakt dieses Paket ist lokal protokolliert.
+  Es wurde **nicht** als extern veröffentlicht markiert.
+- Drei direkte öffentliche HTTPS-JPEGs sind mit HTTP 200, `image/jpeg` und
+  JPEG-Magic validiert. Lokales Secret-freies Manifest:
+  `data/meta_media_urls.json` (gitignored).
+- Öffentliche Medien und Posting-Karte wurden normal auf GitHub `main`
+  gespiegelt. Commit: `ede152c991e8906ac903b111933850680c74ce7e`.
+- Offizieller Meta-Adapter ist vorhanden, bleibt aber fail-closed:
+  `config.toml` hat `adapter="unconfigured"`, `live_enabled=false`; lokale
+  Leona-/Mara-Instagram-User-IDs, User-Tokens und Graph-API-Version sind nicht
+  gesetzt. Der read-only Preflight liefert daher korrekt
+  `BLOCKED / official_instagram_adapter_not_configured`.
+- Der Meta-Developer-Tab ist am Facebook-Profil-Weiter-Schritt als Handoff
+  offen. Der automatisierte Weiter-Klick änderte den Loginzustand nicht.
+  Keine Passwörter, OTPs, Tokens oder App-Secrets wurden ausgelesen,
+  übertragen oder gespeichert.
+- Instagram ist im Browser angemeldet, aber nur `miloderzug` und
+  `zippo.rocco` sind umschaltbar. Leona/Mara sind in dieser Sitzung nicht als
+  Konten verfügbar. Deshalb kein Versand auf ein falsches Profil.
+- Externe Veröffentlichung: **NONE**. Keine Media-ID und kein Permalink
+  erzeugt; kein Blind-Retry.
+
+### Exakter Resume-Auftrag
+
+1. Owner führt im offenen Meta-Tab einmal `Weiter Philipp Tiburczy` aus und
+   erledigt bei Bedarf nur die persönliche Login-/OTP-Eingabe selbst.
+2. Danach bestehende App `4594359434174028` prüfen; keine neue App bauen.
+3. Leona als professionelles Instagram-Konto autorisieren und erst unmittelbar
+   vor der Erzeugung eines dauerhaften OAuth-/User-Tokens die erforderliche
+   Bestätigung einholen.
+4. Token und Instagram-User-ID ausschließlich lokal über den vorgesehenen
+   Secret-/Environment-Weg setzen; niemals in Git, DB, Journal oder Chat.
+5. `META_GRAPH_API_VERSION` setzen, `config.toml` erst dann kontrolliert auf
+   `meta-graph` + Live-Gates umstellen und ZippoWorkz neu starten.
+6. Read-only Preflight für Publication `1` / Content `1` ausführen. Nur bei
+   `READY`, bestätigtem Username `leonavoss.ai` und unverändertem Drei-Slide-
+   Manifest genau einmal dispatchen.
+7. Bei unklarem `media_publish` niemals erneut senden; zuerst Receipt/Graph
+   reconciliieren. `PUBLISHED` ausschließlich nach echter Media-ID und
+   Instagram-Permalink setzen.
+
+### Nächste Owner-Aktion
+
+Im offen gelassenen Meta-Tab einmal den sichtbaren Facebook-Weiter-Schritt
+ausführen. Danach Codex mit `Meta-Login fertig — API fortsetzen` fortsetzen.
+
 ## AKTUELL — GitHub-Sync, 2026-09-08 ab 22:55 Europe/Berlin
 
 - Letzter vollständiger Schritt: Bestands-/Sicherheitsprüfung und 30 Python-/4

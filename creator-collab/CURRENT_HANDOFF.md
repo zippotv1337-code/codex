@@ -1,5 +1,31 @@
 # Aktueller Handoff
 
+## AKTUELL — Mara Meta-/Instagram-OAuth verifiziert, 20. September 2026
+
+- `leonavoss.ai` und `mara.field.ai` sind in der Meta-App `Zippoworkz` als
+  Instagram-Tester eingetragen.
+- In beiden Instagram-Konten ist `Zippoworkz-IG` unter Tester-Einladungen als
+  „Durch dich autorisiert am 20. September 2026“ sichtbar. Das bestätigt die
+  Annahme der Testerrolle; es wurde kein Tokenwert in Chat, Git, DB oder Journal
+  übernommen.
+- Der Owner hat den OAuth-Ablauf für `mara.field.ai` abgeschlossen. Das Token
+  wurde ausschließlich im lokalen Windows-User-Environment gespeichert; der
+  Browser-Zwischenspeicher wurde danach geleert. Kein Secret steht in Git, DB,
+  Chat oder Journal.
+- Read-only verifiziert: Benutzername `mara.field.ai`, Kontotyp `BUSINESS`,
+  tokengebundene API-ID korrekt gespeichert und
+  `content_publishing_limit` erfolgreich lesbar. Es wurde dabei kein Container
+  erzeugt und nichts veröffentlicht.
+- Leona bleibt separat offen: Für `leonavoss.ai` ist noch kein lokal
+  verifizierter Token gespeichert. OAuth muss ausdrücklich mit Leona
+  abgeschlossen werden; ein Mara-Token darf nicht als Leona-Token verwendet
+  werden.
+- Noch **nicht** erledigt: Leona-Token sichern, beide Persona-Preflights an
+  konkreten Paketen grün prüfen und einen externen Testpost veröffentlichen.
+  Vor dem finalen `media_publish` ist eine konkrete Aktionsbestätigung für
+  Account, Paket und Caption erforderlich.
+- Journal: `sessions/2026-09-20-2327-codex-meta-oauth-handoff.md`.
+
 ## AKTUELL — Finish-First abgeschlossen, 20. September 2026
 
 - Owner-Paket `ZIPPOWORKZ_MASTER_AND_FINISH_FIRST_2026-09-20.zip` vollständig

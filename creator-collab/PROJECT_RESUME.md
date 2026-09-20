@@ -1,5 +1,17 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Meta-/Instagram-Verknüpfung — 20. September 2026
+
+Leona und Mara sind in der Meta-App `Zippoworkz` als Instagram-Tester
+eingetragen; beide Instagram-Konten zeigen `Zippoworkz-IG` als am 20.09.2026
+autorisiert. Der OAuth-Ablauf für `mara.field.ai` ist abgeschlossen: Das Secret
+liegt ausschließlich im lokalen Windows-User-Environment, und read-only wurden
+der korrekte Benutzername, `BUSINESS` sowie der Publishing-Limit-Endpunkt
+bestätigt. Für `leonavoss.ai` fehlt weiterhin ein separat erzeugter und lokal
+verifizierter Token. Zugangsdaten und 2FA bleiben Owner-only. Es existiert noch
+kein neuer API-Publish-Beleg. Fortsetzung:
+`sessions/2026-09-20-2327-codex-meta-oauth-handoff.md`.
+
 ## Finish-First-Abschluss — 20. September 2026
 
 Der offene Local-AI-Repo-Audit wurde ohne neuen Vollscan technisch geschlossen.
