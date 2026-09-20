@@ -1,5 +1,25 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Finish-First-Abschluss — 20. September 2026
+
+Der offene Local-AI-Repo-Audit wurde ohne neuen Vollscan technisch geschlossen.
+Original: Task `20260919-234930-384726`, Run `20260920-000510`, alter
+`STRICT_FINISH_REJECTED`-Fehler durch nicht kanonisch verglichene absolute und
+relative Output-Pfade. Der unveränderte Contract wurde im kontrollierten Lauf
+`20260920-110232-fd18ff` / `20260920-114135` mit `DONE`, Exit-Code 0,
+Write/Readback und identischem Finish-Hash erfüllt. Selftest, Python-Compile,
+Pfad- und Modell-JSON-Regressionsprüfungen sind grün. Ein isolierter Restore des
+neuesten Stabilitäts-Meilensteins stellte 4/4 Dateien mit identischen SHA-256-
+Hashes wieder her; vollständiger DB-/System-Restore bleibt offen. Der neue
+Master-Kontext vom 20.09. wurde als Vorgabe verwendet, aber die ältere
+kanonische Master-Datei nicht ungeprüft überschrieben. Nächster einzelner
+Auftrag: VPS-Branch, HEAD, Runtime und letzten Handoff strukturiert erfassen und
+danach den Master differenziell mergen. Nachweis:
+`sessions/2026-09-20-1609-codex-finish-first.md`.
+Ein automatisch gestarteter zusätzlicher Backup-Check wurde kontrolliert
+beendet, als das verbleibende Schrittbudget keinen vollständigen
+Write/Readback/Finish-Ablauf mehr erlaubte; es wurde kein Erfolgsstatus erfunden.
+
 ## GitHub-Spiegel — 8. September 2026
 
 Aktueller autorisierter Abgleich einschließlich Codex-Local-Ops-Integration:

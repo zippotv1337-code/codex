@@ -1,5 +1,32 @@
 # Aktueller Handoff
 
+## AKTUELL — Finish-First abgeschlossen, 20. September 2026
+
+- Owner-Paket `ZIPPOWORKZ_MASTER_AND_FINISH_FIRST_2026-09-20.zip` vollständig
+  gelesen; Master als übergreifenden Kontext und Finish-First als Auftrag
+  verwendet. Kein neuer Vollscan gestartet.
+- Historischer Blocker eindeutig: Task `20260919-234930-384726`, Run
+  `20260920-000510`, `STRICT_FINISH_REJECTED`, weil absolute und relative
+  Output-Pfade damals nicht dieselbe Schreibidentität hatten.
+- Derselbe Repo-Audit-Contract ist im kontrollierten Lauf
+  `20260920-110232-fd18ff` / `20260920-114135` nachgewiesen abgeschlossen:
+  `DONE`, `rc=0`, Write-Step 6, Readback-Step 7, Hash am Finish identisch.
+- Aktuelle Runtime-Tests grün: Selftest, Python-Compile, Pfadkanonisierung und
+  begrenzte Ablehnung beschädigter Modell-JSON-Aktionen.
+- Restore-Probe des neuesten Stabilitäts-Meilensteins auf separatem Temp-Ziel:
+  4/4 Dateien, alle SHA-256-Hashes identisch. Das ist ein begrenzter Datei-
+  Restore-Nachweis, kein behaupteter vollständiger DB-/System-Restore.
+- Zwei ungestartete Duplikate (Repo-Audit, Web-Recherche) wurden vor Start
+  beendet. Der zusätzliche Backup-Check wurde kontrolliert abgebrochen, nachdem
+  sein Restbudget keinen vollständigen Write/Readback/Finish-Ablauf mehr zuließ;
+  kein `IDLE_CLEAN` wurde vorgetäuscht. Keine Social-, Kauf-, Cloud- oder
+  irreversible Aktion.
+- Voller Abschluss:
+  `C:\Zippoworkz\Handoff\LocalAI\Current\FINISH_FIRST_COMPLETION_20260920.md`.
+  Journal: `sessions/2026-09-20-1609-codex-finish-first.md`.
+- Einziger nächster Auftrag: frischen strukturierten VPS-Status mit Branch,
+  HEAD, Runtime und letztem Handoff holen; danach Master differenziell mergen.
+
 ## AKTUELL — GitHub-Sync, 2026-09-08 ab 22:55 Europe/Berlin
 
 - Expliziter neuer Owner-Auftrag `github sync`: die Beschränkung des vorherigen
