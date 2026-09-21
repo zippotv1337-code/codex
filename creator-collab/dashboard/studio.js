@@ -76,13 +76,35 @@
     document.body.classList.add("studio-platform");
     Array.from(main.children).forEach(child=>{if(child!==bar)child.hidden=true;});
     const data={
-      meta:["Meta","Verbindungen an einem Ort.","Die persönliche Meta-Verifizierung ist zurückgestellt. Den vorhandenen Betriebsstatus und die Freigaben findest du unter Betrieb.","/control","Betriebsstatus ansehen","Verifizierung offen"],
+      meta:["Meta","Verbindungen an einem Ort.","Der aktuelle Meta-/Instagram-Status wird sicher aus dem lokalen Betriebsstatus geladen.","/control","Betriebsstatus ansehen","Status wird geladen …"],
       fanbase:["Fanbase","Raum für deine Community.","Für Fanbase ist hier noch keine Verbindung eingerichtet. Sobald ein konkretes Profil angebunden ist, finden Inhalte und Ergebnisse in diesem Bereich ihren Platz.",null,null,"Nicht verbunden"],
       linktree:["Linktree","Ein Einstieg für alle deine Links.","Hier ist noch kein Linktree-Profil hinterlegt. Es werden deshalb keine Profil-Links oder Klickzahlen angezeigt.",null,null,"Nicht verbunden"],
       adult:["18+ Bereich","Ein eigener, privater Content-Bereich.","Explizite Inhalte bleiben außerhalb des öffentlichen Instagram-Feeds. Der 30-%-Anteil im Instagram-Mix steht für SFW-Glamour und sinnliche Teaser. Eine 18+-Plattform ist derzeit nicht verbunden.",null,null,"Getrennt · nicht verbunden"],
     }[area];
     const panel=document.createElement("section");panel.className="platform-landing";
-    panel.innerHTML=data?'<span class="platform-large-icon">'+icon(area==="adult"?"lock":area==="fanbase"?"heart":area==="linktree"?"link":"meta")+'</span><p class="nav-label">'+data[0]+'</p><h1>'+data[1]+'</h1><p>'+data[2]+'</p><span class="connection-state">'+data[5]+'</span>'+(data[3]?'<a class="studio-primary-link" href="'+data[3]+'">'+data[4]+'</a>':''):'<h1>Bereich nicht gefunden</h1><a href="/">Zurück zu Instagram</a>';
+    panel.innerHTML=data?'<span class="platform-large-icon">'+icon(area==="adult"?"lock":area==="fanbase"?"heart":area==="linktree"?"link":"meta")+'</span><p class="nav-label">'+data[0]+'</p><h1>'+data[1]+'</h1><p data-platform-copy>'+data[2]+'</p><span class="connection-state" data-platform-state>'+data[5]+'</span>'+(data[3]?'<a class="studio-primary-link" href="'+data[3]+'">'+data[4]+'</a>':''):'<h1>Bereich nicht gefunden</h1><a href="/">Zurück zu Instagram</a>';
     main.append(panel);
+    if(area==="meta"){
+      fetch('/api/external-readiness',{credentials:'same-origin',headers:{Accept:'application/json'}})
+        .then(response=>{if(!response.ok)throw new Error('Meta-Status nicht erreichbar');return response.json();})
+        .then(readiness=>{
+          const meta=readiness.meta||{};
+          const proven=Boolean(meta.controlled_publish_proven||meta.status==="PROVEN_CONTROLLED_ONLY");
+          panel.querySelector('[data-platform-state]').textContent=proven
+            ? 'Verbunden · API-Live-Proof bestätigt'
+            : meta.status==="READY_FOR_PREFLIGHT"
+              ? 'Konfiguriert · Live-Test offen'
+              : meta.status==="DEFERRED_OWNER_VERIFICATION"
+                ? 'Verifizierung offen'
+                : 'Einrichtung prüfen';
+          panel.querySelector('[data-platform-copy]').textContent=proven
+            ? 'Leona und Mara sind über den offiziellen Meta-/Instagram-Publish-Pfad verbunden. Kontrollierte API-Publishes wurden extern bestätigt; die globale unbeaufsichtigte Automatik bleibt bewusst geschützt.'
+            : 'Meta ist noch nicht vollständig für einen kontrollierten API-Publish bereit. Unter Betrieb siehst du die konkreten lokalen Gates.';
+        })
+        .catch(()=>{
+          panel.querySelector('[data-platform-state]').textContent='Status nicht erreichbar';
+          panel.querySelector('[data-platform-copy]').textContent='Der lokale Meta-Betriebsstatus konnte gerade nicht geladen werden. Unter Betrieb erneut prüfen.';
+        });
+    }
   }
 })();

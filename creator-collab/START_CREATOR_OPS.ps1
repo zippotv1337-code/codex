@@ -11,6 +11,27 @@ $projectRoot = $PSScriptRoot
 $runtimeConfig = Get-CreatorOpsRuntimeConfig -ProjectRoot $projectRoot -ConfigPath $Config
 if ($null -eq $Port) { $Port = $runtimeConfig.Port }
 if (-not $Database) { $Database = $runtimeConfig.Database }
+
+# `setx` updates the Windows user environment for future shells, but Codex or
+# another already-running parent process can keep an older environment block.
+# Hydrate only the known Meta variable names into this starter process. Values
+# are never printed, written to disk, or added to command-line arguments.
+$metaUserEnvironmentNames = @(
+    'META_IG_USER_ID_LEONA_VOSS',
+    'META_ACCESS_TOKEN_LEONA_VOSS',
+    'META_IG_USER_ID_MARA_FIELD',
+    'META_ACCESS_TOKEN_MARA_FIELD',
+    'META_GRAPH_API_VERSION',
+    'META_GRAPH_HOST',
+    'CREATOR_OPS_META_MEDIA_MANIFEST'
+)
+foreach ($name in $metaUserEnvironmentNames) {
+    $userValue = [Environment]::GetEnvironmentVariable($name, 'User')
+    if (-not [string]::IsNullOrWhiteSpace($userValue)) {
+        [Environment]::SetEnvironmentVariable($name, $userValue, 'Process')
+    }
+}
+
 $runtimeDir = Join-Path $projectRoot 'data'
 $logDir = Join-Path $runtimeDir 'logs'
 $logPath = Join-Path $logDir 'local_server.log'

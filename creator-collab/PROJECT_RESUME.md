@@ -589,3 +589,18 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   Stand lokal. GitHub-Push ist noch blockiert, weil Terminal-Git keine
   GitHub-Credentials lesen kann und der GitHub-Connector das Repo mit `404`
   meldet.
+
+## Meta-Statusanzeige und Runtime-Secrets — 21. September 2026
+
+- Der kontrollierte offizielle Meta-Publishpfad ist durch je ein bestätigtes
+  Carousel für Leona und Mara bewiesen (`PROVEN_CONTROLLED_ONLY`).
+- Dashboard und Meta-Bereich beziehen diesen Zustand dynamisch aus
+  `/api/external-readiness`; alte statische Nicht-verbunden-Texte wurden
+  entfernt.
+- Die globale unbeaufsichtigte Automation bleibt bewusst deaktiviert und wird
+  in der UI als „Automatik geschützt“ getrennt vom Verbindungsstatus gezeigt.
+- `START_CREATOR_OPS.ps1` hydriert ausschließlich die bekannten Meta-
+  Variablennamen aus dem Windows-Benutzerkontext in den Kindprozess. Secret-
+  Werte erscheinen weder in Git noch in Logs oder Prozessargumenten.
+- Nach einem Runtime-Neustart muss sich der Owner im Browser einmal wieder am
+  lokalen Dashboard anmelden.

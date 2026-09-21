@@ -211,6 +211,12 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertIn("owner-confirmed native Instagram URL", (ROOT / "creator_ops" / "web.py").read_text(encoding="utf-8"))
         self.assertNotIn(".status-pill { display: none; }", styles)
         self.assertIn("Slides ausgewählt", script)
+        self.assertIn('id="publishing-status"', html)
+        self.assertNotIn("Kein Live-Publishing verbunden", html)
+        self.assertIn("PROVEN_CONTROLLED_ONLY", script)
+        studio = (ROOT / "dashboard" / "studio.js").read_text(encoding="utf-8")
+        self.assertIn("API-Live-Proof bestätigt", studio)
+        self.assertNotIn("Die persönliche Meta-Verifizierung ist zurückgestellt", studio)
 
     def test_active_review_slots_exclude_blocked_and_expose_attention_inbox(self) -> None:
         queue = self.service.review_queue()

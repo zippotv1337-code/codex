@@ -36,6 +36,20 @@ test('Needs Attention escapes metadata and shows safe preview or explicit fallba
   assert.doesNotMatch(vm.runInContext('attentionTemplate(card)', context), /<img /);
 });
 
+test('Meta status distinguishes proven controlled publishing from global automation', () => {
+  const {context} = dashboard();
+  context.meta = {status:'PROVEN_CONTROLLED_ONLY', controlled_publish_proven:true, unattended_automation_enabled:false};
+  assert.equal(
+    vm.runInContext('metaStatusText(meta)', context),
+    'verbunden · offizieller API-Versand bewiesen · Automatik geschützt'
+  );
+  context.meta = {status:'BLOCKED'};
+  assert.equal(
+    vm.runInContext('metaStatusText(meta)', context),
+    'nicht vollständig verbunden · Einrichtung prüfen'
+  );
+});
+
 for (const ready of [false, true]) {
   test(`story editor ${ready ? 'accepts current backend' : 'blocks writes until old backend restarts'}`, async () => {
     const buttons = [{disabled:false}];

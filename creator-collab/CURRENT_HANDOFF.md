@@ -761,3 +761,19 @@ wurden nicht rückwirkend verändert.
   SQLite-Integrität grün.
 - Nächster operativer Schritt: echte Instagram-Insights aus den Profilen
   manuell importieren; danach die fälligen 24h/72h/168h-Fenster erfassen.
+
+## Meta-Dashboard-Status — 21. September 2026, 10:50 Uhr
+
+- Die zwei bestätigten offiziellen Meta-Carousels bleiben der maßgebliche
+  Live-Proof; Readiness ist `PROVEN_CONTROLLED_ONLY`.
+- Dashboard-Hauptseite, Footer und Meta-Bereich zeigen nicht mehr den alten
+  pauschalen „nicht verbunden“-/„Verifizierung offen“-Zustand.
+- Sichtbare Semantik: offizieller API-Versand bewiesen, globale
+  unbeaufsichtigte Automation weiterhin geschützt/aus.
+- Der Runtime-Starter übernimmt vorhandene Meta-Variablen beim Start sicher
+  aus dem Windows-Benutzerkontext. Werte werden nicht geloggt oder gespeichert.
+- Verifiziert: 5/5 UI-Tests, 28/28 fokussierte Python-Tests, PowerShell- und
+  JavaScript-Syntax grün; Runtime lauscht auf `192.168.188.131:4180`.
+- Browser benötigt nach dem Neustart einmal die lokale Owner-Anmeldung; erst
+  danach kann die neue Anzeige dort sichtbar bestätigt werden.
+- Keine externe Plattformaktion in diesem Schritt.

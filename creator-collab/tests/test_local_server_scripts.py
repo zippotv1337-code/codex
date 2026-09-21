@@ -12,8 +12,12 @@ class LocalServerScriptTests(unittest.TestCase):
             "$PSScriptRoot", "Get-NetTCPConnection", "/api/health",
             "local_server.log", "creator_ops.pid", "-WorkingDirectory $projectRoot",
             "-WindowStyle Hidden", "if (-not $NoBrowser)",
+            "GetEnvironmentVariable($name, 'User')",
+            "SetEnvironmentVariable($name, $userValue, 'Process')",
         ):
             self.assertIn(marker, text)
+        self.assertNotIn("Write-Host $userValue", text)
+        self.assertNotIn("Set-Content $userValue", text)
 
     def test_management_wrappers_delegate_to_single_server_logic(self) -> None:
         self.assertIn("START_CREATOR_OPS.ps1", (ROOT / "run_dashboard.ps1").read_text(encoding="utf-8"))

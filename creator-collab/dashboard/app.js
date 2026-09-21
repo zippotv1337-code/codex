@@ -33,6 +33,18 @@ const escapeHtml = (value) => String(value)
   .replaceAll('"', "&quot;")
   .replaceAll("'", "&#039;");
 
+function metaStatusText(meta = {}) {
+  if (meta.controlled_publish_proven || meta.status === "PROVEN_CONTROLLED_ONLY") {
+    return meta.unattended_automation_enabled
+      ? "verbunden · offizieller API-Versand bewiesen · Automatik aktiv"
+      : "verbunden · offizieller API-Versand bewiesen · Automatik geschützt";
+  }
+  if (meta.status === "READY_FOR_PREFLIGHT") return "konfiguriert · kontrollierter Live-Test offen";
+  if (meta.status === "DEFERRED_OWNER_VERIFICATION") return "zurückgestellt · persönliche Verifizierung offen";
+  if (meta.status === "BLOCKED") return "nicht vollständig verbunden · Einrichtung prüfen";
+  return "Status unbekannt · Betrieb prüfen";
+}
+
 function cookieValue(name) {
   return document.cookie.split(";")
     .map((value) => value.trim())
@@ -375,7 +387,10 @@ async function loadCards() {
       const identity = readiness.fiverr.identity_status === 'OWNER_REPORTED_VERIFIED'
         ? 'Verifizierung laut Owner erledigt · Gig zuletzt Entwurf, Live-Status offen'
         : 'Profil-/Live-Status prüfen';
-      document.querySelector('#platform-status').innerHTML = `<article class="planned-item"><div><b>ZippoWorkz ${health.status === 'ok' ? 'erreichbar' : 'Status prüfen'}</b><span>Meta: ${readiness.meta.status === 'DEFERRED_OWNER_VERIFICATION' ? 'zurückgestellt · persönliche Verifizierung offen' : escapeHtml(readiness.meta.status)}</span><span>Fiverr: ${identity}</span></div><a class="text-link" href="/revenue">Fiverr / Revenue öffnen</a></article>`;
+      const metaStatus = metaStatusText(readiness.meta);
+      document.querySelector('#platform-status').innerHTML = `<article class="planned-item"><div><b>ZippoWorkz ${health.status === 'ok' ? 'erreichbar' : 'Status prüfen'}</b><span>Meta: ${escapeHtml(metaStatus)}</span><span>Fiverr: ${identity}</span></div><a class="text-link" href="/?area=meta">Meta-Verbindung öffnen</a><a class="text-link" href="/revenue">Fiverr / Revenue öffnen</a></article>`;
+      const publishingStatus = document.querySelector('#publishing-status');
+      if (publishingStatus) publishingStatus.textContent = `Meta: ${metaStatus}`;
     }).catch(() => {document.querySelector('#platform-status').textContent = 'Betriebsstatus nicht erreichbar. Unter Betrieb / Status prüfen.';});
     fetch("/api/operations-audit", { headers: { Accept: "application/json" } })
       .then(response => response.ok ? response.json() : null)
