@@ -1,5 +1,30 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELLER AUTOPILOT-CHECKPOINT — 21. September 2026, 13:46 Europe/Berlin
+
+- Letzter vollständig erledigter Task: Operations-Radar unterscheidet jetzt
+  fällige und zukünftige `LOCAL_SCHEDULED`-Jobs. Ein bewiesener Meta-Pfad wird
+  nicht mehr fälschlich als fehlende Credentials gemeldet.
+- Aktueller Zustand: Leona Content `3` „Spätsommer in Berlin“, Publication `3`,
+  Queuejob `3`, ist für `2026-09-21T19:30:00+02:00` lokal terminiert. Um 13:46
+  war der Job noch nicht fällig; keine externe Aktion.
+- Read-only paketgebundener Preflight: Adapter/Konto/Credentials grün; Status
+  `BLOCKED` ausschließlich wegen
+  `native_ai_disclosure_owner_confirmation_required`.
+- Exakter Fortsetzungspunkt: Owner bestätigt für genau dieses Paket die native
+  Instagram-KI-Kennzeichnung. Frühestens ab 19:30 erneut Publication `3` /
+  Content `3` preflighten. Nur bei `READY` genau einmal dispatchen, danach
+  Media-ID, Permalink, Receipt, Queue, Content und Assets reconciliieren. Bei
+  unklarem Ergebnis niemals blind erneut senden.
+- Analytics: aktuell 0 fällige Fenster; fehlende Werte bleiben `UNKNOWN/NULL`.
+- Weitere Gates: Story-Upload braucht eine echte native Story-Session;
+  Mara „Werkstattabend“ bleibt Mock/Needs Attention und wird ohne kreative
+  Owner-Richtung nicht repariert oder veröffentlicht.
+- Tests: 26/26 fokussierte Python-Tests und Compilecheck grün. Runtime auf
+  `192.168.188.131:4180` neu gestartet.
+- Keine Käufe, keine Profiländerungen, keine Veröffentlichung und keine
+  Secret-Ausgabe in diesem Autopilot-Lauf.
+
 ## ABSCHLUSS-CHECKPOINT — Instagram API, 20. September 2026, 16:53 Europe/Berlin
 
 - Auftrag gestoppt wie vom Owner gewünscht: keine weitere Bildgenerierung und

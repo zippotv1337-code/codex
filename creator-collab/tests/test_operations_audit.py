@@ -110,10 +110,54 @@ class OperationsAuditTests(unittest.TestCase):
         payload = self.audit.snapshot(now=datetime.fromisoformat("2026-09-07T14:30:00+02:00"))
 
         self.assertEqual(payload["publishing"]["local_scheduled_count"], 1)
+        self.assertEqual(payload["publishing"]["due_local_scheduled_count"], 0)
+        self.assertEqual(payload["publishing"]["future_local_scheduled_count"], 1)
         self.assertGreaterEqual(payload["stories"]["ready_package_count"], 1)
         lanes = [action["lane"] for action in payload["next_actions"]]
-        self.assertIn("instagram_output", lanes)
+        self.assertIn("instagram_schedule", lanes)
+        self.assertNotIn("instagram_output", lanes)
         self.assertIn("stories", lanes)
+        scheduled = next(
+            action for action in payload["next_actions"]
+            if action["lane"] == "instagram_schedule"
+        )
+        self.assertEqual(scheduled["blocked_by"], "PLANNED_TIME_NOT_REACHED")
+
+    def test_due_publish_with_meta_proof_requires_package_preflight_not_credentials(self) -> None:
+        proof_card, due_card = self.reviews.ensure_date(date(2026, 9, 8))
+        self.reviews.approve(due_card["content_id"])
+        with self.pipeline.db.transaction() as connection:
+            variant = connection.execute(
+                "SELECT id FROM platform_variants WHERE content_id=?",
+                (proof_card["content_id"],),
+            ).fetchone()
+            connection.execute(
+                """
+                INSERT INTO publications
+                    (content_id, platform_variant_id, provider, scheduled_at,
+                     published_at, external_id, external_url, status)
+                VALUES (?, ?, 'instagram-meta-graph', ?, ?, ?, ?, 'PUBLISHED')
+                """,
+                (
+                    proof_card["content_id"],
+                    variant["id"],
+                    "2026-09-08T18:00:00+02:00",
+                    "2026-09-08T18:00:00+02:00",
+                    "18000000000000001",
+                    "https://www.instagram.com/p/AuditMetaDue/",
+                ),
+            )
+
+        payload = self.audit.snapshot(
+            now=datetime.fromisoformat("2026-09-09T22:00:00+02:00")
+        )
+
+        action = next(
+            item for item in payload["next_actions"]
+            if item["lane"] == "instagram_output"
+        )
+        self.assertEqual(action["blocked_by"], "PACKAGE_BOUND_PREFLIGHT_REQUIRED")
+        self.assertNotEqual(action["blocked_by"], "META_CREDENTIALS_OR_NATIVE_UPLOAD_SESSION")
 
     def test_http_endpoint_exposes_operations_audit(self) -> None:
         self.reviews.ensure_date(date(2026, 9, 8))

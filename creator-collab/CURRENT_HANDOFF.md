@@ -1,5 +1,25 @@
 # Aktueller Handoff
 
+## AKTUELL — Autopilot hält Leona-Publish sicher bis 19:30, 21. September 2026
+
+- Operations-Radar korrigiert: `LOCAL_SCHEDULED` wird in zukünftig/fällig
+  getrennt. Vor dem geplanten Zeitpunkt meldet er nicht mehr fehlende Meta-
+  Credentials, sondern `PLANNED_TIME_NOT_REACHED` mit dem exakten Termin.
+- Aktueller echter Job: Leona Content `3` „Spätsommer in Berlin“, Publication
+  `3`, Queuejob `3`, geplant für 19:30 Europe/Berlin.
+- Read-only Preflight bestätigte Konto, offiziellen Adapter und lokale
+  Credentials. Einziger Gate:
+  `native_ai_disclosure_owner_confirmation_required`.
+- Keine Plattformaktion ausgelöst. Für den späteren Versand muss der Owner
+  ausdrücklich bestätigen, dass bei genau diesem Paket die native Instagram-
+  KI-Kennzeichnung gesetzt wird. Danach ab 19:30 erneut preflighten und nur
+  bei `READY` genau einmal dispatchen.
+- Analytics: 0 fällige Fenster. Story-Live und Mara-Mockkarte bleiben separat
+  blockiert; keine künstliche Arbeit oder neue Contentserie begonnen.
+- Verifikation: 26/26 fokussierte Tests grün, Compilecheck grün, Current State
+  erneuert, Runtime auf `192.168.188.131:4180` neu gestartet.
+- Journal: `sessions/2026-09-21-1346-codex-autopilot-scheduled-guard.md`.
+
 ## AKTUELL — Offizielle Leona- und Mara-Meta-Carousels live bestätigt, 21. September 2026
 
 ### Sicherer Nachlauf ohne Owner-Eingriff, 09:44 Uhr

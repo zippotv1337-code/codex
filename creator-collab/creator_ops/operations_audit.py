@@ -134,6 +134,18 @@ class OperationsAuditService:
         local_scheduled = [
             item for item in publish_jobs if item.get("status") == "LOCAL_SCHEDULED"
         ]
+        due_local_scheduled: list[dict[str, object]] = []
+        future_local_scheduled: list[dict[str, object]] = []
+        for item in local_scheduled:
+            planned_value = item.get("planned_at")
+            if not planned_value:
+                due_local_scheduled.append(item)
+                continue
+            planned = _as_datetime(str(planned_value)).astimezone(UTC)
+            if planned <= current.astimezone(UTC):
+                due_local_scheduled.append(item)
+            else:
+                future_local_scheduled.append(item)
         external_blocked = [
             item
             for item in publish_jobs
@@ -163,14 +175,37 @@ class OperationsAuditService:
                     "blocked_by": "INSIGHTS_ACCESS",
                 }
             )
-        if local_scheduled:
+        if due_local_scheduled:
             next_actions.append(
                 {
                     "priority": "P0",
                     "lane": "instagram_output",
-                    "action": "Lokal terminierte Pakete ueber offiziellen Weg veroeffentlichen",
-                    "count": len(local_scheduled),
-                    "blocked_by": "META_CREDENTIALS_OR_NATIVE_UPLOAD_SESSION",
+                    "action": (
+                        "Faellige Pakete kontrolliert per offiziellem Meta-Pfad dispatchen"
+                        if official_meta_published
+                        else "Faellige Pakete ueber offiziellen Weg veroeffentlichen"
+                    ),
+                    "count": len(due_local_scheduled),
+                    "blocked_by": (
+                        "PACKAGE_BOUND_PREFLIGHT_REQUIRED"
+                        if official_meta_published
+                        else "META_CREDENTIALS_OR_NATIVE_UPLOAD_SESSION"
+                    ),
+                }
+            )
+        if future_local_scheduled:
+            next_actions.append(
+                {
+                    "priority": "P1",
+                    "lane": "instagram_schedule",
+                    "action": "Bis zum geplanten Zeitpunkt warten; dann paketgebunden preflighten",
+                    "count": len(future_local_scheduled),
+                    "blocked_by": "PLANNED_TIME_NOT_REACHED",
+                    "next_planned_at": min(
+                        str(item["planned_at"])
+                        for item in future_local_scheduled
+                        if item.get("planned_at")
+                    ),
                 }
             )
         if ready_cards:
@@ -242,6 +277,8 @@ class OperationsAuditService:
             "publishing": {
                 "queue_by_status": self._publish_queue_groups(publish_jobs),
                 "local_scheduled_count": len(local_scheduled),
+                "due_local_scheduled_count": len(due_local_scheduled),
+                "future_local_scheduled_count": len(future_local_scheduled),
                 "external_blocked_count": len(external_blocked),
                 "official_meta_published_count": official_meta_published,
                 "live_posting": (

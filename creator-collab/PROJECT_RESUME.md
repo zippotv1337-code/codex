@@ -1,5 +1,18 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Autopilot Scheduling Guard — 21. September 2026
+
+Der Operations-Radar trennt lokale Publishjobs jetzt nach Fälligkeit. Leona
+„Spätsommer in Berlin“ ist real lokal freigegeben und für 19:30 Europe/Berlin
+terminiert; um 13:46 wurde deshalb korrekt nur gewartet. Der paketgebundene
+Meta-Preflight bestätigte Adapter, Konto und Credentials, blockiert aber noch
+ehrlich mit `native_ai_disclosure_owner_confirmation_required`. Ohne konkrete
+Owner-Bestätigung wurde weder dieser Status erfunden noch ein Post ausgelöst.
+26 fokussierte Tests und Compilecheck sind grün; Runtime wurde neu gestartet.
+Fortsetzung ausschließlich nach Bestätigung der nativen KI-Kennzeichnung und
+frühestens zum geplanten Zeitpunkt. Nachweis:
+`sessions/2026-09-21-1346-codex-autopilot-scheduled-guard.md`.
+
 ## Meta-/Instagram-Live-Proof — 21. September 2026
 
 Sicherer Nachlauf: Der Operations-Radar meldet den offiziellen Pfad jetzt als

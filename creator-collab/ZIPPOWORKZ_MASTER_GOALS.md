@@ -1,6 +1,6 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-21 — official Meta carousel proof completed for Leona and Mara; analytics and secure token rotation are next.
+Last consolidated: 2026-09-21 — Meta proof completed; Leona reserve is locally scheduled for 19:30 and awaits the exact native AI-disclosure confirmation.
 
 ## Purpose and precedence
 
@@ -42,7 +42,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-04 | Fiverr Gig 1 live: AI Workflow Automation | ACTIVE / VERIFY | Die eingeloggte Verwaltung zeigte am 2026-09-08 `AKTIV 1`; Fiverr lieferte in der Tabelle einen Fehler und die öffentliche Ansicht war CAPTCHA-blockiert. Exit: öffentlicher Gig-Link störungsfrei sichtbar und dokumentiert. Basic $149, Standard $349, Premium $699. |
 | M-05 | First real lead, order and revenue | BLOCKED_BY_M-04 | A genuine inquiry, order, fulfillment and revenue record; dry runs never count. |
 | M-06 | Standardize fulfillment from first order | LATER | Learn recurring requests, revisions, integrations and boundaries. Gig 2 only after Gig 1 proof. |
-| M-07 | Maintain real content cadence | ACTIVE — ONE_REAL_REVIEW_RESERVE | Leona „Spätsommer in Berlin“ ist mit fünf realen unveröffentlichten Assets und Top 3 wieder `READY_FOR_REVIEW`; keine automatische Freigabe oder Veröffentlichung. Öffentliche Richtung bleibt ca. 70 % glaubwürdiger Alltag/Setting/Handlung und 30 % glamourös/sexy angedeutet, stets `SFW + PUBLIC_SFW`. |
+| M-07 | Maintain real content cadence | ACTIVE — LOCAL_SCHEDULED / OWNER_AI_DISCLOSURE_GATE | Leona „Spätsommer in Berlin“ besitzt fünf reale unveröffentlichte Assets, ist lokal freigegeben und für 2026-09-21 19:30 Europe/Berlin terminiert. Read-only Meta-Preflight: Konto/Adapter/Credentials ok; offen ist ausschließlich `native_ai_disclosure_owner_confirmation_required`. Kein Versand vor Termin und Bestätigung. |
 | M-08 | Stories as a first-class lane | PARTIAL / LOCAL_IMPLEMENTED | Local preview/edit/approve/change/reject/pause/plan persistent and honest; official Story publishing waits for supported proof. |
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |
@@ -122,4 +122,4 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 1. Rotate the chat-exposed Meta tokens locally, then run read-only identity checks; do not store replacement tokens in Git, DB or journals.
 2. T-002/M-02: capture real 24h/72h/168h metrics for the new independent Leona and Mara Meta publications and complete the first cross-persona learning cycle.
 3. T-003/M-04: publish and verify Fiverr Gig 1 in a dedicated output run when the public page is reachable.
-4. M-07: Owner reviews the prepared Leona reserve; do not create another batch while this complete package is waiting.
+4. M-07: Für Leona „Spätsommer in Berlin“ die native KI-Kennzeichnung konkret bestätigen; frühestens um 19:30 paketgebunden erneut preflighten und erst bei `READY` einmal dispatchen.
