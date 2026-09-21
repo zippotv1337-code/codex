@@ -1,5 +1,28 @@
 # Verbindliche Owner-Entscheidungen
 
+## Aktueller Owner-Override — 21. September 2026: dauerhafte Publish-Freigabe
+
+- Für vollständige projektbezogene Instagram-Pakete gilt dauerhaft:
+  Codex/ZippoWorkz darf ohne erneute Einzelrückfrage veröffentlichen, wenn das
+  Paket eindeutig der richtigen Persona zugeordnet, `SFW + PUBLIC_SFW`,
+  rechtegeklärt, vollständig freigegeben, nicht bereits veröffentlicht und im
+  paketgebundenen offiziellen Preflight `READY` ist.
+- Für KI-generierte Inhalte muss die native Instagram-/Meta-KI-Kennzeichnung
+  gesetzt werden. Der Owner hat dies für Leona „Spätsommer in Berlin“ am
+  21. September 2026 ausdrücklich bestätigt.
+- Die Freigabe bleibt an Idempotenz und externen Abgleich gebunden: genau ein
+  Publishversuch pro Paket; bei Timeout oder unklarem `media_publish` zuerst
+  reconciliieren und niemals blind erneut senden.
+- Ein geplanter Post wird nicht vor seinem dokumentierten Zeitpunkt gesendet,
+  sofern der Owner nicht ausdrücklich eine frühere Veröffentlichung verlangt.
+- Nach erfolgreichem Publish müssen Media-ID, Permalink, Receipt, Queue,
+  Content- und Assetstatus gespeichert und öffentlich verifiziert werden.
+- Diese Dauerfreigabe umfasst keine Profiländerungen, Nachrichten, Kommentare,
+  DMs, Follow-Aktionen, bezahlte Aktionen, Adult-Inhalte, neue Konten,
+  Identitäts-/OTP-Schritte oder das Löschen bestehender öffentlicher Inhalte.
+- Plattform- und Produktsicherheitsregeln sowie die roten Schranken weiter
+  unten bleiben vollständig wirksam.
+
 ## Aktueller Owner-Override — 8. September 2026: ZippoWorkz
 
 - Kanonischer Produktname **ZippoWorkz**. Creator Ops bleibt der vorhandene Core, kein zweites Produkt.
