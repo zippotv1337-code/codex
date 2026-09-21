@@ -674,3 +674,17 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
   Werte erscheinen weder in Git noch in Logs oder Prozessargumenten.
 - Nach einem Runtime-Neustart muss sich der Owner im Browser einmal wieder am
   lokalen Dashboard anmelden.
+
+## Leona content output — 21. September 2026
+
+- `Ein Blazer, drei Stimmungen` ist als offizielles Fünfer-Carousel live:
+  https://www.instagram.com/p/DdkFJYlkeYW/.
+- Meta bestätigte Media-ID `18118135330810940`, Typ `CAROUSEL_ALBUM` und
+  Benutzername `leonavoss.ai`; Creator Ops speichert fünf veröffentlichte
+  Assets und genau einen Dispatch-Versuch.
+- Der Meta-Adapter akzeptiert jetzt eine explizite Owner-Auswahl von 2–10
+  Carousel-Assets. Der normale Review-Standard bleibt Top 3.
+- Der lokale Asset-Import erstellt nur noch das angeforderte Persona-Paket.
+- Quellmedien und Paketbrief liegen unter
+  `assets/meta-public/2026-09-22/leona-black-blazer-three-moods/` und
+  `docs/CONTENT_PACKAGE_LEONA_BLAZER_2026-09-22.md`.

@@ -883,3 +883,24 @@ wurden nicht rückwirkend verändert.
 - Browser benötigt nach dem Neustart einmal die lokale Owner-Anmeldung; erst
   danach kann die neue Anzeige dort sichtbar bestätigt werden.
 - Keine externe Plattformaktion in diesem Schritt.
+
+## Leona-Fünfer-Carousel live — 21. September 2026, 23:05 Uhr
+
+- Neues Leona-Paket `Ein Blazer, drei Stimmungen` mit fünf unterschiedlichen
+  SFW/PUBLIC_SFW-Bildern erzeugt, visuell geprüft und in Creator Ops importiert.
+- Der Import erzeugt jetzt nur noch die angeforderte Persona und keine leere
+  Gegenpersona-Karte als Nebenwirkung.
+- Der offizielle Meta-Adapter unterstützt nach ausdrücklicher Owner-Auswahl
+  regelkonforme Instagram-Carousels mit 2–10 Slides; der normale
+  Curation-Standard bleibt Top 3.
+- Preflight war vollständig `READY`: Leona-Konto, fünf öffentliche HTTPS-JPEGs,
+  native KI-Kennzeichnung, Live-Gate und Publishing-Quota grün.
+- Extern veröffentlicht und über Meta Graph nachgelesen:
+  Media-ID `18118135330810940`, Typ `CAROUSEL_ALBUM`, Konto `leonavoss.ai`,
+  https://www.instagram.com/p/DdkFJYlkeYW/.
+- Creator Ops: Content/Publication/Queue `PUBLISHED`, fünf Assets `PUBLISHED`,
+  genau ein Versuch, kein Fehler, SQLite `integrity_check=ok`.
+- GitHub: öffentlicher Medien-/Code-Commit `e94a60a` erfolgreich auf `main`.
+- Teststatus: 12 relevante Tests grün; Python-Compilecheck grün. Drei nicht
+  ausgewählte Dashboard-HTTP-Tests benötigen aufgrund der produktiven
+  Live-Konfiguration explizit ein Testpasswort und sind kein Publish-Fehler.

@@ -578,3 +578,25 @@ gegen 13:00 Uhr.
   `codex/creator-ops-full-sync-20260907`. Terminal-Git blockiert ohne
   GitHub-Credentials; GitHub-Connector meldet für `zippotv1337-code/codex`
   `404`. Kein Force-Push, kein Main-Overwrite.
+
+## Content-/Publish-Checkpoint — 21. September 2026, 23:05 Uhr
+
+- Letzter vollständig erledigter Task: Leona `Ein Blazer, drei Stimmungen`
+  als Fünfer-Carousel offiziell veröffentlicht und extern verifiziert.
+- Aktuell angefangener Task: keiner.
+- Exakter Fortsetzungspunkt: erst zum fälligen 24h-Fenster echte Insights für
+  Media-ID `18118135330810940` erfassen; fehlende Werte bleiben UNKNOWN/NULL.
+- Geänderte Projektbereiche: Asset-Import, Meta-Carousel-Limit, fokussierte
+  Tests, fünf öffentliche JPEGs und Content-Paketdokumentation.
+- Teststatus: 12 relevante Tests grün; Compilecheck grün.
+- Backupstatus: `creator-ops-backup-pre-leona-five-slide-live.db` erstellt;
+  SQLite-Integrität nach Publish `ok`.
+- Bekannte Blocker: keine für diesen Post. Chat-offengelegte Meta-Tokens später
+  rotieren, ohne Ersatzwerte in Git/Journal zu schreiben.
+- Owner-Gates: keine neue Aktion für diesen Abschluss.
+- Nächste 3 priorisierte Aufgaben:
+  1. 24h/72h/168h-Analytics für den neuen Leona-Post erfassen.
+  2. Fiverr Gig 1 mit der vorbereiteten korrekten Copy/Paketen aktualisieren.
+  3. Erst danach anhand echter Signale das nächste Contentpaket wählen.
+- Resume-Auftrag: `Lies diesen Checkpoint und erfasse nur fällige echte
+  Analytics; erzeuge keine Werte und sende keinen Doppelpost.`

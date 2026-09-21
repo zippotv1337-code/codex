@@ -42,7 +42,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-04 | Fiverr Gig 1 live: AI Workflow Automation | ACTIVE / LIVE_NEEDS_CORRECTION | Öffentlicher Gig und Seller-Session am 2026-09-21 verifiziert. Live sind noch Platzhalter und 50/150/355 USD; bestehender Gig wird auf Basic $149, Standard $349, Premium $699 korrigiert. Kein zweiter Gig. |
 | M-05 | First real lead, order and revenue | BLOCKED_BY_M-04 | A genuine inquiry, order, fulfillment and revenue record; dry runs never count. |
 | M-06 | Standardize fulfillment from first order | LATER | Learn recurring requests, revisions, integrations and boundaries. Gig 2 only after Gig 1 proof. |
-| M-07 | Maintain real content cadence | ACTIVE — LEONA_AND_MARA_LIVE_2026_09_21 | Leona „Spätsommer in Berlin“ und Mara „Werkstattabend“ wurden am 2026-09-21 über den offiziellen Meta-Pfad veröffentlicht. Mara: Media-ID `18119026942937326`, https://www.instagram.com/p/DdjvixqEY-Q/. Beide Jobs wurden extern bestätigt; als Nächstes echte 24h/72h/168h-Analytics erfassen. |
+| M-07 | Maintain real content cadence | ACTIVE — FIVE_OFFICIAL_POSTS_2026_09_21 | Zusätzlich zu den bestehenden Leona-/Mara-Posts wurde Leona „Ein Blazer, drei Stimmungen“ als Fünfer-Carousel über den offiziellen Meta-Pfad veröffentlicht: Media-ID `18118135330810940`, https://www.instagram.com/p/DdkFJYlkeYW/. Alle fünf Assets wurden extern bestätigt; als Nächstes echte 24h/72h/168h-Analytics erfassen. |
 | M-08 | Stories as a first-class lane | PARTIAL / LOCAL_IMPLEMENTED | Local preview/edit/approve/change/reject/pause/plan persistent and honest; official Story publishing waits for supported proof. |
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |
@@ -122,4 +122,4 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 1. Rotate the chat-exposed Meta tokens locally, then run read-only identity checks; do not store replacement tokens in Git, DB or journals.
 2. T-002/M-02: capture real 24h/72h/168h metrics for the new independent Leona and Mara Meta publications and complete the first cross-persona learning cycle.
 3. T-003/M-04: publish and verify Fiverr Gig 1 in a dedicated output run when the public page is reachable.
-4. M-07: Für Leona „Spätsommer in Berlin“ die native KI-Kennzeichnung konkret bestätigen; frühestens um 19:30 paketgebunden erneut preflighten und erst bei `READY` einmal dispatchen.
+4. M-07: Keine weitere Serie erzeugen, bevor die erste echte Analytics-Auswertung des neuen Leona-Fünfer-Carousels fällig ist.
