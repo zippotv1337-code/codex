@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T12:31:58+00:00",
+  "generated_at": "2026-09-21T17:56:24+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -38,8 +38,7 @@
   "content": {
     "total": 4,
     "by_status": {
-      "PUBLISHED": 2,
-      "SCHEDULED": 2
+      "PUBLISHED": 4
     },
     "by_stage": {
       "ALLTAG": 4
@@ -64,21 +63,17 @@
     }
   },
   "reserve": {
-    "dates": [
-      "2026-09-20",
-      "2026-09-21"
-    ],
-    "days": 2,
-    "through": "2026-09-21"
+    "dates": [],
+    "days": 0,
+    "through": null
   },
   "publications": {
     "owner_confirmed_native": 0,
-    "official_meta_graph": 2,
-    "mock": 2,
+    "official_meta_graph": 4,
+    "mock": 0,
     "manual_analytics_events": 0,
     "local_queue": {
-      "LOCAL_SCHEDULED": 2,
-      "PUBLISHED": 2
+      "PUBLISHED": 4
     },
     "instagram_channel_real_live": true,
     "meta_graph_automation_proof": "proven_live"

@@ -1,5 +1,16 @@
 # AUTOPILOT CHECKPOINT
 
+## LIVE-CHECKPOINT — Mara, 21. September 2026, 19:55 Europe/Berlin
+
+- Mara Content `2` / Publication `4` / Queuejob `4`: `PUBLISHED`.
+- Externe Bestätigung: Media-ID `18119026942937326`, Konto `mara.field.ai`,
+  Typ `CAROUSEL_ALBUM`, Permalink
+  https://www.instagram.com/p/DdjvixqEY-Q/.
+- Genau ein Versuch, `last_error=NULL`, kein Blind-Retry. Drei Top-Assets sind
+  `PUBLISHED`; zwei alte Mock-Slots bleiben unveröffentlicht und nicht gewählt.
+- Exakter Fortsetzungspunkt: nach Fälligkeit echte 24h-, 72h- und 168h-Werte
+  erfassen. Fehlende Werte nie als Null erfinden.
+
 ## ZWEI-POST-CHECKPOINT — 21. September 2026
 
 - Leona Content `3` / Publication `3` / Queuejob `3`: `LOCAL_SCHEDULED`,

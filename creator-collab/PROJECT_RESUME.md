@@ -1,5 +1,15 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Mara „Werkstattabend“ offiziell live — 21. September 2026
+
+Das neue Drei-Slide-Werkstattcarousel wurde nach ausdrücklichem Owner-Auftrag
+über den offiziellen Meta-Adapter auf `mara.field.ai` veröffentlicht. Meta
+bestätigte Media-ID `18119026942937326`, `CAROUSEL_ALBUM` und den Permalink
+https://www.instagram.com/p/DdjvixqEY-Q/. Queue, Publication, Content und die
+drei Top-Assets sind nach genau einem Versuch konsistent `PUBLISHED`; kein
+Retry und kein Fehler. Nachweis:
+`sessions/2026-09-21-1955-codex-mara-workshop-live.md`.
+
 ## Mara „Werkstattabend“ als zweiter Post READY — 21. September 2026
 
 Das unbrauchbare Mock-Paket wurde mit drei neuen, identitätskonsistenten

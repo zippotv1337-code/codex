@@ -1,5 +1,20 @@
 # Aktueller Handoff
 
+## LIVE — Mara „Werkstattabend“ veröffentlicht, 21. September 2026
+
+- Auf ausdrücklichen Owner-Auftrag wurde Content `2`, Publication `4`,
+  Queuejob `4` einmalig über den offiziellen Meta-Adapter veröffentlicht.
+- Meta bestätigt Media-ID `18119026942937326`, Typ `CAROUSEL_ALBUM`, Konto
+  `mara.field.ai` und Permalink:
+  https://www.instagram.com/p/DdjvixqEY-Q/
+- Creator Ops ist konsistent: Queue, Publication, Content und die drei Top-
+  Assets stehen auf `PUBLISHED`; genau 1 Versuch, kein Fehler, kein Retry.
+- Native Instagram-KI-Kennzeichnung war paketgebunden bestätigt. Backup vor
+  Versand: `backups/creator-ops-backup-pre-mara-werkstatt-live-publish.db`.
+- Nächste operative Aufgabe: echte 24h/72h/168h-Analytics erfassen; fehlende
+  Werte bleiben `UNKNOWN/NULL`.
+- Journal: `sessions/2026-09-21-1955-codex-mara-workshop-live.md`.
+
 ## AKTUELL — Zweiter Post: Mara „Werkstattabend“ READY, 21. September 2026
 
 - Das alte reine Mock-Paket wurde durch drei neue reale Mara-Bilder ersetzt:
