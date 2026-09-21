@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-08T16:36:37+00:00",
+  "generated_at": "2026-09-21T07:36:07+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -12,20 +12,14 @@
     ]
   },
   "operations": {
-    "meta_api_status": "DEFERRED_OWNER_VERIFICATION",
+    "meta_api_status": "PROVEN_LIVE_2026_09_21",
     "fiverr_identity_status": "OWNER_REPORTED_VERIFIED",
     "fiverr_gig_status": "DRAFT_LAST_OBSERVED_2026_09_07"
   },
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
-    "state": "SYNC_VERIFIED",
-    "verified_content_commit": "3ac0cb8b3a290633b21a5689e5c7f2d82296b1ff",
-    "verified_at": "2026-09-08T23:04:33+02:00",
-    "remote_branch": "main",
-    "source_branch": "codex/zippoworkz-snapshot-20260908",
-    "evidence": "sessions/2026-09-08-2255-github-sync.md",
-    "scope": "creator-collab source/docs; runtime databases, secrets, backups and unrelated root files excluded"
+    "state": "MANAGED_OUTSIDE_RUNTIME"
   },
   "personas": [
     {
@@ -42,96 +36,80 @@
     }
   ],
   "content": {
-    "total": 9,
+    "total": 4,
     "by_status": {
-      "BLOCKED": 2,
-      "PARTIAL_READY": 1,
       "PUBLISHED": 2,
-      "READY_FOR_REVIEW": 2,
-      "SCHEDULED": 2
+      "READY_FOR_REVIEW": 2
     },
     "by_stage": {
-      "ALLTAG": 9
+      "ALLTAG": 4
     },
-    "review_required": 3,
+    "review_required": 2,
     "mix_target_percent": {
-      "ALLTAG_AND_SITUATIONAL_SFW": 70,
-      "GLAMOUR_TEASER_SFW": 30,
-      "ADULT_18_PUBLIC": 0
+      "ALLTAG": 70,
+      "TEASER": 30,
+      "ADULT_18": 0
     },
-    "next_recommended_stage": "PUBLIC_SFW_CONTEXTUAL_GLAMOUR",
-    "direction": {
-      "effective_date": "2026-09-08",
-      "public_scope": "SFW + PUBLIC_SFW only",
-      "principle": "70% believable everyday, setting, action and personality; 30% tasteful glamour/sexy tease with context.",
-      "leona": "urban, stylish, glamorous; city, fashion, home and occasional gym",
-      "mara": "rural, strong, sporty; farm/outdoor, gym, casual daily life and leisure",
-      "adult_public_planning": "DISABLED"
-    }
+    "next_recommended_stage": "TEASER"
   },
   "assets": {
-    "total": 45,
-    "real": 29,
-    "mock": 16,
+    "total": 20,
+    "real": 8,
+    "mock": 12,
     "by_safety": {
-      "SFW": 45
+      "SFW": 20
     },
     "by_visibility": {
-      "PUBLIC_SFW": 45
+      "PUBLIC_SFW": 20
     }
   },
   "reserve": {
     "dates": [
-      "2026-09-05",
-      "2026-09-06",
-      "2026-09-09"
+      "2026-09-20",
+      "2026-09-21"
     ],
-    "days": 3,
-    "through": "2026-09-09"
+    "days": 2,
+    "through": "2026-09-21"
   },
   "publications": {
-    "owner_confirmed_native": 4,
-    "mock": 5,
-    "manual_analytics_events": 2,
+    "owner_confirmed_native": 0,
+    "official_meta_graph": 2,
+    "mock": 0,
+    "manual_analytics_events": 0,
     "local_queue": {
-      "LOCAL_SCHEDULED": 1,
-      "NEEDS_RESCHEDULE_REVIEW": 1,
       "PUBLISHED": 2
     },
     "instagram_channel_real_live": true,
-    "meta_graph_automation_proof": "not_yet_proven"
+    "meta_graph_automation_proof": "proven_live"
   },
   "background_runs": {
-    "COMPLETE": 4
+    "COMPLETE": 2
   },
   "engagement": {
-    "real_post_proposals": 8,
+    "real_post_proposals": 0,
     "execution": "manual-owner-only"
   },
   "finance": {
     "cost_eur": 0.0,
     "revenue_eur": 0.0,
     "adworks_real_revenue_eur": 0.0,
-    "adworks_dry_run_revenue_eur": 123.45,
+    "adworks_dry_run_revenue_eur": 0.0,
     "funnel_events_real": 0,
-    "funnel_events_dry_run": 4,
+    "funnel_events_dry_run": 0,
     "paid_spend": "OWNER_GATE"
   },
   "remote": {
-    "active": true,
-    "started_at": "2026-09-08T18:38:48+02:00",
-    "host": "192.168.188.131",
-    "port": 4180,
-    "auth": "password"
+    "active": false,
+    "started_at": null
   },
   "tests": {
     "status": "passed",
-    "passed": 144,
+    "passed": 44,
     "failed": 0
   },
   "blockers": {
-    "owner_review_required": 3,
-    "mock_assets_remaining": 16
+    "owner_review_required": 2,
+    "mock_assets_remaining": 12
   },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",

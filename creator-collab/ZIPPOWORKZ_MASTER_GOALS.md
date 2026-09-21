@@ -1,6 +1,6 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-08 — Meta is a deferred external lane; local content reserve is the next unblocked operating task.
+Last consolidated: 2026-09-21 — official Meta carousel proof completed for Leona and Mara; analytics and secure token rotation are next.
 
 ## Purpose and precedence
 
@@ -38,7 +38,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 |---|---|---|---|
 | M-01 | One canonical ZippoWorkz surface | DONE | One visible product, primary launcher, dashboard and operational DB; runtime contract verified 2026-09-08. |
 | M-02 | Real Instagram analytics in ZippoWorkz | ACTIVE — OBSERVING | Zwei echte Leona-Messungen sind gespeichert: Publication 7 (13 Aufrufe, 11 Betrachter, 1 Like; spät als 24h-Fenster erfasst) und Publication 4 (19 Aufrufe, 16 Betrachter, 2 Likes, 1 Profilbesuch; spät als 72h-Fenster erfasst). Beide gehören zum selben Contentpaket; die Learning-Logik zählt sie bewusst nur als einen unabhängigen Inhalt. Complete when real 24h/72h/168h snapshots create the first evidenced learning cycle. |
-| M-03 | Official Meta/Instagram API proof | DEFERRED — EXTERNAL_SIGNAL_ONLY | Preserve the adapter; do not let Meta configuration block local content, analytics or revenue work. Resume only after a confirmed Developer-App/account-linkage signal; Leona read-only → one controlled publish → receipt/reconcile → Mara. |
+| M-03 | Official Meta/Instagram API proof | DONE — LEONA + MARA — 2026-09-21 | Both account identities and quotas passed; one three-image carousel per persona was published through the official adapter. Graph IDs/permalinks, durable receipts, queues, publications, content and asset states reconcile. Evidence: `sessions/2026-09-21-0908-codex-meta-live-proof.md` and `sessions/2026-09-21-0936-codex-mara-meta-live-github-sync.md`. |
 | M-04 | Fiverr Gig 1 live: AI Workflow Automation | ACTIVE / VERIFY | Die eingeloggte Verwaltung zeigte am 2026-09-08 `AKTIV 1`; Fiverr lieferte in der Tabelle einen Fehler und die öffentliche Ansicht war CAPTCHA-blockiert. Exit: öffentlicher Gig-Link störungsfrei sichtbar und dokumentiert. Basic $149, Standard $349, Premium $699. |
 | M-05 | First real lead, order and revenue | BLOCKED_BY_M-04 | A genuine inquiry, order, fulfillment and revenue record; dry runs never count. |
 | M-06 | Standardize fulfillment from first order | LATER | Learn recurring requests, revisions, integrations and boundaries. Gig 2 only after Gig 1 proof. |
@@ -47,7 +47,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |
 | M-11 | Recovery, backup and journals | ACTIVE_FOREVER | Journal each meaningful run; pre-change backup for critical state; restore validation; no secrets. |
-| M-12 | GitHub trustworthy mirror | DONE / SYNC_VERIFIED_2026_09_08 | main 3ac0cb8 externally confirmed; identical project tree, no secrets/DB/backups or force push. Evidence: sessions/2026-09-08-2255-github-sync.md. Visibility remains Owner-only; new changes may reopen normal sync. |
+| M-12 | GitHub trustworthy mirror | DONE / SYNC_VERIFIED_2026_09_21 | Mara public JPEG media and the final secret-free Meta evidence/code/docs were pushed normally to `origin/main`; no secrets, DB, backups, receipts, force push or history rewrite. Evidence: `sessions/2026-09-21-0936-codex-mara-meta-live-github-sync.md`. Repository visibility remains Owner-only. |
 | M-13 | Simple model/runtime compatibility | ACTIVE_FOREVER | Stable current model/runtime is sufficient; stronger models are optional. |
 | M-14 | Learn sellable product from demand | WAITING_REAL_SIGNALS | Learn from real inquiries, orders and fulfillment. |
 | M-15 | Keep offers separate | LATER | Gig 1 automation (149/349/699) remains separate from historical SFW content packs (45/95/175). |
@@ -62,7 +62,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | T-001 | Verify newest ZippoWorkz runtime after restart | DONE — 2026-09-08 | Health `ok`, `review_schema=story-review-v1`, one active backend process. Evidence: session journal. |
 | T-002 | Build real Instagram analytics capture and dashboard statistics | ACTIVE — TWO_REAL_SNAPSHOTS / ONE_INDEPENDENT_PACKAGE | Two real Leona snapshots stored without duplicate learning influence; next: a different content package, preferably Mara after account switch. Exit: traceable first learning cycle. |
 | T-003 | Verify/publish Fiverr Gig 1 | ACTIVE — PUBLIC_VERIFY_BLOCKED | Verwaltung meldet `AKTIV 1`; öffentlicher Link ist wegen Plattformfehler/CAPTCHA nicht belegt. Exit: öffentlicher Gig-Link sichtbar und dokumentiert. |
-| T-004 | Resume Meta API proof | DEFERRED — EXTERNAL_SIGNAL_ONLY | No active work or blocker hunting. Resume only after a confirmed Meta Developer-App/account-linkage signal. |
+| T-004 | Resume Meta API proof | DONE — LEONA + MARA — 2026-09-21 | Official Leona and Mara carousels are live and externally confirmed. Reopen only for a reproducible defect or post-rotation credential validation. |
 
 ## Active experiments
 
@@ -98,7 +98,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 
 | ID | Gate | Handling |
 |---|---|---|
-| GATE-META-01 | Meta developer/account verification | Wait; do not loop. |
+| GATE-META-01 | Meta developer/account verification | DONE for Leona/Mara OAuth on 2026-09-21; exposed tokens should be rotated before long-term production. |
 | GATE-FIVERR-01 | Final public Fiverr state | Verify in a dedicated run. |
 | GATE-GITHUB-01 | Repository visibility | Owner only. |
 | GATE-PAID-01 | Paid services, ads or subscriptions | Owner approval. |
@@ -119,7 +119,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 
 ## Next operational sequence
 
-1. M-07: build one complete, lokale `PUBLIC_SFW`-Reservepaket nach der 70/30-Content-Richtung; zuerst Leona urban/glamourös oder Mara rural/sportlich, nie Adult und ohne externe Veröffentlichung.
-2. T-002/M-02: make real Instagram metrics visible and useful when an independent real post/account insight is available.
+1. Rotate the chat-exposed Meta tokens locally, then run read-only identity checks; do not store replacement tokens in Git, DB or journals.
+2. T-002/M-02: capture real 24h/72h/168h metrics for the new independent Leona and Mara Meta publications and complete the first cross-persona learning cycle.
 3. T-003/M-04: publish and verify Fiverr Gig 1 in a dedicated output run when the public page is reachable.
-4. Collect real data; review E-001 only after a meaningful signal. Meta remains deferred unless a confirmed external signal arrives.
+4. M-07: replenish one complete `PUBLIC_SFW` reserve package only when the publishable reserve actually needs it.

@@ -1,16 +1,21 @@
 # Projekt-Résumé: Virtual Creators Germany
 
-## Meta-/Instagram-Verknüpfung — 20. September 2026
+## Meta-/Instagram-Live-Proof — 21. September 2026
 
 Leona und Mara sind in der Meta-App `Zippoworkz` als Instagram-Tester
-eingetragen; beide Instagram-Konten zeigen `Zippoworkz-IG` als am 20.09.2026
-autorisiert. Der OAuth-Ablauf für `mara.field.ai` ist abgeschlossen: Das Secret
-liegt ausschließlich im lokalen Windows-User-Environment, und read-only wurden
-der korrekte Benutzername, `BUSINESS` sowie der Publishing-Limit-Endpunkt
-bestätigt. Für `leonavoss.ai` fehlt weiterhin ein separat erzeugter und lokal
-verifizierter Token. Zugangsdaten und 2FA bleiben Owner-only. Es existiert noch
-kein neuer API-Publish-Beleg. Fortsetzung:
-`sessions/2026-09-20-2327-codex-meta-oauth-handoff.md`.
+autorisiert; beide OAuth-Tokens liegen ausschließlich im lokalen Windows-User-
+Environment und sind read-only dem richtigen Konto zugeordnet. Der offizielle
+Meta-Pfad ist jetzt für beide Personas real bewiesen. Leona Publication `1` /
+Content `1` „Rainy Berlin Afterwork“ und Mara Publication `2` / Content `4`
+„Küchenfenster“ wurden jeweils als dreiteiliges Carousel veröffentlicht und
+von Graph als `CAROUSEL_ALBUM` mit identischem Permalink bestätigt:
+https://www.instagram.com/p/DdilnXGEVdO/ und
+https://www.instagram.com/p/DdioXo1Ec9j/. Queue, Publication, Content, je drei
+Assets und Receipt sind konsistent `PUBLISHED`/`CONFIRMED`; je ein Versuch,
+kein Retry, SQLite-Integrität ok. Globale unbeaufsichtigte Live-Schalter
+bleiben aus. Die im Chat offengelegten Tokens sollten vor dem Langzeitbetrieb
+rotiert werden. Fortsetzung: `sessions/2026-09-21-0908-codex-meta-live-proof.md`
+und `sessions/2026-09-21-0936-codex-mara-meta-live-github-sync.md`.
 
 ## Finish-First-Abschluss — 20. September 2026
 

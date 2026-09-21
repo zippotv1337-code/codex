@@ -130,12 +130,25 @@ class CurrentStateService:
             )
             or 0
         )
-        real_publications = int(
+        owner_confirmed_native = int(
             self.database.scalar(
                 "SELECT COUNT(*) FROM publications WHERE provider LIKE 'instagram-native-manual%'"
             )
             or 0
         )
+        official_meta_graph = int(
+            self.database.scalar(
+                """
+                SELECT COUNT(*) FROM publications
+                WHERE provider='instagram-meta-graph'
+                  AND status='PUBLISHED'
+                  AND external_id IS NOT NULL
+                  AND external_url LIKE 'https://%.instagram.com/%'
+                """
+            )
+            or 0
+        )
+        real_publications = owner_confirmed_native + official_meta_graph
         mock_publications = int(
             self.database.scalar(
                 "SELECT COUNT(*) FROM publications WHERE provider LIKE 'mock%'"
@@ -215,12 +228,15 @@ class CurrentStateService:
                 "through": reserve_dates[-1] if reserve_dates else None,
             },
             "publications": {
-                "owner_confirmed_native": real_publications,
+                "owner_confirmed_native": owner_confirmed_native,
+                "official_meta_graph": official_meta_graph,
                 "mock": mock_publications,
                 "manual_analytics_events": manual_analytics,
                 "local_queue": queue_counts,
                 "instagram_channel_real_live": bool(real_publications),
-                "meta_graph_automation_proof": "not_yet_proven",
+                "meta_graph_automation_proof": (
+                    "proven_live" if official_meta_graph else "not_yet_proven"
+                ),
             },
             "background_runs": background_counts,
             "engagement": {

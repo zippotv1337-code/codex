@@ -1,19 +1,62 @@
 # Live Evidence
 
-Stand: 2026-09-07T14:27:00+02:00 · Europe/Berlin
+Stand: 2026-09-21T09:36:00+02:00 · Europe/Berlin
 
 ## Instagram
 
+- **Offizielle API-Automation:** `PROVEN_LIVE` am 21.09.2026.
+- **INSTAGRAM_AUTOMATION_PROOF:** 10/10 für je einen kontrollierten Leona- und
+  Mara-Carousel-Pilot über `graph.instagram.com`; globale unbeaufsichtigte
+  Live-Schalter bleiben absichtlich deaktiviert.
+
+### Offiziell bestätigter Meta-Graph-Carousel-Pilot
+
+- Persona: Leona Voss · `@leonavoss.ai`
+- Content: ID `1` · „Rainy Berlin Afterwork“
+- Publication: ID `1` · Provider `instagram-meta-graph`
+- Permalink: https://www.instagram.com/p/DdilnXGEVdO/
+- Instagram-Media-ID: `18028287917684160`
+- Plattform-Zeitstempel: `2026-09-21T07:08:04+00:00`
+  (`09:08:04 Europe/Berlin`)
+- Format: `CAROUSEL_ALBUM`, drei eigenständige SFW-/PUBLIC_SFW-JPEGs.
+- Account vor Publish read-only als `leonavoss.ai` / `MEDIA_CREATOR`
+  bestätigt; Publishing-Limit 0/100.
+- Vorab: drei öffentliche HTTPS-JPEGs mit HTTP 200, `image/jpeg` und gültiger
+  JPEG-Magic; native AI-Kennzeichnung bestätigt.
+- Nachweis: Queue genau ein Versuch, Status `PUBLISHED`, kein Fehler; Receipt
+  `CONFIRMED`; DB-, Receipt- und Graph-ID/Permalink stimmen überein; alle drei
+  Top-Picks als `PUBLISHED`; SQLite `integrity_check = ok`.
+- Doppelpost-Schutz: derselbe Queue-Key besitzt nun ein bestätigtes Receipt;
+  ein erneuter Dispatch liefert den vorhandenen Beleg statt erneut zu posten.
+- Tokens bleiben ausschließlich im lokalen Windows-User-Environment. Weil sie
+  zuvor im Chat offengelegt wurden, ist Rotation nach dem Proof empfohlen.
+
+### Offiziell bestätigter Mara-Meta-Graph-Carousel
+
+- Persona: Mara Field · `@mara.field.ai`
+- Content: ID `4` · „Küchenfenster“
+- Publication: ID `2` · Provider `instagram-meta-graph`
+- Permalink: https://www.instagram.com/p/DdioXo1Ec9j/
+- Instagram-Media-ID: `18090373508475307`
+- Plattform-Zeitstempel: `2026-09-21T07:32:09+00:00`
+  (`09:32:09 Europe/Berlin`)
+- Format: `CAROUSEL_ALBUM`; Top 3 S4 Ganzkörper/Bewegung → S3 Fenster rechts
+  3/4 → S5 candid am Tisch mit Notizbuch.
+- Account vor Publish read-only als `mara.field.ai` / `BUSINESS` bestätigt;
+  Publishing-Limit 0/100. Alle drei öffentlichen Medien bestanden HTTP 200,
+  `image/jpeg` und JPEG-Magic.
+- Queue genau ein Versuch, Status `PUBLISHED`, kein Fehler; Receipt
+  `CONFIRMED`; DB-, Receipt- und Graph-ID/Permalink stimmen überein. Der
+  anschließende Dispatch lieferte `due=0` und erzeugte keinen Doppelpost.
+
 - **Konkreter Pilot:** `LIVE_NATIVE_OWNER_CONFIRMED`
-- **Offizielle API-Automation:** `LIVE_READY_WAITING_FOR_OWNER_CONFIG`
-- **INSTAGRAM_AUTOMATION_PROOF:** 0/10; der Pilot lief nativ im Browser und
-  ist kein Beweis für einen Meta-Graph-Autopublish.
-- **Live in diesem Run:** 2 Carousels / 6 Bilder seit 6. September; heute
-  zusätzlich Leona `Gym Reset, aber echt`
-- **Lokaler Modus:** `local-mock`; der offizielle Adapter ist vorhanden, aber
-  Credentials, öffentliche HTTPS-Asset-URLs und globale Live-Gates bleiben aus.
-- **Queue:** 2 × `PUBLISHED`, 2 × `NEEDS_RESCHEDULE_REVIEW`, 0 ×
-  `LOCAL_SCHEDULED`.
+- **Frühere native Piloten:** bleiben als historische Belege erhalten; sie sind
+  nicht der neue Meta-Graph-Autopublish-Nachweis.
+- **Live am 21. September:** 2 offizielle Meta-Carousels / 6 Bilder: Leona
+  „Rainy Berlin Afterwork“ und Mara „Küchenfenster“.
+- **Lokaler Modus:** globale unbeaufsichtigte Live-Schalter bleiben aus; die
+  beiden exakt owner-freigegebenen Pakete liefen über den offiziellen Adapter.
+- **Aktuelle kanonische Queue:** 2 × `PUBLISHED`, 0 × `LOCAL_SCHEDULED`.
 
 ### Neu sichtbar bestätigter Leona-Gym-Carousel
 

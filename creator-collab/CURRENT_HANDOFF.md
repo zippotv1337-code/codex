@@ -1,6 +1,6 @@
 # Aktueller Handoff
 
-## AKTUELL — Mara Meta-/Instagram-OAuth verifiziert, 20. September 2026
+## AKTUELL — Offizielle Leona- und Mara-Meta-Carousels live bestätigt, 21. September 2026
 
 - `leonavoss.ai` und `mara.field.ai` sind in der Meta-App `Zippoworkz` als
   Instagram-Tester eingetragen.
@@ -8,23 +8,50 @@
   „Durch dich autorisiert am 20. September 2026“ sichtbar. Das bestätigt die
   Annahme der Testerrolle; es wurde kein Tokenwert in Chat, Git, DB oder Journal
   übernommen.
-- Der Owner hat den OAuth-Ablauf für `mara.field.ai` abgeschlossen. Das Token
-  wurde ausschließlich im lokalen Windows-User-Environment gespeichert; der
-  Browser-Zwischenspeicher wurde danach geleert. Kein Secret steht in Git, DB,
-  Chat oder Journal.
-- Read-only verifiziert: Benutzername `mara.field.ai`, Kontotyp `BUSINESS`,
-  tokengebundene API-ID korrekt gespeichert und
-  `content_publishing_limit` erfolgreich lesbar. Es wurde dabei kein Container
-  erzeugt und nichts veröffentlicht.
-- Leona bleibt separat offen: Für `leonavoss.ai` ist noch kein lokal
-  verifizierter Token gespeichert. OAuth muss ausdrücklich mit Leona
-  abgeschlossen werden; ein Mara-Token darf nicht als Leona-Token verwendet
-  werden.
-- Noch **nicht** erledigt: Leona-Token sichern, beide Persona-Preflights an
-  konkreten Paketen grün prüfen und einen externen Testpost veröffentlichen.
-  Vor dem finalen `media_publish` ist eine konkrete Aktionsbestätigung für
-  Account, Paket und Caption erforderlich.
-- Journal: `sessions/2026-09-20-2327-codex-meta-oauth-handoff.md`.
+- Die OAuth-Tokens für `leonavoss.ai` und `mara.field.ai` liegen ausschließlich
+  im lokalen Windows-User-Environment. Die jeweils verwendete Zwischenablage
+  wurde nach dem Speichern geleert. Kein Secret wurde in Git, DB, Handoff oder
+  Journal geschrieben.
+- Read-only verifiziert: Leona = `MEDIA_CREATOR`, Mara = `BUSINESS`; beide
+  tokengebundenen API-IDs sind dem richtigen Persona-Slot zugeordnet und der
+  jeweilige `content_publishing_limit`-Endpunkt ist lesbar.
+- Der Meta-Preflight für Leona Publication `1` / Content `1`
+  **„Rainy Berlin Afterwork“** war `READY`. Nach der konkreten Owner-
+  Bestätigung wurde genau dieses dreiteilige Carousel über den offiziellen
+  Meta-Adapter veröffentlicht.
+- Live-Beleg: https://www.instagram.com/p/DdilnXGEVdO/ · Media-ID
+  `18028287917684160` · Plattform-Zeit `2026-09-21T07:08:04+00:00`.
+- Danach wurde für Mara ausschließlich das bereits QA-bestandene Paket
+  **„Küchenfenster“** verwendet. Fünf reale Originale wurden registriert; die
+  drei unterschiedlichen Top-Picks S4 Ganzkörper/Bewegung → S3 Fenster rechts
+  3/4 → S5 candid am Notizbuch wurden als öffentliche JPEGs vorbereitet.
+- Der Mara-Preflight für Publication `2` / Content `4` war vollständig
+  `READY`: `mara.field.ai` / `BUSINESS`, richtige Persona-Zuordnung, Quote
+  0/100 und drei anonyme HTTP-200-JPEG-Prüfungen.
+- Mara-Live-Beleg: https://www.instagram.com/p/DdioXo1Ec9j/ · Media-ID
+  `18090373508475307` · Plattform-Zeit `2026-09-21T07:32:09+00:00`.
+- Queue, Publication und Content stehen `PUBLISHED`; genau drei Top-Pick-
+  Assets sind als veröffentlicht markiert. Receipt `CONFIRMED`, DB-/Receipt-/
+  Graph-ID und Permalink stimmen überein; ein Versuch, kein Fehler, kein Retry.
+  SQLite `integrity_check = ok`.
+- Abschlussprüfung: 44 fokussierte Meta-/Queue-/Dashboard-/Current-State-Tests
+  grün; Backup-Integrität und SQLite `integrity_check` ok. Beide offiziellen
+  Publikationen besitzen je genau einen Versuch und ein `CONFIRMED`-Receipt;
+  der Mara-Kontrolldurchlauf fand keinen fälligen Job (`due=0`).
+- Der dynamische Current-State zählt offizielle Meta-Publishes jetzt korrekt:
+  `official_meta_graph=2`, `instagram_channel_real_live=true` und
+  `meta_graph_automation_proof=proven_live`.
+- Die globalen unbeaufsichtigten Live-Schalter bleiben aus. Der Nachweis gilt
+  für den kontrollierten, paketgebundenen Pfad und aktiviert keine Posting-
+  Flut oder fremde Queuejobs.
+- Sicherheitsnachtrag: Die Tokens wurden vom Owner im Chat offengelegt. Sie
+  werden nicht weiter dokumentiert; Rotation nach dem Verbindungsnachweis ist
+  empfohlen. Vor einem produktiven Langzeitbetrieb frische Tokens nur per
+  lokaler Secret-Übergabe speichern.
+- Noch offen: 24h/72h/168h-Analytics beider Posts erfassen und die im Chat
+  offengelegten Leona-/Mara-Tokens für den Langzeitbetrieb rotieren.
+- Journale: `sessions/2026-09-21-0908-codex-meta-live-proof.md` und
+  `sessions/2026-09-21-0936-codex-mara-meta-live-github-sync.md`.
 
 ## AKTUELL — Finish-First abgeschlossen, 20. September 2026
 
