@@ -1,5 +1,16 @@
 # Aktueller Handoff
 
+## AKTUELL — Story-/Inbound-Engagement-Freigabe, 21. September 2026
+
+- Owner hat SFW/PUBLIC_SFW-Story-Publishing sowie individuelle Antworten auf
+  echte eingehende Kommentare und DMs für Leona/Mara dauerhaft freigegeben.
+- Direkt nach den zwei neuen Liveposts wurden deren echte Kommentar-Endpunkte
+  geprüft: Leona `0`, Mara `0`. Deshalb keine Antwort gesendet.
+- Keine Massen-Follow-Automation: offizieller Meta-Pfad unterstützt Followback
+  nicht, und die bestehende Anti-Spam-Regel bleibt aktiv. Einzelne manuelle
+  Followbacks nur nach sichtbarer Prüfung.
+- Journal: `sessions/2026-09-21-2010-codex-engagement-permission.md`.
+
 ## LIVE — Mara „Werkstattabend“ veröffentlicht, 21. September 2026
 
 - Auf ausdrücklichen Owner-Auftrag wurde Content `2`, Publication `4`,

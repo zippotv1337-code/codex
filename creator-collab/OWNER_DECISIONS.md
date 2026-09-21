@@ -1,5 +1,29 @@
 # Verbindliche Owner-Entscheidungen
 
+## Aktueller Owner-Override — 21. September 2026: Storys und Inbound-Engagement
+
+Der Owner erteilt dauerhaft folgende Freigaben für die projektbezogenen
+Instagram-Konten von Leona und Mara:
+
+- vollständige, rechtegeklärte SFW/PUBLIC_SFW-Storypakete dürfen nach denselben
+  Safety-, Persona-, Disclosure- und Idempotenz-Gates wie Feedposts
+  veröffentlicht werden;
+- auf tatsächlich vorhandene eingehende Kommentare darf individuell,
+  freundlich und persona-gerecht geantwortet werden;
+- auf tatsächlich vorhandene eingehende Direktnachrichten darf individuell
+  geantwortet werden, sofern keine persönliche Identität, Rechts-/Finanzzusage,
+  sexuelle Interaktion, Zahlung oder andere sensible Verpflichtung betroffen
+  ist;
+- keine erfundenen Kommentare, Nachrichten oder Engagementdaten;
+- keine Massenantworten, Auto-DMs, Engagement-Bait-Schleifen oder repetitiven
+  Standardtexte.
+
+Die Bitte „Followern folgen“ ist keine Freigabe für Massen-Follow-Automation.
+Die Projektregel gegen Massen-Follow/Unfollow bleibt bestehen. Einzelne
+Followbacks dürfen nur manuell, kontobezogen und nach sichtbarer Prüfung eines
+echten Followers erfolgen; der offizielle Meta-Adapter bietet dafür aktuell
+keinen unterstützten API-Pfad.
+
 ## Aktueller Owner-Override — 21. September 2026: dauerhafte Publish-Freigabe
 
 - Für vollständige projektbezogene Instagram-Pakete gilt dauerhaft:

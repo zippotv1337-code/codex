@@ -1,5 +1,16 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Storys und echtes Inbound-Engagement freigegeben — 21. September 2026
+
+SFW/PUBLIC_SFW-Storys dürfen künftig nach den bestehenden Safety- und
+Disclosure-Gates veröffentlicht werden. Tatsächlich vorhandene Kommentare und
+DMs dürfen individuell und persona-gerecht beantwortet werden; erfundene
+Interaktionen, Massenantworten und sensible Zusagen bleiben ausgeschlossen.
+Unmittelbare API-Prüfung der neuen Leona-/Mara-Posts ergab jeweils 0 Kommentare,
+daher wurde nichts gesendet. Massen-Follow-Automation bleibt verboten und wird
+nicht über inoffizielle Browserwege ersetzt. Nachweis:
+`sessions/2026-09-21-2010-codex-engagement-permission.md`.
+
 ## Mara „Werkstattabend“ offiziell live — 21. September 2026
 
 Das neue Drei-Slide-Werkstattcarousel wurde nach ausdrücklichem Owner-Auftrag
