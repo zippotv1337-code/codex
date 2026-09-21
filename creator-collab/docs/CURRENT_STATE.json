@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T17:56:24+00:00",
+  "generated_at": "2026-09-21T18:53:59+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -14,7 +14,7 @@
   "operations": {
     "meta_api_status": "PROVEN_LIVE_2026_09_21",
     "fiverr_identity_status": "OWNER_REPORTED_VERIFIED",
-    "fiverr_gig_status": "DRAFT_LAST_OBSERVED_2026_09_07"
+    "fiverr_gig_status": "ACTIVE_PUBLIC_VERIFIED_WRITE_READY_2026_09_21"
   },
   "app_version": "1.6.4-beta",
   "schema_version": 5,
@@ -79,7 +79,66 @@
     "meta_graph_automation_proof": "proven_live"
   },
   "background_runs": {
-    "COMPLETE": 3
+    "COMPLETE": 5
+  },
+  "fiverr": {
+    "schema": "zippo-fiverr-status-v1",
+    "status": "WRITE_READY",
+    "account_id": 1,
+    "username": "zippoworkz",
+    "public_profile_url": "https://www.fiverr.com/zippoworkz",
+    "session_status": "AUTHENTICATED_SELLER",
+    "read_provider": "playwright-authenticated-read",
+    "write_provider": "playwright-seller-webflow",
+    "last_successful_sync": "2026-09-21T18:48:04+00:00",
+    "last_write_test": null,
+    "last_human_gate": "2026-09-21T18:42:35+00:00",
+    "last_error": null,
+    "next_action": "Update placeholder Gig copy, packages, requirements and tags to the approved ZippoWorkz offer, then verify publicly",
+    "active_gig_count": 1,
+    "gigs": [
+      {
+        "id": 1,
+        "account_id": 1,
+        "gig_key": "build-custom-ai-workflow-automations-for-your-business-4-you",
+        "title": "I will build custom AI workflow automations for your business 4 you",
+        "public_url": "https://www.fiverr.com/zippoworkz/build-custom-ai-workflow-automations-for-your-business-4-you",
+        "edit_url": "https://www.fiverr.com/users/zippoworkz/manage_gigs/build-custom-ai-workflow-automations-for-your-business-4-you/edit",
+        "status": "ACTIVE",
+        "source": "playwright-authenticated-read",
+        "last_verified_at": "2026-09-21T18:48:04+00:00",
+        "created_at": "2026-09-21T18:42:35+00:00",
+        "updated_at": "2026-09-21T18:48:04+00:00",
+        "packages": {
+          "currency": "USD",
+          "basic_usd": 50,
+          "standard_usd": 150,
+          "premium_usd": 355,
+          "basic_name": "vgf",
+          "standard_name": "fgsg",
+          "premium_name": "ghfh",
+          "basic_delivery_days": 30,
+          "standard_delivery_days": 1,
+          "premium_delivery_days": 1,
+          "basic_revisions": 0,
+          "standard_revisions": 0,
+          "premium_revisions": 0,
+          "verification": "PUBLIC_GIG_2026_09_21"
+        },
+        "metrics": {
+          "window": "last_30_days",
+          "impressions": 13,
+          "clicks": 0,
+          "orders": 0,
+          "cancellations_percent": 0,
+          "observed_on": "2026-09-21"
+        },
+        "assets": [
+          "one_public_gallery_image_observed"
+        ]
+      }
+    ],
+    "human_gates": []
   },
   "engagement": {
     "real_post_proposals": 0,
@@ -100,7 +159,7 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 17,
+    "passed": 9,
     "failed": 0
   },
   "blockers": {

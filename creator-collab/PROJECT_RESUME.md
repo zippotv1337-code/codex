@@ -1,5 +1,19 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Fiverr als modulare Operations-Lane — 21. September 2026
+
+Fiverr ist nun als eigener Adapter in ZippoWorkz integriert: kostenlose
+öffentliche Reads, authentifizierter Seller-Webflow, persistenter Account-,
+Gig- und Human-Gate-Status sowie ein idempotentes Operations-Ledger. Das neue
+Dashboard `/fiverr` zeigt den echten Seller-Status. Die Session ist
+`WRITE_READY`; genau ein aktiver Gig und seine öffentliche URL wurden sichtbar
+verifiziert. Der aktuelle Live-Gig enthält allerdings noch provisorische
+Pakettexte und 50/150/355 USD statt des autoritativen 149/349/699-USD-Angebots.
+Die Korrektur ist vorbereitet, aber noch nicht öffentlich gespeichert. Kein
+zweiter Gig wurde erzeugt. Technische Details und Nachweis:
+`docs/FIVERR_AUTOMATION.md` und
+`sessions/2026-09-21-2051-codex-fiverr-automation.md`.
+
 ## Storys und echtes Inbound-Engagement freigegeben — 21. September 2026
 
 SFW/PUBLIC_SFW-Storys dürfen künftig nach den bestehenden Safety- und

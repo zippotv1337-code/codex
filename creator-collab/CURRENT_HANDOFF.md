@@ -1,5 +1,27 @@
 # Aktueller Handoff
 
+## AKTUELL — Fiverr-Adapter und öffentlicher Gig verifiziert, 21. September 2026
+
+- ZippoWorkz besitzt jetzt einen eigenen modularen Fiverr-Adapter mit
+  kostenlosen öffentlichen Reads, authentifiziertem Seller-Webflow,
+  persistentem Account-/Gig-Status, Human-Gates und idempotentem Write-Ledger.
+- Dashboard `/fiverr` und API `/api/fiverr` melden `WRITE_READY`, eine
+  authentifizierte Seller-Session und genau einen aktiven Gig.
+- Der Gig ist öffentlich verifiziert:
+  https://www.fiverr.com/zippoworkz/build-custom-ai-workflow-automations-for-your-business-4-you
+- Reale sichtbare Werte: 13 Impressionen, 0 Klicks, 0 Orders in 30 Tagen.
+- Wichtig: Der Live-Gig enthält noch Platzhalterpakete `vgf / fgsg / ghfh`,
+  Preise 50/150/355 USD, Lieferzeiten 30/1/1 Tage, null Revisionen und eine
+  Platzhalter-Anforderung. Kein zweiter Gig wird erzeugt; der bestehende muss
+  auf den freigegebenen 149/349/699-USD-Vertrag korrigiert werden.
+- Die anfängliche Fiverr-Challenge `PXCR10002539` ist nicht mehr aktiv; der
+  normale Edit-Flow ist erreichbar. Vor der öffentlichen Änderung wartet der
+  Browserlauf am erforderlichen Bestätigungspunkt.
+- Backup: `backups/creator-ops-backup-pre-fiverr-integration.db`.
+- Verifikation: 9/9 fokussierte Tests, Python-Compile, Dashboard-JavaScript,
+  `/api/health=ok` und `/api/fiverr=WRITE_READY`.
+- Journal: `sessions/2026-09-21-2051-codex-fiverr-automation.md`.
+
 ## AKTUELL — Story-/Inbound-Engagement-Freigabe, 21. September 2026
 
 - Owner hat SFW/PUBLIC_SFW-Story-Publishing sowie individuelle Antworten auf

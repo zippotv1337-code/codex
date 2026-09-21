@@ -25,6 +25,7 @@ from .analytics import AnalyticsService
 from .cli import ROOT, build_pipeline, build_publish_queue, live_publishing_requested
 from .current_state import CurrentStateService
 from .external_readiness import ExternalReadinessService
+from .fiverr import FiverrAutomationService
 from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .stories import StoryReserveService
@@ -231,7 +232,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
             links = [("/", "Heute / Review"), ("/stories", "Stories"),
                      ("/#attention-heading", "Needs Attention"), ("/archive", "Published / Archiv"),
                      ("/analytics", "Analytics"), ("/#planned-heading", "Planung / Queue"),
-                     ("/revenue", "Fiverr / Revenue"), ("/offer", "Angebot"),
+                     ("/fiverr", "Fiverr Ops"), ("/revenue", "Fiverr / Revenue"), ("/offer", "Angebot"),
                      ("/control", "Betrieb / Status"), ("/collections", "Alben"),
                      ("/top3", "Top 3"), ("/engagement", "Engagement")]
             current = urlparse(self.path).path
@@ -361,6 +362,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("control.html", "text/html; charset=utf-8")
             elif parsed.path == "/revenue":
                 self._file("revenue.html", "text/html; charset=utf-8")
+            elif parsed.path == "/fiverr":
+                self._file("fiverr.html", "text/html; charset=utf-8")
             elif parsed.path == "/offer":
                 self._file("offer.html", "text/html; charset=utf-8")
             elif parsed.path == "/app.css":
@@ -387,6 +390,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._file("control.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/revenue.js":
                 self._file("revenue.js", "text/javascript; charset=utf-8")
+            elif parsed.path == "/fiverr.js":
+                self._file("fiverr.js", "text/javascript; charset=utf-8")
             elif parsed.path == "/offer.js":
                 self._file("offer.js", "text/javascript; charset=utf-8")
             elif parsed.path in {
@@ -431,6 +436,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 )
             elif parsed.path == "/api/analytics":
                 self._json(AnalyticsService(self.service.pipeline.db).snapshot())
+            elif parsed.path == "/api/fiverr":
+                self._json(self.fiverr.status("zippoworkz"))
             elif parsed.path == "/api/top3":
                 query = parse_qs(parsed.query)
                 self._json(
@@ -698,6 +705,7 @@ def create_server(
     )
     adworks = AdWorksService(pipeline.db)
     adworks.seed_catalog()
+    fiverr = FiverrAutomationService(pipeline.db)
     handler = type(
         "BoundDashboardHandler",
         (DashboardHandler,),
@@ -707,6 +715,7 @@ def create_server(
             "auth": DashboardAuth(auth_password),
             "control_plane": control_plane,
             "adworks": adworks,
+            "fiverr": fiverr,
             "publishing": publishing,
         },
     )

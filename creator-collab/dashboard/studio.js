@@ -24,7 +24,7 @@
   const groups = [
     {name:"Instagram", key:"instagram", selected:activeInstagram, children:[
       ["/","Beiträge"],["/stories","Stories"],["/engagement?view=comments","Kommentare"],["/engagement?view=messages","Nachrichten"],["/archive","Veröffentlicht"],["/analytics","Insights"],["/collections","Mediathek"]]},
-    {name:"Fiverr",key:"work",selected:["/revenue","/offer"].includes(path),children:[["/revenue","Übersicht & Umsatz"],["/offer","Angebot & Gig"]]},
+    {name:"Fiverr",key:"work",selected:["/fiverr","/revenue","/offer"].includes(path),children:[["/fiverr","Seller Ops"],["/revenue","Übersicht & Umsatz"],["/offer","Angebot & Gig"]]},
     {name:"Meta",key:"meta",selected:area==="meta",children:[["/?area=meta","Verbindung"],["/control","Betrieb & Freigaben"]]},
     {name:"Fanbase",key:"heart",selected:area==="fanbase",children:[["/?area=fanbase","Übersicht"]]},
     {name:"Linktree",key:"link",selected:area==="linktree",children:[["/?area=linktree","Links & Profil"]]},
@@ -45,7 +45,7 @@
   document.body.prepend(sidebar);
   const bar = document.createElement("div");
   bar.className="studio-toolbar";
-  const section= area ? ({meta:"Meta",fanbase:"Fanbase",linktree:"Linktree",adult:"18+ Bereich"}[area] || "Workspace") : (activeInstagram ? "Instagram" : ["/revenue","/offer"].includes(path) ? "Fiverr" : "Workspace");
+  const section= area ? ({meta:"Meta",fanbase:"Fanbase",linktree:"Linktree",adult:"18+ Bereich"}[area] || "Workspace") : (activeInstagram ? "Instagram" : ["/fiverr","/revenue","/offer"].includes(path) ? "Fiverr" : "Workspace");
   const labels={"/":"Beiträge","/stories":"Stories","/archive":"Veröffentlicht","/analytics":"Insights","/collections":"Mediathek","/top3":"Top 3","/revenue":"Übersicht & Umsatz","/offer":"Angebot & Gig","/control":"Betrieb","/engagement":query.get("view")==="messages"?"Nachrichten":"Kommentare"};
   bar.innerHTML='<button type="button" class="sidebar-toggle" aria-label="Navigation öffnen" aria-controls="studio-sidebar" aria-expanded="false">'+icon("grid")+'</button><div class="studio-breadcrumb">'+escape(section)+'<span>/</span><b>'+escape(area?"Übersicht":labels[path]||"Übersicht")+'</b></div><div class="toolbar-right"><span class="toolbar-status"><i></i> Lokal</span><span class="owner-avatar">Z</span></div>';
   main.prepend(bar);

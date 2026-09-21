@@ -1,5 +1,28 @@
 # AUTOPILOT CHECKPOINT
 
+## FIVERR-CHECKPOINT — 21. September 2026, 20:51 Europe/Berlin
+
+- Letzter vollständig erledigter Task: modularen Fiverr-Adapter, additive
+  Schema-5-Persistenz, CLI, `/fiverr` und `/api/fiverr` implementiert und
+  lokal verifiziert.
+- Echter externer Zustand: Seller-Session authentifiziert, Gig 1 öffentlich
+  aktiv, URL bestätigt, 13 Impressionen und 0 Klicks/Orders in 30 Tagen.
+- Aktueller Task: den bestehenden Gig korrigieren; keinen neuen Gig anlegen.
+  Öffentlicher Ist-Zustand 50/150/355 USD, 30/1/1 Tage, 0 Revisionen und
+  Platzhaltertexte. Soll-Zustand 149/349/699 USD, 4/7/10 Tage, 1/2/3
+  Revisionen sowie die vorbereitete ZippoWorkz-Copy und Requirements.
+- Exakter Fortsetzungspunkt: im offen gehaltenen Fiverr-Edit-Tab die
+  vorbereiteten Felder eintragen, dann unmittelbar vor `Speichern` die
+  erforderliche Aktionsbestätigung einholen; anschließend öffentliche Seite
+  neu laden, Zustand lesen, Write-Receipt im lokalen Ledger speichern.
+- Backup: `backups/creator-ops-backup-pre-fiverr-integration.db`, erstellt und
+  Integrität geprüft.
+- Tests: 9/9 fokussierte Fiverr-Tests, Python-Compile und JavaScript-Syntax
+  grün. Runtime neu gestartet; Health und `/api/fiverr` grün.
+- Blocker: kein Fiverr-Login-/OTP-/KYC-/CAPTCHA-Gate offen.
+- Nächste 3: (1) Gig 1 korrigieren und verifizieren, (2) ersten echten
+  Inquiry/Order-Sync testen, (3) erst danach Gig 2 erwägen.
+
 ## LIVE-CHECKPOINT — Mara, 21. September 2026, 19:55 Europe/Berlin
 
 - Mara Content `2` / Publication `4` / Queuejob `4`: `PUBLISHED`.

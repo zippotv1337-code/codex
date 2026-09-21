@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .content_mix import ContentMixPlanner
 from .database import CreatorDatabase
+from .fiverr import FiverrAutomationService
 
 
 REMOTE_URL_PATTERN = re.compile(r"https://[a-z0-9-]+\.trycloudflare\.com", re.IGNORECASE)
@@ -195,6 +196,7 @@ class CurrentStateService:
         }
         if tests_failed:
             tests["status"] = "failed"
+        fiverr_status = FiverrAutomationService(self.database).status("zippoworkz")
 
         return {
             "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
@@ -239,6 +241,7 @@ class CurrentStateService:
                 ),
             },
             "background_runs": background_counts,
+            "fiverr": fiverr_status,
             "engagement": {
                 "real_post_proposals": real_engagement_proposals,
                 "execution": "manual-owner-only",

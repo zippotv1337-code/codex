@@ -14,6 +14,7 @@ from .current_state import CurrentStateService
 from .evening import EveningRunCoordinator
 from .exporting import ExportBackupService
 from .external_readiness import ExternalReadinessService
+from .fiverr import FiverrAutomationService, FiverrGigSnapshot
 from .pipeline import VerticalPipeline
 from .reconcile import ManualInstagramService
 from .recovery import RecoveryBackupService
@@ -188,6 +189,18 @@ def parser() -> argparse.ArgumentParser:
         "external-readiness",
         help="Print secret-free readiness for Meta, Fiverr, and handoff mirror lanes",
     )
+    fiverr_status = subcommands.add_parser(
+        "fiverr-status", help="Print durable secret-free Fiverr account and Gig state"
+    )
+    fiverr_status.add_argument("--username", default="zippoworkz")
+    fiverr_public = subcommands.add_parser(
+        "fiverr-sync-public", help="Run the free public Fiverr read adapter"
+    )
+    fiverr_public.add_argument("--username", default="zippoworkz")
+    fiverr_snapshot = subcommands.add_parser(
+        "fiverr-sync-snapshot", help="Import a secret-free authenticated seller snapshot"
+    )
+    fiverr_snapshot.add_argument("--file", type=Path, required=True)
     return result
 
 
@@ -378,6 +391,44 @@ def main() -> int:
         print(
             json.dumps(
                 ExternalReadinessService(ROOT, args.config).snapshot(),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "fiverr-status":
+        print(
+            json.dumps(
+                FiverrAutomationService(pipeline.db).status(args.username),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "fiverr-sync-public":
+        print(
+            json.dumps(
+                FiverrAutomationService(pipeline.db).sync_public(args.username),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "fiverr-sync-snapshot":
+        payload = json.loads(args.file.read_text(encoding="utf-8"))
+        gigs = tuple(
+            FiverrGigSnapshot(
+                gig_key=item["gig_key"], title=item["title"], status=item["status"],
+                public_url=item.get("public_url"), edit_url=item.get("edit_url"),
+                packages=item.get("packages"), metrics=item.get("metrics"),
+                assets=item.get("assets"),
+            )
+            for item in payload.get("gigs", [])
+        )
+        print(
+            json.dumps(
+                FiverrAutomationService(pipeline.db).record_browser_snapshot(
+                    username=payload["username"], gigs=gigs,
+                    session_status=payload.get("session_status", "AUTHENTICATED_SELLER"),
+                    next_action=payload.get("next_action", "Verify public Gig URL"),
+                ),
                 ensure_ascii=False,
                 indent=2,
             )

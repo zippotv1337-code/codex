@@ -394,6 +394,70 @@ CREATE TABLE IF NOT EXISTS revenue_events (
     occurred_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS fiverr_accounts (
+    id INTEGER PRIMARY KEY,
+    account_key TEXT NOT NULL UNIQUE,
+    username TEXT NOT NULL UNIQUE,
+    public_profile_url TEXT NOT NULL,
+    connection_status TEXT NOT NULL,
+    session_status TEXT NOT NULL,
+    read_provider TEXT NOT NULL,
+    write_provider TEXT NOT NULL,
+    last_sync_at TEXT,
+    last_write_test_at TEXT,
+    last_human_gate_at TEXT,
+    last_error TEXT,
+    next_action TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS fiverr_gigs (
+    id INTEGER PRIMARY KEY,
+    account_id INTEGER NOT NULL REFERENCES fiverr_accounts(id),
+    gig_key TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    public_url TEXT,
+    edit_url TEXT,
+    status TEXT NOT NULL,
+    packages_json TEXT NOT NULL DEFAULT '{}',
+    metrics_json TEXT NOT NULL DEFAULT '{}',
+    assets_json TEXT NOT NULL DEFAULT '[]',
+    source TEXT NOT NULL,
+    last_verified_at TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS fiverr_operations (
+    id INTEGER PRIMARY KEY,
+    operation_key TEXT NOT NULL UNIQUE,
+    account_id INTEGER NOT NULL REFERENCES fiverr_accounts(id),
+    gig_id INTEGER REFERENCES fiverr_gigs(id),
+    kind TEXT NOT NULL,
+    fingerprint TEXT NOT NULL,
+    status TEXT NOT NULL,
+    detail_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    UNIQUE (account_id, kind, fingerprint)
+);
+
+CREATE TABLE IF NOT EXISTS fiverr_human_gates (
+    id INTEGER PRIMARY KEY,
+    account_id INTEGER NOT NULL REFERENCES fiverr_accounts(id),
+    gate_type TEXT NOT NULL,
+    page_url TEXT NOT NULL,
+    action TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    after_action TEXT NOT NULL,
+    costs_money INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'OPEN',
+    created_at TEXT NOT NULL,
+    resolved_at TEXT,
+    UNIQUE (account_id, gate_type, page_url, status)
+);
+
 CREATE TABLE IF NOT EXISTS cost_events (
     id INTEGER PRIMARY KEY,
     creator_id INTEGER NOT NULL REFERENCES creators(id),
