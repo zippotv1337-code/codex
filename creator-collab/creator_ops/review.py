@@ -36,6 +36,23 @@ class ReviewDashboardService:
         existing = self.pipeline.db.one(
             "SELECT id FROM content_items WHERE run_key = ?", (run_key,)
         )
+        if existing is None:
+            # Curation may rename a package away from the persona default.
+            # Reuse the existing creator/date review slot instead of creating
+            # duplicate deterministic asset IDs for that same day.
+            existing = self.pipeline.db.one(
+                """
+                SELECT c.id
+                FROM content_items c
+                JOIN creators cr ON cr.id=c.creator_id
+                JOIN runs r ON r.id=c.run_id
+                WHERE cr.slug=? AND r.run_date=?
+                  AND c.run_key LIKE 'review:%'
+                ORDER BY c.id
+                LIMIT 1
+                """,
+                (creator_slug, run_date.isoformat()),
+            )
         if existing:
             return int(existing["id"])
 

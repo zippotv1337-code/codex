@@ -69,6 +69,40 @@ class OperationsAuditTests(unittest.TestCase):
             [action["lane"] for action in payload.get("next_actions", [])],
         )
 
+    def test_confirmed_meta_publish_is_reported_as_controlled_proof(self) -> None:
+        card = self.reviews.ensure_date(date(2026, 9, 8))[0]
+        with self.pipeline.db.transaction() as connection:
+            variant = connection.execute(
+                "SELECT id FROM platform_variants WHERE content_id=?",
+                (card["content_id"],),
+            ).fetchone()
+            connection.execute(
+                """
+                INSERT INTO publications
+                    (content_id, platform_variant_id, provider, scheduled_at,
+                     published_at, external_id, external_url, status)
+                VALUES (?, ?, 'instagram-meta-graph', ?, ?, ?, ?, 'PUBLISHED')
+                """,
+                (
+                    card["content_id"],
+                    variant["id"],
+                    "2026-09-08T19:30:00+02:00",
+                    "2026-09-08T19:30:00+02:00",
+                    "18000000000000000",
+                    "https://www.instagram.com/p/AuditMetaProof/",
+                ),
+            )
+
+        payload = self.audit.snapshot(
+            now=datetime.fromisoformat("2026-09-08T20:00:00+02:00")
+        )
+
+        self.assertEqual(payload["publishing"]["official_meta_published_count"], 1)
+        self.assertEqual(
+            payload["publishing"]["live_posting"],
+            "PROVEN_CONTROLLED_PACKAGE_ONLY_GLOBAL_AUTOMATION_OFF",
+        )
+
     def test_audit_prioritizes_local_publish_and_story_ready_state(self) -> None:
         card = self.reviews.ensure_date(date(2026, 9, 8))[0]
         self.reviews.approve(card["content_id"])

@@ -234,6 +234,36 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM content_items"), 2)
         self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM assets"), 10)
 
+    def test_renamed_review_package_is_reused_for_same_creator_and_date(self) -> None:
+        run_date = date(2026, 9, 8)
+        cards = self.service.ensure_date(run_date)
+        mara = next(card for card in cards if card["creator_slug"] == "mara-field")
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                "UPDATE content_items SET run_key=?, title=? WHERE id=?",
+                (
+                    "review:2026-09-08:mara-field:Küchenfenster",
+                    "Küchenfenster",
+                    mara["content_id"],
+                ),
+            )
+
+        prepared = self.service.ensure_date(run_date)
+
+        self.assertEqual(len(prepared), 2)
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                """
+                SELECT COUNT(*) FROM content_items c
+                JOIN creators cr ON cr.id=c.creator_id
+                JOIN runs r ON r.id=c.run_id
+                WHERE cr.slug='mara-field' AND r.run_date='2026-09-08'
+                  AND c.run_key LIKE 'review:%'
+                """
+            ),
+            1,
+        )
+
     def test_local_image_import_replaces_mock_slot_and_keeps_fallbacks(self) -> None:
         source = Path(self.tempdir.name) / "candidate.png"
         source.write_bytes(b"\x89PNG\r\n\x1a\nlocal-test-image")

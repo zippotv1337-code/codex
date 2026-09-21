@@ -2,6 +2,29 @@
 
 ## AKTUELL — Offizielle Leona- und Mara-Meta-Carousels live bestätigt, 21. September 2026
 
+### Sicherer Nachlauf ohne Owner-Eingriff, 09:44 Uhr
+
+- Operations-Radar und External Readiness unterscheiden jetzt korrekt zwischen
+  dem real bewiesenen kontrollierten Meta-Pfad und den absichtlich
+  deaktivierten globalen/unbeaufsichtigten Live-Schaltern. Der alte pauschale
+  Credential-Blocker wird nicht mehr angezeigt.
+- Der vorhandene Default-Medienmanifestpfad wird erkannt, auch wenn keine
+  zusätzliche `CREATOR_OPS_META_MEDIA_MANIFEST`-Variable gesetzt ist.
+- Leona Content `3` **„Spätsommer in Berlin“** ist aus den fünf bereits
+  vorhandenen, historisch QA-bestandenen Originalen wieder als reale aktive
+  Reviewkarte aufgebaut. Top 3: Asset `14` City-Walk → `12` Café links 3/4 →
+  `15` candid Schulterblick. Status bleibt `READY_FOR_REVIEW`; es gab keine
+  lokale Freigabe, Terminierung oder Plattformaktion.
+- Ein Idempotenzdefekt bei umbenannten Reviewpaketen wurde behoben: Pro Persona
+  und Datum wird die bestehende Karte auch nach einer Serienumbenennung
+  wiederverwendet, statt deterministische Asset-IDs doppelt anzulegen.
+- Aktueller Radar: 1 aktive reale Reviewkarte, 1 Mock-/Needs-Attention-Karte,
+  2 bestätigte offizielle Meta-Publikationen, 0 fällige Analytics-Fenster.
+- Verifikation: 55 fokussierte Tests grün, Python-Compile grün, SQLite
+  `integrity_check=ok`, 0 Foreign-Key-Verstöße. Backup vor Reserve-Import:
+  `backups/creator-ops-backup-pre-leona-reserve-import-20260921.db`.
+- Journal: `sessions/2026-09-21-0944-codex-safe-followup.md`.
+
 - `leonavoss.ai` und `mara.field.ai` sind in der Meta-App `Zippoworkz` als
   Instagram-Tester eingetragen.
 - In beiden Instagram-Konten ist `Zippoworkz-IG` unter Tester-Einladungen als

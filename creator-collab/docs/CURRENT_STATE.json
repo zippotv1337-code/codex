@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T07:36:07+00:00",
+  "generated_at": "2026-09-21T07:44:04+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -54,8 +54,8 @@
   },
   "assets": {
     "total": 20,
-    "real": 8,
-    "mock": 12,
+    "real": 13,
+    "mock": 7,
     "by_safety": {
       "SFW": 20
     },
@@ -104,12 +104,12 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 44,
+    "passed": 55,
     "failed": 0
   },
   "blockers": {
     "owner_review_required": 2,
-    "mock_assets_remaining": 12
+    "mock_assets_remaining": 7
   },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",

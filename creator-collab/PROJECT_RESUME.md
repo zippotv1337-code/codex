@@ -2,6 +2,15 @@
 
 ## Meta-/Instagram-Live-Proof — 21. September 2026
 
+Sicherer Nachlauf: Der Operations-Radar meldet den offiziellen Pfad jetzt als
+`PROVEN_CONTROLLED_PACKAGE_ONLY_GLOBAL_AUTOMATION_OFF`, nicht mehr pauschal als
+fehlende Credentials. Leona „Spätsommer in Berlin“ wurde aus fünf vorhandenen,
+unveröffentlichten und bereits QA-bestandenen Originalen als reale
+`READY_FOR_REVIEW`-Reservekarte wiederhergestellt; Top 3 City-Walk → Café
+links 3/4 → candid Schulterblick. Keine Freigabe, Terminierung oder externe
+Aktion. Umbenannte Reviewpakete werden pro Persona/Datum idempotent
+wiedererkannt. Nachweis: `sessions/2026-09-21-0944-codex-safe-followup.md`.
+
 Leona und Mara sind in der Meta-App `Zippoworkz` als Instagram-Tester
 autorisiert; beide OAuth-Tokens liegen ausschließlich im lokalen Windows-User-
 Environment und sind read-only dem richtigen Konto zugeordnet. Der offizielle

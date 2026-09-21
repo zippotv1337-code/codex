@@ -139,6 +139,18 @@ class OperationsAuditService:
             for item in publish_jobs
             if item.get("status") == "BLOCKED_EXTERNAL_PUBLISHING"
         ]
+        official_meta_published = int(
+            self.database.scalar(
+                """
+                SELECT COUNT(*) FROM publications
+                WHERE provider='instagram-meta-graph'
+                  AND status='PUBLISHED'
+                  AND external_id IS NOT NULL
+                  AND external_url LIKE 'https://%.instagram.com/%'
+                """
+            )
+            or 0
+        )
 
         next_actions: list[dict[str, object]] = []
         if due_analytics:
@@ -231,7 +243,12 @@ class OperationsAuditService:
                 "queue_by_status": self._publish_queue_groups(publish_jobs),
                 "local_scheduled_count": len(local_scheduled),
                 "external_blocked_count": len(external_blocked),
-                "live_posting": "BLOCKED_UNTIL_OFFICIAL_CREDENTIALS_OR_NATIVE_SESSION",
+                "official_meta_published_count": official_meta_published,
+                "live_posting": (
+                    "PROVEN_CONTROLLED_PACKAGE_ONLY_GLOBAL_AUTOMATION_OFF"
+                    if official_meta_published
+                    else "BLOCKED_UNTIL_OFFICIAL_CREDENTIALS_OR_NATIVE_SESSION"
+                ),
             },
             "analytics": {
                 "due_count": len(due_analytics),

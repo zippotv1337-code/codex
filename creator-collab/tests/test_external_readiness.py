@@ -122,6 +122,35 @@ live_external_actions = true
         self.assertEqual(snapshot['fiverr']['blockers'], [])
         self.assertFalse(any('Meta' in action for action in snapshot['next_actions']))
 
+    def test_proven_controlled_publish_is_not_reported_as_unproven_blocker(self) -> None:
+        (self.root / "data").mkdir()
+        (self.root / "data" / "meta_media_urls.json").write_text(
+            '{"schema":"creator-ops-meta-publish-v1","content":{}}',
+            encoding="utf-8",
+        )
+        with self.config.open("a", encoding="utf-8") as output:
+            output.write(
+                '\n[operations]\nmeta_api_status = "PROVEN_LIVE_2026_09_21"\n'
+            )
+        os.environ.update(
+            {
+                "META_IG_USER_ID_LEONA_VOSS": "12345",
+                "META_ACCESS_TOKEN_LEONA_VOSS": "secret-token-leona",
+                "META_IG_USER_ID_MARA_FIELD": "67890",
+                "META_ACCESS_TOKEN_MARA_FIELD": "secret-token-mara",
+                "META_GRAPH_API_VERSION": "v24.0",
+                "META_GRAPH_HOST": "graph.instagram.com",
+            }
+        )
+
+        snapshot = ExternalReadinessService(self.root, self.config).snapshot()
+
+        self.assertEqual(snapshot["meta"]["status"], "PROVEN_CONTROLLED_ONLY")
+        self.assertTrue(snapshot["meta"]["controlled_publish_proven"])
+        self.assertFalse(snapshot["meta"]["unattended_automation_enabled"])
+        self.assertEqual(snapshot["meta"]["manifest"]["source"], "default-local")
+        self.assertNotIn("meta_required_env_missing", snapshot["meta"]["blockers"])
+
     def test_http_endpoint_exposes_external_readiness(self) -> None:
         database = self.root / "creator_ops.db"
         pipeline = build_pipeline(database)

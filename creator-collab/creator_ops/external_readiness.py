@@ -46,12 +46,30 @@ class ExternalReadinessService:
     def _meta(self) -> dict[str, Any]:
         config = self._config()
         env = [self._env_state(name) for name in META_ENV_VARS]
-        missing = [item["name"] for item in env if not item["set"]]
+        default_manifest = self.project_root / "data" / "meta_media_urls.json"
+        manifest_available = any(
+            item["name"] == "CREATOR_OPS_META_MEDIA_MANIFEST"
+            and item["valid_hint"]
+            for item in env
+        ) or default_manifest.is_file()
+        missing = [
+            item["name"]
+            for item in env
+            if not item["set"]
+            and not (
+                item["name"] == "CREATOR_OPS_META_MEDIA_MANIFEST"
+                and manifest_available
+            )
+        ]
         invalid = [item["name"] for item in env if item["set"] and not item["valid_hint"]]
         blockers: list[str] = []
         publishing = config.get("publishing", {})
         scheduler = config.get("scheduler", {})
         capabilities = config.get("capabilities", {})
+        meta_api_status = str(
+            config.get("operations", {}).get("meta_api_status", "UNKNOWN")
+        )
+        controlled_publish_proven = meta_api_status.startswith("PROVEN_LIVE")
 
         if missing:
             blockers.append("meta_required_env_missing")
@@ -69,9 +87,30 @@ class ExternalReadinessService:
             blockers.append("live_external_actions_false")
 
         return {
-            "status": ("DEFERRED_OWNER_VERIFICATION" if config.get("operations", {}).get("meta_api_status") == "DEFERRED_OWNER_VERIFICATION"
-                       else "READY_FOR_PREFLIGHT" if not blockers else "BLOCKED"),
+            "status": (
+                "DEFERRED_OWNER_VERIFICATION"
+                if meta_api_status == "DEFERRED_OWNER_VERIFICATION"
+                else "PROVEN_CONTROLLED_ONLY"
+                if controlled_publish_proven
+                else "READY_FOR_PREFLIGHT"
+                if not blockers
+                else "BLOCKED"
+            ),
             "env": env,
+            "manifest": {
+                "available": manifest_available,
+                "source": (
+                    "environment"
+                    if any(
+                        item["name"] == "CREATOR_OPS_META_MEDIA_MANIFEST"
+                        and item["valid_hint"]
+                        for item in env
+                    )
+                    else "default-local"
+                    if default_manifest.is_file()
+                    else "missing"
+                ),
+            },
             "config": {
                 "adapter": publishing.get("adapter"),
                 "live_enabled": bool(publishing.get("live_enabled", False)),
@@ -86,6 +125,8 @@ class ExternalReadinessService:
                     capabilities.get("live_external_actions", False)
                 ),
             },
+            "controlled_publish_proven": controlled_publish_proven,
+            "unattended_automation_enabled": not blockers,
             "blockers": blockers,
         }
 
@@ -161,7 +202,11 @@ class ExternalReadinessService:
         handoff_zip: dict[str, Any],
     ) -> list[str]:
         actions: list[str] = []
-        if meta["status"] == "BLOCKED":
+        if meta["status"] == "PROVEN_CONTROLLED_ONLY":
+            actions.append(
+                "Controlled Meta publishing is proven; rotate exposed tokens locally before long-term production."
+            )
+        elif meta["status"] == "BLOCKED":
             actions.append(
                 "Set missing Meta env/config gates, then run meta-preflight for one exact package."
             )
