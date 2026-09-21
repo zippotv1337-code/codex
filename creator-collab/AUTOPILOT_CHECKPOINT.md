@@ -1,5 +1,19 @@
 # AUTOPILOT CHECKPOINT
 
+## ZWEI-POST-CHECKPOINT — 21. September 2026
+
+- Leona Content `3` / Publication `3` / Queuejob `3`: `LOCAL_SCHEDULED`,
+  `READY`, heute 19:30 Europe/Berlin.
+- Mara Content `2` / Publication `4` / Queuejob `4`: `LOCAL_SCHEDULED`,
+  `READY`, morgen 18:30 Europe/Berlin.
+- Mara Top 3: frontal Werkbank → 3/4 Bauteilprüfung → Ganzkörper Türmoment.
+  Alle drei Assets SFW/PUBLIC_SFW, AI-generiert, rechtegeklärt, öffentlich als
+  JPEG erreichbar und mit nativer KI-Kennzeichnung gebunden.
+- Beide Jobs: genau ein fail-closed Versuch ab geplantem Zeitpunkt; bei
+  unklarem Meta-Zustand Reconcile statt Blind-Retry.
+- Exakter nächster Schritt: nach jedem Termin externen Media-ID/Permalink-
+  Receipt verifizieren und anschließend 24h/72h/168h Analytics beobachten.
+
 ## AKTUELLER AUTOPILOT-CHECKPOINT — 21. September 2026, 14:09 Europe/Berlin
 
 - Letzter vollständig erledigter Task: native KI-Offenlegung für Leona

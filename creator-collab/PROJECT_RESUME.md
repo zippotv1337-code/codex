@@ -1,5 +1,15 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Mara „Werkstattabend“ als zweiter Post READY — 21. September 2026
+
+Das unbrauchbare Mock-Paket wurde mit drei neuen, identitätskonsistenten
+Werkstattmotiven ersetzt und vollständig für den offiziellen Meta-Pfad
+vorbereitet. Content `2` / Publication `4` / Queuejob `4` ist live-autorisiert,
+AI-disclosure-confirmed und für 22. September 18:30 terminiert. Der Meta-
+Preflight ist `READY`; alle öffentlichen JPEGs und das Konto `mara.field.ai`
+sind bestätigt. Leona bleibt separat für heute 19:30 geplant. Nachweis:
+`sessions/2026-09-21-1435-codex-mara-workshop-ready.md`.
+
 ## Fail-closed Autopublish aktiviert — 21. September 2026
 
 Der Owner bestätigte für Leona „Spätsommer in Berlin“ die native Instagram-

@@ -1,5 +1,19 @@
 # Aktueller Handoff
 
+## AKTUELL — Zweiter Post: Mara „Werkstattabend“ READY, 21. September 2026
+
+- Das alte reine Mock-Paket wurde durch drei neue reale Mara-Bilder ersetzt:
+  frontal an der Werkbank → 3/4-Arbeitsmoment mit Bauteil → Ganzkörper beim
+  Verlassen der Werkstatt. Identität, SFW/PUBLIC_SFW und Bilddiversität geprüft.
+- Caption, Hook, CTA, Hashtags und native KI-Kennzeichnung sind gesetzt.
+- Content `2`, Publication `4`, Queuejob `4` ist live-autorisiert und für
+  `2026-09-22T18:30:00+02:00` geplant. Offizieller Meta-Preflight: `READY`;
+  Zielkonto `mara.field.ai`, drei öffentliche HTTPS-JPEGs HTTP 200, Quota grün.
+- Damit sind zwei Pakete vorbereitet: Leona heute 19:30 und Mara morgen 18:30.
+- Öffentliche Aktion in diesem Erstelllauf: keine; Versand übernimmt der
+  fail-closed Scheduler jeweils erst ab dem geplanten Zeitpunkt.
+- Journal: `sessions/2026-09-21-1435-codex-mara-workshop-ready.md`.
+
 ## AKTUELL — Fail-closed Meta-Autopublish aktiv, 21. September 2026
 
 - Der Owner hat die native Instagram-KI-Kennzeichnung für Leona
