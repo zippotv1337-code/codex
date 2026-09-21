@@ -55,7 +55,7 @@ class LocalAssetImportService:
         if not sources:
             raise ValueError("at_least_one_image_required")
 
-        ReviewDashboardService(self.pipeline).ensure_date(run_date)
+        ReviewDashboardService(self.pipeline).ensure_creator_date(creator_slug, run_date)
         target_dir = self.storage_root / creator_slug / run_date.isoformat()
         target_dir.mkdir(parents=True, exist_ok=True)
         imported: list[dict] = []

@@ -282,11 +282,21 @@ class ReviewDashboardTests(unittest.TestCase):
         )
         cards = self.service.cards(date(2026, 9, 4))
         leona = cards[0]
-        mara = cards[1]
         self.assertEqual(len(imported), 1)
+        self.assertEqual(len(cards), 1)
         self.assertEqual(leona["asset_count"], 5)
         self.assertEqual(sum(asset["preview_url"] is not None for asset in leona["assets"]), 1)
-        self.assertTrue(all(asset["preview_url"] is None for asset in mara["assets"]))
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                """
+                SELECT COUNT(*) FROM content_items c
+                JOIN creators cr ON cr.id=c.creator_id
+                JOIN runs r ON r.id=c.run_id
+                WHERE cr.slug='mara-field' AND r.run_date='2026-09-04'
+                """
+            ),
+            0,
+        )
         preview = importer.preview_path(imported[0]["asset_id"])
         self.assertIsNotNone(preview)
         self.assertEqual(preview[1], "image/png")

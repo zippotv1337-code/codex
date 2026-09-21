@@ -178,6 +178,33 @@ class MetaPublishingTests(unittest.TestCase):
         )
         self.assertEqual(len(parent_payload["children"].split(",")), 3)
         self.assertIn("#", parent_payload["caption"])
+
+    def test_official_carousel_accepts_explicit_five_asset_owner_selection(self) -> None:
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                "UPDATE assets SET is_top_pick=1 WHERE content_id=?",
+                (self.card["content_id"],),
+            )
+        self.asset_ids = [
+            row["asset_id"]
+            for row in self.pipeline.db.all(
+                "SELECT asset_id FROM assets WHERE content_id=? ORDER BY id",
+                (self.card["content_id"],),
+            )
+        ]
+        self._write_manifest()
+        transport = FakeMetaTransport()
+
+        result = self._adapter(transport).publish(
+            self.publication["id"], self.card["content_id"], "b" * 64
+        )
+
+        self.assertEqual(result.status, PUBLISHED)
+        self.assertEqual(transport.child_count, 5)
+        parent_payload = next(
+            data for _, data in transport.posts if data.get("media_type") == "CAROUSEL"
+        )
+        self.assertEqual(len(parent_payload["children"].split(",")), 5)
         self.assertEqual(parent_payload["is_ai_generated"], "true")
         child_payloads = [
             data for _, data in transport.posts if data.get("is_carousel_item") == "true"

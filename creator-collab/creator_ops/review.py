@@ -30,6 +30,22 @@ class ReviewDashboardService:
             self._ensure_creator_draft(slug, run_date)
         return self.cards(run_date)
 
+    def ensure_creator_date(self, creator_slug: str, run_date: date) -> dict:
+        """Prepare exactly one persona's review package for a date.
+
+        Asset imports are persona-scoped.  Creating the other persona's empty
+        draft as a side effect made the operations queue look fuller than it
+        really was, so single-persona callers use this narrower entry point.
+        """
+        if creator_slug not in self.pipeline.personas:
+            raise ValueError(f"unknown_creator: {creator_slug}")
+        content_id = self._ensure_creator_draft(creator_slug, run_date)
+        return next(
+            card
+            for card in self.cards(run_date)
+            if int(card["content_id"]) == content_id
+        )
+
     def _ensure_creator_draft(self, creator_slug: str, run_date: date) -> int:
         persona = self.pipeline.personas[creator_slug]
         run_key = f"review:{run_date.isoformat()}:{creator_slug}:{persona['default_series']}"

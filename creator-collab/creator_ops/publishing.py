@@ -509,8 +509,11 @@ class MetaInstagramPublishingAdapter:
             """,
             (content_id,),
         )
-        if len(assets) != 3:
-            raise ValueError("three_unpublished_public_top_picks_required")
+        # Instagram carousel containers accept between two and ten children.
+        # Three remains the normal curation default, but an explicit owner
+        # selection may intentionally publish a longer coherent set.
+        if not 2 <= len(assets) <= 10:
+            raise ValueError("two_to_ten_unpublished_public_carousel_assets_required")
         manifest = json.loads(self.manifest_path.read_text(encoding="utf-8"))
         if manifest.get("schema") != self.manifest_schema:
             raise ValueError("meta_manifest_schema_invalid")
@@ -915,7 +918,7 @@ class PublishQueueService:
     SAFE_PREFLIGHT_ERRORS = {
         "official_instagram_adapter_not_configured",
         "publication_not_found",
-        "three_unpublished_public_top_picks_required",
+        "two_to_ten_unpublished_public_carousel_assets_required",
         "meta_manifest_schema_invalid",
         "meta_content_manifest_missing",
         "native_ai_disclosure_owner_confirmation_required",
