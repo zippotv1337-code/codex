@@ -163,6 +163,10 @@ class OperationsAuditService:
             )
             or 0
         )
+        live_automation_active = (
+            official_meta_published > 0
+            and self.publishing.adapter.provider == "instagram-meta-graph"
+        )
 
         next_actions: list[dict[str, object]] = []
         if due_analytics:
@@ -281,8 +285,11 @@ class OperationsAuditService:
                 "future_local_scheduled_count": len(future_local_scheduled),
                 "external_blocked_count": len(external_blocked),
                 "official_meta_published_count": official_meta_published,
+                "live_automation_active": live_automation_active,
                 "live_posting": (
-                    "PROVEN_CONTROLLED_PACKAGE_ONLY_GLOBAL_AUTOMATION_OFF"
+                    "PROVEN_FAIL_CLOSED_AUTOMATION_ACTIVE"
+                    if live_automation_active
+                    else "PROVEN_CONTROLLED_PACKAGE_ONLY_GLOBAL_AUTOMATION_OFF"
                     if official_meta_published
                     else "BLOCKED_UNTIL_OFFICIAL_CREDENTIALS_OR_NATIVE_SESSION"
                 ),

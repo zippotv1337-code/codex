@@ -1,5 +1,29 @@
 # Aktueller Handoff
 
+## AKTUELL — Fail-closed Meta-Autopublish aktiv, 21. September 2026
+
+- Der Owner hat die native Instagram-KI-Kennzeichnung für Leona
+  „Spätsommer in Berlin“ ausdrücklich bestätigt und eine dauerhafte
+  Publish-Freigabe für vollständige SFW/PUBLIC_SFW-Projektpakete erteilt.
+  Safety-, Rechte-, Persona-, Idempotenz- und Termin-Gates bleiben zwingend.
+- Content `3`, Publication `3`, Queuejob `3` ist exakt an drei geprüfte
+  JPEG-Assets gebunden und für `2026-09-21T19:30:00+02:00` geplant. Der
+  paketgebundene Meta-Preflight ist `READY`, inklusive nativer KI-Offenlegung.
+- Der lokale Scheduler ist auf den offiziellen `meta-graph`-Adapter geschaltet.
+  Er lädt ausschließlich die bekannten Windows-User-Secrets in den begrenzten
+  Child-Prozess, protokolliert keine Werte und dispatcht nur fällige
+  `LOCAL_SCHEDULED`-Jobs. Der Vorab-Probelauf um 14:04 veröffentlichte nichts;
+  Queuejob `3` blieb bei 0 Versuchen.
+- Operations Audit bestätigt
+  `PROVEN_FAIL_CLOSED_AUTOMATION_ACTIVE`, einen zukünftigen Job und keinen
+  fälligen Job. Der erste Scheduler-Zyklus nach 19:30 darf das Paket genau
+  einmal senden; bei unklarem Zustand gilt Reconcile statt Blind-Retry.
+- Backup vor Aktivierung:
+  `backups/creator-ops-backup-pre-autopublish-20260921-1408.db`, Integrität ok.
+- Verifikation: 27/27 fokussierte Tests grün, Compilecheck grün. Keine
+  Plattformaktion in diesem Vorbereitungslauf.
+- Journal: `sessions/2026-09-21-1409-codex-autopublish-enabled.md`.
+
 ## AKTUELL — Autopilot hält Leona-Publish sicher bis 19:30, 21. September 2026
 
 - Operations-Radar korrigiert: `LOCAL_SCHEDULED` wird in zukünftig/fällig

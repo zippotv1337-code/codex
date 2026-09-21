@@ -98,9 +98,44 @@ class OperationsAuditTests(unittest.TestCase):
         )
 
         self.assertEqual(payload["publishing"]["official_meta_published_count"], 1)
+        self.assertFalse(payload["publishing"]["live_automation_active"])
         self.assertEqual(
             payload["publishing"]["live_posting"],
             "PROVEN_CONTROLLED_PACKAGE_ONLY_GLOBAL_AUTOMATION_OFF",
+        )
+
+    def test_confirmed_meta_publish_reports_active_fail_closed_adapter(self) -> None:
+        card = self.reviews.ensure_date(date(2026, 9, 8))[0]
+        with self.pipeline.db.transaction() as connection:
+            variant = connection.execute(
+                "SELECT id FROM platform_variants WHERE content_id=?",
+                (card["content_id"],),
+            ).fetchone()
+            connection.execute(
+                """
+                INSERT INTO publications
+                    (content_id, platform_variant_id, provider, scheduled_at,
+                     published_at, external_id, external_url, status)
+                VALUES (?, ?, 'instagram-meta-graph', ?, ?, ?, ?, 'PUBLISHED')
+                """,
+                (
+                    card["content_id"], variant["id"],
+                    "2026-09-08T19:30:00+02:00", "2026-09-08T19:30:00+02:00",
+                    "18000000000000002", "https://www.instagram.com/p/AuditActive/",
+                ),
+            )
+        self.audit.publishing.adapter = type(
+            "ActiveMetaAdapter", (), {"provider": "instagram-meta-graph"}
+        )()
+
+        payload = self.audit.snapshot(
+            now=datetime.fromisoformat("2026-09-08T20:00:00+02:00")
+        )
+
+        self.assertTrue(payload["publishing"]["live_automation_active"])
+        self.assertEqual(
+            payload["publishing"]["live_posting"],
+            "PROVEN_FAIL_CLOSED_AUTOMATION_ACTIVE",
         )
 
     def test_audit_prioritizes_local_publish_and_story_ready_state(self) -> None:
@@ -161,7 +196,20 @@ class OperationsAuditTests(unittest.TestCase):
 
     def test_http_endpoint_exposes_operations_audit(self) -> None:
         self.reviews.ensure_date(date(2026, 9, 8))
-        server = create_server(self.database_path, port=0, asset_root=self.root)
+        config = self.root / "config.toml"
+        config.write_text(
+            "[scheduler]\ndispatch_live = false\n"
+            "[publishing]\nadapter = \"unconfigured\"\nlive_enabled = false\n"
+            "[capabilities]\nofficial_instagram_publish = false\n"
+            "live_external_actions = false\n",
+            encoding="utf-8",
+        )
+        server = create_server(
+            self.database_path,
+            port=0,
+            asset_root=self.root,
+            config_path=config,
+        )
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:

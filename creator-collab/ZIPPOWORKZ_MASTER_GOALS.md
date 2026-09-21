@@ -1,6 +1,6 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-21 — Meta proof completed; Leona reserve is locally scheduled for 19:30 and awaits the exact native AI-disclosure confirmation.
+Last consolidated: 2026-09-21 — Meta proof completed; Leona reserve is AI-disclosure-confirmed, preflight READY and fail-closed scheduled for 19:30.
 
 ## Purpose and precedence
 
@@ -42,7 +42,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | M-04 | Fiverr Gig 1 live: AI Workflow Automation | ACTIVE / VERIFY | Die eingeloggte Verwaltung zeigte am 2026-09-08 `AKTIV 1`; Fiverr lieferte in der Tabelle einen Fehler und die öffentliche Ansicht war CAPTCHA-blockiert. Exit: öffentlicher Gig-Link störungsfrei sichtbar und dokumentiert. Basic $149, Standard $349, Premium $699. |
 | M-05 | First real lead, order and revenue | BLOCKED_BY_M-04 | A genuine inquiry, order, fulfillment and revenue record; dry runs never count. |
 | M-06 | Standardize fulfillment from first order | LATER | Learn recurring requests, revisions, integrations and boundaries. Gig 2 only after Gig 1 proof. |
-| M-07 | Maintain real content cadence | ACTIVE — LOCAL_SCHEDULED / OWNER_AI_DISCLOSURE_GATE | Leona „Spätsommer in Berlin“ besitzt fünf reale unveröffentlichte Assets, ist lokal freigegeben und für 2026-09-21 19:30 Europe/Berlin terminiert. Read-only Meta-Preflight: Konto/Adapter/Credentials ok; offen ist ausschließlich `native_ai_disclosure_owner_confirmation_required`. Kein Versand vor Termin und Bestätigung. |
+| M-07 | Maintain real content cadence | ACTIVE — AUTOPUBLISH_READY_19_30 | Leona „Spätsommer in Berlin“ besitzt fünf reale unveröffentlichte Assets; die Top 3 sind paketgebunden, AI-disclosure-confirmed und für 2026-09-21 19:30 Europe/Berlin terminiert. Meta-Preflight ist `READY`; der fail-closed 5-Minuten-Scheduler darf ab Termin genau einmal dispatchen und muss danach extern reconciliieren. |
 | M-08 | Stories as a first-class lane | PARTIAL / LOCAL_IMPLEMENTED | Local preview/edit/approve/change/reject/pause/plan persistent and honest; official Story publishing waits for supported proof. |
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |

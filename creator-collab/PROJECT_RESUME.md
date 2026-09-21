@@ -1,5 +1,17 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Fail-closed Autopublish aktiviert — 21. September 2026
+
+Der Owner bestätigte für Leona „Spätsommer in Berlin“ die native Instagram-
+KI-Kennzeichnung und erteilte eine dauerhafte Publish-Freigabe für vollständige,
+rechtegeklärte SFW/PUBLIC_SFW-Projektpakete. Das konkrete Drei-Slide-Carousel
+ist paketgebunden `READY` und für 19:30 Europe/Berlin terminiert. Der bestehende
+5-Minuten-Scheduler nutzt nun den offiziellen Meta-Adapter, lädt Secrets nur aus
+dem lokalen Windows-User-Environment in den Child-Prozess und bleibt vor dem
+Termin untätig. Operations Audit meldet
+`PROVEN_FAIL_CLOSED_AUTOMATION_ACTIVE`; 27/27 fokussierte Tests sind grün.
+Nachweis: `sessions/2026-09-21-1409-codex-autopublish-enabled.md`.
+
 ## Autopilot Scheduling Guard — 21. September 2026
 
 Der Operations-Radar trennt lokale Publishjobs jetzt nach Fälligkeit. Leona

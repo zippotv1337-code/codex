@@ -1,5 +1,28 @@
 # AUTOPILOT CHECKPOINT
 
+## AKTUELLER AUTOPILOT-CHECKPOINT — 21. September 2026, 14:09 Europe/Berlin
+
+- Letzter vollständig erledigter Task: native KI-Offenlegung für Leona
+  „Spätsommer in Berlin“ paketgebunden bestätigt, drei öffentliche JPEGs
+  validiert und fail-closed Meta-Autopublish aktiviert.
+- Aktueller Job: Content `3`, Publication `3`, Queuejob `3`, Status
+  `LOCAL_SCHEDULED`, geplant `2026-09-21T19:30:00+02:00`, Versuche `0`.
+- Read-only Meta-Preflight: `READY`; Konto `leonavoss.ai`, drei exakte Assets,
+  native KI-Kennzeichnung, Quota und öffentliche HTTPS-JPEGs sind grün.
+- Supervisor/Scheduler: laufender Supervisor, Scheduler-Intervall 5 Minuten.
+  Vor 19:30 kein Dispatch; im ersten fälligen Zyklus höchstens ein atomarer
+  Versand. Unklarer externer Zustand wird reconciliert und niemals blind
+  erneut gesendet.
+- Exakter Fortsetzungspunkt: nach 19:30 Queuejob `3`, Publication `3`, Media-ID,
+  Permalink, Receipt, Content- und Assetstatus verifizieren. Danach Analytics-
+  Fenster 24h/72h/168h beobachten; fehlende Werte bleiben `UNKNOWN/NULL`.
+- Tests: 27/27 fokussierte Tests und Python-Compilecheck grün.
+- Backup: `backups/creator-ops-backup-pre-autopublish-20260921-1408.db`,
+  `integrity_check=ok`.
+- Owner-Gates bleiben für Profiländerungen, Nachrichten/Kommentare/DMs,
+  Follow-Aktionen, Ausgaben, Adult-Publishing, Identität/OTP und destruktive
+  externe Aktionen bestehen.
+
 ## AKTUELLER AUTOPILOT-CHECKPOINT — 21. September 2026, 13:46 Europe/Berlin
 
 - Letzter vollständig erledigter Task: Operations-Radar unterscheidet jetzt

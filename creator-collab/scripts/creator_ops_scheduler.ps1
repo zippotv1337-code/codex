@@ -10,6 +10,27 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $runtimeConfig = Get-CreatorOpsRuntimeConfig -ProjectRoot $projectRoot -ConfigPath $Config
 if (-not $Database) { $Database = Join-Path $projectRoot $runtimeConfig.Database }
 if (-not $OfflineOutput) { $OfflineOutput = Join-Path $projectRoot $runtimeConfig.OfflineOutput }
+
+# The long-running supervisor can predate values written with `setx`. Hydrate
+# only the explicitly supported local secret names for this bounded child
+# process. Values are never logged or added to command-line arguments.
+$userEnvironmentNames = @(
+  'CREATOR_OPS_PASSWORD',
+  'META_IG_USER_ID_LEONA_VOSS',
+  'META_ACCESS_TOKEN_LEONA_VOSS',
+  'META_IG_USER_ID_MARA_FIELD',
+  'META_ACCESS_TOKEN_MARA_FIELD',
+  'META_GRAPH_API_VERSION',
+  'META_GRAPH_HOST',
+  'CREATOR_OPS_META_MEDIA_MANIFEST'
+)
+foreach ($name in $userEnvironmentNames) {
+  $userValue = [Environment]::GetEnvironmentVariable($name, 'User')
+  if (-not [string]::IsNullOrWhiteSpace($userValue)) {
+    [Environment]::SetEnvironmentVariable($name, $userValue, 'Process')
+  }
+}
+
 $databasePath = [System.IO.Path]::GetFullPath($Database)
 $offlinePath = [System.IO.Path]::GetFullPath($OfflineOutput)
 $logDirectory = Join-Path $projectRoot 'data\logs'
