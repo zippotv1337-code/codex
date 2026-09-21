@@ -42,6 +42,9 @@
 - SQLite `integrity_check = ok`; Foreign-Key-Verstöße = 0.
 - Backup:
   `backups/creator-ops-backup-pre-leona-reserve-import-20260921.db`.
+- Die bestehende LAN-Runtime wurde über `RESTART_CREATOR_OPS.ps1 -NoBrowser`
+  kontrolliert neu geladen. Health ist `ok`, Auth aktiv, Datenbank `ok`; genau
+  ein Prozess lauscht auf `192.168.188.131:4180`.
 
 ## Entscheidungen
 

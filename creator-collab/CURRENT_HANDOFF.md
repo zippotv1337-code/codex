@@ -23,6 +23,9 @@
 - Verifikation: 55 fokussierte Tests grün, Python-Compile grün, SQLite
   `integrity_check=ok`, 0 Foreign-Key-Verstöße. Backup vor Reserve-Import:
   `backups/creator-ops-backup-pre-leona-reserve-import-20260921.db`.
+- Laufende LAN-Runtime anschließend kontrolliert neu gestartet. Health unter
+  `http://192.168.188.131:4180/api/health` ist `ok`, Auth aktiv, Datenbank
+  `ok`; genau ein Prozess lauscht auf Port 4180.
 - Journal: `sessions/2026-09-21-0944-codex-safe-followup.md`.
 
 - `leonavoss.ai` und `mara.field.ai` sind in der Meta-App `Zippoworkz` als
