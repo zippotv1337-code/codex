@@ -25,8 +25,16 @@ class StoryReserveService:
         for card in self.reviews.review_queue()["cards"]:
             if card["status"] == "BLOCKED" or card["safety_class"] != "SFW" or card["visibility_scope"] != "PUBLIC_SFW":
                 continue
-            available = [asset for asset in card["assets"] if not asset["excluded"]
-                         and asset["safety_class"] == "SFW" and asset["visibility_scope"] == "PUBLIC_SFW"]
+            available = [
+                asset
+                for asset in card["assets"]
+                if not asset["excluded"]
+                and asset["safety_class"] == "SFW"
+                and asset["visibility_scope"] == "PUBLIC_SFW"
+                # A deterministic mock slot is useful for layout tests, but it
+                # is not publishable content and must never become a Story kit.
+                and asset["preview_url"] is not None
+            ]
             top = sorted(
                 (asset for asset in available if asset["top_pick"]),
                 key=lambda asset: asset["top_pick_order"],

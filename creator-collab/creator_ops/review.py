@@ -542,6 +542,9 @@ class ReviewDashboardService:
             or int(row["available_real_asset_count"]) < 3
         ][:6]
         attention_ids = {int(row["content_id"]) for row in attention_rows}
+        attention_meta = {
+            int(row["content_id"]): row for row in attention_rows
+        }
         active_dates = list(dict.fromkeys(
             [row["run_date"] for row in selected]
             + [row["run_date"] for row in attention_rows]
@@ -564,11 +567,12 @@ class ReviewDashboardService:
             if int(card["content_id"]) not in attention_ids:
                 continue
             attention = dict(card)
+            meta = attention_meta[int(card["content_id"])]
             attention["attention_reason"] = (
                 "Paket ist blockiert und benötigt eine Owner-Entscheidung"
                 if attention["status"] == "BLOCKED"
                 else "Mindestens drei echte Assets erforderlich"
-                if attention["available_asset_count"] < 3
+                if int(meta["available_real_asset_count"]) < 3
                 else "Owner-/Review-Entscheidung prüfen"
             )
             needs_attention.append(attention)

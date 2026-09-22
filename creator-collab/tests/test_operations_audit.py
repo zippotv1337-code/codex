@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.request import urlopen
 
 from creator_ops.cli import build_pipeline
+from creator_ops.asset_import import LocalAssetImportService
 from creator_ops.operations_audit import OperationsAuditService
 from creator_ops.publishing import PublishQueueService
 from creator_ops.reconcile import ManualInstagramService
@@ -140,6 +141,14 @@ class OperationsAuditTests(unittest.TestCase):
 
     def test_audit_prioritizes_local_publish_and_story_ready_state(self) -> None:
         card = self.reviews.ensure_date(date(2026, 9, 8))[0]
+        sources = []
+        for index in range(5):
+            source = self.root / f"audit-story-{index}.png"
+            source.write_bytes(b"\x89PNG\r\n\x1a\n" + bytes([index]))
+            sources.append(source)
+        LocalAssetImportService(self.pipeline, self.root).import_files(
+            "leona-voss", date(2026, 9, 8), sources
+        )
         self.reviews.approve(card["content_id"])
 
         payload = self.audit.snapshot(now=datetime.fromisoformat("2026-09-07T14:30:00+02:00"))

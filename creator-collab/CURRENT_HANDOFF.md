@@ -904,3 +904,22 @@ wurden nicht rückwirkend verändert.
 - Teststatus: 12 relevante Tests grün; Python-Compilecheck grün. Drei nicht
   ausgewählte Dashboard-HTTP-Tests benötigen aufgrund der produktiven
   Live-Konfiguration explizit ein Testpasswort und sind kein Publish-Fehler.
+
+## Autopilot-Betriebsaudit — 22. September 2026, 06:30 Uhr
+
+- SQLite-Integrität `ok`; fünf offizielle Meta-Publikationen und fünf
+  Queue-Einträge sind `PUBLISHED`, jeweils mit genau einem Versuch und ohne
+  Fehler. Kein lokaler Publishjob ist offen.
+- Noch kein Analytics-Fenster ist fällig. Die ersten beiden 24h-Fenster öffnen
+  um 09:08 Uhr (Leona Rainy Berlin) und 09:32 Uhr (Mara Küchenfenster).
+- Dokumentationsdrift erkannt: Die kanonische DB enthält derzeit weder
+  `manual_analytics_events` noch `analytics_snapshots`; eine ältere Aussage
+  über zwei gespeicherte Leona-Messungen ist für diese DB nicht belegt.
+- Der Morning Run erzeugte Content 6 `Werkstattabend` ausschließlich mit fünf
+  Mock-Slots. Dieses Paket wird nicht freigegeben oder veröffentlicht.
+- Story Reserve und Operations Audit wurden fail-closed korrigiert: Mock-only
+  Inhalte erscheinen nicht länger als fertige Story-Kits; Needs Attention
+  nennt jetzt korrekt `Mindestens drei echte Assets erforderlich`.
+- 14 relevante Story-/Audit-/Queue-Tests und der Compilecheck sind grün.
+- Höchste nächste externe Aufgabe ist die bereits vorbereitete Korrektur des
+  bestehenden Fiverr-Gigs; kein zweiter Gig wird angelegt.

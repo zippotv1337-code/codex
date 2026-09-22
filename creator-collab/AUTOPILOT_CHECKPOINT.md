@@ -600,3 +600,28 @@ gegen 13:00 Uhr.
   3. Erst danach anhand echter Signale das nächste Contentpaket wählen.
 - Resume-Auftrag: `Lies diesen Checkpoint und erfasse nur fällige echte
   Analytics; erzeuge keine Werte und sende keinen Doppelpost.`
+
+## Autopilot-Checkpoint — 22. September 2026, 06:30 Uhr
+
+- Letzter vollständig erledigter Task: Mock-only Story-/Attention-Drift
+  fail-closed korrigiert und auf der kanonischen DB verifiziert.
+- Aktuell angefangener Task: keiner.
+- Exakter Fortsetzungspunkt: Publication 1 frühestens ab 09:08 CEST und
+  Publication 2 frühestens ab 09:32 CEST über echte Insights erfassen.
+- Geänderte Dateien: `creator_ops/stories.py`, `creator_ops/review.py`,
+  `tests/test_stories.py`, `tests/test_operations_audit.py` sowie aktuelle
+  State-/Handoff-/Master-Dokumente.
+- Teststatus: 14 relevante Tests grün; Compilecheck grün.
+- Backupstatus: keine DB-Mutation in diesem Block, daher kein neues Backup.
+- Bekannte Blocker: Analytics-Zeitfenster noch nicht fällig; Meta-Tokenrotation
+  bleibt Owner-only; Fiverr-Public-Write braucht den nächsten bewussten
+  Browser-Speicherschritt.
+- Owner-Gates: keine für lokale Korrektur; öffentliche Fiverr-Änderung erst am
+  konkreten Speicherschritt.
+- Geparkte Aufgabe: Content 6 ist mock-only und darf nicht freigegeben werden.
+- Nächste 3 priorisierte Aufgaben:
+  1. Ab 09:08/09:32 echte Analytics erfassen.
+  2. Bestehenden Fiverr-Gig auf 149/349/699 und vorbereitete Copy korrigieren.
+  3. Erst nach echten Signalen neuen Content auswählen.
+- Resume-Auftrag: `Erfasse nur fällige echte Analytics; wenn noch nicht fällig,
+  korrigiere den bestehenden Fiverr-Gig und erzeuge keinen zweiten Gig.`

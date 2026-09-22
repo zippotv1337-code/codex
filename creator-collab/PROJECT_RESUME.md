@@ -688,3 +688,14 @@ abstrakten Multi-Tenant-/SaaS-Umbau ohne aktuellen Bedarf.
 - Quellmedien und Paketbrief liegen unter
   `assets/meta-public/2026-09-22/leona-black-blazer-three-moods/` und
   `docs/CONTENT_PACKAGE_LEONA_BLAZER_2026-09-22.md`.
+
+## Story-/Analytics-Guard — 22. September 2026
+
+- Story Reserve akzeptiert nur echte, lokal vorschaufähige SFW/PUBLIC_SFW-
+  Assets. Reine `mock-generator`-Slots werden nicht mehr als Story-Kit oder
+  Uploadreserve dargestellt.
+- Needs Attention bewertet die Zahl echter verfügbarer Assets und meldet bei
+  Content 6 korrekt, dass mindestens drei echte Assets fehlen.
+- Der kanonische DB-Stand enthält aktuell keine gespeicherten Analytics-
+  Events oder Snapshots. Frühere gegenteilige Dokumentationsangaben sind als
+  Drift behandelt; der erste reale 24h-Termin ist 2026-09-22 09:08 CEST.

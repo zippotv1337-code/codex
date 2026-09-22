@@ -12,7 +12,7 @@ from creator_ops.asset_import import LocalAssetImportService
 
 
 class StoryReserveTests(unittest.TestCase):
-    def test_four_feed_packages_become_safe_review_only_story_packages(self) -> None:
+    def test_mock_only_feed_packages_do_not_become_story_packages(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
             pipeline = build_pipeline(Path(folder) / "stories.db")
             pipeline.initialize()
@@ -20,12 +20,7 @@ class StoryReserveTests(unittest.TestCase):
             reviews.ensure_date(date(2026, 9, 5))
             reviews.ensure_date(date(2026, 9, 6))
             packages = StoryReserveService(reviews).packages()
-            self.assertEqual(len(packages), 4)
-            for package in packages:
-                self.assertEqual(package["status"], "READY_FOR_OWNER_REVIEW")
-                self.assertEqual([frame["kind"] for frame in package["frames"]], ["TEASER", "POLL", "COMMUNITY"])
-                self.assertEqual(len({frame["asset"]["id"] for frame in package["frames"]}), 3)
-                self.assertIn("kein Auto-Posting", package["safety_note"])
+            self.assertEqual(packages, [])
 
     def test_published_assets_never_enter_story_frames(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
@@ -33,6 +28,15 @@ class StoryReserveTests(unittest.TestCase):
             pipeline.initialize()
             reviews = ReviewDashboardService(pipeline)
             card = reviews.ensure_date(date(2026, 9, 5))[0]
+            sources = []
+            for index in range(5):
+                source = Path(folder) / f"published-story-{index}.png"
+                source.write_bytes(b"\x89PNG\r\n\x1a\n" + bytes([index]))
+                sources.append(source)
+            LocalAssetImportService(pipeline, Path(folder)).import_files(
+                "leona-voss", date(2026, 9, 5), sources
+            )
+            card = reviews.cards(date(2026, 9, 5))[0]
             published_id = card["assets"][0]["id"]
             with pipeline.db.transaction() as connection:
                 connection.execute("UPDATE assets SET published_status='PUBLISHED' WHERE id=?", (published_id,))
@@ -81,6 +85,14 @@ class StoryReserveTests(unittest.TestCase):
             pipeline.initialize()
             reviews = ReviewDashboardService(pipeline)
             reviews.ensure_date(date(2026, 9, 5))
+            sources = []
+            for index in range(5):
+                source = Path(folder) / f"editable-story-{index}.png"
+                source.write_bytes(b"\x89PNG\r\n\x1a\n" + bytes([index]))
+                sources.append(source)
+            LocalAssetImportService(pipeline, Path(folder)).import_files(
+                "leona-voss", date(2026, 9, 5), sources
+            )
             package = StoryReserveService(reviews).packages()[0]
             fields = {"cta": "Am Fenster oder auf dem Weg?", "highlight": "Berlin", "status": "PUBLISHED",
                       "frames": [{"kind": "BTS", "copy": "Kaffee am Fenster", "interaction": "Eine ruhige Minute",
@@ -103,13 +115,12 @@ class StoryReserveTests(unittest.TestCase):
             pipeline.initialize()
             reviews = ReviewDashboardService(pipeline)
             card = reviews.ensure_date(date(2026, 9, 5))[0]
-            with self.assertRaisesRegex(ValueError, "real_previews"):
+            self.assertEqual(StoryReserveService(reviews).packages(), [])
+            with self.assertRaises(KeyError):
                 reviews.story_decision(card["content_id"], "approve")
             with pipeline.db.transaction() as connection:
                 connection.execute("INSERT INTO review_events(content_id,action,actor,note,created_at) VALUES (?,'STORY_PLANNED_UI','owner-dashboard','legacy plan without date','2026-09-05')", (card["content_id"],))
-            package = StoryReserveService(reviews).packages()[0]
-            self.assertEqual(package["status"], "NEEDS_SCHEDULE")
-            self.assertIsNone(package["planned_at"])
+            self.assertEqual(StoryReserveService(reviews).packages(), [])
 
 
 if __name__ == "__main__":

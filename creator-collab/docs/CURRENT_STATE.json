@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T21:05:04+00:00",
+  "generated_at": "2026-09-22T04:28:30+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -36,14 +36,16 @@
     }
   ],
   "content": {
-    "total": 5,
+    "total": 6,
     "by_status": {
-      "PUBLISHED": 5
+      "PUBLISHED": 5,
+      "READY_FOR_REVIEW": 1
     },
     "by_stage": {
-      "ALLTAG": 5
+      "ALLTAG": 6
     },
     "review_required": 0,
+    "needs_attention": 1,
     "mix_target_percent": {
       "ALLTAG": 70,
       "TEASER": 30,
@@ -52,14 +54,14 @@
     "next_recommended_stage": "TEASER"
   },
   "assets": {
-    "total": 25,
+    "total": 30,
     "real": 21,
-    "mock": 4,
+    "mock": 9,
     "by_safety": {
-      "SFW": 25
+      "SFW": 30
     },
     "by_visibility": {
-      "PUBLIC_SFW": 25
+      "PUBLIC_SFW": 30
     }
   },
   "reserve": {
@@ -159,11 +161,14 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 12,
+    "passed": 14,
     "failed": 0
   },
   "blockers": {
-    "mock_assets_remaining": 4
+    "mock_assets_remaining": 9,
+    "mock_only_story_packages_suppressed": true,
+    "manual_analytics_events": 0,
+    "analytics_snapshots": 0
   },
   "owner_decisions": {
     "source": "OWNER_DECISIONS.md",
