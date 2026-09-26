@@ -93,10 +93,10 @@
     "read_provider": "playwright-authenticated-read",
     "write_provider": "playwright-seller-webflow",
     "last_successful_sync": "2026-09-21T18:48:04+00:00",
-    "last_write_test": null,
+    "last_write_test": "2026-09-26_OWNER_SAVE_CONFIRMED",
     "last_human_gate": "2026-09-21T18:42:35+00:00",
     "last_error": null,
-    "next_action": "Update placeholder Gig copy, packages, requirements and tags to the approved ZippoWorkz offer, then verify publicly",
+    "next_action": "Owner confirmed Save on 2026-09-26; verify the public Gig readback for approved 149/349/699 USD, 4/7/10 delivery days and 1/2/3 revisions before marking LIVE_VERIFIED.",
     "active_gig_count": 1,
     "gigs": [
       {
@@ -137,7 +137,23 @@
         },
         "assets": [
           "one_public_gallery_image_observed"
-        ]
+        ],
+        "pending_public_readback": {
+          "owner_confirmed_saved_on": "2026-09-26",
+          "verification": "OWNER_CONFIRMED_SAVE_PENDING_PUBLIC_READBACK",
+          "expected_packages": {
+            "currency": "USD",
+            "basic_usd": 149,
+            "standard_usd": 349,
+            "premium_usd": 699,
+            "basic_delivery_days": 4,
+            "standard_delivery_days": 7,
+            "premium_delivery_days": 10,
+            "basic_revisions": 1,
+            "standard_revisions": 2,
+            "premium_revisions": 3
+          }
+        }
       }
     ],
     "human_gates": []

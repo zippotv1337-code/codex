@@ -1,19 +1,8 @@
 # Projekt-Résumé: Virtual Creators Germany
 
-## Fiverr als modulare Operations-Lane — 21. September 2026
+## Fiverr Owner-Save / Verifikationsstand — 26. September 2026
 
-Fiverr ist nun als eigener Adapter in ZippoWorkz integriert: kostenlose
-öffentliche Reads, authentifizierter Seller-Webflow, persistenter Account-,
-Gig- und Human-Gate-Status sowie ein idempotentes Operations-Ledger. Das neue
-Dashboard `/fiverr` zeigt den echten Seller-Status. Die Session ist
-`WRITE_READY`; genau ein aktiver Gig und seine öffentliche URL wurden sichtbar
-verifiziert. Der aktuelle Live-Gig enthält allerdings noch provisorische
-Pakettexte und 50/150/355 USD statt des autoritativen 149/349/699-USD-Angebots.
-Die Korrektur ist vorbereitet, aber noch nicht öffentlich gespeichert. Kein
-zweiter Gig wurde erzeugt. Technische Details und Nachweis:
-`docs/FIVERR_AUTOMATION.md` und
-`sessions/2026-09-21-2051-codex-fiverr-automation.md`.
-
+Fiverr bleibt als modulare Operations-Lane integriert. Der bestehende aktive Gig wurde im echten eingeloggten Seller-Edit-Flow bearbeitet; der Owner bestätigte am 26.09.2026 den Klick auf Speichern. Der erwartete neue Vertrag ist 149/349/699 USD mit 4/7/10 Tagen und 1/2/3 Revisionen. Der letzte unabhängig öffentlich nachgelesene Stand bleibt jedoch der 21.09.2026 mit 50/150/355 USD, 30/1/1 Tagen und 0 Revisionen. Deshalb wird der neue Stand bis zum öffentlichen Readback ausdrücklich nur als OWNER_SAVED_PENDING_PUBLIC_READBACK geführt. Kein zweiter Gig wurde erzeugt und kein Fiverr-Challenge-/Anti-Bot-Gate umgangen. Der lokale tzdata-Fehler der CLI wurde projektlokal unter .venv (tzdata 2026.4) behoben.
 ## Storys und echtes Inbound-Engagement freigegeben — 21. September 2026
 
 SFW/PUBLIC_SFW-Storys dürfen künftig nach den bestehenden Safety- und
