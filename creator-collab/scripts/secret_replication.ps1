@@ -1,6 +1,7 @@
 param(
-  [ValidateSet('Init','Status','ExportMeta','ImportMeta')]
+  [ValidateSet('Init','Status','ExportMeta','ImportMeta','ExportConnector','ImportConnector')]
   [string]$Mode = 'Status',
+  [string]$Connector = 'meta-instagram',
   [string]$RecipientPublicKey = '',
   [string]$BundlePath = '',
   [string]$NodeRole = '',
@@ -81,7 +82,9 @@ if ($Mode -eq 'Status') {
   exit 0
 }
 
-if ($Mode -eq 'ExportMeta') {
+if ($Mode -eq 'ExportMeta' -or $Mode -eq 'ImportMeta') { $Connector = 'meta-instagram' }
+
+if ($Mode -eq 'ExportMeta' -or $Mode -eq 'ExportConnector') {
   if (-not $RecipientPublicKey -or -not (Test-Path -LiteralPath $RecipientPublicKey)) { throw 'recipient_public_key_missing' }
   if (-not $BundlePath) { throw 'bundle_path_missing' }
   $recipient=Get-Content -LiteralPath $RecipientPublicKey -Raw | ConvertFrom-Json
@@ -89,7 +92,9 @@ if ($Mode -eq 'ExportMeta') {
   $rsa=New-Object System.Security.Cryptography.RSACryptoServiceProvider
   $rsa.PersistKeyInCsp=$false
   $rsa.ImportCspBlob([Convert]::FromBase64String([string]$recipient.public_csp_blob_b64))
-  $payloadRaw=& $Python $Helper export
+  [Environment]::SetEnvironmentVariable('ZW_SECRET_EXPORT_INTERNAL','1','Process')
+  try { $payloadRaw=& $Python $Helper export $Connector }
+  finally { [Environment]::SetEnvironmentVariable('ZW_SECRET_EXPORT_INTERNAL',$null,'Process') }
   if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($payloadRaw)) { $rsa.Dispose(); throw 'secret_payload_export_failed' }
   try {
     $payload=$payloadRaw | ConvertFrom-Json
@@ -106,21 +111,21 @@ if ($Mode -eq 'ExportMeta') {
       $encrypted[$prop.Name]=$chunks
       [Array]::Clear($bytes,0,$bytes.Length)
     }
-    $bundle=[ordered]@{schema='zippoworkz-secret-replication-bundle-v1';scope='meta-instagram';source_machine=[string]$Machine.machine_id;recipient_machine=[string]$recipient.machine_id;recipient_fingerprint=[string]$recipient.fingerprint;created_at=[DateTimeOffset]::Now.ToString('o');encrypted=$encrypted}
+    $bundle=[ordered]@{schema='zippoworkz-secret-replication-bundle-v2';scope=[string]$Connector;source_machine=[string]$Machine.machine_id;recipient_machine=[string]$recipient.machine_id;recipient_fingerprint=[string]$recipient.fingerprint;created_at=[DateTimeOffset]::Now.ToString('o');encrypted=$encrypted}
     $dir=Split-Path -Parent $BundlePath
     if($dir){New-Item -ItemType Directory -Force -Path $dir | Out-Null}
     $bundle | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $BundlePath -Encoding UTF8
   } finally { $payloadRaw=$null; $payload=$null; $rsa.Dispose() }
-  [ordered]@{ok=$true;mode='ExportMeta';bundle=$BundlePath;recipient_machine=$recipient.machine_id;recipient_fingerprint=$recipient.fingerprint} | ConvertTo-Json -Compress
+  [ordered]@{ok=$true;mode=$Mode;connector=$Connector;bundle=$BundlePath;recipient_machine=$recipient.machine_id;recipient_fingerprint=$recipient.fingerprint} | ConvertTo-Json -Compress
   exit 0
 }
 
-if ($Mode -eq 'ImportMeta') {
+if ($Mode -eq 'ImportMeta' -or $Mode -eq 'ImportConnector') {
   if (-not $BundlePath -or -not (Test-Path -LiteralPath $BundlePath)) { throw 'bundle_missing' }
   $identity=Get-Identity
   if (-not $identity) { throw 'replication_identity_missing' }
   $bundle=Get-Content -LiteralPath $BundlePath -Raw | ConvertFrom-Json
-  if ($bundle.schema -ne 'zippoworkz-secret-replication-bundle-v1' -or $bundle.scope -ne 'meta-instagram') { throw 'bundle_schema_invalid' }
+  if ($bundle.schema -ne 'zippoworkz-secret-replication-bundle-v2' -or [string]$bundle.scope -ne [string]$Connector) { throw 'bundle_schema_invalid' }
   if ([string]$bundle.recipient_fingerprint -ne [string]$identity.fingerprint) { throw 'bundle_recipient_mismatch' }
   $rsa=Load-Private-Rsa
   $secrets=[ordered]@{}
@@ -130,9 +135,15 @@ if ($Mode -eq 'ImportMeta') {
       foreach($cipherText in @($prop.Value)) { $plainChunk=$rsa.Decrypt([Convert]::FromBase64String([string]$cipherText),$true); $buffer.AddRange([byte[]]$plainChunk) }
       $secrets[$prop.Name]=[Text.Encoding]::UTF8.GetString($buffer.ToArray())
     }
-    $payload=[ordered]@{schema='zippoworkz-secret-bundle-v1';scope='meta-instagram';created_at=[DateTimeOffset]::Now.ToString('o');secrets=$secrets} | ConvertTo-Json -Depth 6 -Compress
+    $payload=[ordered]@{schema='zippoworkz-secret-bundle-v2';scope=[string]$Connector;worker='';created_at=[DateTimeOffset]::Now.ToString('o');secrets=$secrets} | ConvertTo-Json -Depth 6 -Compress
+    $catalog=Get-Content -LiteralPath (Join-Path $ProjectRoot 'config\connector_secret_catalog.json') -Raw | ConvertFrom-Json
+    $connectorConfig=$catalog.connectors.PSObject.Properties | Where-Object { $_.Name -eq $Connector } | Select-Object -First 1
+    if(-not $connectorConfig){throw 'connector_scope_unknown'}
+    $payloadObject=$payload | ConvertFrom-Json
+    $payloadObject.worker=[string]$connectorConfig.Value.worker
+    $payload=$payloadObject | ConvertTo-Json -Depth 6 -Compress
     [Environment]::SetEnvironmentVariable('ZW_SECRET_PAYLOAD',$payload,'Process')
-    $result=& $Python $Helper import-env
+    $result=& $Python $Helper import-env $Connector
     if($LASTEXITCODE -ne 0){throw 'secret_payload_import_failed'}
   } finally { [Environment]::SetEnvironmentVariable('ZW_SECRET_PAYLOAD',$null,'Process'); $payload=$null; $secrets=$null; $rsa.Dispose() }
   if($DeleteBundle){Remove-Item -LiteralPath $BundlePath -Force}

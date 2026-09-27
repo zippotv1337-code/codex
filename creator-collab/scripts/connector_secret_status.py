@@ -22,31 +22,48 @@ def load_broker():
 def main() -> int:
     catalog = json.loads(CATALOG.read_text(encoding="utf-8-sig"))
     broker = load_broker()
-    present = set()
+    metadata: dict[str, dict[str, object]] = {}
     if broker is not None:
-        present = {
-            str(item.get("name"))
+        metadata = {
+            str(item.get("name")): item
             for item in broker.metadata()
-            if item.get("present")
+            if item.get("name")
         }
-    rows = {}
+
+    rows: dict[str, dict[str, object]] = {}
     for name, spec in catalog.get("connectors", {}).items():
-        names = [str(item) for item in spec.get("secret_names", [])]
-        missing = [item for item in names if item not in present]
+        worker = str(spec.get("worker") or "")
+        names = [str(item) for item in spec.get("secret_names", []) if str(item)]
+        present = {
+            secret: bool(
+                isinstance(metadata.get(secret), dict)
+                and metadata[secret].get("present")
+                and worker in (metadata[secret].get("allowed_workers") or [])
+            )
+            for secret in names
+        }
+        missing = [secret for secret, ok in present.items() if not ok]
+        managed_auth = spec.get("status") == "MANAGED_AUTH"
+        broker_ready = bool(names) and not missing
         rows[name] = {
             "configured_status": spec.get("status"),
-            "worker": spec.get("worker"),
+            "worker": worker,
             "replicate": bool(spec.get("replicate")),
+            "accounts": spec.get("accounts", []),
+            "owner_gate": spec.get("owner_gate"),
             "required_names": names,
-            "present_names": [item for item in names if item in present],
+            "present_names": [secret for secret, ok in present.items() if ok],
             "missing_names": missing,
-            "broker_ready": bool(names) and not missing,
+            "broker_ready": broker_ready,
+            "ready": managed_auth or broker_ready,
         }
+
     payload = {
-        "schema": "zippoworkz-connector-secret-status-v1",
+        "schema": "zippoworkz-connector-secret-status-v2",
         "machine_id": json.loads(
             (ROOT / "MACHINE_ID.json").read_text(encoding="utf-8-sig")
         ).get("machine_id"),
+        "catalog_schema": catalog.get("schema"),
         "connectors": rows,
     }
     print(json.dumps(payload, ensure_ascii=False, indent=2))

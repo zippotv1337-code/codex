@@ -7,7 +7,11 @@ $runtimeConfig = Get-CreatorOpsRuntimeConfig -ProjectRoot $projectRoot -ConfigPa
 $starter = Join-Path $projectRoot 'START_CREATOR_OPS.ps1'
 $watchdog = Join-Path $PSScriptRoot 'creator_ops_watchdog.ps1'
 $scheduler = Join-Path $PSScriptRoot 'creator_ops_scheduler.ps1'
-$metaSecretSync = Join-Path $PSScriptRoot 'sync_meta_secrets_to_localai.ps1'
+$machinePath = 'C:\Zippoworkz\MACHINE_ID.json'
+$machine = if (Test-Path -LiteralPath $machinePath) { Get-Content -LiteralPath $machinePath -Raw | ConvertFrom-Json } else { $null }
+$isLocalAI = $machine -and [string]$machine.machine_id -eq 'ZIPPOWORKZ-LOCALAI'
+$connectorSecretScript = if ($isLocalAI) { Join-Path $PSScriptRoot 'import_connector_bundles.ps1' } else { Join-Path $PSScriptRoot 'sync_connector_secrets_to_localai.ps1' }
+$connectorSecretTask = if ($isLocalAI) { 'Creator Ops - Connector Secret Import' } else { 'Creator Ops - Connector Secret Replication' }
 $standalone = Join-Path $projectRoot 'START_STANDALONE_CREATOR_OPS.ps1'
 $startupDirectory = [Environment]::GetFolderPath('Startup')
 $startupFile = Join-Path $startupDirectory 'CreatorOpsStandalone.cmd'
@@ -15,7 +19,7 @@ $plans = @(
   @{ Name='Creator Ops - Autostart'; Script=$starter; Trigger='AtLogOn' },
   @{ Name='Creator Ops - Watchdog'; Script=$watchdog; Trigger="Every$($runtimeConfig.WatchdogIntervalMinutes)Minutes" },
   @{ Name='Creator Ops - Scheduler'; Script=$scheduler; Trigger="Every$($runtimeConfig.SchedulerIntervalMinutes)Minutes" },
-  @{ Name='Creator Ops - Meta Secret Replication'; Script=$metaSecretSync; Trigger='Every5Minutes' }
+  @{ Name=$connectorSecretTask; Script=$connectorSecretScript; Trigger='Every5Minutes' }
 )
 
 if (-not $Apply) {
@@ -40,7 +44,7 @@ try {
     if ($plan.Trigger -eq 'AtLogOn') {
       $trigger = New-ScheduledTaskTrigger -AtLogOn -ErrorAction Stop
     } else {
-      $minutes = if ($plan.Name -eq 'Creator Ops - Watchdog') { $runtimeConfig.WatchdogIntervalMinutes } elseif ($plan.Name -eq 'Creator Ops - Meta Secret Replication') { 5 } else { $runtimeConfig.SchedulerIntervalMinutes }
+      $minutes = if ($plan.Name -eq 'Creator Ops - Watchdog') { $runtimeConfig.WatchdogIntervalMinutes } elseif ($plan.Name -like 'Creator Ops - Connector Secret*') { 5 } else { $runtimeConfig.SchedulerIntervalMinutes }
       $trigger = New-ScheduledTaskTrigger -Once -At ([DateTime]::Now.AddMinutes(1)) `
         -RepetitionInterval (New-TimeSpan -Minutes $minutes) `
         -RepetitionDuration (New-TimeSpan -Days 3650) -ErrorAction Stop
