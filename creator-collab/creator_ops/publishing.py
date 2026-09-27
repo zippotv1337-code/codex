@@ -17,7 +17,9 @@ from typing import Protocol
 from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
+from .authority import live_publish_error
 from .database import CreatorDatabase, utc_now
+from .secrets import get_secret
 
 
 LOCAL_SCHEDULED = "LOCAL_SCHEDULED"
@@ -302,12 +304,12 @@ class MetaInstagramPublishingAdapter:
             ("leona-voss", "LEONA_VOSS"),
             ("mara-field", "MARA_FIELD"),
         ):
-            ig_user_id = os.environ.get(f"META_IG_USER_ID_{suffix}", "").strip()
-            access_token = os.environ.get(f"META_ACCESS_TOKEN_{suffix}", "").strip()
+            ig_user_id = get_secret(f"META_IG_USER_ID_{suffix}")
+            access_token = get_secret(f"META_ACCESS_TOKEN_{suffix}")
             if ig_user_id and access_token:
                 accounts[creator_slug] = (ig_user_id, access_token)
-        graph_version = os.environ.get("META_GRAPH_API_VERSION", "").strip()
-        graph_host = os.environ.get(
+        graph_version = get_secret("META_GRAPH_API_VERSION")
+        graph_host = get_secret(
             "META_GRAPH_HOST", "graph.instagram.com"
         ).strip().lower()
         configured_manifest = os.environ.get("CREATOR_OPS_META_MEDIA_MANIFEST", "").strip()
@@ -782,6 +784,12 @@ class MetaInstagramPublishingAdapter:
     def publish(
         self, publication_id: int, content_id: int, idempotency_key: str
     ) -> DispatchResult:
+        authority_error = live_publish_error()
+        if authority_error:
+            return DispatchResult(
+                status=BLOCKED_EXTERNAL_PUBLISHING,
+                error=authority_error,
+            )
         if not self.available:
             return DispatchResult(
                 status=BLOCKED_EXTERNAL_PUBLISHING,
