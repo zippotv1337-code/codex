@@ -55,3 +55,27 @@ Wer von uns beiden würde bei einer spontanen Challenge zuerst einknicken? 😏
 
 ## Next exact action
 Securely reconnect current Meta/Instagram credentials or an authorized Instagram publishing connector. Then execute the intended live flow above without regenerating assets.
+
+
+## RESOLVED LIVE — 2026-09-27
+- Fresh local Meta credentials were supplied in `.env.meta.local`; values were never printed or committed.
+- File is covered by `.gitignore` rule `.env.*` and is not tracked.
+- Read-only preflight passed:
+  - `leonavoss.ai` = MEDIA_CREATOR, quota before publish 0/100.
+  - `mara.field.ai` = BUSINESS, quota before publish 0/100.
+- Feed published exactly once from Leona with Mara passed as collaborator:
+  - Media ID: `17918424729450608`
+  - Permalink: `https://www.instagram.com/p/DdyhcL_EZzC/`
+  - `media_product_type=FEED`
+  - `is_ai_generated=true`
+- Mara collaboration-invite read/accept endpoint is not available through the current Instagram Login token/host; Mara must accept the Collab invite in Instagram for the feed post to appear as co-authored on her profile.
+- Prepared story image published to both accounts:
+  - Mara story media ID `18137474008715760`
+  - Leona story media ID `17869614849642694`
+  - Both confirmed `media_product_type=STORY` and `is_ai_generated=true`.
+- Quota after publish:
+  - Leona: 2/100 (feed + story)
+  - Mara: 1/100 (story)
+- Higgsfield calls: 0
+- Higgsfield cost: 0 EUR
+- No blind retry occurred.
