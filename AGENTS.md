@@ -4,9 +4,10 @@
 
 Für jede Arbeit in diesem Repository gilt zuerst:
 
-1. ZIPPOWORKZ_OWNER_POLICY.md vollständig lesen.
-2. Den aktuellen Projekt-/Runtime-Status lesen, soweit für die Aufgabe relevant.
-3. Bei creator-collab zusätzlich creator-collab/PROJECT_RESUME.md,
+1. ZIPPOWORKZ_START_HERE.md lesen.
+2. ZIPPOWORKZ_OWNER_POLICY.md vollständig lesen.
+3. Den aktuellen Projekt-/Runtime-Status lesen, soweit für die Aufgabe relevant.
+4. Bei creator-collab zusätzlich creator-collab/PROJECT_RESUME.md,
    creator-collab/CURRENT_HANDOFF.md und das neueste Sitzungsjournal lesen.
 
 ZIPPOWORKZ_OWNER_POLICY.md ist die einzige kanonische Owner-Policy.

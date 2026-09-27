@@ -1,6 +1,6 @@
 # ZIPPOWORKZ_OWNER_POLICY
 
-Version: 1.0
+Version: 1.1
 Stand: 27.09.2026
 Geltung: projektweit und dashboard-übergreifend
 Status: CANONICAL / OWNER-APPROVED
@@ -402,10 +402,12 @@ Ads oder kostenpflichtiger APIs.
 Auch kleine Beträge benötigen Freigabe, bis der Owner diese Policy später ändert.
 ## 35. Accounts und externe Identität
 
-Keine neuen Accounts automatisch erstellen.
-Keine privaten Accounts verwenden oder verändern.
+Neue Plattformaccounts dürfen vollständig vorbereitet werden: Name, Bio, Assets, Handle-Vorschläge, Settings, Contentplan und technische Checkliste. Der finale Create-/Consent-Schritt bleibt Owner-Gate.
+Keine privaten, nicht projektbezogenen Accounts verwenden oder verändern.
 Keine Identitäts-, OTP-, KYC- oder Passwortaktionen autonom durchführen.
-Bestehende projektbezogene Accounts dürfen innerhalb ihrer freigegebenen Betriebsregeln autonom genutzt werden.
+Bestehende projektbezogene Accounts dürfen innerhalb ihrer freigegebenen Betriebsregeln autonom genutzt und reversibel gepflegt werden, z. B. Bio, Profilbild, Links, Highlights, Contentstruktur und normale Metadaten.
+Handle-, Eigentümer-, Rollen-, Recovery- und Identitätsänderungen bleiben Owner-Gate.
+Neue Personas benötigen weiterhin das Owner-Gate aus Abschnitt 20.
 
 ## 36. Externe Aktionen und freigegebene Lanes
 
@@ -462,12 +464,74 @@ Bei echter Owner-Regeländerung:
 Keine separaten Owner-Policies pro VPS, Local AI, Codex oder Creator Ops erzeugen.
 Das Dashboard soll später anzeigen, welche Policy-Version die Komponenten geladen haben.
 
-## 42. Policy versus Runtime-Status
+## 42. Datenschutz und Retention
+
+Datenminimierung gilt projektweit.
+Kunden-/Auftrags-Arbeitskopien standardmäßig nur bis Auftragsende + 30 Tage halten und danach löschen oder anonymisieren, sofern kein aktiver Auftrag, Streitfall, Recovery-Bedarf oder gesetzlicher Grund entgegensteht.
+Temporäre Exporte, Downloads und Caches so kurz wie möglich halten.
+Originale in externen Quellsystemen nicht autonom endgültig löschen.
+Personenbezogene Daten in Logs/Handoffs soweit sinnvoll minimieren oder maskieren.
+
+## 43. Gmail / Projekt-E-Mail
+
+Autonom erlaubt:
+- projektbezogene E-Mails lesen, suchen, labeln und archivieren,
+- relevante Anhänge prüfen,
+- normale Sachfragen sowie Status-, Empfangs- und Terminbestätigungen beantworten,
+- Anfragen zu bestehenden Leistungen beantworten,
+- offensichtlichen Spam intern markieren.
+
+Owner-Gate:
+- rechtliche Erklärungen, Mahnungen, Streitbeilegung oder Haftungszusagen,
+- neue finanzielle Verpflichtungen,
+- Weitergabe sensibler Daten an neue Empfänger,
+- dauerhafte Löschung von E-Mails,
+- Account-/Recovery-/Sicherheitsänderungen.
+
+## 44. Google Drive / Dokumente / Kalender
+
+Projektbezogene Dateien dürfen autonom gelesen, gesucht, erstellt und bearbeitet werden.
+Interne Arbeitsdokumente, Reports und Handoffs dürfen autonom gepflegt werden.
+Bestehende projektbezogene Ordnerstrukturen dürfen gepflegt werden.
+
+Owner-Gate:
+- Dateien öffentlich freigeben,
+- neue externe Empfänger mit Zugriff versehen,
+- Besitz übertragen,
+- freigegebene Originale endgültig löschen,
+- sensible Daten in neue Cloud-Ziele kopieren.
+
+Private Projekttermine, Erinnerungen und interne Zeitblöcke dürfen autonom erstellt oder geändert werden.
+Neue externe Teilnehmer, verbindliche externe Terminverschiebungen/Absagen oder Verpflichtungen mit Kosten/Reise/Vertrag/Haftung benötigen Owner-Gate.
+
+## 45. Sicherheitsvorfall
+
+Bei möglichem Secret-Leak, kompromittiertem Account oder unerwarteter externer Write-Aktion:
+1. betroffene externe Write-Lane pausieren,
+2. lokale Evidence sichern,
+3. Secret niemals ausgeben,
+4. externen Zustand reconciliieren,
+5. betroffenen Adapter lokal deaktivieren, wenn sicher möglich,
+6. Owner-Gate auslösen, wenn Rotation, Recovery, Verifikation oder Sperrungsrisiko besteht.
+
+## 46. Öffentliche Privacy / Impressum
+
+Interne Betriebs- und Datenschutzregeln sind keine veröffentlichte Rechtsbelehrung.
+Privacy Policy, Datenschutzerklärung oder Impressum erst als FINAL markieren, wenn reale Betreiber-/Kontaktangaben, Hosting/Domain, Drittanbieter, Tracking/Cookies, Zahlungsanbieter und tatsächliche Datenflüsse belegt sind.
+Fehlende Angaben als OWNER_INPUT/PLACEHOLDER markieren, niemals erfinden.
+
+## 47. Laufzeit und Fortschritt
+
+Ein langer Run ist nicht allein wegen seiner Dauer falsch. Ein 24h-Punkt ist ein Kontrollpunkt, kein automatischer Abbruchgrund.
+Solange echter Fortschritt messbar ist und Ressourcen-/Safety-Gates grün sind, darf eine freigegebene Lane weiterarbeiten.
+Die aktuellere Retry-Regel aus Abschnitt 4 bleibt maßgeblich: maximal 3 kontrollierte Reparaturversuche pro Thema.
+
+## 48. Policy versus Runtime-Status
 
 Diese Datei enthält dauerhafte Regeln, keine volatile Betriebswahrheit.
 Aktuelle Versionen, laufende Jobs, Queue-Zustände, Contentstatus und Fehler
 gehören in Current State, Handoffs, Dashboard, Journals oder Runtime-Evidence.
 
-## 43. Schlussregel
+## 49. Schlussregel
 
 Ein Owner -> eine gemeinsame Policy -> ein ZippoWorkz -> mehrere spezialisierte ausführende Systeme.

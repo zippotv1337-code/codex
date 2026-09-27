@@ -5,10 +5,11 @@ Sie ist keine eigene Owner-Policy und darf der zentralen Policy nicht widersprec
 
 ## Sitzungsstart
 
-1. ../ZIPPOWORKZ_OWNER_POLICY.md lesen.
-2. PROJECT_RESUME.md lesen.
-3. CURRENT_HANDOFF.md lesen.
-4. neuestes Sitzungsjournal lesen.
+1. ../ZIPPOWORKZ_START_HERE.md lesen.
+2. ../ZIPPOWORKZ_OWNER_POLICY.md lesen.
+3. PROJECT_RESUME.md lesen.
+4. CURRENT_HANDOFF.md lesen.
+5. neuestes Sitzungsjournal lesen.
 
 Aktuelle ausdrückliche Owner-Anweisungen haben Vorrang vor historischen Plänen.
 Bereits verifizierte Arbeit nicht ohne neue Anforderung oder reproduzierbaren Defekt wiederholen.
