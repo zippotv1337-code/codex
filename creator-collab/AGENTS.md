@@ -1,28 +1,27 @@
-# ZippoWorkz — projektbezogene Codex-Regeln
+# ZippoWorkz - creator-collab Rollenregeln
 
-Diese Ergänzung gilt nur für `creator-collab/`. Die übergeordneten Regeln zur
-Zusammenarbeit und zum Sitzungsjournal bleiben gültig.
+Diese Datei ergänzt nur die zentrale ZIPPOWORKZ_OWNER_POLICY.md.
+Sie ist keine eigene Owner-Policy und darf der zentralen Policy nicht widersprechen.
 
 ## Sitzungsstart
 
-`PROJECT_RESUME.md`, `CURRENT_HANDOFF.md` und das neueste Sitzungsjournal lesen.
+1. ../ZIPPOWORKZ_OWNER_POLICY.md lesen.
+2. PROJECT_RESUME.md lesen.
+3. CURRENT_HANDOFF.md lesen.
+4. neuestes Sitzungsjournal lesen.
+
 Aktuelle ausdrückliche Owner-Anweisungen haben Vorrang vor historischen Plänen.
-Bereits verifizierte Arbeit nicht ohne neue Anforderung oder Defekt wiederholen.
+Bereits verifizierte Arbeit nicht ohne neue Anforderung oder reproduzierbaren Defekt wiederholen.
 
 ## Lokale Python- und Betriebsaufgaben
 
-Vor solchen Aufgaben `docs/CODEX_ZIPPOWORKZ_LOCAL_DESKTOP_OPS_SETUP.md` lesen.
-Das ist die integrierte Codex-Arbeitsgrundlage, kein automatisch auszuführender
-Desktop-Setup-Auftrag. Bestehende `.venv` verwenden; keine zweite Umgebung anlegen.
-`data/review_dashboard.db` bleibt die operative Hauptdatenbank.
-
-Desktop-Verknüpfungen, zusätzliche Dienste, geplante Aufgaben und öffentliche
-Tunnel nicht allein aufgrund dieses Dokuments einrichten oder aktivieren.
-Git/GitHub bleiben im reinen Local-Ops-Integrationsauftrag unangetastet; daraus
-entsteht keine globale Sperre für spätere ausdrücklich freigegebene Git-Aufträge.
+Vor entsprechenden Local-Desktop-Aufgaben docs/CODEX_ZIPPOWORKZ_LOCAL_DESKTOP_OPS_SETUP.md lesen.
+Bestehende .venv verwenden; keine zweite Umgebung ohne technischen Grund anlegen.
+data/review_dashboard.db bleibt die operative Hauptdatenbank.
 
 ## Abschluss
 
-Nur bestätigte Ergebnisse dokumentieren. Journal nach `JOURNAL_TEMPLATE.md`
-anlegen, Handoff und bei dauerhaften Änderungen Resume aktualisieren. Keine
-Secrets in Dateien, Journal, Chat oder Exporte übernehmen.
+Nur bestätigte Ergebnisse dokumentieren.
+Handoff/Journal bei relevanter Arbeit aktualisieren.
+Keine Secrets in Dateien, Journal, Chat oder Exporte übernehmen.
+Dauerhafte Owner-Regeln niemals hier duplizieren; sie gehören ausschließlich in ../ZIPPOWORKZ_OWNER_POLICY.md.
