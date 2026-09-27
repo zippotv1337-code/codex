@@ -33,6 +33,7 @@ from .collections import CollectionService
 from .control_plane import ControlPlaneService
 from .adworks import AdWorksService
 from .publishing import PublishQueueService
+from .secrets import get_secret
 from .reconcile import ManualInstagramService
 
 
@@ -733,7 +734,7 @@ def parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     args = parser().parse_args()
-    password = os.environ.get("CREATOR_OPS_PASSWORD")
+    password = get_secret("CREATOR_OPS_PASSWORD", worker="creator-ops-web") or None
     server = create_server(
         args.db,
         args.host,

@@ -58,7 +58,18 @@ if (Test-CreatorOpsHealth) {
 
 $listener = Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($listener) {
-    throw "Port $Port ist durch Prozess $($listener.OwningProcess) belegt, aber Creator Ops antwortet dort nicht."
+    # A parallel autostart/watchdog can observe the listener a few seconds
+    # before /api/health is ready. Give the known port a bounded grace window
+    # before treating it as a foreign/stuck process.
+    for ($attempt = 0; $attempt -lt 20; $attempt++) {
+        if (Test-CreatorOpsHealth) {
+            Write-Host "Creator Ops läuft bereits: $url" -ForegroundColor Green
+            if (-not $NoBrowser) { Start-Process $url }
+            exit 0
+        }
+        Start-Sleep -Milliseconds 250
+    }
+    throw "Port $Port ist durch Prozess $($listener.OwningProcess) belegt, aber Creator Ops antwortet auch nach Grace-Window nicht."
 }
 
 $python = Resolve-CreatorOpsPython -ProjectRoot $projectRoot
