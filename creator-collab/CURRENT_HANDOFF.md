@@ -1,5 +1,35 @@
 # Aktueller Handoff
 
+## AKTUELL — Next Stack vollständig in Main integriert, 28. September 2026
+
+- Die sechs Commits von `codex/20260928-next-stack` wurden gegen den nach der
+  AI-Branch-Integration aktuellen Main geprüft und als kontrollierter
+  Delta-Merge integriert. Main-Commit:
+  `ca1d729e6aec90f944b3348a9b15d20237dd4830`.
+- Enthalten sind Schema 6, offizieller fail-closed TikTok-v2-Adapter,
+  OAuth/Refresh und Secret-Broker-Anbindung, Publish-Intent/Idempotenz/
+  Reconciliation, Virality/Trend Intelligence, Topic-to-Short bis `QA_READY`,
+  plan-only Media-Routing und Analytics-Learning aus echten 24/72/168-h-
+  Ereignissen sowie die Statusdarstellung im bestehenden Dashboard.
+- Die neueren Main-Garantien blieben erhalten: kanonische Owner Policy v1.2,
+  wertfreier Secret-Scanner und Pre-Push-Guard, AI-Branch-Archivnachweis sowie
+  fail-closed Web-/Meta-Testisolation. Keine zweite DB, kein zweites Dashboard
+  und keine zweite Statuswahrheit wurden eingeführt.
+- Konflikte wurden gezielt in `web.py`, Current State, Handoff/Resume und den
+  Tests aufgelöst. `TOKEN_PATH` wird als Pfadkonstante nicht mehr fälschlich
+  als Secret gemeldet; echte Secret-Muster bleiben fail-closed.
+- Verifikation auf dem finalen Main-Baum: 182 Python-Tests und 6 Dashboard-
+  JavaScript-Tests grün; Compile/Syntax grün; Schema 6, SQLite Integrität
+  `ok`, Foreign Keys 0; Secret-Scan 368 getrackte Dateien ohne Fund.
+- Keine externe Plattformaktion und keine Kosten. TikTok bleibt technisch
+  fail-closed, bis App/HTTPS-Redirect lokal konfiguriert und genau ein echter
+  Owner-OAuth-Consent durchgeführt wurde. Media-Jobs bleiben plan-only.
+- Source-Tip `91c00d4fe5cb65e3306abef88bbd8257c868fcc9` ist als
+  `archive/20260928-next-stack-final` gesichert. Der aktive Remote-Branch
+  `codex/20260928-next-stack` wurde danach gelöscht und als abwesend geprüft.
+- Detailnachweis: `docs/NEXT_STACK_INTEGRATION_REPORT_2026-09-28.md` und
+  `sessions/2026-09-28-2001-codex-next-stack-integration.md`.
+
 ## AKTUELL — AI-Branch-Deltas integriert und Altbranch archiviert, 28. September 2026
 
 - `codex/ai-ops-20260913` wurde bewusst nicht pauschal gemergt. Alle 106
@@ -25,14 +55,12 @@
 - Detailnachweis: `docs/AI_BRANCH_DELTA_REPORT_2026-09-28.md` und
   `sessions/2026-09-28-1926-codex-ai-branch-retirement.md`.
 
-## AKTUELL — TikTok/Short-Factory Next Stack auf Review-Branch, 28. September 2026
+## HISTORISCHER REVIEW-NACHWEIS — TikTok/Short-Factory Next Stack, 28. September 2026
 
-- Kritischer Arbeitsbranch: `codex/20260928-next-stack`; **nicht nach main
-  mergen**, bevor der Owner Auth/Schema/Publishing-Core geprüft und freigegeben
-  hat. Der vorherige lokale Stand wurde zuerst als `cd434c5` gesichert und der
-  neuere `origin/main` anschließend ohne Reset oder Verlust integriert. Der
-  Branch ist auf `origin/codex/20260928-next-stack` gepusht; `main` blieb
-  unverändert.
+- Dieser Abschnitt beschreibt den inzwischen abgeschlossenen Review-Stand vor
+  der Integration. Der Owner hat den kritischen Main-Merge danach ausdrücklich
+  beauftragt; der validierte Funktionsstand ist heute in Main enthalten und der
+  Quellbranch nur noch über den Archiv-Tag erhalten.
 - TikTok ist als offizieller, fail-closed v2-Adapter umgesetzt: OAuth State /
   Code Exchange / Refresh, node-lokaler Secret Broker, Creator-Info-Preflight,
   Account-Match, Draft/Direct-Post-Init, FILE_UPLOAD/PULL_FROM_URL,
@@ -60,10 +88,9 @@
   Verstöße. Backup vor Migration:
   `backups/creator-ops-backup-pre-next-stack-schema6-20260928.db`; validierter
   Abschlussstand: `backups/creator-ops-backup-post-next-stack-schema6.db`.
-- Ein gebündeltes Owner-Gate: TikTok-App/Redirect sicher im Secret Broker
+- Verbleibendes operatives Gate: TikTok-App/Redirect sicher im Secret Broker
   konfigurieren und danach im vorbereiteten OAuth-Dialog den richtigen
-  Projektaccount/Scopes bestätigen. Separat nötig: Review/Merge-Freigabe für
-  die kritischen Auth-/Schema-/Publishing-Core-Änderungen.
+  Projektaccount/Scopes bestätigen. Das frühere Main-Merge-Gate ist erledigt.
 - Journal: `sessions/2026-09-28-1826-codex-next-stack.md`.
 
 ## AKTUELL — Fiverr Owner-Save erfolgt, Public-Readback offen, 26. September 2026

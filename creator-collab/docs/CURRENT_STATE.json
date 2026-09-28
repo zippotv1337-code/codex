@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T19:26:00+02:00",
+  "generated_at": "2026-09-28T20:01:36+02:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -23,7 +23,11 @@
     "main_merge_commit": "b862f16c671e952e48c05cd7c83de65c0095caeb",
     "archive_tag": "archive/ai-ops-20260913-final",
     "archive_tag_target": "5b3298b45aa2fb7c27bece08cfd7f7de42340cf1",
-    "old_ai_branch_active": false
+    "old_ai_branch_active": false,
+    "next_stack_main_commit": "ca1d729e6aec90f944b3348a9b15d20237dd4830",
+    "next_stack_archive_tag": "archive/20260928-next-stack-final",
+    "next_stack_archive_target": "91c00d4fe5cb65e3306abef88bbd8257c868fcc9",
+    "next_stack_branch_active": false
   },
   "personas": [
     {
@@ -250,15 +254,15 @@
   },
   "security": {
     "tracked_project_secret_scan": "PASSED",
-    "tracked_files_scanned": 358,
+    "tracked_files_scanned": 368,
     "finding_output": "VALUE_FREE",
     "pre_push_hook": "AVAILABLE_OPT_IN"
   },
   "tests": {
     "status": "passed",
-    "passed": 169,
+    "passed": 182,
     "failed": 0,
-    "dashboard_javascript_passed": 5,
+    "dashboard_javascript_passed": 6,
     "compilecheck": "passed",
     "sqlite_integrity_check": "ok",
     "sqlite_foreign_key_check_rows": 0

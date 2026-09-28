@@ -1,5 +1,20 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Next Stack auf Main konsolidiert — 28. September 2026
+
+Schema 6, TikTok OAuth/Direct-Post/Draft/Status mit fail-closed Idempotenz,
+Virality/Trend Intelligence, Topic-to-Short bis `QA_READY`, plan-only
+Higgsfield/OpenAI-Media-Routing, Analytics-Learning und die zugehörige
+Dashboardanzeige sind kontrolliert in Main integriert. Die vorherige
+AI-Branch-Integration einschließlich Secret-Scanner und fail-closed
+Publishing-/Testisolation blieb erhalten. Validierter Integrationscommit ist
+`ca1d729e6aec90f944b3348a9b15d20237dd4830`; 182 Python- und 6 Dashboard-
+JavaScript-Tests sind grün, SQLite Schema 6 ist integer und ohne FK-Verstöße.
+Der exakte Quelltip ist als `archive/20260928-next-stack-final` gesichert und
+der aktive Next-Stack-Branch ist gelöscht. Es gab keine externe
+Plattformaktion und keine Kosten. Nächster Entwicklungsauftrag ist ausdrücklich
+WORK 001–005 als P0-Delta gegen diesen konsolidierten Main.
+
 ## Alter AI-Ops-Branch kontrolliert stillgelegt — 28. September 2026
 
 Der historische Branch `codex/ai-ops-20260913` wurde nicht direkt gemergt.
@@ -17,8 +32,7 @@ auf `codex/20260928-next-stack` geschützt.
 
 ## TikTok + Virality/Short-Factory Baseline — 28. September 2026
 
-Auf dem kritischen Review-Branch `codex/20260928-next-stack` erweitert Schema 6
-die bestehende Creator-Ops-Datenbank additiv um offizielle TikTok-OAuth-/
+Schema 6 erweitert die bestehende Creator-Ops-Datenbank additiv um offizielle TikTok-OAuth-/
 Publish-Intents, Trend-Briefs/Patterns, Short-Projekte/Pipeline-Evidence,
 plan-only Media-Jobs und Pattern-Learning aus realen 24/72/168-h-Analytics.
 TikTok arbeitet fail-closed und secret-free über den node-lokalen DPAPI Broker;
@@ -26,9 +40,9 @@ unklare Writes werden reconciliert statt wiederholt. Der erste rein lokale
 Leona-Beispiellauf ist `QA_READY`, während Higgsfield/OpenAI-Ausführung wegen
 ungeklärter Zusatzkosten bewusst `NOT_STARTED` bleibt. Das vorhandene Dashboard
 zeigt TikTok-Readiness und Short-Factory-Status, ohne zweite App oder zweite
-operative Wahrheit. 178 Python- und 6 Dashboardtests sind grün; SQLite-
-Integrität ist bestätigt und es gibt keine Foreign-Key-Verstöße. Main-Merge
-bleibt wegen Auth, Schema und Publishing-Core ein Owner-Gate. Nachweis:
+operative Wahrheit. Der damalige Review-Stand mit 178 Python- und 6
+Dashboardtests wurde im finalen Main-Lauf auf 182 und 6 erweitert; SQLite-
+Integrität und Foreign Keys sind bestätigt. Der Main-Merge ist abgeschlossen. Nachweis:
 `sessions/2026-09-28-1826-codex-next-stack.md`.
 
 ## Fiverr Owner-Save / Verifikationsstand — 26. September 2026

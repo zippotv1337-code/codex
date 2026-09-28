@@ -65,3 +65,14 @@ integration run.
 - Media jobs remain plan-only and blocked before any uncertain or additional
   cost.
 - No TikTok, Meta, Fiverr, Higgsfield or OpenAI external action was executed.
+
+## Main integration and retirement
+
+- Main integration commit: `ca1d729e6aec90f944b3348a9b15d20237dd4830`
+- Remote Main readback matched that commit before source-branch retirement.
+- All source commits are ancestors of the integrated Main commit.
+- Archive tag: `archive/20260928-next-stack-final`
+- Archive tag target: `91c00d4fe5cb65e3306abef88bbd8257c868fcc9`
+- Remote source branch `codex/20260928-next-stack`: deleted and verified absent.
+- No force push, history rewrite, external platform action, paid call or secret
+  write was performed.
