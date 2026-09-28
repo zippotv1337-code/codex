@@ -15,6 +15,14 @@
   keine Anforderungen erfinden. Die unvollständige Legacy-Karte
   `Werkstattabend` später reparieren oder archivieren.
 - Echte 24/72/168-h-Analytics erfassen und Ranking validieren.
+- **P1 VIRALITY / TREND INTELLIGENCE** als zentralen Creator-Ops-Baustein umsetzen:
+  aktuelle Nischen-/Plattformtrends finden, Hook/Visual/Caption/Struktur analysieren,
+  begründen warum ein Muster funktioniert, daraus eigenständige Originalkonzepte/Skripte
+  für Leona, Mara, ZippoWorkz und spätere Creator bauen und die Ergebnisse nach dem
+  Publishing wieder mit Insights zurück in die Planung speisen. Keine bloßen Kopien;
+  Muster/Mechanik extrahieren und neu umsetzen. Web-/Trend-Recherche darf über einen
+  webfähigen Agenten/ChatGPT erfolgen; Local AI/Qwen übernimmt Routing, Auswertung,
+  Speicherung und Folgeplanung. Keine neue externe Ausgabe/Kosten außerhalb der Owner-Policy.
 - Engagement-Vorschläge später um manuelles Dismiss/Review ergänzen; die
   read-only Dashboard-Ansicht `/engagement` ist fertig.
 - Instagram-API nur als offizieller, weiterhin owner-gegateter Adapter.
