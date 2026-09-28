@@ -9,7 +9,11 @@ from unittest import TestCase
 from urllib.request import urlopen
 
 from creator_ops.cli import build_pipeline
-from creator_ops.external_readiness import ExternalReadinessService, META_ENV_VARS
+from creator_ops.external_readiness import (
+    ExternalReadinessService,
+    META_ENV_VARS,
+    TIKTOK_ENV_VARS,
+)
 from creator_ops.web import create_server
 
 
@@ -47,8 +51,10 @@ live_external_actions = false
         (self.root / "output" / "CREATOR_OPS_LIVE_HANDOFF_NO_BACKUP_1.zip").write_bytes(
             b"PK"
         )
-        self._env_backup = {name: os.environ.get(name) for name in META_ENV_VARS}
-        for name in META_ENV_VARS:
+        self._env_backup = {
+            name: os.environ.get(name) for name in (*META_ENV_VARS, *TIKTOK_ENV_VARS)
+        }
+        for name in (*META_ENV_VARS, *TIKTOK_ENV_VARS):
             os.environ.pop(name, None)
 
     def tearDown(self) -> None:
@@ -72,6 +78,32 @@ live_external_actions = false
             {"name", "set", "valid_hint"},
         )
         self.assertNotIn("secret-token", json.dumps(snapshot))
+
+    def test_tiktok_readiness_requires_config_then_owner_oauth_without_leaking_values(self) -> None:
+        os.environ.update(
+            {
+                "TIKTOK_CLIENT_KEY": "client-key",
+                "TIKTOK_CLIENT_SECRET": "do-not-render",
+                "TIKTOK_REDIRECT_URI": "https://ops.example.test/api/tiktok/oauth/callback",
+            }
+        )
+        awaiting = ExternalReadinessService(self.root, self.config).snapshot()["tiktok"]
+        self.assertEqual(awaiting["status"], "READY_FOR_OWNER_OAUTH")
+        self.assertFalse(awaiting["direct_post_ready"])
+
+        os.environ.update(
+            {
+                "TIKTOK_ACCESS_TOKEN": "access-do-not-render",
+                "TIKTOK_REFRESH_TOKEN": "refresh-do-not-render",
+                "TIKTOK_OPEN_ID": "open-id-do-not-render",
+                "TIKTOK_SCOPES": "user.info.basic, video.upload, video.publish",
+            }
+        )
+        connected = ExternalReadinessService(self.root, self.config).snapshot()["tiktok"]
+        serialized = json.dumps(connected)
+        self.assertEqual(connected["status"], "CONNECTED")
+        self.assertTrue(connected["direct_post_ready"])
+        self.assertNotIn("do-not-render", serialized)
 
     def test_ready_meta_requires_valid_config_env_and_manifest(self) -> None:
         manifest = self.root / "public_manifest.json"

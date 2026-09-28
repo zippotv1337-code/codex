@@ -30,6 +30,12 @@ from .offline import OfflineSnapshotService
 from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .style_reference import StyleReferenceService
+from .short_factory import ShortFactoryService
+from .tiktok import (
+    TikTokOAuthService,
+    TikTokPublishingAdapter,
+    TikTokPublishService,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -201,6 +207,74 @@ def parser() -> argparse.ArgumentParser:
         "fiverr-sync-snapshot", help="Import a secret-free authenticated seller snapshot"
     )
     fiverr_snapshot.add_argument("--file", type=Path, required=True)
+    tiktok_oauth = subcommands.add_parser(
+        "tiktok-oauth-begin",
+        help="Create a state-protected TikTok OAuth authorization URL",
+    )
+    tiktok_oauth.add_argument(
+        "--scope",
+        action="append",
+        choices=("user.info.basic", "video.list", "video.upload", "video.publish"),
+        required=True,
+    )
+    subcommands.add_parser(
+        "tiktok-oauth-refresh",
+        help="Rotate TikTok tokens through the node-local Secret Broker",
+    )
+    subcommands.add_parser(
+        "tiktok-creator-info",
+        help="Read TikTok creator constraints before any Direct Post",
+    )
+    tiktok_reconcile = subcommands.add_parser(
+        "tiktok-reconcile",
+        help="Fetch the status of an existing TikTok publish intent",
+    )
+    tiktok_reconcile.add_argument("--intent-id", required=True, type=int)
+    tiktok_init = subcommands.add_parser(
+        "tiktok-video-init",
+        help="Initialize one idempotent TikTok draft or consented Direct Post",
+    )
+    tiktok_init.add_argument("--idempotency-key", required=True)
+    tiktok_init.add_argument("--account", required=True)
+    tiktok_init.add_argument(
+        "--mode", required=True, choices=("DIRECT_POST", "MEDIA_UPLOAD")
+    )
+    source = tiktok_init.add_mutually_exclusive_group(required=True)
+    source.add_argument("--video-url")
+    source.add_argument("--file", type=Path)
+    tiktok_init.add_argument("--title", default="")
+    tiktok_init.add_argument("--privacy", default="SELF_ONLY")
+    tiktok_init.add_argument("--duration", type=int, default=0)
+    tiktok_init.add_argument("--disable-comment", action="store_true")
+    tiktok_init.add_argument("--disable-duet", action="store_true")
+    tiktok_init.add_argument("--disable-stitch", action="store_true")
+    tiktok_init.add_argument("--aigc", action="store_true")
+    tiktok_init.add_argument("--confirm-owner-consent", action="store_true")
+    tiktok_init.add_argument("--content-id", type=int)
+    trend_ingest = subcommands.add_parser(
+        "trend-ingest", help="Ingest a source/evidence-separated trend brief JSON"
+    )
+    trend_ingest.add_argument("--file", type=Path, required=True)
+    short_build = subcommands.add_parser(
+        "short-build", help="Build one original short project through QA_READY"
+    )
+    short_build.add_argument("--topic", required=True)
+    short_build.add_argument("--audience", required=True)
+    short_build.add_argument("--persona", required=True)
+    short_build.add_argument("--pattern-id", action="append", type=int, required=True)
+    short_build.add_argument("--format", default="vertical-short")
+    short_link = subcommands.add_parser(
+        "short-link-publication", help="Link a short project to a real publication"
+    )
+    short_link.add_argument("--project-id", required=True, type=int)
+    short_link.add_argument("--publication-id", required=True, type=int)
+    short_learning = subcommands.add_parser(
+        "short-learning", help="Apply real 24/72/168h analytics to linked patterns"
+    )
+    short_learning.add_argument("--project-id", type=int)
+    subcommands.add_parser(
+        "short-status", help="Show Virality and Topic-to-Short pipeline status"
+    )
     return result
 
 
@@ -429,6 +503,116 @@ def main() -> int:
                     session_status=payload.get("session_status", "AUTHENTICATED_SELLER"),
                     next_action=payload.get("next_action", "Verify public Gig URL"),
                 ),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "tiktok-oauth-begin":
+        print(
+            json.dumps(
+                TikTokOAuthService(pipeline.db, ROOT).begin(tuple(args.scope)),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "tiktok-oauth-refresh":
+        print(
+            json.dumps(
+                TikTokOAuthService(pipeline.db, ROOT).refresh(),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "tiktok-creator-info":
+        creator = TikTokPublishingAdapter(ROOT).creator_info()
+        print(json.dumps(asdict(creator), ensure_ascii=False, indent=2))
+    elif args.command == "tiktok-reconcile":
+        service = TikTokPublishService(pipeline.db, TikTokPublishingAdapter(ROOT))
+        print(
+            json.dumps(
+                service.reconcile(args.intent_id), ensure_ascii=False, indent=2
+            )
+        )
+    elif args.command == "tiktok-video-init":
+        adapter = TikTokPublishingAdapter(ROOT)
+        file_path = Path(args.file) if args.file else None
+        source_info = (
+            adapter.pull_source(args.video_url)
+            if args.video_url
+            else adapter.file_upload_source(file_path.stat().st_size)
+        )
+        post_info = None
+        if args.mode == "DIRECT_POST":
+            post_info = {
+                "title": args.title,
+                "privacy_level": args.privacy,
+                "disable_comment": args.disable_comment,
+                "disable_duet": args.disable_duet,
+                "disable_stitch": args.disable_stitch,
+                "duration_seconds": args.duration,
+                "is_aigc": args.aigc,
+                "explicit_user_consent": args.confirm_owner_consent,
+            }
+        print(
+            json.dumps(
+                TikTokPublishService(pipeline.db, adapter).initialize_video(
+                    idempotency_key=args.idempotency_key,
+                    account_key=args.account,
+                    mode=args.mode,
+                    source_info=source_info,
+                    post_info=post_info,
+                    content_id=args.content_id,
+                    file_path=file_path,
+                ),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "trend-ingest":
+        payload = json.loads(args.file.read_text(encoding="utf-8"))
+        print(
+            json.dumps(
+                ShortFactoryService(pipeline.db).ingest_trend(**payload),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "short-build":
+        print(
+            json.dumps(
+                ShortFactoryService(pipeline.db).build_qa_ready(
+                    topic=args.topic,
+                    audience=args.audience,
+                    persona_slug=args.persona,
+                    pattern_ids=args.pattern_id,
+                    format=args.format,
+                ),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "short-link-publication":
+        print(
+            json.dumps(
+                ShortFactoryService(pipeline.db).link_publication(
+                    args.project_id, args.publication_id
+                ),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "short-learning":
+        print(
+            json.dumps(
+                ShortFactoryService(pipeline.db).refresh_learning(args.project_id),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "short-status":
+        print(
+            json.dumps(
+                ShortFactoryService(pipeline.db).dashboard(),
                 ensure_ascii=False,
                 indent=2,
             )

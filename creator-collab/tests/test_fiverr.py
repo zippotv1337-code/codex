@@ -67,6 +67,33 @@ class FiverrAutomationTests(unittest.TestCase):
         self.assertTrue(second["reused"])
         self.assertEqual(self.database.scalar("SELECT COUNT(*) FROM fiverr_operations"), 1)
 
+    def test_owner_save_is_durable_but_not_mislabeled_as_public_readback(self) -> None:
+        self.service.record_browser_snapshot(username="zippoworkz", gigs=(self.gig(),))
+        payload = self.service.record_owner_save_pending_readback(
+            username="zippoworkz",
+            gig_key="ai-workflow-automation",
+            fingerprint="packages-149-349-699-v1",
+            expected_public_state={"basic_usd": 149, "standard_usd": 349, "premium_usd": 699},
+            confirmed_at="2026-09-26_OWNER_SAVE_CONFIRMED",
+        )
+        repeated = self.service.record_owner_save_pending_readback(
+            username="zippoworkz",
+            gig_key="ai-workflow-automation",
+            fingerprint="packages-149-349-699-v1",
+            expected_public_state={"basic_usd": 149, "standard_usd": 349, "premium_usd": 699},
+            confirmed_at="2026-09-26_OWNER_SAVE_CONFIRMED",
+        )
+        self.assertEqual(payload["last_write_test"], "2026-09-26_OWNER_SAVE_CONFIRMED")
+        self.assertEqual(
+            payload["recent_operations"][0]["status"],
+            "OWNER_CONFIRMED_PENDING_PUBLIC_READBACK",
+        )
+        self.assertEqual(
+            payload["recent_operations"][0]["detail"]["verification"],
+            "PENDING_PUBLIC_READBACK",
+        )
+        self.assertEqual(len(repeated["recent_operations"]), 1)
+
     def test_dashboard_assets_expose_status_and_human_gate(self) -> None:
         root = Path(__file__).resolve().parents[1]
         page = (root / "dashboard" / "fiverr.html").read_text(encoding="utf-8")

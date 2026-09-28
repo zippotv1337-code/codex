@@ -25,6 +25,47 @@
 - Detailnachweis: `docs/AI_BRANCH_DELTA_REPORT_2026-09-28.md` und
   `sessions/2026-09-28-1926-codex-ai-branch-retirement.md`.
 
+## AKTUELL — TikTok/Short-Factory Next Stack auf Review-Branch, 28. September 2026
+
+- Kritischer Arbeitsbranch: `codex/20260928-next-stack`; **nicht nach main
+  mergen**, bevor der Owner Auth/Schema/Publishing-Core geprüft und freigegeben
+  hat. Der vorherige lokale Stand wurde zuerst als `cd434c5` gesichert und der
+  neuere `origin/main` anschließend ohne Reset oder Verlust integriert. Der
+  Branch ist auf `origin/codex/20260928-next-stack` gepusht; `main` blieb
+  unverändert.
+- TikTok ist als offizieller, fail-closed v2-Adapter umgesetzt: OAuth State /
+  Code Exchange / Refresh, node-lokaler Secret Broker, Creator-Info-Preflight,
+  Account-Match, Draft/Direct-Post-Init, FILE_UPLOAD/PULL_FROM_URL,
+  AIGC/Privacy/Comment/Duet/Stitch/Duration-Constraints sowie persistente
+  Idempotenz/Reconciliation. Kein Token wird in DB, Git oder Ausgabe geschrieben.
+- Aktuelle reale TikTok-Readiness bleibt `BLOCKED`: Client-Konfiguration,
+  registrierter HTTPS-Redirect und Tokens sind auf diesem Node nicht vorhanden.
+  Es gab keinen TikTok-Post und keinen erfundenen Live-Proof.
+- Creator Ops nutzt additiv Schema 6. Virality/Trend Intelligence und die
+  Topic-to-Short Factory speichern Quelle/Evidence getrennt von Analyse,
+  extrahieren Patterns und führen Projekte nachvollziehbar bis `QA_READY`.
+- Operativer lokaler Beleg: 1 Trend-Brief, 1 Pattern, 1 eigenständiges Leona-
+  Short-Projekt `Berlin zwischen Morgenroutine und Feierabend`, 1 Media-Job.
+  Media bleibt `NOT_STARTED` / `AWAITING_COST_CONFIRMATION`; Kosten 0 €, keine
+  externe Aktion. Das bestehende Dashboard zeigt die neue Readiness/Pipeline.
+- Learning ist an echte `manual_analytics_events` für 24/72/168 h angebunden.
+  Aktuell existieren 0 reale Analytics-Events und daher korrekt 0 Learning-
+  Zeilen; fehlende Werte bleiben `NULL/UNKNOWN`, Views allein sind kein Erfolg.
+- Der Fiverr-Owner-Save vom 26.09. ist jetzt in der operativen DB dauerhaft als
+  `OWNER_CONFIRMED_PENDING_PUBLIC_READBACK` gespeichert. Der alte öffentlich
+  verifizierte Paketstand bleibt unverändert, bis ein normaler Readback den
+  neuen Sollstand 149/349/699 USD bestätigt.
+- Verifikation: 178 Python-Tests und 6 Node-Dashboardtests grün, Python-
+  Compilecheck und JS-Syntax grün, SQLite `integrity_check=ok`, 0 Foreign-Key-
+  Verstöße. Backup vor Migration:
+  `backups/creator-ops-backup-pre-next-stack-schema6-20260928.db`; validierter
+  Abschlussstand: `backups/creator-ops-backup-post-next-stack-schema6.db`.
+- Ein gebündeltes Owner-Gate: TikTok-App/Redirect sicher im Secret Broker
+  konfigurieren und danach im vorbereiteten OAuth-Dialog den richtigen
+  Projektaccount/Scopes bestätigen. Separat nötig: Review/Merge-Freigabe für
+  die kritischen Auth-/Schema-/Publishing-Core-Änderungen.
+- Journal: `sessions/2026-09-28-1826-codex-next-stack.md`.
+
 ## AKTUELL — Fiverr Owner-Save erfolgt, Public-Readback offen, 26. September 2026
 
 - Der bestehende Fiverr-Gig bleibt der einzige aktive Gig; kein Duplikat wurde erzeugt.

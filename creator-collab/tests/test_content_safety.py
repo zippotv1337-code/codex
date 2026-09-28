@@ -8,7 +8,7 @@ from pathlib import Path
 
 from creator_ops.cli import build_pipeline
 from creator_ops.curation import qa_assets, select_diverse_top_picks
-from creator_ops.database import CreatorDatabase, SCHEMA, utc_now
+from creator_ops.database import CreatorDatabase, SCHEMA, SCHEMA_VERSION, utc_now
 from creator_ops.models import (
     ComplianceInput,
     ContentStage,
@@ -337,7 +337,7 @@ class AdditiveMigrationTests(unittest.TestCase):
                 (content_id,),
             )
 
-            self.assertEqual(database.schema_version(), 5)
+            self.assertEqual(database.schema_version(), SCHEMA_VERSION)
             self.assertEqual(tuple(content), ("ADULT_18", "ADULT_ONLY"))
             self.assertEqual(tuple(asset), ("ADULT_18", "ADULT_ONLY", "FRONTAL"))
 

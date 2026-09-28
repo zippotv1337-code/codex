@@ -11,6 +11,7 @@ from urllib.request import Request, urlopen
 
 from creator_ops.adworks import AdWorksService
 from creator_ops.cli import build_pipeline
+from creator_ops.database import SCHEMA_VERSION
 from creator_ops.exporting import ExportBackupService
 from creator_ops.review import ReviewDashboardService
 from creator_ops.web import create_server
@@ -32,7 +33,7 @@ class AdWorksTests(unittest.TestCase):
         ReviewDashboardService(self.pipeline).ensure_date(date(2026, 9, 5))
         before = self.pipeline.db.scalar("SELECT COUNT(*) FROM content_items")
         self.pipeline.initialize()
-        self.assertEqual(self.pipeline.db.schema_version(), 5)
+        self.assertEqual(self.pipeline.db.schema_version(), SCHEMA_VERSION)
         self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM content_items"), before)
         packs = self.service.seed_catalog()
         self.assertEqual([p["tier"] for p in packs], ["BASIC", "STANDARD", "PREMIUM"])

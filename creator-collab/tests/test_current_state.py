@@ -46,11 +46,11 @@ class CurrentStateTests(unittest.TestCase):
             )
             self.assertEqual(
                 stored["owner_decisions"]["pre_approved_actions"]
-                ["fiverr_public_gig_publish"],
-                "PRE_APPROVED_AFTER_IDENTITY_GATE",
+                ["fiverr_existing_gig_optimization"],
+                "PRE_APPROVED_REVERSIBLE",
             )
             self.assertIn(
-                "personal_identity_or_verification",
+                "kyc_otp_or_personal_verification",
                 stored["owner_decisions"]["owner_only_gates"],
             )
             self.assertFalse(
@@ -61,8 +61,8 @@ class CurrentStateTests(unittest.TestCase):
                 "not_yet_proven",
             )
             self.assertEqual(stored["publications"]["official_meta_graph"], 0)
-            self.assertIn("official adapter available", stored["publishing_mode"])
-            self.assertIn("pre-approved with safety gates", stored["publishing_mode"])
+            self.assertIn("DO_LOG_VERIFY", stored["publishing_mode"])
+            self.assertIn("official configured adapters", stored["publishing_mode"])
             self.assertNotIn("adapter unavailable", stored["publishing_mode"])
             self.assertTrue(stored["remote"]["active"])
             self.assertNotIn("url", stored["remote"])

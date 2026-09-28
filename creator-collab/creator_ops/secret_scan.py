@@ -65,6 +65,17 @@ SECRET_ENV_MARKERS = (
     "API_KEY",
     "PRIVATE_KEY",
 )
+NON_SECRET_IDENTIFIER_SUFFIXES = (
+    "_ALIAS",
+    "_ENDPOINT",
+    "_FIELD",
+    "_NAME",
+    "_NAMESPACE",
+    "_PATH",
+    "_PROVIDER",
+    "_STATUS",
+    "_URL",
+)
 
 
 @dataclass(frozen=True)
@@ -80,7 +91,7 @@ def _placeholder(value: str, key: str = "") -> bool:
     normalized = value.strip().strip("'\"").lower()
     if not normalized:
         return True
-    if key.endswith(("_ALIAS", "_NAMESPACE", "_PROVIDER")):
+    if key.endswith(NON_SECRET_IDENTIFIER_SUFFIXES):
         return True
     return (
         normalized.startswith(

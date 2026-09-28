@@ -27,6 +27,7 @@ class SecretScanTests(unittest.TestCase):
                 'API_KEY="${OPENAI_API_KEY}"',
                 'CLIENT_SECRET="test-only-client-secret"',
                 "META_ACCESS_TOKEN=<set-locally>",
+                'TOKEN_PATH="/v2/oauth/token/"',
             )
         )
 

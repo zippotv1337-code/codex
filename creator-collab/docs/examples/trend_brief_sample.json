@@ -1,0 +1,25 @@
+{
+  "platform": "tiktok",
+  "source_url": "https://www.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en",
+  "observed_at": "2026-09-28T12:00:00+02:00",
+  "niche": "urban lifestyle",
+  "source_summary": "Schema-Demo: ein vertikaler Kurzclip beginnt mit einer konkreten Alltagsentscheidung und löst sie in wenigen visuellen Beats auf. Dies ist kein Ranking- oder Reichweitenbeleg.",
+  "evidence": {
+    "evidence_level": "SCHEMA_SAMPLE_NOT_LIVE_TREND_CLAIM",
+    "observed_fields": [
+      "hook structure",
+      "visual rhythm",
+      "cta shape"
+    ],
+    "copied_text": false
+  },
+  "analysis": {
+    "hook_type": "concrete_choice_open_loop",
+    "tension_arc": "choice_context_payoff",
+    "visual_rhythm": "fast_open_then_calm_resolution",
+    "cta_pattern": "audience_choice",
+    "format": "vertical_short",
+    "duration_seconds": 22,
+    "why_it_may_work": "Eine sofort verständliche Wahl erzeugt Kontext; der Abschluss beantwortet sie, ohne einen externen Erfolg zu behaupten."
+  }
+}

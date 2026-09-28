@@ -15,6 +15,22 @@ grün, SQLite und Foreign Keys sauber, 358 getrackte Projektdateien ohne
 Secret-Fund. Die neuere TikTok-/Virality-/Short-Factory-Arbeit bleibt separat
 auf `codex/20260928-next-stack` geschützt.
 
+## TikTok + Virality/Short-Factory Baseline — 28. September 2026
+
+Auf dem kritischen Review-Branch `codex/20260928-next-stack` erweitert Schema 6
+die bestehende Creator-Ops-Datenbank additiv um offizielle TikTok-OAuth-/
+Publish-Intents, Trend-Briefs/Patterns, Short-Projekte/Pipeline-Evidence,
+plan-only Media-Jobs und Pattern-Learning aus realen 24/72/168-h-Analytics.
+TikTok arbeitet fail-closed und secret-free über den node-lokalen DPAPI Broker;
+unklare Writes werden reconciliert statt wiederholt. Der erste rein lokale
+Leona-Beispiellauf ist `QA_READY`, während Higgsfield/OpenAI-Ausführung wegen
+ungeklärter Zusatzkosten bewusst `NOT_STARTED` bleibt. Das vorhandene Dashboard
+zeigt TikTok-Readiness und Short-Factory-Status, ohne zweite App oder zweite
+operative Wahrheit. 178 Python- und 6 Dashboardtests sind grün; SQLite-
+Integrität ist bestätigt und es gibt keine Foreign-Key-Verstöße. Main-Merge
+bleibt wegen Auth, Schema und Publishing-Core ein Owner-Gate. Nachweis:
+`sessions/2026-09-28-1826-codex-next-stack.md`.
+
 ## Fiverr Owner-Save / Verifikationsstand — 26. September 2026
 
 Fiverr bleibt als modulare Operations-Lane integriert. Der bestehende aktive Gig wurde im echten eingeloggten Seller-Edit-Flow bearbeitet; der Owner bestätigte am 26.09.2026 den Klick auf Speichern. Der erwartete neue Vertrag ist 149/349/699 USD mit 4/7/10 Tagen und 1/2/3 Revisionen. Der letzte unabhängig öffentlich nachgelesene Stand bleibt jedoch der 21.09.2026 mit 50/150/355 USD, 30/1/1 Tagen und 0 Revisionen. Deshalb wird der neue Stand bis zum öffentlichen Readback ausdrücklich nur als OWNER_SAVED_PENDING_PUBLIC_READBACK geführt. Kein zweiter Gig wurde erzeugt und kein Fiverr-Challenge-/Anti-Bot-Gate umgangen. Der lokale tzdata-Fehler der CLI wurde projektlokal unter .venv (tzdata 2026.4) behoben.

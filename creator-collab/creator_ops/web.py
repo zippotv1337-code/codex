@@ -35,6 +35,8 @@ from .adworks import AdWorksService
 from .publishing import PublishQueueService, UnconfiguredInstagramAdapter
 from .secrets import get_secret
 from .reconcile import ManualInstagramService
+from .short_factory import ShortFactoryService
+from .tiktok import TikTokOAuthService
 
 
 STATIC_ROOT = ROOT / "dashboard"
@@ -419,6 +421,30 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 self._json(OperationsAuditService(self.service, self.publishing).snapshot())
             elif parsed.path == "/api/external-readiness":
                 self._json(ExternalReadinessService(self.asset_root).snapshot())
+            elif parsed.path == "/api/tiktok/oauth/callback":
+                query = parse_qs(parsed.query)
+                if query.get("error"):
+                    self._json(
+                        {
+                            "status": "OWNER_CONSENT_NOT_COMPLETED",
+                            "error": str(query["error"][0]),
+                        },
+                        HTTPStatus.BAD_REQUEST,
+                    )
+                else:
+                    self._json(
+                        TikTokOAuthService(
+                            self.service.pipeline.db, self.asset_root
+                        ).complete(
+                            code=query.get("code", [""])[0],
+                            state=query.get("state", [""])[0],
+                            granted_scopes=query.get("scopes", [""])[0],
+                        )
+                    )
+            elif parsed.path == "/api/short-factory":
+                self._json(
+                    ShortFactoryService(self.service.pipeline.db).dashboard()
+                )
             elif parsed.path == "/api/status":
                 self._json(
                     CurrentStateService(
