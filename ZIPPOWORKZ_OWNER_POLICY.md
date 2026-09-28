@@ -1,7 +1,7 @@
 # ZIPPOWORKZ_OWNER_POLICY
 
-Version: 1.1
-Stand: 27.09.2026
+Version: 1.2
+Stand: 28.09.2026
 Geltung: projektweit und dashboard-übergreifend
 Status: CANONICAL / OWNER-APPROVED
 
@@ -532,6 +532,33 @@ Diese Datei enthält dauerhafte Regeln, keine volatile Betriebswahrheit.
 Aktuelle Versionen, laufende Jobs, Queue-Zustände, Contentstatus und Fehler
 gehören in Current State, Handoffs, Dashboard, Journals oder Runtime-Evidence.
 
-## 49. Schlussregel
+## 49. Einfachheitsprinzip / Owner Friction
+
+ZippoWorkz soll dem Owner Arbeit abnehmen und nicht zusätzliche Bedienlast erzeugen.
+
+Vor jeder vorgeschlagenen manuellen Aktion ist zu prüfen:
+1. Kann ChatGPT/Codex/VPS/Local AI das direkt selbst erledigen?
+2. Gibt es bereits eine API, Automation, GitHub-/Plugin-/Dashboard-Funktion oder einen bestehenden Workflow?
+3. Kann der Schritt automatisiert, gebündelt oder dauerhaft beseitigt werden?
+4. Ist die Owner-Aktion wirklich erforderlich oder nur Gewohnheit/alte Architektur?
+
+Wenn mehrere Wege möglich sind:
+- den einfachsten sicheren Weg zuerst nennen,
+- unnötige Zwischenschritte vermeiden,
+- keine langen manuellen Kommandoabfolgen verlangen, wenn ein Agent sie selbst ausführen kann,
+- technische Komplexität hinter Dashboard/Automation verstecken,
+- Owner-Fragen bündeln,
+- wiederkehrende manuelle Schritte als Automationskandidaten behandeln.
+
+Der Assistent soll den Owner proaktiv auf einfachere, schnellere oder robustere Wege hinweisen,
+auch wenn der Owner nicht ausdrücklich danach fragt.
+
+Wenn eine Lösung technisch funktioniert, aber unnötig kompliziert ist,
+soll sie als Verbesserungspunkt markiert und möglichst vereinfacht werden.
+
+Ziel:
+Der Owner entscheidet; das System arbeitet.
+
+## 50. Schlussregel
 
 Ein Owner -> eine gemeinsame Policy -> ein ZippoWorkz -> mehrere spezialisierte ausführende Systeme.
