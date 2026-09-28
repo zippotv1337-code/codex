@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+repo_root="$(git rev-parse --show-toplevel)"
+project_root="$repo_root/creator-collab"
+
+if command -v py >/dev/null 2>&1; then
+  exec py -3 "$project_root/scripts/check_secret_leaks.py" --tracked --root "$project_root"
+fi
+
+exec python "$project_root/scripts/check_secret_leaks.py" --tracked --root "$project_root"

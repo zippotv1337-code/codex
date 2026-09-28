@@ -62,6 +62,10 @@ class MetaPublishingTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tempdir = tempfile.TemporaryDirectory()
         self.root = Path(self.tempdir.name)
+        self.authority_root = patch.dict(
+            os.environ, {"ZIPPOWORKZ_ROOT": str(self.root)}, clear=False
+        )
+        self.authority_root.start()
         self.pipeline = build_pipeline(self.root / "review.db")
         self.pipeline.initialize()
         self.review = ReviewDashboardService(self.pipeline)
@@ -103,6 +107,7 @@ class MetaPublishingTests(unittest.TestCase):
         self.receipts = self.root / "receipts"
 
     def tearDown(self) -> None:
+        self.authority_root.stop()
         self.tempdir.cleanup()
 
     def _write_manifest(self, *, omit_last: bool = False) -> None:
