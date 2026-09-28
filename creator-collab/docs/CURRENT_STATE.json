@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T04:28:30+00:00",
+  "generated_at": "2026-09-28T19:26:00+02:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -19,7 +19,11 @@
   "app_version": "1.6.4-beta",
   "schema_version": 5,
   "git": {
-    "state": "MANAGED_OUTSIDE_RUNTIME"
+    "state": "MAIN_SYNCED_AI_BRANCH_RETIRED_2026_09_28",
+    "main_merge_commit": "b862f16c671e952e48c05cd7c83de65c0095caeb",
+    "archive_tag": "archive/ai-ops-20260913-final",
+    "archive_tag_target": "5b3298b45aa2fb7c27bece08cfd7f7de42340cf1",
+    "old_ai_branch_active": false
   },
   "personas": [
     {
@@ -175,10 +179,20 @@
     "active": false,
     "started_at": null
   },
+  "security": {
+    "tracked_project_secret_scan": "PASSED",
+    "tracked_files_scanned": 358,
+    "finding_output": "VALUE_FREE",
+    "pre_push_hook": "AVAILABLE_OPT_IN"
+  },
   "tests": {
     "status": "passed",
-    "passed": 14,
-    "failed": 0
+    "passed": 169,
+    "failed": 0,
+    "dashboard_javascript_passed": 5,
+    "compilecheck": "passed",
+    "sqlite_integrity_check": "ok",
+    "sqlite_foreign_key_check_rows": 0
   },
   "blockers": {
     "mock_assets_remaining": 9,

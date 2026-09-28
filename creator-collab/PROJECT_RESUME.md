@@ -1,5 +1,20 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Alter AI-Ops-Branch kontrolliert stillgelegt — 28. September 2026
+
+Der historische Branch `codex/ai-ops-20260913` wurde nicht direkt gemergt.
+Sein Inhalt wurde vollständig gegen den heutigen Main-Stand und den neueren
+Next-Stack verglichen. Nur der noch fehlende, wertfreie Secret-Scan samt CLI,
+Tests und optionalem Pre-Push-Hook wurde in die aktuelle Architektur portiert.
+Veraltete Parallelzustände, Richtlinien, Dashboards, Adapter, Medien und
+Release-Archive bleiben ausschließlich historische Evidenz. Main enthält den
+validierten Merge `b862f16c671e952e48c05cd7c83de65c0095caeb`; der alte Tip ist
+unter `archive/ai-ops-20260913-final` gesichert und der aktive Remote-Branch
+ist gelöscht. Abschlussstand: 169 Python- und 5 Dashboard-JavaScript-Tests
+grün, SQLite und Foreign Keys sauber, 358 getrackte Projektdateien ohne
+Secret-Fund. Die neuere TikTok-/Virality-/Short-Factory-Arbeit bleibt separat
+auf `codex/20260928-next-stack` geschützt.
+
 ## Fiverr Owner-Save / Verifikationsstand — 26. September 2026
 
 Fiverr bleibt als modulare Operations-Lane integriert. Der bestehende aktive Gig wurde im echten eingeloggten Seller-Edit-Flow bearbeitet; der Owner bestätigte am 26.09.2026 den Klick auf Speichern. Der erwartete neue Vertrag ist 149/349/699 USD mit 4/7/10 Tagen und 1/2/3 Revisionen. Der letzte unabhängig öffentlich nachgelesene Stand bleibt jedoch der 21.09.2026 mit 50/150/355 USD, 30/1/1 Tagen und 0 Revisionen. Deshalb wird der neue Stand bis zum öffentlichen Readback ausdrücklich nur als OWNER_SAVED_PENDING_PUBLIC_READBACK geführt. Kein zweiter Gig wurde erzeugt und kein Fiverr-Challenge-/Anti-Bot-Gate umgangen. Der lokale tzdata-Fehler der CLI wurde projektlokal unter .venv (tzdata 2026.4) behoben.

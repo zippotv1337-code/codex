@@ -96,3 +96,13 @@ from the old AI branch.
 - SQLite `foreign_key_check`: `0` rows
 - Git-tracked project secret scan: `OK (357 files checked)`
 - `git diff --check`: passed
+
+## Integration and retirement result
+
+- Main merge commit: `b862f16c671e952e48c05cd7c83de65c0095caeb`
+- Remote main readback matched the merge commit before retirement.
+- Archive tag: `archive/ai-ops-20260913-final`
+- Archive tag target: `5b3298b45aa2fb7c27bece08cfd7f7de42340cf1`
+- Old remote branch `codex/ai-ops-20260913`: deleted and verified absent.
+- No force push, history rewrite, external platform action, secret write, or
+  paid action was performed.

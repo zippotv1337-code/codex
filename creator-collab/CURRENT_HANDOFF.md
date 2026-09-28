@@ -1,5 +1,30 @@
 # Aktueller Handoff
 
+## AKTUELL — AI-Branch-Deltas integriert und Altbranch archiviert, 28. September 2026
+
+- `codex/ai-ops-20260913` wurde bewusst nicht pauschal gemergt. Alle 106
+  geänderten Pfade wurden gegen den heutigen `main`, Owner Policy v1.2 und
+  `codex/20260928-next-stack` klassifiziert.
+- Einziger fachlicher Port ist ein wertfreier Secret-Scan mit CLI,
+  fokussierten Tests und optionalem Pre-Push-Hook. Er protokolliert niemals
+  vermutete Secret-Werte und scannt im Repositorymodus nur getrackte
+  Projektdateien.
+- Alte Parallelzustände, lokale Qwen-Taskkataloge, Alt-Policies, historische
+  Medien/ZIPs und veraltete TikTok-/Meta-/Dashboard-Lösungen wurden nicht
+  zurückgebaut. Neuere TikTok-, Media-, Virality- und Short-Factory-Arbeit auf
+  `codex/20260928-next-stack` blieb unverändert und separat.
+- Main-Merge: `b862f16c671e952e48c05cd7c83de65c0095caeb`.
+- Der exakte alte Tip ist dauerhaft als
+  `archive/ai-ops-20260913-final` →
+  `5b3298b45aa2fb7c27bece08cfd7f7de42340cf1` gesichert. Der aktive Remote-
+  Branch `codex/ai-ops-20260913` wurde danach gelöscht und als abwesend
+  verifiziert.
+- Abschlussprüfung: 169 Python-Tests und 5 Dashboard-JavaScript-Tests grün;
+  Compile-/Syntaxchecks grün; SQLite Integrität `ok`, Foreign Keys 0 Fehler;
+  Secret-Scan 358 getrackte Dateien ohne Fund.
+- Detailnachweis: `docs/AI_BRANCH_DELTA_REPORT_2026-09-28.md` und
+  `sessions/2026-09-28-1926-codex-ai-branch-retirement.md`.
+
 ## AKTUELL — Fiverr Owner-Save erfolgt, Public-Readback offen, 26. September 2026
 
 - Der bestehende Fiverr-Gig bleibt der einzige aktive Gig; kein Duplikat wurde erzeugt.
