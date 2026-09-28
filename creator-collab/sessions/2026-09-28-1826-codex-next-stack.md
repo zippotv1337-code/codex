@@ -56,6 +56,8 @@
   0 TikTok-Publish-Intents, 0 Pattern-Learning ohne echte Analytics.
 - Secret-Werte wurden weder angezeigt noch in versionierte Dateien geschrieben.
 - Externe Plattformaktionen: 0. Neue Kosten: 0 €.
+- Git-Checkpoints `5998aa5`, `5e6434d` und `6f01a26` wurden ohne Force-Push
+  auf `origin/codex/20260928-next-stack` gesichert; `main` wurde nicht gemergt.
 
 ## Entscheidungen
 

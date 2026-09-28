@@ -5,7 +5,9 @@
 - Kritischer Arbeitsbranch: `codex/20260928-next-stack`; **nicht nach main
   mergen**, bevor der Owner Auth/Schema/Publishing-Core geprüft und freigegeben
   hat. Der vorherige lokale Stand wurde zuerst als `cd434c5` gesichert und der
-  neuere `origin/main` anschließend ohne Reset oder Verlust integriert.
+  neuere `origin/main` anschließend ohne Reset oder Verlust integriert. Der
+  Branch ist auf `origin/codex/20260928-next-stack` gepusht; `main` blieb
+  unverändert.
 - TikTok ist als offizieller, fail-closed v2-Adapter umgesetzt: OAuth State /
   Code Exchange / Refresh, node-lokaler Secret Broker, Creator-Info-Preflight,
   Account-Match, Draft/Direct-Post-Init, FILE_UPLOAD/PULL_FROM_URL,
