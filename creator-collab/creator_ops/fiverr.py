@@ -368,6 +368,54 @@ class FiverrAutomationService:
             "reused": cursor.rowcount == 0,
         }
 
+    def record_owner_save_pending_readback(
+        self,
+        *,
+        username: str,
+        gig_key: str,
+        fingerprint: str,
+        expected_public_state: dict[str, Any],
+        confirmed_at: str,
+    ) -> dict[str, Any]:
+        """Persist an owner-confirmed save without claiming public verification."""
+
+        operation = self.reserve_operation(
+            username=username,
+            kind="UPDATE_GIG_OWNER_CONFIRMED",
+            fingerprint=fingerprint,
+            gig_key=gig_key,
+            detail={
+                "owner_confirmed_at": confirmed_at,
+                "expected_public_state": expected_public_state,
+                "verification": "PENDING_PUBLIC_READBACK",
+            },
+        )
+        account = self.status(username)
+        now = utc_now()
+        with self.database.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE fiverr_operations
+                SET status='OWNER_CONFIRMED_PENDING_PUBLIC_READBACK', updated_at=?
+                WHERE id=?
+                """,
+                (now, operation["operation_id"]),
+            )
+            connection.execute(
+                """
+                UPDATE fiverr_accounts
+                SET last_write_test_at=?, next_action=?, updated_at=?
+                WHERE id=?
+                """,
+                (
+                    confirmed_at,
+                    "Verify the owner-saved Gig state through a normal public readback before marking it live-verified",
+                    now,
+                    account["account_id"],
+                ),
+            )
+        return self.status(username)
+
     def status(self, username: str) -> dict[str, Any]:
         account = self.database.one(
             "SELECT * FROM fiverr_accounts WHERE account_key=?",
@@ -390,6 +438,14 @@ class FiverrAutomationService:
                 (account["id"],),
             )
         ]
+        operations = []
+        for row in self.database.all(
+            "SELECT * FROM fiverr_operations WHERE account_id=? ORDER BY id DESC LIMIT 10",
+            (account["id"],),
+        ):
+            item = dict(row)
+            item["detail"] = json.loads(item.pop("detail_json"))
+            operations.append(item)
         return {
             "schema": "zippo-fiverr-status-v1",
             "status": account["connection_status"],
@@ -406,5 +462,6 @@ class FiverrAutomationService:
             "next_action": account["next_action"],
             "active_gig_count": sum(gig["status"] == "ACTIVE" for gig in gigs),
             "gigs": gigs,
+            "recent_operations": operations,
             "human_gates": gates,
         }

@@ -458,6 +458,132 @@ CREATE TABLE IF NOT EXISTS fiverr_human_gates (
     UNIQUE (account_id, gate_type, page_url, status)
 );
 
+CREATE TABLE IF NOT EXISTS oauth_states (
+    id INTEGER PRIMARY KEY,
+    provider TEXT NOT NULL,
+    state_hash TEXT NOT NULL UNIQUE,
+    redirect_uri TEXT NOT NULL,
+    scopes_json TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    consumed_at TEXT,
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS oauth_states_provider_expiry
+ON oauth_states(provider, expires_at, consumed_at);
+
+CREATE TABLE IF NOT EXISTS tiktok_publish_intents (
+    id INTEGER PRIMARY KEY,
+    idempotency_key TEXT NOT NULL UNIQUE,
+    content_id INTEGER REFERENCES content_items(id),
+    account_key TEXT NOT NULL,
+    mode TEXT NOT NULL,
+    media_kind TEXT NOT NULL,
+    source_method TEXT NOT NULL,
+    request_fingerprint TEXT NOT NULL,
+    publish_id TEXT UNIQUE,
+    status TEXT NOT NULL,
+    attempt_count INTEGER NOT NULL DEFAULT 0,
+    external_post_ids_json TEXT NOT NULL DEFAULT '[]',
+    last_error_code TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS tiktok_publish_intents_status
+ON tiktok_publish_intents(status, updated_at);
+
+CREATE TABLE IF NOT EXISTS trend_briefs (
+    id INTEGER PRIMARY KEY,
+    brief_key TEXT NOT NULL UNIQUE,
+    platform TEXT NOT NULL,
+    source_url TEXT NOT NULL,
+    observed_at TEXT NOT NULL,
+    niche TEXT NOT NULL,
+    source_summary TEXT NOT NULL,
+    evidence_json TEXT NOT NULL,
+    analysis_json TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS trend_patterns (
+    id INTEGER PRIMARY KEY,
+    pattern_key TEXT NOT NULL UNIQUE,
+    brief_id INTEGER NOT NULL REFERENCES trend_briefs(id),
+    hook_type TEXT NOT NULL,
+    tension_arc TEXT NOT NULL,
+    visual_rhythm TEXT NOT NULL,
+    cta_pattern TEXT NOT NULL,
+    duration_seconds INTEGER,
+    format TEXT NOT NULL,
+    analysis TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS short_projects (
+    id INTEGER PRIMARY KEY,
+    project_key TEXT NOT NULL UNIQUE,
+    creator_id INTEGER REFERENCES creators(id),
+    persona_slug TEXT NOT NULL,
+    topic TEXT NOT NULL,
+    audience TEXT NOT NULL,
+    format TEXT NOT NULL,
+    status TEXT NOT NULL,
+    hook TEXT NOT NULL,
+    script TEXT NOT NULL,
+    voice_json TEXT NOT NULL DEFAULT '{}',
+    shot_plan_json TEXT NOT NULL DEFAULT '[]',
+    media_plan_json TEXT NOT NULL DEFAULT '{}',
+    captions_json TEXT NOT NULL DEFAULT '{}',
+    cta TEXT NOT NULL,
+    pattern_ids_json TEXT NOT NULL DEFAULT '[]',
+    content_id INTEGER REFERENCES content_items(id),
+    publication_id INTEGER REFERENCES publications(id),
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS short_pipeline_events (
+    id INTEGER PRIMARY KEY,
+    short_project_id INTEGER NOT NULL REFERENCES short_projects(id),
+    previous_status TEXT,
+    new_status TEXT NOT NULL,
+    evidence_json TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS short_pipeline_events_project
+ON short_pipeline_events(short_project_id, id);
+
+CREATE TABLE IF NOT EXISTS media_jobs (
+    id INTEGER PRIMARY KEY,
+    job_key TEXT NOT NULL UNIQUE,
+    short_project_id INTEGER NOT NULL REFERENCES short_projects(id),
+    provider TEXT NOT NULL,
+    fallback_provider TEXT,
+    media_kind TEXT NOT NULL,
+    status TEXT NOT NULL,
+    owner_gate TEXT,
+    request_json TEXT NOT NULL,
+    receipt_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS pattern_learning (
+    id INTEGER PRIMARY KEY,
+    pattern_id INTEGER NOT NULL REFERENCES trend_patterns(id),
+    short_project_id INTEGER NOT NULL REFERENCES short_projects(id),
+    publication_id INTEGER NOT NULL REFERENCES publications(id),
+    window_hours INTEGER NOT NULL,
+    observed_at TEXT NOT NULL,
+    metrics_json TEXT NOT NULL,
+    score REAL,
+    decision TEXT NOT NULL,
+    evidence_source TEXT NOT NULL,
+    UNIQUE (pattern_id, short_project_id, publication_id, window_hours)
+);
+
 CREATE TABLE IF NOT EXISTS cost_events (
     id INTEGER PRIMARY KEY,
     creator_id INTEGER NOT NULL REFERENCES creators(id),
@@ -542,7 +668,7 @@ CREATE TABLE IF NOT EXISTS export_jobs (
 """
 
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 COLUMN_MIGRATIONS = {
     "content_items": (
@@ -946,5 +1072,13 @@ class CreatorDatabase:
             "background_runs",
             "run_leases",
             "runtime_events",
+            "oauth_states",
+            "tiktok_publish_intents",
+            "trend_briefs",
+            "trend_patterns",
+            "short_projects",
+            "short_pipeline_events",
+            "media_jobs",
+            "pattern_learning",
         )
         return {table: int(self.scalar(f"SELECT COUNT(*) FROM {table}") or 0) for table in tables}

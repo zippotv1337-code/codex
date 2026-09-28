@@ -50,6 +50,24 @@ test('Meta status distinguishes proven controlled publishing from global automat
   );
 });
 
+test('Virality card renders secret-free QA and media-gate status', () => {
+  const {context,nodes} = dashboard();
+  context.factory = {
+    trend_briefs: 1,
+    patterns: 2,
+    by_status: {QA_READY: 1},
+    latest_project: {topic: '<b>Original Short</b>', persona_slug: 'leona-voss', status: 'QA_READY'},
+    media_jobs: [{status: 'AWAITING_COST_CONFIRMATION'}],
+    external_actions: 0,
+  };
+  vm.runInContext('renderShortFactory(factory)', context);
+  const html = nodes.get('#short-factory-status').innerHTML;
+  assert.match(html, /Shorts QA-ready/);
+  assert.match(html, /AWAITING_COST_CONFIRMATION/);
+  assert.match(html, /externe Aktionen 0/);
+  assert.doesNotMatch(html, /<b>Original Short<\/b>/);
+});
+
 for (const ready of [false, true]) {
   test(`story editor ${ready ? 'accepts current backend' : 'blocks writes until old backend restarts'}`, async () => {
     const buttons = [{disabled:false}];

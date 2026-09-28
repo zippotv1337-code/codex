@@ -17,6 +17,7 @@ from creator_ops.web import (
     DashboardAuth,
     create_server,
 )
+from creator_ops.database import SCHEMA_VERSION
 
 
 PASSWORD = "correct horse battery staple"
@@ -134,8 +135,9 @@ class DashboardAuthHttpTests(unittest.TestCase):
         self.assertEqual(len(payload["cards"]), 2)
         with opener.open(f"{self.base}/api/status", timeout=5) as response:
             status = json.load(response)
-        self.assertEqual(status["schema_version"], 5)
-        self.assertIn("human-gated", status["publishing_mode"])
+        self.assertEqual(status["schema_version"], SCHEMA_VERSION)
+        self.assertIn("DO_LOG_VERIFY", status["publishing_mode"])
+        self.assertIn("owner gates", status["publishing_mode"])
         self.assertNotIn("url", status["remote"])
 
     def test_approval_requires_valid_csrf(self) -> None:

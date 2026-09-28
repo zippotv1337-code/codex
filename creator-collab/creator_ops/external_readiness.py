@@ -19,6 +19,16 @@ META_ENV_VARS = (
     "CREATOR_OPS_META_MEDIA_MANIFEST",
 )
 
+TIKTOK_ENV_VARS = (
+    "TIKTOK_CLIENT_KEY",
+    "TIKTOK_CLIENT_SECRET",
+    "TIKTOK_REDIRECT_URI",
+    "TIKTOK_ACCESS_TOKEN",
+    "TIKTOK_REFRESH_TOKEN",
+    "TIKTOK_OPEN_ID",
+    "TIKTOK_SCOPES",
+)
+
 
 class ExternalReadinessService:
     """Secret-free readiness snapshot for external output lanes.
@@ -34,12 +44,14 @@ class ExternalReadinessService:
 
     def snapshot(self) -> dict[str, Any]:
         meta = self._meta()
+        tiktok = self._tiktok()
         fiverr = self._fiverr()
         handoff_zip = self._handoff_zip()
-        next_actions = self._next_actions(meta, fiverr, handoff_zip)
+        next_actions = self._next_actions(meta, tiktok, fiverr, handoff_zip)
         return {
             "schema": "creator-ops-external-readiness-v1",
             "meta": meta,
+            "tiktok": tiktok,
             "fiverr": fiverr,
             "handoff_zip": handoff_zip,
             "next_actions": next_actions,
@@ -172,6 +184,68 @@ class ExternalReadinessService:
             return manifest.exists() and manifest.is_file()
         return True
 
+    def _tiktok_env_state(self, name: str) -> dict[str, Any]:
+        node_root = self._node_root()
+        value = (
+            os.environ.get(name)
+            if node_root is None
+            else get_secret(name, worker="creator-ops-tiktok", root=node_root)
+        )
+        valid = bool(value)
+        if name == "TIKTOK_REDIRECT_URI" and value:
+            parsed = urllib_parse(value)
+            valid = parsed[0] == "https" and bool(parsed[1])
+        elif name == "TIKTOK_SCOPES" and value:
+            scopes = {item.strip() for item in value.split(",") if item.strip()}
+            valid = bool(scopes & {"video.upload", "video.publish"})
+        return {"name": name, "set": bool(value), "valid_hint": valid}
+
+    def _tiktok(self) -> dict[str, Any]:
+        env = [self._tiktok_env_state(name) for name in TIKTOK_ENV_VARS]
+        states = {item["name"]: item for item in env}
+        configuration_names = {
+            "TIKTOK_CLIENT_KEY",
+            "TIKTOK_CLIENT_SECRET",
+            "TIKTOK_REDIRECT_URI",
+        }
+        connection_names = {
+            "TIKTOK_ACCESS_TOKEN",
+            "TIKTOK_REFRESH_TOKEN",
+            "TIKTOK_OPEN_ID",
+            "TIKTOK_SCOPES",
+        }
+        config_ready = all(states[name]["valid_hint"] for name in configuration_names)
+        connected = config_ready and all(
+            states[name]["valid_hint"] for name in connection_names
+        )
+        node_root = self._node_root()
+        scope_value = (
+            get_secret(
+                "TIKTOK_SCOPES",
+                worker="creator-ops-tiktok",
+                root=node_root,
+            )
+            if node_root is not None
+            else os.environ.get("TIKTOK_SCOPES", "")
+        )
+        scopes = {item.strip() for item in scope_value.split(",") if item.strip()}
+        blockers: list[str] = []
+        if not config_ready:
+            blockers.append("tiktok_app_or_redirect_configuration_missing")
+        elif not connected:
+            blockers.append("tiktok_owner_oauth_consent_required")
+        return {
+            "status": (
+                "CONNECTED" if connected else "READY_FOR_OWNER_OAUTH" if config_ready else "BLOCKED"
+            ),
+            "env": env,
+            "oauth_configured": config_ready,
+            "credentials_connected": connected,
+            "direct_post_ready": connected and "video.publish" in scopes,
+            "blockers": blockers,
+            "secrets_exposed": False,
+        }
+
     def _fiverr(self) -> dict[str, Any]:
         evidence = "\n".join(
             self._read_optional(path)
@@ -211,6 +285,7 @@ class ExternalReadinessService:
     def _next_actions(
         self,
         meta: dict[str, Any],
+        tiktok: dict[str, Any],
         fiverr: dict[str, Any],
         handoff_zip: dict[str, Any],
     ) -> list[str]:
@@ -225,6 +300,14 @@ class ExternalReadinessService:
             )
         elif meta["status"] != "DEFERRED_OWNER_VERIFICATION":
             actions.append("Run one controlled Meta preflight; reconcile before retrying any publish.")
+        if tiktok["status"] == "READY_FOR_OWNER_OAUTH":
+            actions.append(
+                "Complete one TikTok OAuth consent for the configured app; ZippoWorkz resumes automatically after callback."
+            )
+        elif tiktok["status"] == "BLOCKED":
+            actions.append(
+                "Configure the TikTok app client and registered HTTPS redirect in the node-local Secret Broker."
+            )
         if fiverr["status"] == "BLOCKED":
             actions.append("Finish Fiverr seller profile / identity gate manually, then publish Gig 1.")
         if handoff_zip["status"] == "READY_LOCAL_FILE":
@@ -236,3 +319,11 @@ class ExternalReadinessService:
         if not path.exists():
             return ""
         return path.read_text(encoding="utf-8", errors="replace")
+
+
+def urllib_parse(value: str) -> tuple[str, str]:
+    """Return only scheme/netloc so readiness never echoes URL details."""
+    from urllib.parse import urlparse
+
+    parsed = urlparse(value)
+    return parsed.scheme, parsed.netloc

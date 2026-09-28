@@ -10,6 +10,8 @@ from pathlib import Path
 from .content_mix import ContentMixPlanner
 from .database import CreatorDatabase
 from .fiverr import FiverrAutomationService
+from .external_readiness import ExternalReadinessService
+from .short_factory import ShortFactoryService
 
 
 REMOTE_URL_PATTERN = re.compile(r"https://[a-z0-9-]+\.trycloudflare\.com", re.IGNORECASE)
@@ -197,6 +199,8 @@ class CurrentStateService:
         if tests_failed:
             tests["status"] = "failed"
         fiverr_status = FiverrAutomationService(self.database).status("zippoworkz")
+        external = ExternalReadinessService(self.root, config_path).snapshot()
+        short_factory = ShortFactoryService(self.database).dashboard()
 
         return {
             "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
@@ -242,9 +246,19 @@ class CurrentStateService:
             },
             "background_runs": background_counts,
             "fiverr": fiverr_status,
+            "tiktok": external["tiktok"],
+            "short_factory": {
+                "schema": short_factory["schema"],
+                "trend_briefs": short_factory["trend_briefs"],
+                "patterns": short_factory["patterns"],
+                "projects": short_factory["projects"],
+                "by_status": short_factory["by_status"],
+                "external_actions": short_factory["external_actions"],
+                "cost_eur": short_factory["cost_eur"],
+            },
             "engagement": {
                 "real_post_proposals": real_engagement_proposals,
-                "execution": "manual-owner-only",
+                "execution": "policy-controlled; no invented interactions or spam",
             },
             "finance": {
                 "cost_eur": float(self.database.scalar("SELECT COALESCE(SUM(amount), 0) FROM cost_events") or 0),
@@ -259,30 +273,33 @@ class CurrentStateService:
             "tests": tests,
             "blockers": dict(blockers),
             "owner_decisions": {
-                "source": "OWNER_DECISIONS.md",
+                "source": "ZIPPOWORKZ_OWNER_POLICY.md v1.2",
                 "pre_approved_actions": {
                     "instagram_official_live_publish": "PRE_APPROVED_WITH_SAFETY_GATES",
-                    "fiverr_public_gig_publish": "PRE_APPROVED_AFTER_IDENTITY_GATE",
+                    "instagram_normal_comments": "AUTONOMOUS_WITH_ANTI_SPAM_GUARDS",
+                    "instagram_project_dms_and_targeted_outreach": "AUTONOMOUS_WITH_ANTI_SPAM_GUARDS",
+                    "fiverr_existing_gig_optimization": "PRE_APPROVED_REVERSIBLE",
+                    "tiktok_configured_project_workflows": "AUTONOMOUS_WITH_PLATFORM_AND_SAFETY_GATES",
+                    "git_project_branches_commits_pushes": "PRE_APPROVED_NO_FORCE_PUSH",
                 },
                 "owner_only_gates": [
-                    "personal_identity_or_verification",
-                    "otp_or_verification_codes",
-                    "missing_personal_tax_or_identification_numbers",
-                    "profile_changes_messages_and_follow_actions",
+                    "new_accounts_or_new_external_identity",
+                    "kyc_otp_or_personal_verification",
+                    "new_format_offer_or_cost_class",
+                    "critical_security_auth_schema_or_publishing_core_merge_to_main",
                 ],
                 "red_gates": [
-                    "paid_services_or_spend",
-                    "adult_generation_or_publishing",
-                    "cloud_permission_changes",
-                    "repository_visibility_changes",
+                    "new_costs_paid_services_ads_or_credits",
+                    "adult_pipeline_without_separate_explicit_authorization",
                     "force_push_or_history_rewrite",
-                    "destructive_or_irreversible_actions",
+                    "destructive_irreversible_or_account_deletion_actions",
+                    "secret_values_in_git_logs_prompts_or_docs",
                 ],
             },
             "publishing_mode": (
-                "human-gated content review; Instagram/Fiverr live publish "
-                "pre-approved with safety gates; official adapter available; "
-                "live state depends on credentials, public HTTPS assets, and identity gates"
+                "DO_LOG_VERIFY; known SFW/PUBLIC_SFW lanes may run autonomously "
+                "through official configured adapters; reconcile uncertain writes; "
+                "new identity, cost and critical merge classes remain owner gates"
             ),
         }
 

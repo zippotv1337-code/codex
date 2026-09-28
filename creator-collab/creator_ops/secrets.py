@@ -60,3 +60,30 @@ def secret_present(
     root: Path | None = None,
 ) -> bool:
     return bool(get_secret(name, worker=worker, root=root))
+
+
+def set_secret(
+    name: str,
+    value: str,
+    *,
+    worker: str,
+    root: Path | None = None,
+    expires_at: str | None = None,
+) -> None:
+    """Persist a secret in the node-local DPAPI broker without returning it.
+
+    This is intentionally stricter than ``get_secret``: writes never fall back
+    to process environment variables or plaintext files. Callers receive only
+    success/failure and must not log ``value``.
+    """
+    if not name.strip() or not value:
+        raise ValueError("secret_name_and_value_required")
+    broker = _load_broker(root)
+    if broker is None or not hasattr(broker, "set_secret"):
+        raise RuntimeError("node_secret_broker_unavailable")
+    broker.set_secret(
+        name,
+        value,
+        allowed_workers=[worker],
+        expires_at=expires_at,
+    )

@@ -7,6 +7,7 @@ const attentionSummary = document.querySelector("#attention-summary");
 const plannedRoot = document.querySelector("#planned-summary");
 const storyOpsRoot = document.querySelector("#story-ops");
 const auditRoot = document.querySelector("#operations-audit");
+const shortFactoryRoot = document.querySelector("#short-factory-status");
 const toast = document.querySelector("#toast");
 const stageFilters = document.querySelectorAll("[data-stage-filter]");
 let currentCards = [];
@@ -232,6 +233,17 @@ function renderAudit(audit) {
     ${stats.map(([label, value]) => `<article class="audit-stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></article>`).join("")}`;
 }
 
+function renderShortFactory(factory) {
+  if (!shortFactoryRoot) return;
+  const latest = factory.latest_project;
+  const media = factory.media_jobs?.[0];
+  shortFactoryRoot.innerHTML = `
+    <article><strong>${escapeHtml(factory.trend_briefs ?? 0)}</strong><span>Trend-Briefs</span></article>
+    <article><strong>${escapeHtml(factory.patterns ?? 0)}</strong><span>wiederverwendbare Patterns</span></article>
+    <article><strong>${escapeHtml(factory.by_status?.QA_READY ?? 0)}</strong><span>Shorts QA-ready</span></article>
+    <article class="intelligence-current"><b>${escapeHtml(latest?.topic || "Noch kein Short-Projekt")}</b><span>${escapeHtml(latest?.persona_slug || "Trendbrief ingestieren")} · ${escapeHtml(latest?.status || "BEREIT")}</span><small>Media: ${escapeHtml(media?.status || "noch nicht geplant")} · externe Aktionen ${escapeHtml(factory.external_actions ?? 0)}</small></article>`;
+}
+
 function previewSlides(card) {
   const selected = card.assets.filter(asset => asset.top_pick && !asset.excluded)
     .sort((a, b) => a.top_pick_order - b.top_pick_order);
@@ -388,7 +400,8 @@ async function loadCards() {
         ? 'Verifizierung laut Owner erledigt · Gig zuletzt Entwurf, Live-Status offen'
         : 'Profil-/Live-Status prüfen';
       const metaStatus = metaStatusText(readiness.meta);
-      document.querySelector('#platform-status').innerHTML = `<article class="planned-item"><div><b>ZippoWorkz ${health.status === 'ok' ? 'erreichbar' : 'Status prüfen'}</b><span>Meta: ${escapeHtml(metaStatus)}</span><span>Fiverr: ${identity}</span></div><a class="text-link" href="/?area=meta">Meta-Verbindung öffnen</a><a class="text-link" href="/revenue">Fiverr / Revenue öffnen</a></article>`;
+      const tiktokStatus = readiness.tiktok?.status || 'Status unbekannt';
+      document.querySelector('#platform-status').innerHTML = `<article class="planned-item"><div><b>ZippoWorkz ${health.status === 'ok' ? 'erreichbar' : 'Status prüfen'}</b><span>Meta: ${escapeHtml(metaStatus)}</span><span>TikTok: ${escapeHtml(tiktokStatus)}</span><span>Fiverr: ${identity}</span></div><a class="text-link" href="/?area=meta">Meta-Verbindung öffnen</a><a class="text-link" href="/revenue">Fiverr / Revenue öffnen</a></article>`;
       const publishingStatus = document.querySelector('#publishing-status');
       if (publishingStatus) publishingStatus.textContent = `Meta: ${metaStatus}`;
     }).catch(() => {document.querySelector('#platform-status').textContent = 'Betriebsstatus nicht erreichbar. Unter Betrieb / Status prüfen.';});
@@ -402,6 +415,12 @@ async function loadCards() {
       .then(response => response.ok ? response.json() : { items: [] })
       .then(data => renderStoryOps(data.items))
       .catch(() => renderStoryOps([]));
+    fetch("/api/short-factory", { headers: { Accept: "application/json" } })
+      .then(response => response.ok ? response.json() : null)
+      .then(data => data ? renderShortFactory(data) : null)
+      .catch(() => {
+        if (shortFactoryRoot) shortFactoryRoot.innerHTML = '<div class="error">Short-Pipeline-Status nicht erreichbar.</div>';
+      });
   } catch (error) {
     cardsRoot.innerHTML = `<div class="error">Die Freigabepakete konnten nicht geladen werden. ${escapeHtml(error.message)}</div>`;
   } finally {
