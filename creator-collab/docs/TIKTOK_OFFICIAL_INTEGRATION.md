@@ -1,6 +1,6 @@
 # Offizielle TikTok-Integration
 
-Stand: 2026-09-28  
+Stand: 2026-09-28
 Status: technisch vorbereitet, kein Live-Proof und kein externer Post in diesem Run
 
 ## Umfang
@@ -68,4 +68,3 @@ oder KYC bleiben nur dann Owner-Gates, wenn TikTok sie tatsächlich verlangt.
 Alle Ausgaben sind secret-free. Ein echter Direct Post benötigt zusätzlich
 einen stabilen Idempotency-Key, den erwarteten Account, expliziten Consent im
 Auftrag und die von Creator Info erlaubten Optionen.
-
