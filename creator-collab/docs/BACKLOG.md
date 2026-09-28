@@ -23,6 +23,13 @@
   Muster/Mechanik extrahieren und neu umsetzen. Web-/Trend-Recherche darf über einen
   webfähigen Agenten/ChatGPT erfolgen; Local AI/Qwen übernimmt Routing, Auswertung,
   Speicherung und Folgeplanung. Keine neue externe Ausgabe/Kosten außerhalb der Owner-Policy.
+- **P1 TOPIC-TO-SHORT FACTORY** an Virality/Trend Intelligence hängen:
+  Eingang = Thema/Zielgruppe/Persona/Kunde; Pipeline = Trend-/Hook-Brief -> Script -> Voice ->
+  Shot-/B-Roll-Plan -> Video-Generierung/Editing -> Captions/Subtitles -> QA -> Review/Gate ->
+  Publish -> 24/72/168h Insights -> Learning zurück in Format/Hook/Timing. Jeder Schritt bekommt
+  Status/Evidence/Receipt statt Blackbox. Für eigene Creator und als produktisierbare Kundenleistung
+  nutzbar (z. B. monatliche Short-Pakete), ohne Umsatzversprechen aus fremdem Marketing zu übernehmen.
+  Bevor neue Tools gekauft werden: vorhandene ZippoWorkz-Worker/verbundene Dienste prüfen und Kosten-Gate beachten.
 - Engagement-Vorschläge später um manuelles Dismiss/Review ergänzen; die
   read-only Dashboard-Ansicht `/engagement` ist fertig.
 - Instagram-API nur als offizieller, weiterhin owner-gegateter Adapter.
