@@ -9,7 +9,7 @@ fiverr_identity_status = "OWNER_REPORTED_VERIFIED"
 fiverr_gig_status = "ACTIVE_PUBLIC_VERIFIED_WRITE_READY_2026_09_21"
 
 [runtime]
-host = "192.168.188.131"
+host = "127.0.0.1"
 port = 4180
 database = "data/review_dashboard.db"
 offline_output = "output/offline"

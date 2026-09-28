@@ -6,6 +6,8 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
+from .secrets import get_secret
+
 
 META_ENV_VARS = (
     "META_IG_USER_ID_LEONA_VOSS",
@@ -135,8 +137,19 @@ class ExternalReadinessService:
             return {}
         return tomllib.loads(self.config_path.read_text(encoding="utf-8"))
 
+    def _node_root(self) -> Path | None:
+        current = self.project_root.resolve()
+        for candidate in (current, *current.parents):
+            if (candidate / "_system" / "SECRET_BROKER.py").is_file():
+                return candidate
+        return None
+
     def _env_state(self, name: str) -> dict[str, Any]:
-        value = os.environ.get(name)
+        node_root = self._node_root()
+        if name == "CREATOR_OPS_META_MEDIA_MANIFEST" or node_root is None:
+            value = os.environ.get(name)
+        else:
+            value = get_secret(name, root=node_root)
         return {
             "name": name,
             "set": bool(value),
