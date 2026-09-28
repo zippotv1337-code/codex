@@ -32,7 +32,7 @@ from .stories import StoryReserveService
 from .collections import CollectionService
 from .control_plane import ControlPlaneService
 from .adworks import AdWorksService
-from .publishing import PublishQueueService
+from .publishing import PublishQueueService, UnconfiguredInstagramAdapter
 from .secrets import get_secret
 from .reconcile import ManualInstagramService
 
@@ -688,16 +688,23 @@ def create_server(
     port: int = 4180,
     asset_root: Path = ROOT,
     auth_password: str | None = None,
-    config_path: Path = ROOT / "config.toml",
+    config_path: Path | None = None,
 ) -> ThreadingHTTPServer:
     if host not in {"127.0.0.1", "localhost", "::1"} and not auth_password:
         raise ValueError("A password is required when the dashboard listens beyond localhost")
-    if live_publishing_requested(config_path) and not auth_password:
+    if config_path is not None and live_publishing_requested(config_path) and not auth_password:
         raise ValueError("CREATOR_OPS_PASSWORD is required whenever live publishing is enabled")
     pipeline = build_pipeline(database_path)
     pipeline.initialize()
     service = ReviewDashboardService(pipeline)
-    publishing = build_publish_queue(pipeline, config_path)
+    # Library callers and tests are fail-closed by default. The production
+    # entrypoint always passes its explicit config path below, so omitting a
+    # config can never inherit this checkout's live-publishing settings.
+    publishing = (
+        build_publish_queue(pipeline, config_path)
+        if config_path is not None
+        else PublishQueueService(pipeline.db, UnconfiguredInstagramAdapter())
+    )
     publishing.reconcile()
     control_plane = ControlPlaneService(
         service,
