@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-22T10:51:00+00:00",
+  "generated_at": "2026-09-28T16:26:17+00:00",
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -17,7 +17,7 @@
     "fiverr_gig_status": "ACTIVE_PUBLIC_VERIFIED_WRITE_READY_2026_09_21"
   },
   "app_version": "1.6.4-beta",
-  "schema_version": 5,
+  "schema_version": 6,
   "git": {
     "state": "MANAGED_OUTSIDE_RUNTIME"
   },
@@ -94,7 +94,7 @@
     "last_write_test": "2026-09-26_OWNER_SAVE_CONFIRMED",
     "last_human_gate": "2026-09-21T18:42:35+00:00",
     "last_error": null,
-    "next_action": "Owner confirmed Save on 2026-09-26; verify the public Gig readback for approved 149/349/699 USD, 4/7/10 delivery days and 1/2/3 revisions before marking LIVE_VERIFIED.",
+    "next_action": "Verify the owner-saved Gig state through a normal public readback before marking it live-verified",
     "active_gig_count": 1,
     "gigs": [
       {
@@ -135,11 +135,23 @@
         },
         "assets": [
           "one_public_gallery_image_observed"
-        ],
-        "pending_public_readback": {
-          "owner_confirmed_saved_on": "2026-09-26",
-          "verification": "OWNER_CONFIRMED_SAVE_PENDING_PUBLIC_READBACK",
-          "expected_packages": {
+        ]
+      }
+    ],
+    "recent_operations": [
+      {
+        "id": 1,
+        "operation_key": "de818e957bf6fea457d60aaf653dc808f156cdb4723c12b9fb79a7f664aa73aa",
+        "account_id": 1,
+        "gig_id": 1,
+        "kind": "UPDATE_GIG_OWNER_CONFIRMED",
+        "fingerprint": "gig1-packages-149-349-699-delivery-4-7-10-revisions-1-2-3-v1",
+        "status": "OWNER_CONFIRMED_PENDING_PUBLIC_READBACK",
+        "created_at": "2026-09-28T16:24:26+00:00",
+        "updated_at": "2026-09-28T16:24:26+00:00",
+        "detail": {
+          "owner_confirmed_at": "2026-09-26_OWNER_SAVE_CONFIRMED",
+          "expected_public_state": {
             "currency": "USD",
             "basic_usd": 149,
             "standard_usd": 349,
@@ -150,15 +162,74 @@
             "basic_revisions": 1,
             "standard_revisions": 2,
             "premium_revisions": 3
-          }
+          },
+          "verification": "PENDING_PUBLIC_READBACK"
         }
       }
     ],
     "human_gates": []
   },
+  "tiktok": {
+    "status": "BLOCKED",
+    "env": [
+      {
+        "name": "TIKTOK_CLIENT_KEY",
+        "set": false,
+        "valid_hint": false
+      },
+      {
+        "name": "TIKTOK_CLIENT_SECRET",
+        "set": false,
+        "valid_hint": false
+      },
+      {
+        "name": "TIKTOK_REDIRECT_URI",
+        "set": false,
+        "valid_hint": false
+      },
+      {
+        "name": "TIKTOK_ACCESS_TOKEN",
+        "set": false,
+        "valid_hint": false
+      },
+      {
+        "name": "TIKTOK_REFRESH_TOKEN",
+        "set": false,
+        "valid_hint": false
+      },
+      {
+        "name": "TIKTOK_OPEN_ID",
+        "set": false,
+        "valid_hint": false
+      },
+      {
+        "name": "TIKTOK_SCOPES",
+        "set": false,
+        "valid_hint": false
+      }
+    ],
+    "oauth_configured": false,
+    "credentials_connected": false,
+    "direct_post_ready": false,
+    "blockers": [
+      "tiktok_app_or_redirect_configuration_missing"
+    ],
+    "secrets_exposed": false
+  },
+  "short_factory": {
+    "schema": "zippoworkz-short-factory-v1",
+    "trend_briefs": 1,
+    "patterns": 1,
+    "projects": 1,
+    "by_status": {
+      "QA_READY": 1
+    },
+    "external_actions": 0,
+    "cost_eur": 0.0
+  },
   "engagement": {
     "real_post_proposals": 0,
-    "execution": "manual-owner-only"
+    "execution": "policy-controlled; no invented interactions or spam"
   },
   "finance": {
     "cost_eur": 0.0,
@@ -175,32 +246,35 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 34,
+    "passed": 178,
     "failed": 0
   },
   "blockers": {
     "mock_assets_remaining": 4
   },
   "owner_decisions": {
-    "source": "OWNER_DECISIONS.md",
+    "source": "ZIPPOWORKZ_OWNER_POLICY.md v1.2",
     "pre_approved_actions": {
       "instagram_official_live_publish": "PRE_APPROVED_WITH_SAFETY_GATES",
-      "fiverr_public_gig_publish": "PRE_APPROVED_AFTER_IDENTITY_GATE"
+      "instagram_normal_comments": "AUTONOMOUS_WITH_ANTI_SPAM_GUARDS",
+      "instagram_project_dms_and_targeted_outreach": "AUTONOMOUS_WITH_ANTI_SPAM_GUARDS",
+      "fiverr_existing_gig_optimization": "PRE_APPROVED_REVERSIBLE",
+      "tiktok_configured_project_workflows": "AUTONOMOUS_WITH_PLATFORM_AND_SAFETY_GATES",
+      "git_project_branches_commits_pushes": "PRE_APPROVED_NO_FORCE_PUSH"
     },
     "owner_only_gates": [
-      "personal_identity_or_verification",
-      "otp_or_verification_codes",
-      "missing_personal_tax_or_identification_numbers",
-      "profile_changes_messages_and_follow_actions"
+      "new_accounts_or_new_external_identity",
+      "kyc_otp_or_personal_verification",
+      "new_format_offer_or_cost_class",
+      "critical_security_auth_schema_or_publishing_core_merge_to_main"
     ],
     "red_gates": [
-      "paid_services_or_spend",
-      "adult_generation_or_publishing",
-      "cloud_permission_changes",
-      "repository_visibility_changes",
+      "new_costs_paid_services_ads_or_credits",
+      "adult_pipeline_without_separate_explicit_authorization",
       "force_push_or_history_rewrite",
-      "destructive_or_irreversible_actions"
+      "destructive_irreversible_or_account_deletion_actions",
+      "secret_values_in_git_logs_prompts_or_docs"
     ]
   },
-  "publishing_mode": "human-gated content review; Instagram/Fiverr live publish pre-approved with safety gates; official adapter available; live state depends on credentials, public HTTPS assets, and identity gates"
+  "publishing_mode": "DO_LOG_VERIFY; known SFW/PUBLIC_SFW lanes may run autonomously through official configured adapters; reconcile uncertain writes; new identity, cost and critical merge classes remain owner gates"
 }

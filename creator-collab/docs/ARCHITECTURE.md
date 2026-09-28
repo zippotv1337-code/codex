@@ -41,3 +41,27 @@ werden niemals blind veröffentlicht, sondern `NEEDS_RESCHEDULE_REVIEW`.
 Nicht-Loopback-Zugriff nutzt unverändert Passwort, Session und CSRF. Externe
 Credentials fehlen dem Kern nicht: Er bleibt im lokalen Dry Run vollständig
 testbar.
+
+## Schema 6 — TikTok, Virality und Topic-to-Short
+
+Schema 6 ist additiv und bleibt in `data/review_dashboard.db`. Es ergänzt:
+
+- `oauth_states` für kurzlebige, gehashte OAuth-State-Nachweise;
+- `tiktok_publish_intents` für Idempotenz und Reconciliation;
+- `trend_briefs` und `trend_patterns` für getrennte Quelle/Evidence/Analyse;
+- `short_projects` und `short_pipeline_events` für den nachvollziehbaren Weg
+  `RESEARCHED -> CONCEPT_READY -> SCRIPT_READY -> MEDIA_PLAN_READY -> QA_READY`;
+- `media_jobs` als reine Worker-/Kosten-Grenze;
+- `pattern_learning` als Verbindung zu echten 24/72/168-h-Snapshots.
+
+TikTok-Secrets bleiben außerhalb der DB im vorhandenen DPAPI Secret Broker.
+Unklare externe Schreibzustände werden reconciliert, nicht erneut gesendet.
+Die Media-Grenze plant Higgsfield als bevorzugten Worker und OpenAI Image als
+Fallback, führt aber ohne bestätigte enthaltene Nutzung oder Owner-Kostengate
+keinen Cloud-Call aus.
+
+Die bestehende Dashboard-Startseite liest `/api/short-factory` und
+`/api/external-readiness`. Es gibt keine zweite App und keine zweite operative
+Wahrheit. Analytics stammen weiterhin aus realen `manual_analytics_events`;
+fehlende Werte bleiben `NULL/UNKNOWN`, und Views allein gelten nicht als
+Erfolgsbeleg.

@@ -1,9 +1,9 @@
 # Backlog nach v1.2.0
 
-- Fiverr Gig 1 ist inhaltlich mit 149/349/699 USD, Lieferzeiten, Revisionen,
-  Intake und Gallery fertig. Blocker bleibt ausschließlich das persönliche
-  Freelancerprofil/Identity-Gate; Kategorie/Service Type wird danach im echten
-  Formular geprüft.
+- Fiverr Gig 1 ist öffentlich aktiv. Der Owner hat am 26.09.2026 den neuen
+  Sollstand 149/349/699 USD mit 4/7/10 Tagen und 1/2/3 Revisionen gespeichert;
+  der öffentliche Readback dieses neuen Stands bleibt offen. Keinen zweiten
+  Gig oder Doppel-Gig erzeugen.
 - Gig 2 erst nach live/verifiziertem Gig 1; Gig 3 erst nach live/verifiziertem
   Gig 2. Kein Gig 4 in diesem Lauf.
 - Nach echtem Launch reale Kampagne/Trackingquelle anlegen; Dry-Run-Ereignisse
@@ -15,24 +15,20 @@
   keine Anforderungen erfinden. Die unvollständige Legacy-Karte
   `Werkstattabend` später reparieren oder archivieren.
 - Echte 24/72/168-h-Analytics erfassen und Ranking validieren.
-- **P1 VIRALITY / TREND INTELLIGENCE** als zentralen Creator-Ops-Baustein umsetzen:
-  aktuelle Nischen-/Plattformtrends finden, Hook/Visual/Caption/Struktur analysieren,
-  begründen warum ein Muster funktioniert, daraus eigenständige Originalkonzepte/Skripte
-  für Leona, Mara, ZippoWorkz und spätere Creator bauen und die Ergebnisse nach dem
-  Publishing wieder mit Insights zurück in die Planung speisen. Keine bloßen Kopien;
-  Muster/Mechanik extrahieren und neu umsetzen. Web-/Trend-Recherche darf über einen
-  webfähigen Agenten/ChatGPT erfolgen; Local AI/Qwen übernimmt Routing, Auswertung,
-  Speicherung und Folgeplanung. Keine neue externe Ausgabe/Kosten außerhalb der Owner-Policy.
-- **P1 TOPIC-TO-SHORT FACTORY** an Virality/Trend Intelligence hängen:
-  Eingang = Thema/Zielgruppe/Persona/Kunde; Pipeline = Trend-/Hook-Brief -> Script -> Voice ->
-  Shot-/B-Roll-Plan -> Video-Generierung/Editing -> Captions/Subtitles -> QA -> Review/Gate ->
-  Publish -> 24/72/168h Insights -> Learning zurück in Format/Hook/Timing. Jeder Schritt bekommt
-  Status/Evidence/Receipt statt Blackbox. Für eigene Creator und als produktisierbare Kundenleistung
-  nutzbar (z. B. monatliche Short-Pakete), ohne Umsatzversprechen aus fremdem Marketing zu übernehmen.
-  Bevor neue Tools gekauft werden: vorhandene ZippoWorkz-Worker/verbundene Dienste prüfen und Kosten-Gate beachten.
+- **P1 VIRALITY / TREND INTELLIGENCE — MVP-KERN FERTIG AUF ARBEITSBRANCH:**
+  Source/Evidence und eigene Analyse, Pattern-Speicherung und secret-free
+  Dashboardstatus sind umgesetzt. Offen bleibt der produktive webfähige
+  Research-Worker mit belegten aktuellen Quellen; keine Trends erfinden.
+- **P1 TOPIC-TO-SHORT FACTORY — INTERN BIS QA_READY FERTIG:**
+  Thema/Zielgruppe/Persona + Pattern erzeugen ein originales Script, Voice-,
+  Shot-, Caption- und Media-Plan mit Evidence je Statusschritt. Media-Ausführung,
+  Review/Pipeline-Verknüpfung und späterer Publish bleiben offen. Higgsfield/
+  OpenAI sind nur geroutet; unbekannte oder zusätzliche Kosten bleiben Gate.
 - Engagement-Vorschläge später um manuelles Dismiss/Review ergänzen; die
   read-only Dashboard-Ansicht `/engagement` ist fertig.
 - Instagram-API nur als offizieller, weiterhin owner-gegateter Adapter.
-- TikTok, Linkseite, Monetarisierung, Videos und Winner-Remixes erst nach
-  stabilem Kernbetrieb.
+- TikTok-Adapter/OAuth/Direct-Post-Intent ist auf dem Arbeitsbranch technisch
+  vorbereitet und fail-closed getestet. Offen: echte App-/Redirect-Konfiguration,
+  genau ein Owner-OAuth-Consent und danach kontrollierter Live-Proof; kein
+  TikTok-Live-Erfolg wird vor diesem Beleg behauptet.
 - Kein neuer Account, Kauf, Vertrag oder Zahlungsanbieter ohne Owner-Gate.
