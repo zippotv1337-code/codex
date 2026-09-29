@@ -93,10 +93,11 @@
 
 ## OWNER_ACTIONS
 
-1. Kritischen Instagram-DM-P1-PR #2 reviewen und den Schema/Auth/Messaging-Core-Merge freigeben oder Änderungswünsche nennen.
-2. Für Live-DM-Webhooks einen bereits genehmigten öffentlichen HTTPS-Callback bereitstellen/auswählen und die Meta-Webhook-Registrierung im Account bestätigen; dieser Run durfte keine Firewall-/Router-/Cloudflare-Sicherheitsänderung vornehmen.
-3. TikTok-App-Redirect und einmalige OAuth-Zustimmung im echten TikTok-Account abschließen, nachdem die Werte sicher im node-lokalen Broker hinterlegt sind.
-4. Den VPS-Agenten starten bzw. dessen aktuellen strukturierten Node-Status in den bestehenden Exchange-Pfad liefern, falls die Multi-Node-Lane wieder aktiv werden soll.
+1. Die früher im Chat offengelegten Meta-Zugriffstokens im Meta-Account rotieren und die Ersatzwerte ausschließlich im node-lokalen Secret Broker hinterlegen; keine Werte in Chat, Git oder Journal kopieren.
+2. Kritischen Instagram-DM-P1-PR #2 reviewen und den Schema/Auth/Messaging-Core-Merge freigeben oder Änderungswünsche nennen.
+3. Für Live-DM-Webhooks einen bereits genehmigten öffentlichen HTTPS-Callback bereitstellen/auswählen und die Meta-Webhook-Registrierung im Account bestätigen; dieser Run durfte keine Firewall-/Router-/Cloudflare-Sicherheitsänderung vornehmen.
+4. TikTok-App-Redirect und einmalige OAuth-Zustimmung im echten TikTok-Account abschließen, nachdem die Werte sicher im node-lokalen Broker hinterlegt sind.
+5. Den VPS-Agenten starten bzw. dessen aktuellen strukturierten Node-Status in den bestehenden Exchange-Pfad liefern, falls die Multi-Node-Lane wieder aktiv werden soll.
 
 ## STALE_DOCS_CORRECTED
 
