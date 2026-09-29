@@ -1,5 +1,13 @@
 # Aktueller Handoff
 
+## AKTUELL — Autonomy-Master Evidence abgeschlossen, 29. September 2026
+
+- Vollständiger Evidence-Handoff: `docs/AUTONOMY_EVIDENCE_HANDOFF_2026-09-29.md`.
+- Sichere Runtime-/Recovery- und Instagram-Insights-Deltas sind auf `main`; laufendes Dashboard wurde neu gestartet und zurückgelesen.
+- Instagram DM P1 ist provider-read-verifiziert und als kritischer Review-PR #2 offen, aber nicht nach `main` gemergt oder deployed.
+- Finaler Main-Testblock: `203 passed, 22 subtests passed`; SQLite Integrity `ok`, FK 0, Secret-/Compile-/JS-/PowerShell-/Diff-Checks grün.
+- Local AI `READY / IDLE_CLEAN`; VPS `WAITING_EXTERNAL_NODE`; TikTok wartet auf App/OAuth; Fiverr ist `WRITE_READY` mit Neupreis-Readback offen.
+
 ## AKTUELL — Offizieller Instagram-Insights-Learning-Loop, 29. September 2026
 
 - Branch `codex/20260929-instagram-insights` ergänzt den bestehenden Analytics-Kern ohne neue DB oder Schemaänderung.
