@@ -1,5 +1,56 @@
 # Aktueller Handoff
 
+Status: `DERIVED_EVIDENCE / NOT_OWNER_POLICY / NOT_OPERATIONAL_DATABASE`
+
+Kanonische Regeln: `../ZIPPOWORKZ_OWNER_POLICY.md`
+
+Maschinenlesbarer Snapshot: `docs/CURRENT_STATE.json`
+
+Operative Wahrheit: `data/review_dashboard.db` über `CurrentStateService`
+
+Leseregel: Nur die neuesten Abschnitte oberhalb der ausdrücklich markierten
+historischen Grenze sind aktueller Fortsetzungskontext. Alle späteren datierten
+Abschnitte bleiben Audit-Evidence; auch ihr damaliges Wort `AKTUELL` reaktiviert
+keine alte Aufgabe, kein altes Gate und keine alte Owner-Regel.
+
+## AKTUELL — WORK 001–005 P0-Delta abgeschlossen, 29. September 2026
+
+- Frischer Worktree/Branch auf dem bei Start aktuellen `origin/main`
+  `79a08e34cc1630b3220102c36a477eabc1c59be5`; das alte Checkout
+  `C:\Zippoworkz\Workspace\codex_ingest` blieb vollständig unangetastet.
+- 20 materielle WORK-Anforderungen klassifiziert: final 5 `DONE`, 11
+  `EXPANDED`, 2 `SUPERSEDED_BY_BETTER_CURRENT_DESIGN`, 0 `OPEN`, 1
+  `BLOCKED_BY_OWNER_GATE`, 1 `HISTORICAL_ONLY`.
+- Kein alter `context/state/handoff/archive`-Parallelbaum, keine zweite Policy,
+  kein zweites Dashboard, keine zweite operative DB und kein zweiter
+  Statusgenerator wurden angelegt.
+- CLI-Default ist jetzt die kanonische `data/review_dashboard.db`; der
+  historische `demo`-Befehl verweigert diese operative DB ausdrücklich.
+- `CurrentStateService` liefert einen additiven `state_contract` mit Rolle,
+  kanonischer DB, Runtime-Config, Policy-Version und wertfreiem Policy-SHA.
+  Der alte `owner_decisions`-Block ist als nicht autoritative
+  Kompatibilitätszusammenfassung markiert.
+- 44 getrackte Medien sind in
+  `docs/TRACKED_ASSET_PROVENANCE_2026-09-29.md` paketweise klassifiziert.
+  Rainy Berlin, Werkstattabend und besonders das Collab-Library-Original
+  bleiben für eine spätere kommerzielle Wiederverwendung `NOT_VERIFIED`, bis
+  die Quellrechte belegt sind.
+- Während des Runs rückte `origin/main` auf `686b6a5` mit dem unabhängigen
+  Dokument `docs/INSTAGRAM_DM_ASSISTANT_MVP.md` vor. Dieses Delta wurde sauber
+  bewahrt und als Merge `a8dffec` in den Arbeitsbranch übernommen.
+- Verifiziert auf dem kombinierten Baum: 184 Python-Tests, 6
+  Node-Dashboardtests, Python-Compilecheck, gültiges `CURRENT_STATE.json`,
+  Secret-Scan über 374 getrackte Dateien,
+  SQLite Schema 6, Integrität `ok`, 0 Foreign-Key-Verstöße und
+  `git diff --check`.
+- Keine Plattformaktion, keine Kosten, keine Secrets, keine Datenmigration.
+- Implementierungscommit: `5a7d207ad214eb4eb793beb26d715eaf4f2be834`;
+  Übergabecommit vor Main-Refresh: `6ebae759a5103b58a6342c0e1624c801a4991d5a`.
+- GitHub-Readback: Arbeitsbranch und `origin/main` nahmen den vollständig
+  geprüften kombinierten Baum bei `e2d8950d1c7ad4aed162216fed601ea1b1b11ab1`
+  identisch an; kein Force-Push und kein History-Rewrite.
+- Detailmatrix: `docs/WORK001_005_DELTA_MATRIX_2026-09-29.md`.
+
 ## AKTUELL — Next Stack vollständig in Main integriert, 28. September 2026
 
 - Die sechs Commits von `codex/20260928-next-stack` wurden gegen den nach der
@@ -54,6 +105,15 @@
   Secret-Scan 358 getrackte Dateien ohne Fund.
 - Detailnachweis: `docs/AI_BRANCH_DELTA_REPORT_2026-09-28.md` und
   `sessions/2026-09-28-1926-codex-ai-branch-retirement.md`.
+
+---
+
+## HISTORISCHE EVIDENZ AB HIER — KEINE AKTIVE AUFGABENLISTE
+
+Die folgenden Abschnitte bleiben für Audit und Chronologie erhalten. Ihr
+Statuswortlaut gilt jeweils nur für das angegebene Datum. Aktive Fortsetzung
+wird ausschließlich am Kopf dieser Datei, in `docs/CURRENT_STATE.json` und in
+der kanonischen Owner-Policy bestimmt.
 
 ## HISTORISCHER REVIEW-NACHWEIS — TikTok/Short-Factory Next Stack, 28. September 2026
 

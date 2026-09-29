@@ -1,5 +1,23 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## WORK 001–005 P0-Delta konsolidiert — 29. September 2026
+
+Die alte P0-Baseline vom 25.09. wurde gegen den konsolidierten aktuellen Main
+klassifiziert, ohne alte Strukturvorschläge nachzubauen. START_HERE, Owner
+Policy v1.2, CurrentStateService, Schema 6 sowie die archivierten AI-/Next-
+Stack-Integrationen lösen den überwiegenden Teil bereits besser. Das sichere
+Restdelta schließt vier konkrete Lücken: Die CLI verwendet standardmäßig die
+kanonische `data/review_dashboard.db` und verweigert Demo-Daten dort
+fail-closed; der abgeleitete Current State nennt seine DB-/Config-/Policy-
+Provenienz einschließlich Policy-Hash; der aktuelle Handoff trennt seinen
+Kopf sichtbar von historischer Evidence; und 44 getrackte Medien sind
+paketweise klassifiziert. Für drei ältere Pakete bleiben nicht vollständig
+belegte Rechte ausdrücklich `NOT_VERIFIED`; es wurde nichts gelöscht,
+veröffentlicht oder umgedeutet. Verifikation: 184 Python- und 6 Dashboard-
+JavaScript-Tests, Compilecheck, JSON, Secret-Scan, SQLite Schema 6,
+`integrity_check=ok`, Foreign Keys 0. Matrix:
+`docs/WORK001_005_DELTA_MATRIX_2026-09-29.md`.
+
 ## Next Stack auf Main konsolidiert — 28. September 2026
 
 Schema 6, TikTok OAuth/Direct-Post/Draft/Status mit fail-closed Idempotenz,

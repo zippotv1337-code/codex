@@ -1,23 +1,24 @@
 # ZippoWorkz
 
-## Ein produktiver Einstieg — 8. September 2026
+## Ein produktiver Einstieg — 29. September 2026
 
 Start: `START_ZIPPOWORKZ.ps1`. Dashboard: <http://127.0.0.1:4180/>.
 Der Launcher verwendet den bestehenden Standalone-/Supervisor-Weg, keine zweite Anwendung.
 
 - Operativer Workspace: `C:\Users\ZiPPo\Documents\ChatGPT\Insta baddie\creator-collab`.
-- Konfiguration: `config.toml`; operative Datenbank: `data/review_dashboard.db`, Schema 5.
+- Konfiguration: `config.toml`; operative Datenbank: `data/review_dashboard.db`, Schema 6.
 - Gemeinsame Navigation: Heute/Review, Stories, Needs Attention, Verlauf/Archiv,
   Analytics, Planung/Queue, Fiverr/Revenue, Angebot und Health/Status.
 - Stories: Texte, Typ, CTA, Link, Highlight und Termin lokal bearbeiten;
   Entscheidungen werden gespeichert. Kein Nachweis eines Live-Versands.
-- Meta: `DEFERRED_OWNER_VERIFICATION`. Fiverr: Identität laut Owner erledigt,
-  letzter bestätigter Gig-Zustand DRAFT, nicht als live behaupten.
+- Meta: der kontrollierte offizielle Publishpfad ist bewiesen; aktuelle
+  Readiness bleibt eine Laufzeitwahrheit. Fiverr: ein öffentlicher Gig ist
+  verifiziert, eine später vom Owner gespeicherte Paketänderung wartet noch auf
+  normalen öffentlichen Readback.
 
-**Aktivierung ausstehend:** `RESTART_CREATOR_OPS.ps1 -NoBrowser` einmal in eigener
-PowerShell im Projektordner ausführen und Browser neu laden. Windows verweigert
-dem Agenten die Prozessprüfung für den Neustart. Bis dahin sperrt die Story-UI
-Änderungen und zeigt ausdrücklich „Server-Neustart erforderlich“.
+Volatile Zustände nicht aus diesem README ableiten. Maschinenlesbarer Snapshot:
+`docs/CURRENT_STATE.json`; dynamischer Laufzeitstatus: `/api/status`. Beide sind
+abgeleitete Evidenz, keine zweite Owner-Policy.
 
 ### LEGACY / ARCHIVED — keine konkurrierenden Produkte
 
@@ -63,8 +64,8 @@ python -m creator_ops.cli --db data/creator_ops.db export --out backups --label 
 python -m creator_ops.cli --db data/creator_ops.db backup --out backups --label latest
 python -m creator_ops.cli --db data/creator_ops.db restore --backup backups/creator-ops-backup-latest.db --out backups/restored.db
 python -m creator_ops.cli --db data/review_dashboard.db import-assets --creator leona-voss --date 2026-09-04 --rights-status AI_GENERATED C:\Pfad\zu\bild.png
-python -m creator_ops.cli --db data/creator_ops.db status
-python -m creator_ops.cli --db data/creator_ops.db status --tests-passed 41 --tests-failed 0 --out docs/CURRENT_STATE.json
+python -m creator_ops.cli status
+python -m creator_ops.cli status --tests-passed 41 --tests-failed 0 --out docs/CURRENT_STATE.json
 python -m creator_ops.cli --db data/review_dashboard.db recovery-backup --kind weekly --out backups
 python -m creator_ops.cli --db data/review_dashboard.db reconcile-instagram --creator leona-voss --content-id 5 --asset-id 24 --url https://www.instagram.com/leonavoss.ai/p/Dc3elLhAC2-/ --published-at 2026-09-04
 python -m creator_ops.cli --db data/review_dashboard.db manual-analytics --publication-id 4 --window 24 --reach 100 --likes 10
