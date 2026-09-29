@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import tomllib
@@ -41,6 +42,31 @@ class CurrentStateService:
             return "unknown"
         return value or "unknown"
 
+    def _owner_policy_provenance(self) -> dict[str, object]:
+        """Describe the canonical policy without copying it into runtime state."""
+        path = self.root.parent / "ZIPPOWORKZ_OWNER_POLICY.md"
+        result: dict[str, object] = {
+            "path": "../ZIPPOWORKZ_OWNER_POLICY.md",
+            "role": "CANONICAL_OWNER_POLICY",
+            "loaded": False,
+            "version": "NOT_VERIFIED",
+            "sha256": "NOT_VERIFIED",
+        }
+        try:
+            payload = path.read_bytes()
+            text = payload.decode("utf-8")
+        except (OSError, UnicodeError):
+            return result
+        match = re.search(r"^Version:\s*(\S+)", text, flags=re.MULTILINE)
+        result.update(
+            {
+                "loaded": True,
+                "version": match.group(1) if match else "NOT_VERIFIED",
+                "sha256": hashlib.sha256(payload).hexdigest(),
+            }
+        )
+        return result
+
     def _remote(self, include_url: bool) -> dict[str, object]:
         path = self.root / "data" / "REMOTE_ACCESS_CURRENT.txt"
         result: dict[str, object] = {"active": False, "started_at": None}
@@ -68,8 +94,13 @@ class CurrentStateService:
         tests_passed: int | None = None,
         tests_failed: int | None = None,
     ) -> dict[str, object]:
+        generated_at = datetime.now(UTC).isoformat(timespec="seconds")
         config_path = self.root / "config.toml"
         config = tomllib.loads(config_path.read_text(encoding="utf-8")) if config_path.is_file() else {}
+        operational_db = config.get("runtime", {}).get(
+            "database", "data/review_dashboard.db"
+        )
+        owner_policy = self._owner_policy_provenance()
         operations = config.get("operations", {})
         creators = [
             dict(row)
@@ -203,9 +234,26 @@ class CurrentStateService:
         short_factory = ShortFactoryService(self.database).dashboard()
 
         return {
-            "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
+            "generated_at": generated_at,
+            "state_contract": {
+                "schema": "zippoworkz-current-state-v1",
+                "role": "DERIVED_SECRET_FREE_SNAPSHOT",
+                "authoritative_operational_store": operational_db,
+                "sources": {
+                    "operational_database": {
+                        "path": operational_db,
+                        "role": "CANONICAL_CREATOR_OPS_OPERATIONAL_STATE",
+                    },
+                    "runtime_config": {
+                        "path": "config.toml",
+                        "role": "RUNTIME_CONFIGURATION",
+                    },
+                    "owner_policy": owner_policy,
+                },
+                "unknown_semantics": "UNKNOWN_OR_NOT_VERIFIED_IS_NEVER_ZERO",
+            },
             "product": {"name": "ZippoWorkz", "dashboard_path": "/", "launcher": "START_ZIPPOWORKZ.ps1",
-                        "database": config.get("runtime", {}).get("database", "data/review_dashboard.db"),
+                        "database": operational_db,
                         "core": "Creator Ops", "legacy_databases": ["data/creator_ops.db", "data/verification.db"]},
             "operations": {key: operations.get(key, "UNKNOWN") for key in
                            ("meta_api_status", "fiverr_identity_status", "fiverr_gig_status")},
@@ -274,6 +322,9 @@ class CurrentStateService:
             "blockers": dict(blockers),
             "owner_decisions": {
                 "source": "ZIPPOWORKZ_OWNER_POLICY.md v1.2",
+                "authoritative": False,
+                "role": "DERIVED_COMPATIBILITY_SUMMARY",
+                "source_sha256": owner_policy["sha256"],
                 "pre_approved_actions": {
                     "instagram_official_live_publish": "PRE_APPROVED_WITH_SAFETY_GATES",
                     "instagram_normal_comments": "AUTONOMOUS_WITH_ANTI_SPAM_GUARDS",

@@ -1,5 +1,18 @@
 # Aktueller Handoff
 
+Status: `DERIVED_EVIDENCE / NOT_OWNER_POLICY / NOT_OPERATIONAL_DATABASE`
+
+Kanonische Regeln: `../ZIPPOWORKZ_OWNER_POLICY.md`
+
+Maschinenlesbarer Snapshot: `docs/CURRENT_STATE.json`
+
+Operative Wahrheit: `data/review_dashboard.db` über `CurrentStateService`
+
+Leseregel: Nur die neuesten Abschnitte oberhalb der ausdrücklich markierten
+historischen Grenze sind aktueller Fortsetzungskontext. Alle späteren datierten
+Abschnitte bleiben Audit-Evidence; auch ihr damaliges Wort `AKTUELL` reaktiviert
+keine alte Aufgabe, kein altes Gate und keine alte Owner-Regel.
+
 ## AKTUELL — Next Stack vollständig in Main integriert, 28. September 2026
 
 - Die sechs Commits von `codex/20260928-next-stack` wurden gegen den nach der
@@ -54,6 +67,15 @@
   Secret-Scan 358 getrackte Dateien ohne Fund.
 - Detailnachweis: `docs/AI_BRANCH_DELTA_REPORT_2026-09-28.md` und
   `sessions/2026-09-28-1926-codex-ai-branch-retirement.md`.
+
+---
+
+## HISTORISCHE EVIDENZ AB HIER — KEINE AKTIVE AUFGABENLISTE
+
+Die folgenden Abschnitte bleiben für Audit und Chronologie erhalten. Ihr
+Statuswortlaut gilt jeweils nur für das angegebene Datum. Aktive Fortsetzung
+wird ausschließlich am Kopf dieser Datei, in `docs/CURRENT_STATE.json` und in
+der kanonischen Owner-Policy bestimmt.
 
 ## HISTORISCHER REVIEW-NACHWEIS — TikTok/Short-Factory Next Stack, 28. September 2026
 

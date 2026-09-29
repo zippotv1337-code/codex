@@ -15,7 +15,14 @@ from creator_ops.review import ReviewDashboardService
 class CurrentStateTests(unittest.TestCase):
     def test_snapshot_is_dynamic_and_secret_free_by_default(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
-            root = Path(tempdir)
+            project_root = Path(tempdir)
+            root = project_root / "creator-collab"
+            root.mkdir()
+            policy = project_root / "ZIPPOWORKZ_OWNER_POLICY.md"
+            policy.write_text(
+                "# ZIPPOWORKZ_OWNER_POLICY\n\nVersion: 1.2\n",
+                encoding="utf-8",
+            )
             database = root / "state.db"
             pipeline = build_pipeline(database)
             pipeline.initialize()
@@ -38,6 +45,23 @@ class CurrentStateTests(unittest.TestCase):
             self.assertEqual(stored["tests"]["status"], "passed")
             self.assertEqual(stored["app_version"], "1.6.4-beta")
             self.assertEqual(stored["git"]["state"], "MANAGED_OUTSIDE_RUNTIME")
+            self.assertEqual(
+                stored["state_contract"]["role"],
+                "DERIVED_SECRET_FREE_SNAPSHOT",
+            )
+            self.assertEqual(
+                stored["state_contract"]["authoritative_operational_store"],
+                "data/review_dashboard.db",
+            )
+            policy_source = stored["state_contract"]["sources"]["owner_policy"]
+            self.assertTrue(policy_source["loaded"])
+            self.assertEqual(policy_source["version"], "1.2")
+            self.assertRegex(policy_source["sha256"], r"^[0-9a-f]{64}$")
+            self.assertFalse(stored["owner_decisions"]["authoritative"])
+            self.assertEqual(
+                stored["owner_decisions"]["source_sha256"],
+                policy_source["sha256"],
+            )
             self.assertNotIn("live_publishing", stored["owner_decisions"]["red_gates"])
             self.assertEqual(
                 stored["owner_decisions"]["pre_approved_actions"]

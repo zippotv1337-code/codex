@@ -39,6 +39,7 @@ from .tiktok import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+CANONICAL_OPERATIONAL_DB = ROOT / "data" / "review_dashboard.db"
 
 
 def build_pipeline(database_path: Path) -> VerticalPipeline:
@@ -77,7 +78,7 @@ def build_publish_queue(
 
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description="Creator Ops local MVP")
-    result.add_argument("--db", type=Path, default=ROOT / "data" / "creator_ops.db")
+    result.add_argument("--db", type=Path, default=CANONICAL_OPERATIONAL_DB)
     result.add_argument("--config", type=Path, default=ROOT / "config.toml")
     subcommands = result.add_subparsers(dest="command", required=True)
     subcommands.add_parser("init", help="Initialize schema and persona seeds")
@@ -280,6 +281,14 @@ def parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     args = parser().parse_args()
+    if (
+        args.command == "demo"
+        and args.db.resolve() == CANONICAL_OPERATIONAL_DB.resolve()
+    ):
+        raise SystemExit(
+            "Refusing to run demo against the canonical operational database; "
+            "pass an explicit non-operational --db path."
+        )
     pipeline = build_pipeline(args.db)
     pipeline.initialize()
     if args.command == "init":
