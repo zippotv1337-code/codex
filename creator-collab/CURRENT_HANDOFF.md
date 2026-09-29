@@ -35,12 +35,17 @@ keine alte Aufgabe, kein altes Gate und keine alte Owner-Regel.
   Rainy Berlin, Werkstattabend und besonders das Collab-Library-Original
   bleiben für eine spätere kommerzielle Wiederverwendung `NOT_VERIFIED`, bis
   die Quellrechte belegt sind.
-- Verifiziert: 184 Python-Tests, 6 Node-Dashboardtests, Python-Compilecheck,
-  gültiges `CURRENT_STATE.json`, Secret-Scan über 373 getrackte Dateien,
+- Während des Runs rückte `origin/main` auf `686b6a5` mit dem unabhängigen
+  Dokument `docs/INSTAGRAM_DM_ASSISTANT_MVP.md` vor. Dieses Delta wurde sauber
+  bewahrt und als Merge `a8dffec` in den Arbeitsbranch übernommen.
+- Verifiziert auf dem kombinierten Baum: 184 Python-Tests, 6
+  Node-Dashboardtests, Python-Compilecheck, gültiges `CURRENT_STATE.json`,
+  Secret-Scan über 374 getrackte Dateien,
   SQLite Schema 6, Integrität `ok`, 0 Foreign-Key-Verstöße und
   `git diff --check`.
 - Keine Plattformaktion, keine Kosten, keine Secrets, keine Datenmigration.
-- Implementierungscommit: `5a7d207ad214eb4eb793beb26d715eaf4f2be834`.
+- Implementierungscommit: `5a7d207ad214eb4eb793beb26d715eaf4f2be834`;
+  Übergabecommit vor Main-Refresh: `6ebae759a5103b58a6342c0e1624c801a4991d5a`.
 - Detailmatrix: `docs/WORK001_005_DELTA_MATRIX_2026-09-29.md`.
 
 ## AKTUELL — Next Stack vollständig in Main integriert, 28. September 2026
