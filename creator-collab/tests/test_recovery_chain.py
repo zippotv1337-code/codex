@@ -147,6 +147,24 @@ class RecoveryChainTests(unittest.TestCase):
             finally:
                 outside.unlink(missing_ok=True)
 
+    def test_isolated_restore_proves_integrity_foreign_keys_and_rollback(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            database = CreatorDatabase(root / "data" / "active.db")
+            database.initialize()
+            service = RecoveryBackupService(database, root)
+            backup = service.build(root / "backups", kind="milestone")
+            evidence_path = root / "evidence" / "restore.json"
+
+            evidence = service.prove_restore(backup, evidence_path)
+
+            self.assertEqual(evidence["integrity_check"], "ok")
+            self.assertEqual(evidence["foreign_key_check"], "ok")
+            self.assertTrue(evidence["mutation_observed"])
+            self.assertTrue(evidence["rollback_hash_match"])
+            self.assertFalse(evidence["production_database_modified"])
+            self.assertEqual(json.loads(evidence_path.read_text()), evidence)
+
 
 if __name__ == "__main__":
     unittest.main()

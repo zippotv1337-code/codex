@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import threading
 from datetime import UTC, datetime
 from pathlib import Path
@@ -10,6 +11,7 @@ from .review import ReviewDashboardService
 from .background import BackgroundCoordinator, WAITING_FOR_CAPACITY
 from .publishing import PublishQueueService
 from .model_routing import ModelRoutingPolicy
+from .node_status import AutonomyNodeStatus
 
 
 CONTROL_PLANE_SCHEMA = 1
@@ -23,10 +25,14 @@ class ControlPlaneService:
         review: ReviewDashboardService,
         state_path: Path,
         publishing: PublishQueueService | None = None,
+        runtime_root: Path | None = None,
     ) -> None:
         self.review = review
         self.state_path = state_path
         self.publishing = publishing
+        self.runtime_root = Path(
+            runtime_root or os.environ.get("ZIPPOWORKZ_ROOT", r"C:\Zippoworkz")
+        )
         self.background = BackgroundCoordinator(
             review.pipeline.db,
             state_path.parent.parent,
@@ -143,7 +149,13 @@ class ControlPlaneService:
             {
                 "id": "publish.external",
                 "label": "Extern veröffentlichen",
-                "state": "OWNER_GATE",
+                "state": "POLICY_CONTROLLED_AVAILABLE",
+                "required": False,
+            },
+            {
+                "id": "instagram.dm.policy",
+                "label": "Normale projektbezogene DMs",
+                "state": "AUTONOMOUS_WHEN_PROVIDER_VERIFIED",
                 "required": False,
             },
         ]
@@ -172,7 +184,7 @@ class ControlPlaneService:
         return {
             "contract": {
                 "schema_version": CONTROL_PLANE_SCHEMA,
-                "execution": "local-safe-only",
+                "execution": "DO_LOG_VERIFY_POLICY_CONTROLLED",
                 "model_policy": "stable-current-model",
                 "future_models": "optional-capability-bonus",
                 "backward_compatible": True,
@@ -181,13 +193,14 @@ class ControlPlaneService:
             "state": state,
             "runtime": self.background.health(),
             "publish_queue": self.publishing.list() if self.publishing else [],
+            "nodes": AutonomyNodeStatus(self.runtime_root).snapshot(),
             "capabilities": self.capabilities(),
             "queue": work,
             "owner_gates": [
-                "Live-Publishing",
-                "Kommentare, Likes, Follows oder DMs",
-                "Account- und Profiländerungen",
-                "Kostenpflichtige Dienste",
+                "Kosten, bezahlte Dienste oder Werbung",
+                "KYC, OTP, Passwörter oder persönliche Identität",
+                "kritische Security/Auth/Schema/Publishing-Core-Merges",
+                "irreversible oder destruktive externe Änderungen",
             ],
         }
 

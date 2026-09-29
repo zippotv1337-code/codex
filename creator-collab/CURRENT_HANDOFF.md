@@ -13,6 +13,32 @@ historischen Grenze sind aktueller Fortsetzungskontext. Alle späteren datierten
 Abschnitte bleiben Audit-Evidence; auch ihr damaliges Wort `AKTUELL` reaktiviert
 keine alte Aufgabe, kein altes Gate und keine alte Owner-Regel.
 
+## AKTUELL — Autonomy Runtime/Recovery Evidence, 29. September 2026
+
+- Der operative Local-AI-Runner wurde aus einem seit 21.09. terminalen,
+  inaktiven `BLOCKED`-Zustand sauber reconciliert. Originale `RUN_STATE`- und
+  `TASK`-Bytes liegen mit SHA-256 unter
+  `C:\Zippoworkz\Backups\Milestones\AutonomyReconcile\20260929-150136`.
+- Der alte Task bleibt im Archiv wahrheitsgemäß `BLOCKED`; er wurde nicht als
+  `DONE` ausgegeben. Nur der aktuelle Runner-Zeiger ist nach API-Readback
+  `IDLE_CLEAN`, `active=false`, ohne Run-/Task-ID und ohne Queue-Hold.
+- Die kanonische operative DB wurde nach einem validierten Meilenstein-Backup
+  ausschließlich mit der bereits auf `main` vorhandenen additiven P0-Migration
+  von Schema 6 auf Schema 7 aktiviert. Readback: `integrity_check=ok`,
+  Foreign-Key-Verstöße 0, beide DM-P0-Tabellen vorhanden.
+- Isolierter Restore-/Rollback-Proof liegt unter
+  `C:\Zippoworkz\Handoff\Codex\Current\BACKUP_RECOVERY_EVIDENCE.json`:
+  ZIP- und Member-Hashes verifiziert, Restore integer/FK-sauber, Mutation im
+  Temp-Clone erkannt, byte-identischer Rollback nachgewiesen, Produktiv-DB
+  nicht durch den Restore-Test verändert.
+- Local AI ist `READY / IDLE_CLEAN`. Für den VPS liegt kein aktueller
+  strukturierter Node-Status vor; er bleibt lokal und lane-spezifisch
+  `WAITING_EXTERNAL_NODE`, ohne andere Lanes zu blockieren.
+- Der im Auftrag genannte Exchange-Masterauftrag war am angegebenen Pfad nicht
+  vorhanden (`Current` enthielt nur `.keep`). Die vollständig im Owner-Text
+  gelieferte Meilensteinfolge wurde deshalb als operative Aufgabenquelle
+  verwendet und der Input-Drift nicht als globaler Blocker behandelt.
+
 ## AKTUELL — Instagram DM Inbound P0 fertig auf Arbeitsbranch, 29. September 2026
 
 - Branch: `codex/20260929-instagram-dm-p0`, basierend auf dem beim Start

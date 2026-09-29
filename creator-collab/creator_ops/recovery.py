@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shutil
 import sqlite3
 import tempfile
 import zipfile
@@ -304,11 +305,81 @@ class RecoveryBackupService:
                 connection = sqlite3.connect(Path(temp_name) / "recovery" / "creator_ops.db")
                 try:
                     integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+                    foreign_keys = connection.execute("PRAGMA foreign_key_check").fetchall()
                     secrets = connection.execute(
                         "SELECT COUNT(*) FROM platform_accounts WHERE secret_reference IS NOT NULL"
                     ).fetchone()[0]
                 finally:
                     connection.close()
-                if integrity != "ok" or secrets:
+                if integrity != "ok" or foreign_keys or secrets:
                     raise RuntimeError("recovery_database_validation_failed")
         return {"path": str(path), "size": path.stat().st_size, "sha256": RecoveryBackupService._sha(path)}
+
+    @staticmethod
+    def prove_restore(path: Path, evidence_path: Path | None = None) -> dict[str, object]:
+        """Prove isolated restore and byte-for-byte rollback without touching production.
+
+        The archive database is extracted to a temporary directory, verified,
+        deliberately changed in a working copy, then rolled back from the
+        pristine extracted snapshot. Only hashes and check results are emitted.
+        """
+        validation = RecoveryBackupService.validate(path)
+        with tempfile.TemporaryDirectory(prefix="creator-restore-proof-") as temp_name:
+            temp = Path(temp_name)
+            pristine = temp / "pristine.db"
+            working = temp / "working.db"
+            with zipfile.ZipFile(path) as archive:
+                pristine.write_bytes(archive.read("recovery/creator_ops.db"))
+            pristine_hash = RecoveryBackupService._sha(pristine)
+            shutil.copy2(pristine, working)
+
+            connection = sqlite3.connect(working)
+            try:
+                before_integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+                before_fk = connection.execute("PRAGMA foreign_key_check").fetchall()
+                connection.execute("PRAGMA user_version = 424242")
+                connection.commit()
+            finally:
+                connection.close()
+            changed_hash = RecoveryBackupService._sha(working)
+            if changed_hash == pristine_hash:
+                raise RuntimeError("restore_probe_mutation_not_observed")
+
+            shutil.copy2(pristine, working)
+            rollback_hash = RecoveryBackupService._sha(working)
+            connection = sqlite3.connect(working)
+            try:
+                after_integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+                after_fk = connection.execute("PRAGMA foreign_key_check").fetchall()
+            finally:
+                connection.close()
+            if (
+                before_integrity != "ok"
+                or before_fk
+                or after_integrity != "ok"
+                or after_fk
+                or rollback_hash != pristine_hash
+            ):
+                raise RuntimeError("isolated_restore_or_rollback_proof_failed")
+
+        evidence = {
+            "schema": "creator-ops-restore-proof-v1",
+            "backup_path": str(path),
+            "backup_sha256": validation["sha256"],
+            "restored_database_sha256": pristine_hash,
+            "integrity_check": "ok",
+            "foreign_key_check": "ok",
+            "mutation_observed": True,
+            "rollback_hash_match": True,
+            "production_database_modified": False,
+        }
+        if evidence_path is not None:
+            evidence_path = Path(evidence_path)
+            evidence_path.parent.mkdir(parents=True, exist_ok=True)
+            temporary = evidence_path.with_suffix(evidence_path.suffix + ".tmp")
+            temporary.write_text(
+                json.dumps(evidence, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            temporary.replace(evidence_path)
+        return evidence

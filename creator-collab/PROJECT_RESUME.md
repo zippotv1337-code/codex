@@ -1,5 +1,18 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Autonomy Runtime und Recovery nachweisbar — 29. September 2026
+
+Der bestehende Local-AI/V8-Runner ist ohne neue Parallelarchitektur aus seinem
+alten terminalen `BLOCKED`-Zeiger in einen ehrlichen `IDLE_CLEAN`-Betrieb
+überführt. Die blockierte Aufgabe bleibt mitsamt Originalzustand und Hashes
+archiviert; es wurde kein falscher Erfolg erzeugt. Die bestehende Creator-Ops-
+DB ist nach validiertem Backup auf das bereits in Main enthaltene additive
+Schema 7 migriert und per SQLite Integrity/FK geprüft. Ein isolierter
+Restore-Test beweist zusätzlich Archivhashes, intakten Restore und einen
+byte-identischen Rollback nach kontrollierter Temp-Mutation. Die vorhandene
+Control Plane projiziert Local-AI- und VPS-Status ohne Netzwerk-Seiteneffekte:
+Local AI `READY`, VPS `WAITING_EXTERNAL_NODE`, global nicht blockiert.
+
 ## Instagram DM Inbound P0 implementiert — 29. September 2026
 
 Auf `codex/20260929-instagram-dm-p0` ist die erste DM-Lane additiv in den
