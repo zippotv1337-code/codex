@@ -13,6 +13,36 @@ historischen Grenze sind aktueller Fortsetzungskontext. Alle späteren datierten
 Abschnitte bleiben Audit-Evidence; auch ihr damaliges Wort `AKTUELL` reaktiviert
 keine alte Aufgabe, kein altes Gate und keine alte Owner-Regel.
 
+## AKTUELL — WORK 001–005 P0-Delta abgeschlossen, 29. September 2026
+
+- Frischer Worktree/Branch auf dem bei Start aktuellen `origin/main`
+  `79a08e34cc1630b3220102c36a477eabc1c59be5`; das alte Checkout
+  `C:\Zippoworkz\Workspace\codex_ingest` blieb vollständig unangetastet.
+- 20 materielle WORK-Anforderungen klassifiziert: final 5 `DONE`, 11
+  `EXPANDED`, 2 `SUPERSEDED_BY_BETTER_CURRENT_DESIGN`, 0 `OPEN`, 1
+  `BLOCKED_BY_OWNER_GATE`, 1 `HISTORICAL_ONLY`.
+- Kein alter `context/state/handoff/archive`-Parallelbaum, keine zweite Policy,
+  kein zweites Dashboard, keine zweite operative DB und kein zweiter
+  Statusgenerator wurden angelegt.
+- CLI-Default ist jetzt die kanonische `data/review_dashboard.db`; der
+  historische `demo`-Befehl verweigert diese operative DB ausdrücklich.
+- `CurrentStateService` liefert einen additiven `state_contract` mit Rolle,
+  kanonischer DB, Runtime-Config, Policy-Version und wertfreiem Policy-SHA.
+  Der alte `owner_decisions`-Block ist als nicht autoritative
+  Kompatibilitätszusammenfassung markiert.
+- 44 getrackte Medien sind in
+  `docs/TRACKED_ASSET_PROVENANCE_2026-09-29.md` paketweise klassifiziert.
+  Rainy Berlin, Werkstattabend und besonders das Collab-Library-Original
+  bleiben für eine spätere kommerzielle Wiederverwendung `NOT_VERIFIED`, bis
+  die Quellrechte belegt sind.
+- Verifiziert: 184 Python-Tests, 6 Node-Dashboardtests, Python-Compilecheck,
+  gültiges `CURRENT_STATE.json`, Secret-Scan über 373 getrackte Dateien,
+  SQLite Schema 6, Integrität `ok`, 0 Foreign-Key-Verstöße und
+  `git diff --check`.
+- Keine Plattformaktion, keine Kosten, keine Secrets, keine Datenmigration.
+- Implementierungscommit: `5a7d207ad214eb4eb793beb26d715eaf4f2be834`.
+- Detailmatrix: `docs/WORK001_005_DELTA_MATRIX_2026-09-29.md`.
+
 ## AKTUELL — Next Stack vollständig in Main integriert, 28. September 2026
 
 - Die sechs Commits von `codex/20260928-next-stack` wurden gegen den nach der
