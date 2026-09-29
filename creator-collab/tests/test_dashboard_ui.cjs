@@ -68,6 +68,14 @@ test('Virality card renders secret-free QA and media-gate status', () => {
   assert.doesNotMatch(html, /<b>Original Short<\/b>/);
 });
 
+test('Instagram DM view is read-only and loads the P0 inbox', () => {
+  const source = readFileSync(join(__dirname, '../dashboard/engagement.js'), 'utf8');
+  assert.match(source, /\/api\/instagram-dm/);
+  assert.match(source, /SEND DISABLED · READ-ONLY P0/);
+  assert.match(source, /Needs Human/);
+  assert.doesNotMatch(source, /\/api\/instagram-dm\/send/);
+});
+
 for (const ready of [false, true]) {
   test(`story editor ${ready ? 'accepts current backend' : 'blocks writes until old backend restarts'}`, async () => {
     const buttons = [{disabled:false}];

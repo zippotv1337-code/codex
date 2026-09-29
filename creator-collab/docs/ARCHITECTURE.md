@@ -65,3 +65,21 @@ Die bestehende Dashboard-Startseite liest `/api/short-factory` und
 Wahrheit. Analytics stammen weiterhin aus realen `manual_analytics_events`;
 fehlende Werte bleiben `NULL/UNKNOWN`, und Views allein gelten nicht als
 Erfolgsbeleg.
+
+## Schema 7 — Instagram DM Inbound P0
+
+Schema 7 ergänzt dieselbe operative `data/review_dashboard.db` ausschließlich
+additiv um `instagram_dm_conversations` und `instagram_dm_events`. Externe
+Event- und Message-IDs sichern die Idempotenz. Bekannte Zielkonto-Metadaten
+ordnen nur `leona-voss` oder `mara-field` zu; unbekannte oder widersprüchliche
+Ziele werden `NEEDS_HUMAN`.
+
+`creator_ops/instagram_dm.py` normalisiert genau ein Inbound-Ereignis,
+klassifiziert eine deterministische P0-Intent-Baseline und setzt die Safety-
+Handoffs. Roh-Payload und Nachrichtentext werden nicht persistiert. Die interne
+API `/api/instagram-dm/inbound` folgt dem bestehenden Dashboard-Zugriffsschutz
+und nimmt lokale JSON-Ereignisse entgegen; ein echter Meta-Webhook ist nicht
+registriert.
+`/api/instagram-dm` und die vorhandene Nachrichtenansicht zeigen nur lokale
+Zahlen und Status. Es existiert bewusst kein Send-, Reply-, Link-, Payment-,
+Preview- oder Delivery-Endpunkt (`SEND_DISABLED_READ_ONLY_P0`).

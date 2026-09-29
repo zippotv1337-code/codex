@@ -643,6 +643,50 @@ CREATE TABLE IF NOT EXISTS engagement_queue (
     UNIQUE (publication_id, action_type, target_ref)
 );
 
+CREATE TABLE IF NOT EXISTS instagram_dm_conversations (
+    id INTEGER PRIMARY KEY,
+    platform TEXT NOT NULL,
+    external_conversation_id TEXT NOT NULL,
+    external_user_id TEXT NOT NULL,
+    creator_id INTEGER REFERENCES creators(id),
+    last_intent TEXT NOT NULL,
+    status TEXT NOT NULL,
+    handoff_reason TEXT,
+    first_seen_at TEXT NOT NULL,
+    last_received_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    UNIQUE (platform, external_conversation_id)
+);
+
+CREATE TABLE IF NOT EXISTS instagram_dm_events (
+    id INTEGER PRIMARY KEY,
+    conversation_id INTEGER NOT NULL REFERENCES instagram_dm_conversations(id),
+    provider TEXT NOT NULL,
+    external_event_id TEXT,
+    external_message_id TEXT,
+    dedupe_key TEXT NOT NULL,
+    intent TEXT NOT NULL,
+    confidence REAL NOT NULL,
+    status TEXT NOT NULL,
+    handoff_reason TEXT,
+    received_at TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    UNIQUE (provider, dedupe_key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_conversations_status
+    ON instagram_dm_conversations(status, last_received_at DESC);
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_events_conversation
+    ON instagram_dm_events(conversation_id, received_at DESC);
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_events_status
+    ON instagram_dm_events(status, received_at DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_events_provider_event_id
+    ON instagram_dm_events(provider, external_event_id)
+    WHERE external_event_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_events_provider_message_id
+    ON instagram_dm_events(provider, external_message_id)
+    WHERE external_message_id IS NOT NULL;
+
 CREATE TABLE IF NOT EXISTS evening_batches (
     id INTEGER PRIMARY KEY,
     batch_key TEXT NOT NULL UNIQUE,
@@ -668,7 +712,7 @@ CREATE TABLE IF NOT EXISTS export_jobs (
 """
 
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 
 COLUMN_MIGRATIONS = {
     "content_items": (
@@ -1061,6 +1105,8 @@ class CreatorDatabase:
             "asset_usage_plan",
             "adapter_attempts",
             "engagement_queue",
+            "instagram_dm_conversations",
+            "instagram_dm_events",
             "evening_batches",
             "export_jobs",
             "product_packs",

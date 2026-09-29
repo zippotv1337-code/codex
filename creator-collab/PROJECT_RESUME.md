@@ -1,5 +1,27 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Instagram DM Inbound P0 implementiert — 29. September 2026
+
+Auf `codex/20260929-instagram-dm-p0` ist die erste DM-Lane additiv in den
+bestehenden Creator-Ops-Kern integriert. Schema 7 ergänzt in derselben
+`data/review_dashboard.db` Conversations und Inbound-Events; externe Event-
+und Message-IDs verhindern Duplikate. Leona und Mara werden ausschließlich
+über bekannte Konto-/Persona-Metadaten zugeordnet. Eine deterministische
+Intent-Baseline deckt alle P0-Klassen ab; unbekannte Zielkonten, unsichere
+Klassifikation und die definierten Safety-Fälle landen fail-closed in
+`NEEDS_HUMAN`.
+
+Die bestehende Nachrichtenansicht und `/api/instagram-dm` zeigen offene DMs,
+Handoffs, Persona, Intent und Zeitpunkt. Roh-Payload und Nachrichtentext werden
+nicht persistiert. Antworten, Senden, Links, Payment, Preview, Delivery und
+echte Meta-Webhook-Registrierung existieren in P0 nicht; sichtbar gilt
+`SEND_DISABLED_READ_ONLY_P0`. Die vollständige Verifikation umfasst die
+Python-, Intent-/Safety- und Dashboard-JavaScript-Tests. Eine isolierte Kopie
+der operativen Schema-6-DB wurde erfolgreich auf Schema 7 migriert
+(`integrity_check=ok`, Foreign Keys 0); das Original blieb hashidentisch.
+Keine Plattformaktion, keine Kosten und keine Secrets. Der Arbeitsbranch
+bleibt entsprechend dem Owner-Auftrag außerhalb von `main`.
+
 ## WORK 001–005 P0-Delta konsolidiert — 29. September 2026
 
 Die alte P0-Baseline vom 25.09. wurde gegen den konsolidierten aktuellen Main

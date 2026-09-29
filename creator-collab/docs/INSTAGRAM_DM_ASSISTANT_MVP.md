@@ -1,6 +1,6 @@
 # Instagram DM Assistant MVP
 
-Status: BACKLOG / READY FOR IMPLEMENTATION AFTER P0  
+Status: P0 INBOUND IMPLEMENTED ON `codex/20260929-instagram-dm-p0`; P1+ BACKLOG
 Owner intent: Instagram soll nicht nur posten, sondern eingehende DMs beantworten, Wünsche erkennen, passende Support-/Wishlist-/Merch-Flows anbieten und Sonderwünsche kontrolliert in Content-/Media-Jobs überführen.
 
 ## Ziel
@@ -267,3 +267,15 @@ Danach:
 6. preview flow
 7. payment/support verification adapter
 8. delivery + analytics
+
+## Implementierungsgrenze P0 — 29. September 2026
+
+Der Branch `codex/20260929-instagram-dm-p0` implementiert ausschließlich Schritt
+1 bis zur lokalen Sichtbarkeit: Normalisierung, exakte Persona-Zuordnung,
+deterministische Intent-Baseline, Safety-/Human-Handoff, Idempotenz und
+Persistenz in der kanonischen Creator-Ops-Datenbank. Der bestehende
+Nachrichtenbereich zeigt offene DMs und `NEEDS_HUMAN`.
+
+Nicht enthalten und technisch nicht erreichbar sind Antworten/Senden,
+freigegebene Links, Custom Requests, Preview, Payment/Support, Media-Jobs,
+Delivery und echte Meta-Webhook-Registrierung. Diese bleiben P1+.

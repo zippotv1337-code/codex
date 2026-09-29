@@ -12,6 +12,7 @@ from .content_mix import ContentMixPlanner
 from .database import CreatorDatabase
 from .fiverr import FiverrAutomationService
 from .external_readiness import ExternalReadinessService
+from .instagram_dm import InstagramDMService
 from .short_factory import ShortFactoryService
 
 
@@ -232,6 +233,9 @@ class CurrentStateService:
         fiverr_status = FiverrAutomationService(self.database).status("zippoworkz")
         external = ExternalReadinessService(self.root, config_path).snapshot()
         short_factory = ShortFactoryService(self.database).dashboard()
+        instagram_dm = InstagramDMService(self.database).dashboard(limit=10)
+        if instagram_dm["counts"]["needs_human"]:
+            blockers["instagram_dm_needs_human"] = instagram_dm["counts"]["needs_human"]
 
         return {
             "generated_at": generated_at,
@@ -307,6 +311,14 @@ class CurrentStateService:
             "engagement": {
                 "real_post_proposals": real_engagement_proposals,
                 "execution": "policy-controlled; no invented interactions or spam",
+            },
+            "instagram_dm": {
+                "schema": instagram_dm["schema"],
+                "mode": instagram_dm["mode"],
+                "send_enabled": False,
+                "webhook_registered": False,
+                "counts": instagram_dm["counts"],
+                "by_intent": instagram_dm["by_intent"],
             },
             "finance": {
                 "cost_eur": float(self.database.scalar("SELECT COALESCE(SUM(amount), 0) FROM cost_events") or 0),
