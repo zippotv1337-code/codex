@@ -72,6 +72,10 @@ try {
     Write-RunLog 'live dispatch skipped by complete owner gate'
   }
 
+  # Official Insights reads are idempotent and never publish. Missing or
+  # unsupported provider metrics remain UNKNOWN instead of becoming zero.
+  Invoke-CreatorOpsStep -CommandArgs @('instagram-insights-sync')
+
   $berlin = [TimeZoneInfo]::FindSystemTimeZoneById('W. Europe Standard Time')
   $localNow = [TimeZoneInfo]::ConvertTime([DateTimeOffset]::UtcNow, $berlin)
   if ($localNow.Hour -eq $runtimeConfig.MorningHour -and $localNow.Minute -ge $runtimeConfig.MorningMinute) {

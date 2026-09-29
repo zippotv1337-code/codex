@@ -32,7 +32,9 @@ class ControlPlaneTests(unittest.TestCase):
         self.tempdir.cleanup()
 
     def test_capability_contract_does_not_require_a_future_model(self) -> None:
-        service = ControlPlaneService(self.review, self.root / "state.json")
+        service = ControlPlaneService(
+            self.review, self.root / "state.json", runtime_root=self.root
+        )
         payload = service.snapshot()
         self.assertEqual(payload["contract"]["model_policy"], "stable-current-model")
         self.assertEqual(payload["contract"]["future_models"], "optional-capability-bonus")
@@ -50,6 +52,10 @@ class ControlPlaneTests(unittest.TestCase):
         self.assertEqual(astra["state"], "OPTIONAL_BONUS")
         self.assertFalse(astra["required"])
         self.assertEqual(external["state"], "POLICY_CONTROLLED_AVAILABLE")
+        self.assertFalse(payload["nodes"]["global_blocked"])
+        self.assertEqual(
+            payload["nodes"]["vps"]["status"], "WAITING_EXTERNAL_NODE"
+        )
 
     def test_commands_are_atomic_and_pause_blocks_run(self) -> None:
         state_path = self.root / "state.json"

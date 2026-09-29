@@ -1,5 +1,28 @@
 {
-  "generated_at": "2026-09-29T08:09:33+02:00",
+  "generated_at": "2026-09-29T18:10:09+00:00",
+  "state_contract": {
+    "schema": "zippoworkz-current-state-v1",
+    "role": "DERIVED_SECRET_FREE_SNAPSHOT",
+    "authoritative_operational_store": "data/review_dashboard.db",
+    "sources": {
+      "operational_database": {
+        "path": "data/review_dashboard.db",
+        "role": "CANONICAL_CREATOR_OPS_OPERATIONAL_STATE"
+      },
+      "runtime_config": {
+        "path": "config.toml",
+        "role": "RUNTIME_CONFIGURATION"
+      },
+      "owner_policy": {
+        "path": "../ZIPPOWORKZ_OWNER_POLICY.md",
+        "role": "CANONICAL_OWNER_POLICY",
+        "loaded": true,
+        "version": "1.2",
+        "sha256": "e10731347b8e9cc88c4dde55a4ad89e8ea32692d5ae55d90dfb68a5c3d431b9f"
+      }
+    },
+    "unknown_semantics": "UNKNOWN_OR_NOT_VERIFIED_IS_NEVER_ZERO"
+  },
   "product": {
     "name": "ZippoWorkz",
     "dashboard_path": "/",
@@ -14,23 +37,12 @@
   "operations": {
     "meta_api_status": "PROVEN_LIVE_2026_09_21",
     "fiverr_identity_status": "OWNER_REPORTED_VERIFIED",
-    "fiverr_gig_status": "ACTIVE_PUBLIC_VERIFIED_WRITE_READY_2026_09_21",
-    "instagram_dm_p0_status": "IMPLEMENTED_LOCAL_READ_ONLY_SEND_DISABLED"
+    "fiverr_gig_status": "ACTIVE_PUBLIC_VERIFIED_WRITE_READY_2026_09_21"
   },
   "app_version": "1.6.4-beta",
   "schema_version": 7,
   "git": {
-    "state": "WORK_BRANCH_CODEX_20260929_INSTAGRAM_DM_P0_NOT_MERGED",
-    "branch": "codex/20260929-instagram-dm-p0",
-    "base_main_commit": "e289b7802aa360bf306773e24c4a7069610e9f7e",
-    "main_merge_commit": "b862f16c671e952e48c05cd7c83de65c0095caeb",
-    "archive_tag": "archive/ai-ops-20260913-final",
-    "archive_tag_target": "5b3298b45aa2fb7c27bece08cfd7f7de42340cf1",
-    "old_ai_branch_active": false,
-    "next_stack_main_commit": "ca1d729e6aec90f944b3348a9b15d20237dd4830",
-    "next_stack_archive_tag": "archive/20260928-next-stack-final",
-    "next_stack_archive_target": "91c00d4fe5cb65e3306abef88bbd8257c868fcc9",
-    "next_stack_branch_active": false
+    "state": "MANAGED_OUTSIDE_RUNTIME"
   },
   "personas": [
     {
@@ -82,7 +94,7 @@
     "owner_confirmed_native": 0,
     "official_meta_graph": 6,
     "mock": 0,
-    "manual_analytics_events": 0,
+    "manual_analytics_events": 6,
     "local_queue": {
       "PUBLISHED": 6
     },
@@ -253,8 +265,7 @@
       "total": 0,
       "events": 0
     },
-    "by_intent": {},
-    "migration_evidence": "schema 6 operational DB copy migrated to schema 7; integrity ok; foreign keys 0; original unchanged"
+    "by_intent": {}
   },
   "finance": {
     "cost_eur": 0.0,
@@ -269,26 +280,19 @@
     "active": false,
     "started_at": null
   },
-  "security": {
-    "tracked_project_secret_scan": "PASSED",
-    "tracked_files_scanned": 368,
-    "finding_output": "VALUE_FREE",
-    "pre_push_hook": "AVAILABLE_OPT_IN"
-  },
   "tests": {
     "status": "passed",
-    "passed": 193,
-    "failed": 0,
-    "dashboard_javascript_passed": 7,
-    "compilecheck": "passed",
-    "sqlite_integrity_check": "ok",
-    "sqlite_foreign_key_check_rows": 0
+    "passed": 203,
+    "failed": 0
   },
   "blockers": {
     "mock_assets_remaining": 4
   },
   "owner_decisions": {
     "source": "ZIPPOWORKZ_OWNER_POLICY.md v1.2",
+    "authoritative": false,
+    "role": "DERIVED_COMPATIBILITY_SUMMARY",
+    "source_sha256": "e10731347b8e9cc88c4dde55a4ad89e8ea32692d5ae55d90dfb68a5c3d431b9f",
     "pre_approved_actions": {
       "instagram_official_live_publish": "PRE_APPROVED_WITH_SAFETY_GATES",
       "instagram_normal_comments": "AUTONOMOUS_WITH_ANTI_SPAM_GUARDS",

@@ -25,7 +25,7 @@ class AnalyticsServiceTests(unittest.TestCase):
             snapshot = AnalyticsService(db).snapshot(now=datetime.now(timezone.utc))
         self.assertIn("instagram", snapshot)
         self.assertEqual(snapshot["instagram"]["captured_windows"], 0)
-        self.assertEqual(snapshot["fiverr"]["status"], "OWNER_GATE")
+        self.assertEqual(snapshot["fiverr"]["status"], "NOT_CONFIGURED")
 
     def test_real_events_power_persona_totals_and_cautious_learning(self):
         with TemporaryDirectory() as folder:

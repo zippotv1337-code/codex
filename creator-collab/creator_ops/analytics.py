@@ -59,18 +59,37 @@ class AnalyticsService:
 
     def _windows(self, publication: dict, now: datetime) -> list[dict]:
         published = _parse_datetime(publication.get("published_at"))
+        captured_rows = [
+            self._manual_event(publication["id"], window) for window in WINDOWS
+        ]
+        highest_captured = max(
+            (
+                window
+                for window, event in zip(WINDOWS, captured_rows, strict=True)
+                if event is not None
+            ),
+            default=0,
+        )
         result = []
-        for window in WINDOWS:
-            event = self._manual_event(publication["id"], window)
+        for window, event in zip(WINDOWS, captured_rows, strict=True):
             due = bool(published and now >= published + timedelta(hours=window))
             metrics = {metric: (event.get(metric) if event else None) for metric in METRICS}
+            status = (
+                "CAPTURED"
+                if event
+                else "MISSED"
+                if due and highest_captured > window
+                else "DUE"
+                if due
+                else "WAITING"
+            )
             result.append(
                 {
                     "window_hours": window,
                     "due": due,
-                    "status": "CAPTURED" if event else ("DUE" if due else "WAITING"),
+                    "status": status,
                     "captured_at": event.get("captured_at") if event else None,
-                    "source": "manual_owner_import" if event else "UNKNOWN",
+                    "source": event.get("source") if event else "UNKNOWN",
                     "metrics": metrics,
                 }
             )
@@ -247,12 +266,33 @@ class AnalyticsService:
             GROUP BY event_type, is_mock ORDER BY event_type, is_mock
             """
         )]
+        fiverr_account = self.database.one(
+            """
+            SELECT id,connection_status,session_status,last_sync_at,last_write_test_at,
+                   last_error,next_action
+            FROM fiverr_accounts
+            WHERE username='zippoworkz'
+            LIMIT 1
+            """
+        )
+        active_gigs = (
+            int(
+                self.database.scalar(
+                    "SELECT COUNT(*) FROM fiverr_gigs WHERE account_id=? AND status='ACTIVE'",
+                    (fiverr_account["id"],),
+                )
+                or 0
+            )
+            if fiverr_account
+            else 0
+        )
         return {
             "generated_at": current.isoformat(),
             "instagram": {
                 "published_count": len(publications),
                 "captured_windows": captured_count,
                 "due_windows": due_count,
+                "unknown_windows": len(publications) * len(WINDOWS) - captured_count,
                 "unknown_until_owner_import": len(publications) * len(WINDOWS) - captured_count,
                 "publications": publications,
                 "data_policy": "REAL_ONLY; fehlende Werte bleiben UNKNOWN/NULL",
@@ -276,7 +316,13 @@ class AnalyticsService:
                 "learning": self._learning(publications, current),
             },
             "fiverr": {
-                "status": "OWNER_GATE",
+                "status": fiverr_account["connection_status"] if fiverr_account else "NOT_CONFIGURED",
+                "session_status": fiverr_account["session_status"] if fiverr_account else "UNKNOWN",
+                "active_gig_count": active_gigs,
+                "last_successful_sync": fiverr_account["last_sync_at"] if fiverr_account else None,
+                "last_write_test": fiverr_account["last_write_test_at"] if fiverr_account else None,
+                "last_error": fiverr_account["last_error"] if fiverr_account else None,
+                "next_action": fiverr_account["next_action"] if fiverr_account else "Configure one real Fiverr seller account snapshot",
                 "real_revenue_eur": real_revenue,
                 "mock_revenue_eur": mock_revenue,
                 "events": fiverr_events,

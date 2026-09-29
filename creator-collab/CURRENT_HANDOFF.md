@@ -1,5 +1,13 @@
 # Aktueller Handoff
 
+## AKTUELL — PR #2 auf aktuellen Main gebracht, 29. September 2026
+
+- `origin/main` wurde per normalem Merge in `codex/20260929-instagram-dm-p1` übernommen; kein Rebase, Force-Push oder History-Rewrite.
+- Die einzigen fünf Konflikte wurden additiv aufgelöst: Main behält Runtime/Recovery, Node-Status und Instagram-Insights; DM-P1 behält Provider, Webhook, Outbox/Reconciliation und `Messages & Sales`.
+- Verifikation auf dem kombinierten Baum: DM-/Control-Plane-Fokus `22 passed, 22 subtests passed`; Full Suite `211 passed, 22 subtests passed`; Secret-Scan `OK` über 391 getrackte Dateien; `git diff --check` grün.
+- Eine echte Schema-5-Backupdatenbank wurde ausschließlich auf einer temporären Kopie zweimal idempotent auf Schema 8 migriert: Integrity `ok`, Foreign Keys 0, Basis-Zeilenzahlen unverändert, alle DM-P1-Tabellen/-Spalten vorhanden und Quell-Hash unverändert.
+- Keine externe Nachricht, kein Publish und keine operative Datenbankmigration. PR #2 bleibt der Review-/Merge-Pfad für den kritischen Schema/Auth/Messaging-Core.
+
 ## AKTUELL — Instagram DM P1 provider-verifiziert, 29. September 2026
 
 - Arbeitsbranch: `codex/20260929-instagram-dm-p1`, Commit `cf6fab0c85a69037c8253b5ffce1c3beac7056d4` (Remote vorhanden).
@@ -8,6 +16,24 @@
 - Branch-Suite: `201 passed, 22 subtests passed`; Compile-/JS-/Secret-/Diff-Checks grün.
 - Kein Live-Write-Beleg wurde erfunden: Es gab kein echtes eingehendes Ereignis. Webhook Secret/Verify Token fehlen noch im lokalen Secret Broker.
 - Wegen Schema/Auth/Messaging-Core verbleibt der Delta bis zum vorgesehenen Review auf dem Branch und ist nicht in `main` gemergt.
+
+## AKTUELL — Autonomy-Master Evidence abgeschlossen, 29. September 2026
+
+- Vollständiger Evidence-Handoff: `docs/AUTONOMY_EVIDENCE_HANDOFF_2026-09-29.md`.
+- Sichere Runtime-/Recovery- und Instagram-Insights-Deltas sind auf `main`; laufendes Dashboard wurde neu gestartet und zurückgelesen.
+- Instagram DM P1 ist provider-read-verifiziert und als kritischer Review-PR #2 offen, aber nicht nach `main` gemergt oder deployed.
+- Finaler Main-Testblock: `203 passed, 22 subtests passed`; SQLite Integrity `ok`, FK 0, Secret-/Compile-/JS-/PowerShell-/Diff-Checks grün.
+- Local AI `READY / IDLE_CLEAN`; VPS `WAITING_EXTERNAL_NODE`; TikTok wartet auf App/OAuth; Fiverr ist `WRITE_READY` mit Neupreis-Readback offen.
+
+## AKTUELL — Offizieller Instagram-Insights-Learning-Loop, 29. September 2026
+
+- Branch `codex/20260929-instagram-insights` ergänzt den bestehenden Analytics-Kern ohne neue DB oder Schemaänderung.
+- Sechs bestätigte Meta-Graph-Publikationen wurden offiziell read-only ausgelesen und als sechs idempotente Events gespeichert; ein zweiter Lauf erzeugte keine Dubletten.
+- Fünf alte 168h-Werte sind transparent `META_GRAPH_LATE`; frühere, nicht mehr exakt rekonstruierbare Fenster bleiben `MISSED / UNKNOWN`. Publication 6 besitzt ein zeitnahes 168h-Fenster `META_GRAPH`.
+- Reale Summen: Leona Reach 17 / Views 50, Mara Reach 31 / Views 96. Nicht gelieferte Profil-/Follow-/Link-/Revenue-Werte bleiben `NULL`.
+- Learning ist `OBSERVING` mit vorsichtiger `VARIATE`-Empfehlung; offizielle 168h-Daten speisen jetzt die vorhandene Prime-Time-Logik.
+- Scheduler, CLI und bestehendes Analytics-Dashboard verwenden denselben read-only Sync. Keine Plattform-Schreibaktion wurde ausgeführt.
+- Verifikation: `203 passed, 22 subtests passed`, Compile/JS/PowerShell/Diff/Secret grün, SQLite `ok`, FK 0.
 
 Status: `DERIVED_EVIDENCE / NOT_OWNER_POLICY / NOT_OPERATIONAL_DATABASE`
 
@@ -21,6 +47,32 @@ Leseregel: Nur die neuesten Abschnitte oberhalb der ausdrücklich markierten
 historischen Grenze sind aktueller Fortsetzungskontext. Alle späteren datierten
 Abschnitte bleiben Audit-Evidence; auch ihr damaliges Wort `AKTUELL` reaktiviert
 keine alte Aufgabe, kein altes Gate und keine alte Owner-Regel.
+
+## AKTUELL — Autonomy Runtime/Recovery Evidence, 29. September 2026
+
+- Der operative Local-AI-Runner wurde aus einem seit 21.09. terminalen,
+  inaktiven `BLOCKED`-Zustand sauber reconciliert. Originale `RUN_STATE`- und
+  `TASK`-Bytes liegen mit SHA-256 unter
+  `C:\Zippoworkz\Backups\Milestones\AutonomyReconcile\20260929-150136`.
+- Der alte Task bleibt im Archiv wahrheitsgemäß `BLOCKED`; er wurde nicht als
+  `DONE` ausgegeben. Nur der aktuelle Runner-Zeiger ist nach API-Readback
+  `IDLE_CLEAN`, `active=false`, ohne Run-/Task-ID und ohne Queue-Hold.
+- Die kanonische operative DB wurde nach einem validierten Meilenstein-Backup
+  ausschließlich mit der bereits auf `main` vorhandenen additiven P0-Migration
+  von Schema 6 auf Schema 7 aktiviert. Readback: `integrity_check=ok`,
+  Foreign-Key-Verstöße 0, beide DM-P0-Tabellen vorhanden.
+- Isolierter Restore-/Rollback-Proof liegt unter
+  `C:\Zippoworkz\Handoff\Codex\Current\BACKUP_RECOVERY_EVIDENCE.json`:
+  ZIP- und Member-Hashes verifiziert, Restore integer/FK-sauber, Mutation im
+  Temp-Clone erkannt, byte-identischer Rollback nachgewiesen, Produktiv-DB
+  nicht durch den Restore-Test verändert.
+- Local AI ist `READY / IDLE_CLEAN`. Für den VPS liegt kein aktueller
+  strukturierter Node-Status vor; er bleibt lokal und lane-spezifisch
+  `WAITING_EXTERNAL_NODE`, ohne andere Lanes zu blockieren.
+- Der im Auftrag genannte Exchange-Masterauftrag war am angegebenen Pfad nicht
+  vorhanden (`Current` enthielt nur `.keep`). Die vollständig im Owner-Text
+  gelieferte Meilensteinfolge wurde deshalb als operative Aufgabenquelle
+  verwendet und der Input-Drift nicht als globaler Blocker behandelt.
 
 ## AKTUELL — Instagram DM Inbound P0 fertig auf Arbeitsbranch, 29. September 2026
 

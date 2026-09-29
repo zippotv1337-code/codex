@@ -1,6 +1,6 @@
 # ZIPPOWORKZ — MASTER GOALS
 
-Last consolidated: 2026-09-21 — Meta proof completed; Leona reserve is AI-disclosure-confirmed, preflight READY and fail-closed scheduled for 19:30.
+Last consolidated: 2026-09-29 — official Instagram Insights cycle completed for six confirmed publications.
 
 ## Purpose and precedence
 
@@ -37,12 +37,12 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | ID | Goal | Status | Evidence / exit condition |
 |---|---|---|---|
 | M-01 | One canonical ZippoWorkz surface | DONE | One visible product, primary launcher, dashboard and operational DB; runtime contract verified 2026-09-08. |
-| M-02 | Real Instagram analytics in ZippoWorkz | ACTIVE — WAITING_FIRST_DUE_WINDOW | Der kanonische DB-Audit vom 2026-09-22 fand `0` manuelle Analytics-Events und `0` Snapshots. Die ältere Dokumentationsbehauptung über zwei gespeicherte Leona-Messungen ist damit für die aktuelle DB nicht bestätigt und wird im Journal als Drift festgehalten. Erstes 24h-Fenster: Publication 1 um 09:08 CEST, danach Publication 2 um 09:32. Complete when real 24h/72h/168h snapshots create the first evidenced learning cycle. |
+| M-02 | Real Instagram analytics in ZippoWorkz | DONE — REAL_GRAPH_LEARNING_CYCLE — 2026-09-29 | Six confirmed official publications have idempotent Meta Graph snapshots, persona totals, 7/30-day ranking and traceable `OBSERVING / VARIATE` learning. Five historical snapshots are explicitly `META_GRAPH_LATE`; missed earlier windows remain UNKNOWN. Evidence: `sessions/2026-09-29-1535-codex-instagram-insights.md`. |
 | M-03 | Official Meta/Instagram API proof | DONE — LEONA + MARA — 2026-09-21 | Both account identities and quotas passed; one three-image carousel per persona was published through the official adapter. Graph IDs/permalinks, durable receipts, queues, publications, content and asset states reconcile. Evidence: `sessions/2026-09-21-0908-codex-meta-live-proof.md` and `sessions/2026-09-21-0936-codex-mara-meta-live-github-sync.md`. |
 | M-04 | Fiverr Gig 1 live: AI Workflow Automation | ACTIVE / OWNER_SAVED_PENDING_PUBLIC_READBACK | Letzter öffentlich verifizierter Stand vom 2026-09-21 bleibt 50/150/355 USD. Owner bestätigte am 2026-09-26 den Save des vorbereiteten 149/349/699-USD-Angebots im bestehenden Gig. Kein zweiter Gig. Exit: öffentliche Readback-Verifikation der neuen Pakete. |
 | M-05 | First real lead, order and revenue | BLOCKED_BY_M-04 | A genuine inquiry, order, fulfillment and revenue record; dry runs never count. |
 | M-06 | Standardize fulfillment from first order | LATER | Learn recurring requests, revisions, integrations and boundaries. Gig 2 only after Gig 1 proof. |
-| M-07 | Maintain real content cadence | ACTIVE — FIVE_OFFICIAL_POSTS_2026_09_21 | Zusätzlich zu den bestehenden Leona-/Mara-Posts wurde Leona „Ein Blazer, drei Stimmungen“ als Fünfer-Carousel über den offiziellen Meta-Pfad veröffentlicht: Media-ID `18118135330810940`, https://www.instagram.com/p/DdkFJYlkeYW/. Alle fünf Assets wurden extern bestätigt; als Nächstes echte 24h/72h/168h-Analytics erfassen. |
+| M-07 | Maintain real content cadence | ACTIVE — SIX_OFFICIAL_POSTS_WITH_BASELINE | Six official posts are reconciled: three Leona and three Mara. Real Graph analytics now provide a small baseline; the next content should be a cautious variation, not a blind rebuild or reuse of published assets. |
 | M-08 | Stories as a first-class lane | PARTIAL / MOCK_GUARD_FIXED | Local preview/edit/approve/change/reject/pause/plan remain persistent. Mock-only review slots are no longer presented as publishable Story kits; a Story package requires real previewable assets. Official Story publishing still waits for supported proof. |
 | M-09 | Engagement from real comments | WAITING_SIGNAL | Use actual text only; manual suggestions, never mass engagement. |
 | M-10 | Secure local/mobile operations | MOSTLY_DONE / LATER | Protected LAN, local dashboard and no router forwarding; no expansion without an actual need. |
@@ -60,7 +60,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 | ID | Goal | Status | Exit condition |
 |---|---|---|---|
 | T-001 | Verify newest ZippoWorkz runtime after restart | DONE — 2026-09-08 | Health `ok`, `review_schema=story-review-v1`, one active backend process. Evidence: session journal. |
-| T-002 | Build real Instagram analytics capture and dashboard statistics | ACTIVE — WAITING_FIRST_DUE_WINDOW | Canonical DB currently contains no analytics event/snapshot. Capture only after the real 24h deadlines beginning 2026-09-22 09:08 CEST. Exit: traceable first learning cycle. |
+| T-002 | Build real Instagram analytics capture and dashboard statistics | DONE — 2026-09-29 | Official read-only sync captured six real publications, remained idempotent on rerun and produced the first traceable learning cycle. |
 | T-003 | Verify/publish Fiverr Gig 1 | ACTIVE — OWNER_SAVED_PENDING_PUBLIC_READBACK | Owner bestätigte am 2026-09-26 den Save im bestehenden Gig. Der neue Stand wird noch nicht als öffentlich verifiziert behauptet. Exit: 149/349/699 USD, 4/7/10 Tage und 1/2/3 Revisionen öffentlich nachlesen und bestätigen. |
 | T-004 | Resume Meta API proof | DONE — LEONA + MARA — 2026-09-21 | Official Leona and Mara carousels are live and externally confirmed. Reopen only for a reproducible defect or post-rotation credential validation. |
 
@@ -119,7 +119,7 @@ direct dependency. Otherwise it is `SKIP_DONE`.
 
 ## Next operational sequence
 
-1. Rotate the chat-exposed Meta tokens locally, then run read-only identity checks; do not store replacement tokens in Git, DB or journals.
-2. T-002/M-02: capture Publication 1 after 09:08 CEST and Publication 2 after 09:32 CEST; later windows remain UNKNOWN until due.
-3. T-003/M-04: publish and verify Fiverr Gig 1 in a dedicated output run when the public page is reachable.
-4. M-07: Keine weitere Serie erzeugen, bevor die erste echte Analytics-Auswertung des neuen Leona-Fünfer-Carousels fällig ist.
+1. Keep replacement Meta tokens exclusively in the node-local Secret Broker; no token material in Git, DB or journals.
+2. M-07: plan one fresh PUBLIC_SFW variation from the real Leona/Mara baseline and never recycle already-published assets as new top picks.
+3. Capture the next publication at its exact 24h/72h/168h windows through the idempotent scheduler path.
+4. T-003/M-04: verify Fiverr Gig 1 publicly when the normal public/authenticated page is reachable; do not bypass challenges.

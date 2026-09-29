@@ -8,6 +8,8 @@ const esc = value => String(value ?? '—').replaceAll('&', '&amp;').replaceAll(
   .replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 const fmt = value => value == null ? 'UNKNOWN' : String(value);
 const csrf = () => (document.cookie.match(/(?:^|;\s*)creator_ops_csrf=([^;]+)/) || [])[1];
+const syncButton = document.querySelector('#sync-meta-insights');
+const syncStatus = document.querySelector('#sync-meta-status');
 
 function metricRow(metrics) {
   return `<div class="metric-row">${metricFields.map(([key, label]) =>
@@ -16,10 +18,13 @@ function metricRow(metrics) {
 
 function windowCard(publication, window) {
   const canCapture = window.status === 'DUE';
+  const detail = window.captured_at ? esc(window.captured_at)
+    : window.status === 'MISSED' ? 'Historisches Fenster verpasst; bleibt UNKNOWN'
+      : canCapture ? 'Werte jetzt aus Instagram Insights übertragen' : 'Noch nicht fällig';
   return `<section class="analytics-window">
     <div class="analytics-window-head"><b>${window.window_hours}h</b>
       <span class="status-badge ${esc(window.status.toLowerCase())}">${esc(window.status)}</span></div>
-    <small>${window.captured_at ? esc(window.captured_at) : canCapture ? 'Werte jetzt aus Instagram Insights übertragen' : 'Noch nicht fällig'}</small>
+    <small>${detail}</small>
     ${metricRow(window.metrics)}
     ${canCapture ? captureForm(publication, window) : ''}
   </section>`;
@@ -73,7 +78,7 @@ function render(payload) {
   const fiverr = payload.fiverr;
   root.innerHTML = `<section class="revenue-summary">
     <div><small>ECHTE POSTS</small><strong>${instagram.published_count}</strong><span>${instagram.captured_windows} Fenster erfasst</span></div>
-    <div><small>FÄLLIGE FENSTER</small><strong>${instagram.due_windows}</strong><span>${instagram.unknown_until_owner_import} bleiben UNKNOWN</span></div>
+    <div><small>FÄLLIGE FENSTER</small><strong>${instagram.due_windows}</strong><span>${instagram.unknown_windows ?? instagram.unknown_until_owner_import} bleiben UNKNOWN</span></div>
     <div><small>FIVERR</small><strong>${esc(fiverr.status)}</strong><span>keine erfundenen Werte</span></div>
   </section>
   <section class="analytics-persona-grid">${personaCards(instagram.by_persona)}</section>
@@ -115,6 +120,26 @@ root.addEventListener('submit', async event => {
     const notice = document.createElement('p');
     notice.className = 'error'; notice.textContent = error.message;
     form.prepend(notice);
+  }
+});
+
+syncButton?.addEventListener('click', async () => {
+  syncButton.disabled = true;
+  syncStatus.textContent = 'Offizielle Insights werden read-only geprüft …';
+  try {
+    const response = await fetch('/api/analytics/sync-meta', {
+      method: 'POST',
+      headers: {...(csrf() ? {'X-CSRF-Token': decodeURIComponent(csrf())} : {})},
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Insights-Sync fehlgeschlagen.');
+    const counts = result.counts || {};
+    syncStatus.textContent = `${counts.captured || 0} neu erfasst · ${counts.waiting || 0} warten · ${counts.provider_error || 0} Providerfehler`;
+    await load();
+  } catch (error) {
+    syncStatus.textContent = error.message;
+  } finally {
+    syncButton.disabled = false;
   }
 });
 

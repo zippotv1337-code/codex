@@ -14,6 +14,7 @@ from .current_state import CurrentStateService
 from .evening import EveningRunCoordinator
 from .exporting import ExportBackupService
 from .external_readiness import ExternalReadinessService
+from .instagram_insights import MetaInstagramInsightsService
 from .fiverr import FiverrAutomationService, FiverrGigSnapshot
 from .pipeline import VerticalPipeline
 from .reconcile import ManualInstagramService
@@ -143,6 +144,10 @@ def parser() -> argparse.ArgumentParser:
         analytics.add_argument(f"--{metric}", type=int)
     analytics.add_argument("--revenue", type=float)
     analytics.add_argument("--note", default="")
+    subcommands.add_parser(
+        "instagram-insights-sync",
+        help="Capture due official Instagram insights without publishing",
+    )
     checkpoint = subcommands.add_parser("checkpoint", help="Write an atomic autopilot savegame")
     checkpoint.add_argument("--out", type=Path, default=ROOT / "AUTOPILOT_CHECKPOINT.md")
     checkpoint.add_argument("--last-completed", required=True)
@@ -376,6 +381,14 @@ def main() -> int:
             **metrics,
         )
         print(json.dumps({"analytics_event_id": event_id}, indent=2))
+    elif args.command == "instagram-insights-sync":
+        print(
+            json.dumps(
+                MetaInstagramInsightsService(pipeline.db, ROOT).sync_due(),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
     elif args.command == "checkpoint":
         path = AutopilotCheckpointService(ROOT).write(
             args.out,

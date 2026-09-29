@@ -4,6 +4,25 @@
 
 Der Branch `codex/20260929-instagram-dm-p1` erweitert die bestehende DM-P0-Basis um provider-verifizierten Read, signierten Webhook, genau-einmal Outbox, 24-Stunden-Antwortfenster, Delivery-Reconciliation sowie `Messages & Sales` im vorhandenen Dashboard. Beide konfigurierten Instagram-Konten wurden read-only beim Provider verifiziert; aktuell lagen keine Inbox-Ereignisse vor. Der kritische Schema/Auth/Messaging-Core-Delta bleibt bis zum vorgesehenen Review separat und ist nicht nach `main` gemergt.
 
+PR #2 ist inzwischen per normalem Merge auf den aktuellen `origin/main` gebracht. Runtime/Recovery, Node-Status und offizielle Instagram-Insights aus Main sowie der vollständige DM-P1-Pfad sind gemeinsam erhalten. Der kombinierte Baum bestand 211 Tests plus 22 Subtests; eine reale Schema-5-Backupkopie migrierte idempotent auf Schema 8 mit sauberer Integritäts-/FK-Prüfung und unveränderter Quelldatenbank.
+
+## Reale Instagram-Insights und Learning aktiv (29. September 2026)
+
+ZippoWorkz liest fällige Medien-Insights jetzt über den offiziellen Meta-Graph-Pfad read-only ein und speichert sie idempotent in der bereits vorhandenen Analytics-Tabelle. Sechs bestehende offizielle Publikationen bilden den ersten realen Learning-Zyklus. Historisch verpasste 24h-/72h-Fenster werden nicht erfunden, sondern bleiben `MISSED / UNKNOWN`; vorhandene kumulative Reads sind als `META_GRAPH_LATE` gekennzeichnet. Scheduler, Dashboard, Leona/Mara-Vergleich, 7/30-Tage-Leaderboard und Prime-Time-Learning nutzen dieselbe Quelle. Fehlende Providerwerte bleiben `NULL`.
+
+## Autonomy Runtime und Recovery nachweisbar — 29. September 2026
+
+Der bestehende Local-AI/V8-Runner ist ohne neue Parallelarchitektur aus seinem
+alten terminalen `BLOCKED`-Zeiger in einen ehrlichen `IDLE_CLEAN`-Betrieb
+überführt. Die blockierte Aufgabe bleibt mitsamt Originalzustand und Hashes
+archiviert; es wurde kein falscher Erfolg erzeugt. Die bestehende Creator-Ops-
+DB ist nach validiertem Backup auf das bereits in Main enthaltene additive
+Schema 7 migriert und per SQLite Integrity/FK geprüft. Ein isolierter
+Restore-Test beweist zusätzlich Archivhashes, intakten Restore und einen
+byte-identischen Rollback nach kontrollierter Temp-Mutation. Die vorhandene
+Control Plane projiziert Local-AI- und VPS-Status ohne Netzwerk-Seiteneffekte:
+Local AI `READY`, VPS `WAITING_EXTERNAL_NODE`, global nicht blockiert.
+
 ## Instagram DM Inbound P0 implementiert — 29. September 2026
 
 Auf `codex/20260929-instagram-dm-p0` ist die erste DM-Lane additiv in den
