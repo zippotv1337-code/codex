@@ -1,5 +1,15 @@
 # Aktueller Handoff
 
+## AKTUELL — Offizieller Instagram-Insights-Learning-Loop, 29. September 2026
+
+- Branch `codex/20260929-instagram-insights` ergänzt den bestehenden Analytics-Kern ohne neue DB oder Schemaänderung.
+- Sechs bestätigte Meta-Graph-Publikationen wurden offiziell read-only ausgelesen und als sechs idempotente Events gespeichert; ein zweiter Lauf erzeugte keine Dubletten.
+- Fünf alte 168h-Werte sind transparent `META_GRAPH_LATE`; frühere, nicht mehr exakt rekonstruierbare Fenster bleiben `MISSED / UNKNOWN`. Publication 6 besitzt ein zeitnahes 168h-Fenster `META_GRAPH`.
+- Reale Summen: Leona Reach 17 / Views 50, Mara Reach 31 / Views 96. Nicht gelieferte Profil-/Follow-/Link-/Revenue-Werte bleiben `NULL`.
+- Learning ist `OBSERVING` mit vorsichtiger `VARIATE`-Empfehlung; offizielle 168h-Daten speisen jetzt die vorhandene Prime-Time-Logik.
+- Scheduler, CLI und bestehendes Analytics-Dashboard verwenden denselben read-only Sync. Keine Plattform-Schreibaktion wurde ausgeführt.
+- Verifikation: `203 passed, 22 subtests passed`, Compile/JS/PowerShell/Diff/Secret grün, SQLite `ok`, FK 0.
+
 Status: `DERIVED_EVIDENCE / NOT_OWNER_POLICY / NOT_OPERATIONAL_DATABASE`
 
 Kanonische Regeln: `../ZIPPOWORKZ_OWNER_POLICY.md`

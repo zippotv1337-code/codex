@@ -1,5 +1,9 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Reale Instagram-Insights und Learning aktiv (29. September 2026)
+
+ZippoWorkz liest fällige Medien-Insights jetzt über den offiziellen Meta-Graph-Pfad read-only ein und speichert sie idempotent in der bereits vorhandenen Analytics-Tabelle. Sechs bestehende offizielle Publikationen bilden den ersten realen Learning-Zyklus. Historisch verpasste 24h-/72h-Fenster werden nicht erfunden, sondern bleiben `MISSED / UNKNOWN`; vorhandene kumulative Reads sind als `META_GRAPH_LATE` gekennzeichnet. Scheduler, Dashboard, Leona/Mara-Vergleich, 7/30-Tage-Leaderboard und Prime-Time-Learning nutzen dieselbe Quelle. Fehlende Providerwerte bleiben `NULL`.
+
 ## Autonomy Runtime und Recovery nachweisbar — 29. September 2026
 
 Der bestehende Local-AI/V8-Runner ist ohne neue Parallelarchitektur aus seinem

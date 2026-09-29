@@ -27,6 +27,7 @@ from .current_state import CurrentStateService
 from .external_readiness import ExternalReadinessService
 from .fiverr import FiverrAutomationService
 from .instagram_dm import InstagramDMService
+from .instagram_insights import MetaInstagramInsightsService
 from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .stories import StoryReserveService
@@ -706,6 +707,14 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                     **metrics,
                 )
                 self._json({"analytics_event_id": event_id, "source": "MANUAL_OWNER", "external_action": False})
+                return
+            if parsed.path == "/api/analytics/sync-meta":
+                self._json(
+                    MetaInstagramInsightsService(
+                        self.service.pipeline.db,
+                        self.asset_root,
+                    ).sync_due()
+                )
                 return
             if len(parts) == 3 and parts[:2] == ["api", "control-plane"]:
                 self._json(self.control_plane.command(parts[2]))
