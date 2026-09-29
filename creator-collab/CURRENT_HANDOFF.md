@@ -1,5 +1,14 @@
 # Aktueller Handoff
 
+## AKTUELL — Instagram DM P1 provider-verifiziert, 29. September 2026
+
+- Arbeitsbranch: `codex/20260929-instagram-dm-p1`, Commit `cf6fab0c85a69037c8253b5ffce1c3beac7056d4` (Remote vorhanden).
+- Provider-verifizierter Inbox-Read ist für Leona und Mara bewiesen; beide Accounts antworteten erfolgreich mit aktuell 0 Ereignissen.
+- Schema 8, Exactly-once Outbox, 24h-Fenster, Reconciliation, signierter Webhook und `Messages & Sales` sind implementiert.
+- Branch-Suite: `201 passed, 22 subtests passed`; Compile-/JS-/Secret-/Diff-Checks grün.
+- Kein Live-Write-Beleg wurde erfunden: Es gab kein echtes eingehendes Ereignis. Webhook Secret/Verify Token fehlen noch im lokalen Secret Broker.
+- Wegen Schema/Auth/Messaging-Core verbleibt der Delta bis zum vorgesehenen Review auf dem Branch und ist nicht in `main` gemergt.
+
 Status: `DERIVED_EVIDENCE / NOT_OWNER_POLICY / NOT_OPERATIONAL_DATABASE`
 
 Kanonische Regeln: `../ZIPPOWORKZ_OWNER_POLICY.md`

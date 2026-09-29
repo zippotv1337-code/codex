@@ -1,5 +1,9 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Instagram DM P1 (29. September 2026)
+
+Der Branch `codex/20260929-instagram-dm-p1` erweitert die bestehende DM-P0-Basis um provider-verifizierten Read, signierten Webhook, genau-einmal Outbox, 24-Stunden-Antwortfenster, Delivery-Reconciliation sowie `Messages & Sales` im vorhandenen Dashboard. Beide konfigurierten Instagram-Konten wurden read-only beim Provider verifiziert; aktuell lagen keine Inbox-Ereignisse vor. Der kritische Schema/Auth/Messaging-Core-Delta bleibt bis zum vorgesehenen Review separat und ist nicht nach `main` gemergt.
+
 ## Instagram DM Inbound P0 implementiert — 29. September 2026
 
 Auf `codex/20260929-instagram-dm-p0` ist die erste DM-Lane additiv in den
