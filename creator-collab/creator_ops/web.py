@@ -26,6 +26,7 @@ from .cli import ROOT, build_pipeline, build_publish_queue, live_publishing_requ
 from .current_state import CurrentStateService
 from .external_readiness import ExternalReadinessService
 from .fiverr import FiverrAutomationService
+from .instagram_dm import InstagramDMService
 from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .stories import StoryReserveService
@@ -136,6 +137,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
     control_plane: ControlPlaneService
     adworks: AdWorksService
     publishing: PublishQueueService
+    instagram_dm: InstagramDMService
     asset_root: Path = ROOT
     auth: DashboardAuth = DashboardAuth(None)
 
@@ -320,6 +322,20 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
             raise ValueError("request_too_large")
         return parse_qs(self.rfile.read(length).decode("utf-8", "replace"))
 
+    def _read_json(self) -> object:
+        length = int(self.headers.get("Content-Length", "0") or "0")
+        if length <= 0:
+            raise ValueError("request_body_required")
+        if length > 32_768:
+            raise ValueError("request_too_large")
+        content_type = self.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        if content_type != "application/json":
+            raise ValueError("application_json_required")
+        try:
+            return json.loads(self.rfile.read(length).decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise ValueError("invalid_json_payload") from error
+
     def do_GET(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
         parsed = urlparse(self.path)
         try:
@@ -484,6 +500,13 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                         "execution": "proposal-only",
                     }
                 )
+            elif parsed.path == "/api/instagram-dm":
+                query = parse_qs(parsed.query)
+                self._json(
+                    self.instagram_dm.dashboard(
+                        limit=int(query.get("limit", ["50"])[0])
+                    )
+                )
             elif parsed.path == "/api/stories":
                 self._json({"items": StoryReserveService(self.service).packages(), "execution": "owner-review-only", "review_schema": "story-review-v1"})
             elif parsed.path == "/api/collections":
@@ -570,6 +593,10 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
 
             if session is not None and not self._csrf_valid(session):
                 self._json({"error": "csrf_failed"}, HTTPStatus.FORBIDDEN)
+                return
+
+            if parsed.path == "/api/instagram-dm/inbound":
+                self._json(self.instagram_dm.ingest(self._read_json()))
                 return
 
             if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "approve":
@@ -740,6 +767,7 @@ def create_server(
     adworks = AdWorksService(pipeline.db)
     adworks.seed_catalog()
     fiverr = FiverrAutomationService(pipeline.db)
+    instagram_dm = InstagramDMService(pipeline.db)
     handler = type(
         "BoundDashboardHandler",
         (DashboardHandler,),
@@ -751,6 +779,7 @@ def create_server(
             "adworks": adworks,
             "fiverr": fiverr,
             "publishing": publishing,
+            "instagram_dm": instagram_dm,
         },
     )
     return ThreadingHTTPServer((host, port), handler)

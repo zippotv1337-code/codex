@@ -13,6 +13,32 @@ historischen Grenze sind aktueller Fortsetzungskontext. Alle späteren datierten
 Abschnitte bleiben Audit-Evidence; auch ihr damaliges Wort `AKTUELL` reaktiviert
 keine alte Aufgabe, kein altes Gate und keine alte Owner-Regel.
 
+## AKTUELL — Instagram DM Inbound P0 fertig auf Arbeitsbranch, 29. September 2026
+
+- Branch: `codex/20260929-instagram-dm-p0`, basierend auf dem beim Start
+  aktuellen `origin/main` `e289b7802aa360bf306773e24c4a7069610e9f7e`.
+  Entsprechend dem Owner-Auftrag erfolgt kein Merge nach `main`.
+- Schema 7 ergänzt in der kanonischen `data/review_dashboard.db` nur zwei
+  additive Tabellen: `instagram_dm_conversations` und `instagram_dm_events`.
+  Externe Event- und Message-IDs werden providerbezogen idempotent gespeichert.
+- Der lokale Inbound-Normalizer ordnet ausschließlich bekannte Leona-/Mara-
+  Konten zu, klassifiziert die 13 P0-Intents deterministisch und setzt
+  unbekannte, uneindeutige oder riskante Ereignisse fail-closed auf
+  `NEEDS_HUMAN`.
+- Persistiert werden nur normalisierte Metadaten und Provider-IDs. Weder
+  Roh-Payload noch Nachrichtentext werden in der Datenbank gespeichert.
+- `/api/instagram-dm` und die bestehende Nachrichtenansicht zeigen Persona,
+  Intent, Status, Zeitpunkt und Handoff-Grund. Der Modus ist sichtbar
+  `SEND_DISABLED_READ_ONLY_P0`; es existiert kein Send-/Reply-Endpunkt.
+- Die Inbound-Route ist nur eine lokale, authentifizierte Test-/Adaptergrenze.
+  Kein Meta-Webhook wurde registriert, keine externe Nachricht gelesen oder
+  gesendet und keine andere Plattformaktion ausgeführt.
+- Eine isolierte Kopie der operativen Schema-6-DB migrierte auf Schema 7 mit
+  `integrity_check=ok` und Foreign Keys 0. Die Quell-DB blieb hashidentisch.
+- Noch offen für spätere Phasen: offizieller Meta-Webhook, signierte Provider-
+  Events, Vorschläge/Preview, Owner-Freigabe, Delivery-Tracking sowie strikt
+  getrennte Payment-/Link- und Medienpfade. Diese Punkte gehören nicht zu P0.
+
 ## AKTUELL — WORK 001–005 P0-Delta abgeschlossen, 29. September 2026
 
 - Frischer Worktree/Branch auf dem bei Start aktuellen `origin/main`

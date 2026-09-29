@@ -6,11 +6,13 @@ Start: `START_ZIPPOWORKZ.ps1`. Dashboard: <http://127.0.0.1:4180/>.
 Der Launcher verwendet den bestehenden Standalone-/Supervisor-Weg, keine zweite Anwendung.
 
 - Operativer Workspace: `C:\Users\ZiPPo\Documents\ChatGPT\Insta baddie\creator-collab`.
-- Konfiguration: `config.toml`; operative Datenbank: `data/review_dashboard.db`, Schema 6.
+- Konfiguration: `config.toml`; operative Datenbank: `data/review_dashboard.db`, Schema 7.
 - Gemeinsame Navigation: Heute/Review, Stories, Needs Attention, Verlauf/Archiv,
   Analytics, Planung/Queue, Fiverr/Revenue, Angebot und Health/Status.
 - Stories: Texte, Typ, CTA, Link, Highlight und Termin lokal bearbeiten;
   Entscheidungen werden gespeichert. Kein Nachweis eines Live-Versands.
+- Instagram-DM-P0: lokale, idempotente Inbound-Erfassung mit Persona-/Intent-
+  Zuordnung und `NEEDS_HUMAN`; Antworten und Versand sind vollständig deaktiviert.
 - Meta: der kontrollierte offizielle Publishpfad ist bewiesen; aktuelle
   Readiness bleibt eine Laufzeitwahrheit. Fiverr: ein öffentlicher Gig ist
   verifiziert, eine später vom Owner gespeicherte Paketänderung wartet noch auf
