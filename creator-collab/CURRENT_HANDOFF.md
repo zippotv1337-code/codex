@@ -4,7 +4,7 @@
 
 - `origin/main` wurde per normalem Merge in `codex/20260929-instagram-dm-p1` übernommen; kein Rebase, Force-Push oder History-Rewrite.
 - Die einzigen fünf Konflikte wurden additiv aufgelöst: Main behält Runtime/Recovery, Node-Status und Instagram-Insights; DM-P1 behält Provider, Webhook, Outbox/Reconciliation und `Messages & Sales`.
-- Verifikation auf dem kombinierten Baum: DM-/Control-Plane-Fokus `22 passed, 22 subtests passed`; Full Suite `211 passed, 22 subtests passed`; Secret-Scan `OK` über 391 getrackte Dateien; `git diff --check` grün.
+- Verifikation auf dem kombinierten Baum: DM-/Control-Plane-Fokus `22 passed, 22 subtests passed`; Full Suite `211 passed, 22 subtests passed`; finaler Secret-Scan `OK` über 392 getrackte Dateien; `git diff --check` grün.
 - Eine echte Schema-5-Backupdatenbank wurde ausschließlich auf einer temporären Kopie zweimal idempotent auf Schema 8 migriert: Integrity `ok`, Foreign Keys 0, Basis-Zeilenzahlen unverändert, alle DM-P1-Tabellen/-Spalten vorhanden und Quell-Hash unverändert.
 - Keine externe Nachricht, kein Publish und keine operative Datenbankmigration. PR #2 bleibt der Review-/Merge-Pfad für den kritischen Schema/Auth/Messaging-Core.
 

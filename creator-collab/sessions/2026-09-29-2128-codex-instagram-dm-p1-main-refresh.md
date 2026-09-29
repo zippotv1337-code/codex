@@ -22,7 +22,7 @@
 
 - Fokussierte DM-/Control-Plane-Tests: `22 passed, 22 subtests passed`.
 - Full Suite: `211 passed, 22 subtests passed`.
-- Wertfreier Secret-Scan: `OK (391 files checked)`.
+- Wertfreier finaler Secret-Scan nach Journalanlage: `OK (392 files checked)`.
 - `git diff --check`: grün.
 - Echte Schema-5-Quelle: `backups/creator-ops-backup-pre-autopublish-20260921-1408.db`.
 - Migration ausschließlich auf temporärer Kopie: Schema 5 → 8 beim ersten Lauf, zweiter Lauf idempotent auf 8; `integrity_check=ok`, Foreign Keys 0, Basis-Zeilenzahlen unverändert, alle DM-P1-Tabellen und Migrationsspalten vorhanden.
