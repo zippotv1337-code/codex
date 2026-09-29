@@ -49,7 +49,7 @@ class ControlPlaneTests(unittest.TestCase):
         self.assertFalse(enhanced["required"])
         self.assertEqual(astra["state"], "OPTIONAL_BONUS")
         self.assertFalse(astra["required"])
-        self.assertEqual(external["state"], "OWNER_GATE")
+        self.assertEqual(external["state"], "POLICY_CONTROLLED_AVAILABLE")
 
     def test_commands_are_atomic_and_pause_blocks_run(self) -> None:
         state_path = self.root / "state.json"
@@ -75,7 +75,7 @@ class ControlPlaneTests(unittest.TestCase):
                 self.assertIn("Capability-basiert", response.read().decode("utf-8"))
             with urlopen(f"{base}/api/control-plane", timeout=5) as response:
                 payload = json.load(response)
-            self.assertEqual(payload["contract"]["execution"], "local-safe-only")
+            self.assertEqual(payload["contract"]["execution"], "DO_LOG_VERIFY_POLICY_CONTROLLED")
             with urlopen(Request(f"{base}/api/control-plane/checkpoint", method="POST"), timeout=5) as response:
                 saved = json.load(response)
             self.assertIsNotNone(saved["state"]["checkpoint_at"])

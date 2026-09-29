@@ -674,6 +674,70 @@ CREATE TABLE IF NOT EXISTS instagram_dm_events (
     UNIQUE (provider, dedupe_key)
 );
 
+CREATE TABLE IF NOT EXISTS instagram_dm_outbox (
+    id INTEGER PRIMARY KEY,
+    conversation_id INTEGER NOT NULL REFERENCES instagram_dm_conversations(id),
+    trigger_event_id INTEGER NOT NULL REFERENCES instagram_dm_events(id),
+    response_type TEXT NOT NULL,
+    reply_text TEXT NOT NULL,
+    idempotency_key TEXT NOT NULL UNIQUE,
+    status TEXT NOT NULL,
+    provider_message_id TEXT,
+    attempt_count INTEGER NOT NULL DEFAULT 0,
+    last_error TEXT,
+    created_at TEXT NOT NULL,
+    sent_at TEXT,
+    reconciled_at TEXT,
+    updated_at TEXT NOT NULL,
+    UNIQUE (trigger_event_id)
+);
+
+CREATE TABLE IF NOT EXISTS instagram_dm_provider_sync (
+    creator_id INTEGER PRIMARY KEY REFERENCES creators(id),
+    provider TEXT NOT NULL,
+    status TEXT NOT NULL,
+    messages_seen INTEGER NOT NULL DEFAULT 0,
+    messages_ingested INTEGER NOT NULL DEFAULT 0,
+    last_started_at TEXT,
+    last_success_at TEXT,
+    last_error TEXT,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS instagram_dm_custom_requests (
+    id INTEGER PRIMARY KEY,
+    conversation_id INTEGER NOT NULL REFERENCES instagram_dm_conversations(id),
+    trigger_event_id INTEGER NOT NULL UNIQUE REFERENCES instagram_dm_events(id),
+    request_type TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS instagram_dm_sales_events (
+    id INTEGER PRIMARY KEY,
+    conversation_id INTEGER NOT NULL REFERENCES instagram_dm_conversations(id),
+    trigger_event_id INTEGER REFERENCES instagram_dm_events(id),
+    event_type TEXT NOT NULL,
+    link_type TEXT,
+    status TEXT NOT NULL,
+    amount REAL,
+    currency TEXT,
+    created_at TEXT NOT NULL,
+    UNIQUE (trigger_event_id, event_type)
+);
+
+CREATE TABLE IF NOT EXISTS instagram_dm_approved_links (
+    id INTEGER PRIMARY KEY,
+    creator_id INTEGER REFERENCES creators(id),
+    link_type TEXT NOT NULL,
+    url TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'ACTIVE',
+    approved_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    UNIQUE (creator_id, link_type)
+);
+
 CREATE INDEX IF NOT EXISTS idx_instagram_dm_conversations_status
     ON instagram_dm_conversations(status, last_received_at DESC);
 CREATE INDEX IF NOT EXISTS idx_instagram_dm_events_conversation
@@ -686,6 +750,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_events_provider_event_id
 CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_events_provider_message_id
     ON instagram_dm_events(provider, external_message_id)
     WHERE external_message_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_outbox_status
+    ON instagram_dm_outbox(status, created_at);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_outbox_provider_message_id
+    ON instagram_dm_outbox(provider_message_id)
+    WHERE provider_message_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_sales_status
+    ON instagram_dm_sales_events(status, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS evening_batches (
     id INTEGER PRIMARY KEY,
@@ -712,7 +783,7 @@ CREATE TABLE IF NOT EXISTS export_jobs (
 """
 
 
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 COLUMN_MIGRATIONS = {
     "content_items": (
@@ -736,6 +807,15 @@ COLUMN_MIGRATIONS = {
         ("external_schedule_id", "TEXT"),
         ("schedule_error", "TEXT"),
         ("approval_version", "INTEGER NOT NULL DEFAULT 0"),
+    ),
+    "instagram_dm_conversations": (
+        ("last_outbound_at", "TEXT"),
+        ("last_provider_sync_at", "TEXT"),
+    ),
+    "instagram_dm_events": (
+        ("provider_verified", "INTEGER NOT NULL DEFAULT 0"),
+        ("processed_at", "TEXT"),
+        ("direction", "TEXT NOT NULL DEFAULT 'INBOUND'"),
     ),
 }
 
@@ -1107,6 +1187,11 @@ class CreatorDatabase:
             "engagement_queue",
             "instagram_dm_conversations",
             "instagram_dm_events",
+            "instagram_dm_outbox",
+            "instagram_dm_provider_sync",
+            "instagram_dm_custom_requests",
+            "instagram_dm_sales_events",
+            "instagram_dm_approved_links",
             "evening_batches",
             "export_jobs",
             "product_packs",

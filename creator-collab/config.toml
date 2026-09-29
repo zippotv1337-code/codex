@@ -34,6 +34,13 @@ poll_seconds = 30
 adapter = "meta-graph"
 live_enabled = true
 
+[instagram_dm]
+provider = "meta-graph"
+provider_read_enabled = true
+webhook_enabled = true
+auto_reply_enabled = true
+reply_window_hours = 24
+
 [capabilities]
 standalone_runtime = true
 per_user_autostart_fallback = true

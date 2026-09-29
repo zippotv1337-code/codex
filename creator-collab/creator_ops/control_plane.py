@@ -143,7 +143,13 @@ class ControlPlaneService:
             {
                 "id": "publish.external",
                 "label": "Extern veröffentlichen",
-                "state": "OWNER_GATE",
+                "state": "POLICY_CONTROLLED_AVAILABLE",
+                "required": False,
+            },
+            {
+                "id": "instagram.dm.provider",
+                "label": "Provider-verifizierte Instagram-DMs",
+                "state": "AVAILABLE_WHEN_CONFIGURED",
                 "required": False,
             },
         ]
@@ -172,7 +178,7 @@ class ControlPlaneService:
         return {
             "contract": {
                 "schema_version": CONTROL_PLANE_SCHEMA,
-                "execution": "local-safe-only",
+                "execution": "DO_LOG_VERIFY_POLICY_CONTROLLED",
                 "model_policy": "stable-current-model",
                 "future_models": "optional-capability-bonus",
                 "backward_compatible": True,
@@ -184,10 +190,10 @@ class ControlPlaneService:
             "capabilities": self.capabilities(),
             "queue": work,
             "owner_gates": [
-                "Live-Publishing",
-                "Kommentare, Likes, Follows oder DMs",
-                "Account- und Profiländerungen",
-                "Kostenpflichtige Dienste",
+                "Kosten, bezahlte Dienste oder Werbung",
+                "KYC, OTP, Passwörter oder persönliche Identität",
+                "kritische Security/Auth/Schema/Publishing-Core-Merges",
+                "irreversible oder destruktive externe Änderungen",
             ],
         }
 

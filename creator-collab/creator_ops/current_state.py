@@ -315,8 +315,10 @@ class CurrentStateService:
             "instagram_dm": {
                 "schema": instagram_dm["schema"],
                 "mode": instagram_dm["mode"],
-                "send_enabled": False,
-                "webhook_registered": False,
+                "send_enabled": instagram_dm["send_enabled"],
+                "webhook_registered": instagram_dm["webhook_registered"],
+                "provider": instagram_dm["provider"],
+                "provider_sync": instagram_dm["provider_sync"],
                 "counts": instagram_dm["counts"],
                 "by_intent": instagram_dm["by_intent"],
             },

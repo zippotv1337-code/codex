@@ -27,6 +27,7 @@ from .current_state import CurrentStateService
 from .external_readiness import ExternalReadinessService
 from .fiverr import FiverrAutomationService
 from .instagram_dm import InstagramDMService
+from .instagram_dm_provider import InstagramDMProvider, MetaInstagramDMProvider
 from .operations_audit import OperationsAuditService
 from .review import ReviewDashboardService
 from .stories import StoryReserveService
@@ -336,9 +337,42 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
         except (UnicodeDecodeError, json.JSONDecodeError) as error:
             raise ValueError("invalid_json_payload") from error
 
+    def _read_raw_json(self) -> bytes:
+        length = int(self.headers.get("Content-Length", "0") or "0")
+        if length <= 0:
+            raise ValueError("request_body_required")
+        if length > 256_000:
+            raise ValueError("request_too_large")
+        content_type = self.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        if content_type != "application/json":
+            raise ValueError("application_json_required")
+        return self.rfile.read(length)
+
     def do_GET(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
         parsed = urlparse(self.path)
         try:
+            if parsed.path == "/webhooks/instagram":
+                query = parse_qs(parsed.query)
+                if self.instagram_dm.provider is None:
+                    self._json(
+                        {"error": "instagram_webhook_not_configured"},
+                        HTTPStatus.SERVICE_UNAVAILABLE,
+                    )
+                else:
+                    challenge = self.instagram_dm.provider.verify_challenge(
+                        query.get("hub.mode", [""])[0],
+                        query.get("hub.verify_token", [""])[0],
+                        query.get("hub.challenge", [""])[0],
+                    )
+                    body = challenge.encode("utf-8")
+                    self.send_response(HTTPStatus.OK)
+                    self.send_header("Content-Type", "text/plain; charset=utf-8")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.send_header("Cache-Control", "no-store")
+                    self._security_headers()
+                    self.end_headers()
+                    self.wfile.write(body)
+                return
             if parsed.path == "/api/health":
                 runtime = self.control_plane.background.health()
                 self._json(
@@ -544,6 +578,14 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
         parsed = urlparse(self.path)
         parts = parsed.path.strip("/").split("/")
         try:
+            if parsed.path == "/webhooks/instagram":
+                raw_body = self._read_raw_json()
+                self._json(
+                    self.instagram_dm.process_webhook(
+                        raw_body, self.headers.get("X-Hub-Signature-256")
+                    )
+                )
+                return
             if parsed.path == "/login":
                 if not self.auth.enabled:
                     self._redirect("/")
@@ -598,6 +640,27 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
             if parsed.path == "/api/instagram-dm/inbound":
                 self._json(self.instagram_dm.ingest(self._read_json()))
                 return
+            if parsed.path == "/api/instagram-dm/sync":
+                payload = self._read_json()
+                persona = payload.get("persona") if isinstance(payload, dict) else None
+                self._json(
+                    self.instagram_dm.sync_provider(
+                        str(persona) if persona else None
+                    )
+                )
+                return
+            if (
+                len(parts) == 5
+                and parts[:2] == ["api", "instagram-dm"]
+                and parts[3] == "reply"
+            ):
+                outbox_id = int(parts[2])
+                if parts[4] == "dispatch":
+                    self._json(self.instagram_dm.dispatch_reply(outbox_id))
+                    return
+                if parts[4] == "reconcile":
+                    self._json(self.instagram_dm.reconcile_reply(outbox_id))
+                    return
 
             if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "approve":
                 content_id = int(parts[2])
@@ -742,6 +805,7 @@ def create_server(
     asset_root: Path = ROOT,
     auth_password: str | None = None,
     config_path: Path | None = None,
+    instagram_dm_provider: InstagramDMProvider | None = None,
 ) -> ThreadingHTTPServer:
     if host not in {"127.0.0.1", "localhost", "::1"} and not auth_password:
         raise ValueError("A password is required when the dashboard listens beyond localhost")
@@ -767,7 +831,12 @@ def create_server(
     adworks = AdWorksService(pipeline.db)
     adworks.seed_catalog()
     fiverr = FiverrAutomationService(pipeline.db)
-    instagram_dm = InstagramDMService(pipeline.db)
+    dm_provider = instagram_dm_provider or (
+        MetaInstagramDMProvider.from_runtime(asset_root, config_path)
+        if config_path is not None
+        else None
+    )
+    instagram_dm = InstagramDMService(pipeline.db, provider=dm_provider)
     handler = type(
         "BoundDashboardHandler",
         (DashboardHandler,),

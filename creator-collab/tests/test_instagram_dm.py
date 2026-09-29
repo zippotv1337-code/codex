@@ -57,7 +57,7 @@ class InstagramDMP0Tests(unittest.TestCase):
         }
 
     def test_schema_is_additive_and_both_personas_resolve_exactly(self) -> None:
-        self.assertEqual(SCHEMA_VERSION, 7)
+        self.assertEqual(SCHEMA_VERSION, 8)
         leona = self.service.ingest(self.payload())
         mara = self.service.ingest(
             self.payload(
@@ -214,7 +214,7 @@ class InstagramDMP0Tests(unittest.TestCase):
             )
         )
         dashboard = self.service.dashboard()
-        self.assertEqual(dashboard["mode"], "SEND_DISABLED_READ_ONLY_P0")
+        self.assertEqual(dashboard["mode"], "PROVIDER_VERIFIED_AUTONOMY_P1")
         self.assertFalse(dashboard["send_enabled"])
         self.assertFalse(dashboard["webhook_registered"])
         self.assertEqual(dashboard["counts"]["open"], 1)

@@ -32,17 +32,43 @@ function dmCard(item) {
     <p><span class="status-pill">${esc(item.status)}</span></p>
     ${reason}
     <p><b>Eingang:</b> ${esc(item.received_at)}</p>
+    <p><b>Provider:</b> ${item.provider_verified ? 'verifiziert' : 'lokaler Test/Import'}</p>
+    <p><b>Antwort:</b> ${esc(item.reply_status || 'noch nicht angelegt')}</p>
+    ${item.outbox_id && ['ACKNOWLEDGED', 'UNKNOWN'].includes(item.reply_status)
+      ? `<button class="secondary dm-reconcile" data-outbox="${esc(item.outbox_id)}">Provider-Status prüfen</button>`
+      : ''}
   </div></article>`;
+}
+
+function cookie(name) {
+  const prefix = `${name}=`;
+  return document.cookie.split(';').map(value => value.trim())
+    .find(value => value.startsWith(prefix))?.slice(prefix.length) || '';
+}
+
+async function postJson(url, payload = {}) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': decodeURIComponent(cookie('creator_ops_csrf')),
+    },
+    body: JSON.stringify(payload),
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || 'Aktion fehlgeschlagen');
+  return body;
 }
 
 const messagesView = new URLSearchParams(location.search).get('view') === 'messages';
 document.querySelector('h1').textContent = messagesView ? 'Nachrichten' : 'Kommentare';
 document.querySelector('.intro').textContent = messagesView
-  ? 'Eingehende Instagram-DMs lokal prüfen. Antworten und Versand sind in P0 vollständig deaktiviert.'
+  ? 'Provider-verifizierte Instagram-DMs, sichere Antworten und Sales-Signale in einem Arbeitsbereich.'
   : 'Kommentartexte und vorhandene Hinweise zu deinen Beiträgen.';
 
 if (messagesView) {
-  document.querySelector('.mode').innerHTML = '<span></span> SEND DISABLED · READ-ONLY P0';
+  document.querySelector('.mode').innerHTML = '<span></span> PROVIDER VERIFIED · P1';
   fetch('/api/instagram-dm', {headers: {Accept: 'application/json'}})
     .then(response => {
       if (!response.ok) throw new Error('DM-P0-Daten konnten nicht geladen werden');
@@ -53,17 +79,44 @@ if (messagesView) {
       const cards = payload.items?.length
         ? payload.items.map(dmCard).join('')
         : '<div class="empty">Noch keine lokal erfassten Inbound-DMs.</div>';
+      const readiness = payload.provider || {};
       root.innerHTML = `<section class="dm-readonly-banner">
-        <p class="nav-label">INSTAGRAM · DIREKTNACHRICHTEN</p>
-        <h2>SEND DISABLED / READ-ONLY P0</h2>
-        <p>Keine Antwort-, Link-, Payment-, Preview- oder Delivery-Aktion ist in diesem Stand erreichbar.</p>
+        <p class="nav-label">INSTAGRAM · MESSAGES & SALES</p>
+        <h2>${payload.send_enabled ? 'AUTONOMER SICHERER ANTWORTPFAD' : 'PROVIDER NOCH NICHT SCHREIBBEREIT'}</h2>
+        <p>Webhook: ${readiness.webhook_ready ? 'bereit' : 'nicht vollständig konfiguriert'} · Auto-Reply: ${payload.send_enabled ? 'aktiv' : 'inaktiv'}.</p>
+        <button id="dm-sync" class="secondary">Provider jetzt lesen</button>
       </section>
       <section class="dm-summary" aria-label="DM-Übersicht">
         <div><strong>${esc(counts.open || 0)}</strong><span>Offen</span></div>
         <div><strong>${esc(counts.needs_human || 0)}</strong><span>Needs Human</span></div>
-        <div><strong>${esc(counts.events || 0)}</strong><span>Inbound Events</span></div>
+        <div><strong>${esc(counts.delivered || 0)}</strong><span>Zugestellt</span></div>
+        <div><strong>${esc(counts.custom_requests || 0)}</strong><span>Custom Requests</span></div>
+        <div><strong>${esc(counts.sales_signals || 0)}</strong><span>Sales-Signale</span></div>
+        <div><strong>${esc(counts.uncertain || 0)}</strong><span>Reconcile nötig</span></div>
       </section>
       <section class="archive-grid">${cards}</section>`;
+      document.querySelector('#dm-sync')?.addEventListener('click', async event => {
+        event.currentTarget.disabled = true;
+        try {
+          await postJson('/api/instagram-dm/sync');
+          location.reload();
+        } catch (error) {
+          event.currentTarget.disabled = false;
+          event.currentTarget.textContent = error.message;
+        }
+      });
+      document.querySelectorAll('.dm-reconcile').forEach(button => {
+        button.addEventListener('click', async () => {
+          button.disabled = true;
+          try {
+            await postJson(`/api/instagram-dm/${button.dataset.outbox}/reply/reconcile`);
+            location.reload();
+          } catch (error) {
+            button.disabled = false;
+            button.textContent = error.message;
+          }
+        });
+      });
     })
     .catch(error => {
       root.innerHTML = `<div class="error">${esc(error.message)}</div>`;
