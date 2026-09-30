@@ -26,8 +26,10 @@ PASSWORD = "test-only-correct-horse-battery-staple"
 
 
 class FakeProvider:
-    def __init__(self, *, uncertain: bool = False) -> None:
-        self.auto_reply_enabled = True
+    def __init__(
+        self, *, uncertain: bool = False, auto_reply_enabled: bool = True
+    ) -> None:
+        self.auto_reply_enabled = auto_reply_enabled
         self.uncertain = uncertain
         self.sent: list[tuple[str, str, str]] = []
         self.polled: dict[str, list[dict[str, object]]] = {
@@ -39,7 +41,7 @@ class FakeProvider:
         return {
             "provider": "fake-meta",
             "webhook_ready": True,
-            "auto_reply_enabled": True,
+            "auto_reply_enabled": self.auto_reply_enabled,
             "personas": {
                 "leona-voss": {"configured": True},
                 "mara-field": {"configured": True},
@@ -73,8 +75,10 @@ class FakeProvider:
 class FakeTransport:
     def __init__(self) -> None:
         self.posts: list[tuple[str, dict[str, str]]] = []
+        self.gets: list[tuple[str, dict[str, str]]] = []
 
     def get(self, path: str, params: dict[str, str]) -> dict[str, object]:
+        self.gets.append((path, params))
         if path.endswith("/conversations"):
             return {"data": [{"id": "thread-1"}]}
         if path == "thread-1" and "message,created_time" in params.get("fields", ""):
@@ -159,6 +163,30 @@ class InstagramDMP1Tests(unittest.TestCase):
         second = service.dispatch_reply(outbox_id)
         self.assertEqual(second["reason"], "reconcile_required_before_retry")
         self.assertEqual(len(provider.sent), 1)
+        with self.assertRaisesRegex(
+            ValueError, "reply_cannot_be_cancelled_after_send_started"
+        ):
+            service.cancel_reply(outbox_id)
+
+    def test_disabled_auto_reply_preserves_safe_draft(self) -> None:
+        provider = FakeProvider(auto_reply_enabled=False)
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        result = service.ingest(
+            self.payload(event_id="draft-disabled"),
+            provider_verified=True,
+            auto_process=True,
+        )
+        self.assertEqual(result["processing"]["status"], "DRAFTED")
+        self.assertEqual(
+            result["processing"]["reason"], "provider_or_auto_reply_not_ready"
+        )
+        self.assertEqual(provider.sent, [])
+        stored = self.pipeline.db.one(
+            "SELECT status, attempt_count, last_error FROM instagram_dm_outbox"
+        )
+        self.assertEqual(stored["status"], "DRAFTED")
+        self.assertEqual(stored["attempt_count"], 0)
+        self.assertIsNone(stored["last_error"])
 
     def test_unsafe_message_never_queues_or_sends(self) -> None:
         provider = FakeProvider()
@@ -350,6 +378,123 @@ class InstagramDMP1Tests(unittest.TestCase):
         ))
         with self.assertRaisesRegex(ValueError, "revenue_event_already_attributed"):
             service.confirm_payment_from_revenue(second_sale_id, revenue_id)
+
+    def test_payment_truth_survives_repeated_initialize(self) -> None:
+        service = InstagramDMService(self.pipeline.db, provider=FakeProvider())
+
+        def sale(event_id: str, conversation_id: str) -> int:
+            inbound = service.ingest(
+                {
+                    **self.payload(
+                        event_id=event_id,
+                        text="Wie kann ich dich unterstützen?",
+                    ),
+                    "conversation_id": conversation_id,
+                    "sender_id": f"user-{event_id}",
+                },
+                provider_verified=True,
+            )
+            service.queue_reply(int(inbound["event_id"]))
+            return int(self.pipeline.db.scalar(
+                "SELECT id FROM instagram_dm_sales_events WHERE trigger_event_id=?",
+                (inbound["event_id"],),
+            ))
+
+        confirmed_id = sale("persist-confirmed", "thread-confirmed")
+        unknown_id = sale("persist-unknown", "thread-unknown")
+        failed_id = sale("persist-failed", "thread-failed")
+        creator_id = int(self.pipeline.db.scalar(
+            "SELECT id FROM creators WHERE slug='leona-voss'"
+        ))
+        with self.pipeline.db.transaction() as connection:
+            revenue_id = int(connection.execute(
+                """INSERT INTO revenue_events
+                   (creator_id, content_id, amount, currency, source, occurred_at)
+                   VALUES (?, NULL, 75, 'EUR', 'verified-payment-provider', ?)""",
+                (creator_id, datetime.now(UTC).isoformat()),
+            ).lastrowid)
+        service.confirm_payment_from_revenue(confirmed_id, revenue_id)
+        service.set_payment_state(unknown_id, "UNKNOWN")
+        service.set_payment_state(failed_id, "FAILED_OR_NOT_RECEIVED")
+
+        self.pipeline.initialize()
+        self.pipeline.initialize()
+
+        confirmed = service.payment_state(confirmed_id)
+        self.assertEqual(confirmed["payment_status"], "CONFIRMED")
+        self.assertEqual(confirmed["revenue_event_id"], revenue_id)
+        self.assertEqual(confirmed["confirmed_revenue"], 75.0)
+        self.assertEqual(service.payment_state(unknown_id)["payment_status"], "UNKNOWN")
+        self.assertEqual(
+            service.payment_state(failed_id)["payment_status"],
+            "FAILED_OR_NOT_RECEIVED",
+        )
+        dashboard = service.dashboard()
+        self.assertEqual(dashboard["counts"]["confirmed_dm_revenue"], 75.0)
+        self.assertEqual(
+            dashboard["counts"]["confirmed_dm_revenue_by_currency"],
+            {"EUR": 75.0},
+        )
+        reply_view_columns = {
+            row[1] for row in self.pipeline.db.all(
+                "PRAGMA table_info(instagram_dm_reply_actions)"
+            )
+        }
+        sales_view_columns = {
+            row[1] for row in self.pipeline.db.all(
+                "PRAGMA table_info(instagram_dm_sales)"
+            )
+        }
+        self.assertTrue(
+            {"owner_review_reason", "approved_at", "cancelled_at"}
+            <= reply_view_columns
+        )
+        self.assertTrue(
+            {"payment_status", "expected_amount", "expected_currency", "revenue_event_id"}
+            <= sales_view_columns
+        )
+
+    def test_webhook_igsid_is_not_used_as_provider_conversation_id(self) -> None:
+        transport = FakeTransport()
+        provider = MetaInstagramDMProvider(
+            accounts={"leona-voss": ("1784", "not-returned")},
+            graph_version="v24.0",
+            graph_host="graph.instagram.com",
+            app_secret="test-secret",
+            verify_token="verify-token",
+            auto_reply_enabled=True,
+            transport_factory=lambda persona: transport,
+        )
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        raw = json.dumps({
+            "object": "instagram",
+            "entry": [{
+                "id": "1784",
+                "messaging": [{
+                    "sender": {"id": "igsid-user"},
+                    "recipient": {"id": "1784"},
+                    "timestamp": int(datetime.now(UTC).timestamp() * 1_000),
+                    "message": {"mid": "webhook-mid", "text": "Hallo"},
+                }],
+            }],
+        }).encode()
+        signature = "sha256=" + hmac.new(
+            b"test-secret", raw, hashlib.sha256
+        ).hexdigest()
+        processed = service.process_webhook(raw, signature)
+        outbox_id = int(processed["results"][0]["processing"]["outbox_id"])
+        conversation_ref = self.pipeline.db.scalar(
+            "SELECT external_conversation_id FROM instagram_dm_conversations"
+        )
+        self.assertEqual(conversation_ref, "webhook-igsid:igsid-user")
+        gets_before = len(transport.gets)
+        reconciled = service.reconcile_reply(outbox_id)
+        self.assertIsNone(reconciled["reconciled"])
+        self.assertEqual(
+            reconciled["reason"], "VERIFY_OFFICIAL_META_CONVERSATION_ID_REQUIRED"
+        )
+        self.assertEqual(reconciled["status"], "RECONCILE_REQUIRED")
+        self.assertEqual(len(transport.gets), gets_before)
 
     def test_malformed_and_unsupported_webhook_events_do_not_persist(self) -> None:
         transport = FakeTransport()

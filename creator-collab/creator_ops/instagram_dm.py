@@ -745,7 +745,9 @@ class InstagramDMService:
             raise KeyError("instagram_dm_outbox_not_found")
         if row["status"] == "CANCELLED":
             return self._outbox_result(row, duplicate=True)
-        if row["status"] in {"SENT", "DELIVERED", "SEND_PENDING"}:
+        if row["status"] in {
+            "SENT", "DELIVERED", "SEND_PENDING", "RECONCILE_REQUIRED"
+        }:
             raise ValueError("reply_cannot_be_cancelled_after_send_started")
         now = utc_now()
         with self.database.transaction() as connection:
@@ -931,6 +933,20 @@ class InstagramDMService:
             return self._outbox_result(row, duplicate=True)
         if self.provider is None or not row["provider_message_id"]:
             return {**self._outbox_result(row, duplicate=False), "reconciled": False}
+        if str(row["external_conversation_id"]).startswith("webhook-igsid:"):
+            self._mark_outbox(
+                outbox_id,
+                "RECONCILE_REQUIRED",
+                "VERIFY_OFFICIAL_META_CONVERSATION_ID_REQUIRED",
+            )
+            updated = self.database.one(
+                "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
+            )
+            return {
+                **self._outbox_result(updated, duplicate=False),
+                "reconciled": None,
+                "reason": "VERIFY_OFFICIAL_META_CONVERSATION_ID_REQUIRED",
+            }
         found = self.provider.reconcile_message(
             str(row["persona"]),
             str(row["external_conversation_id"]),
@@ -960,6 +976,11 @@ class InstagramDMService:
         queued = self.queue_reply(event_id)
         if queued.get("status") in {"NEEDS_HUMAN", "OWNER_REVIEW"} or not dispatch:
             return queued
+        if self.provider is None or not self.provider.auto_reply_enabled:
+            return {
+                **queued,
+                "reason": "provider_or_auto_reply_not_ready",
+            }
         approved = self.approve_reply(int(queued["outbox_id"]))
         if approved["status"] != "APPROVED":
             return approved

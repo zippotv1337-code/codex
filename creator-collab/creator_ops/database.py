@@ -1074,8 +1074,17 @@ class CreatorDatabase:
             SET expected_amount=COALESCE(expected_amount, amount),
                 expected_currency=COALESCE(expected_currency, currency),
                 payment_status=CASE
-                    WHEN event_type IN ('INTENT', 'CUSTOM_REQUEST') THEN 'OPEN'
+                    WHEN status IN ('LINK_READY', 'NO_APPROVED_LINK')
+                         AND event_type IN ('INTENT', 'CUSTOM_REQUEST')
+                         AND COALESCE(NULLIF(payment_status, ''), 'NOT_APPLICABLE')
+                             = 'NOT_APPLICABLE'
+                         AND revenue_event_id IS NULL
+                        THEN 'OPEN'
                     ELSE COALESCE(NULLIF(payment_status, ''), 'NOT_APPLICABLE')
+                END,
+                status=CASE
+                    WHEN status IN ('LINK_READY', 'NO_APPROVED_LINK') THEN 'OPEN'
+                    ELSE status
                 END
             """
         )
@@ -1091,6 +1100,17 @@ class CreatorDatabase:
             CREATE INDEX IF NOT EXISTS idx_instagram_dm_sales_payment_status
             ON instagram_dm_sales_events(payment_status, created_at DESC)
             """
+        )
+        # Recreate the compatibility projections after every additive column
+        # migration. This makes their visible column contract deterministic on
+        # legacy SQLite files while keeping one canonical storage location.
+        connection.execute("DROP VIEW IF EXISTS instagram_dm_reply_actions")
+        connection.execute(
+            "CREATE VIEW instagram_dm_reply_actions AS SELECT * FROM instagram_dm_outbox"
+        )
+        connection.execute("DROP VIEW IF EXISTS instagram_dm_sales")
+        connection.execute(
+            "CREATE VIEW instagram_dm_sales AS SELECT * FROM instagram_dm_sales_events"
         )
 
         # Keep fallback roles aligned with the already selected Top 3 without

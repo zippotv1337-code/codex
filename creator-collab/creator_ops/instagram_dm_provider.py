@@ -236,7 +236,12 @@ class MetaInstagramDMProvider:
                             "provider": self.provider,
                             "event_id": mid,
                             "message_id": mid,
-                            "conversation_id": sender_id,
+                            # The webhook exposes the Instagram-scoped sender
+                            # ID, not a provider conversation/thread ID. Keep a
+                            # stable local reference and fail closed during
+                            # reconciliation until Meta's exact thread lookup
+                            # contract is independently verified.
+                            "conversation_id": f"webhook-igsid:{sender_id}",
                             "sender_id": sender_id,
                             "target_persona": persona or "",
                             "text": text,
