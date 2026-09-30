@@ -33,6 +33,31 @@ INTENT_CLASSES = (
 MAX_IDENTIFIER_LENGTH = 255
 MAX_MESSAGE_LENGTH = 2_000
 HIGH_AMOUNT_THRESHOLD = 500.0
+REPLY_STATUSES = (
+    "DRAFTED",
+    "OWNER_REVIEW",
+    "APPROVED",
+    "SEND_PENDING",
+    "SENT",
+    "DELIVERED",
+    "FAILED",
+    "RECONCILE_REQUIRED",
+    "CANCELLED",
+)
+PAYMENT_STATUSES = (
+    "NOT_APPLICABLE",
+    "OPEN",
+    "CONFIRMED",
+    "FAILED_OR_NOT_RECEIVED",
+    "UNKNOWN",
+)
+SALES_INTENTS = {
+    "CUSTOM_REQUEST",
+    "SUPPORT_INTENT",
+    "WISHLIST_INTENT",
+    "PAYPAL_INTENT",
+    "MERCH_INTENT",
+}
 
 
 class InboundValidationError(ValueError):
@@ -556,6 +581,12 @@ class InstagramDMService:
         link_type = self._link_type(intent)
         link = self._approved_link(int(row["creator_id"]), link_type)
         reply = self._reply_text(persona, intent, link)
+        owner_review_reason = (
+            "custom_request_requires_owner_review"
+            if intent == "CUSTOM_REQUEST"
+            else None
+        )
+        reply_status = "OWNER_REVIEW" if owner_review_reason else "DRAFTED"
         idempotency_key = hashlib.sha256(
             f"instagram-dm:{event_id}:{intent}:{persona}".encode("utf-8")
         ).hexdigest()
@@ -565,19 +596,37 @@ class InstagramDMService:
                 """
                 INSERT INTO instagram_dm_outbox
                     (conversation_id, trigger_event_id, response_type, reply_text,
-                     idempotency_key, status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, 'QUEUED', ?, ?)
+                     idempotency_key, status, owner_review_reason, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (row["conversation_id"], event_id, intent, reply, idempotency_key, now, now),
+                (
+                    row["conversation_id"],
+                    event_id,
+                    intent,
+                    reply,
+                    idempotency_key,
+                    reply_status,
+                    owner_review_reason,
+                    now,
+                    now,
+                ),
             )
             outbox_id = int(cursor.lastrowid)
             connection.execute(
-                "UPDATE instagram_dm_events SET status='REPLY_QUEUED', processed_at=? WHERE id=?",
-                (now, event_id),
+                "UPDATE instagram_dm_events SET status=?, processed_at=? WHERE id=?",
+                (
+                    "OWNER_REVIEW" if owner_review_reason else "REPLY_DRAFTED",
+                    now,
+                    event_id,
+                ),
             )
             connection.execute(
-                "UPDATE instagram_dm_conversations SET status='REPLY_QUEUED', updated_at=? WHERE id=?",
-                (now, row["conversation_id"]),
+                "UPDATE instagram_dm_conversations SET status=?, updated_at=? WHERE id=?",
+                (
+                    "OWNER_REVIEW" if owner_review_reason else "REPLY_DRAFTED",
+                    now,
+                    row["conversation_id"],
+                ),
             )
             if intent == "CUSTOM_REQUEST":
                 connection.execute(
@@ -588,18 +637,19 @@ class InstagramDMService:
                     """,
                     (row["conversation_id"], event_id, now, now),
                 )
-            if link_type is not None:
+            if intent in SALES_INTENTS:
                 connection.execute(
                     """
                     INSERT OR IGNORE INTO instagram_dm_sales_events
-                        (conversation_id, trigger_event_id, event_type, link_type, status, created_at)
-                    VALUES (?, ?, 'INTENT', ?, ?, ?)
+                        (conversation_id, trigger_event_id, event_type, link_type,
+                         status, payment_status, created_at)
+                    VALUES (?, ?, ?, ?, 'OPEN', 'OPEN', ?)
                     """,
                     (
                         row["conversation_id"],
                         event_id,
+                        "CUSTOM_REQUEST" if intent == "CUSTOM_REQUEST" else "INTENT",
                         link_type,
-                        "LINK_READY" if link else "NO_APPROVED_LINK",
                         now,
                     ),
                 )
@@ -614,8 +664,110 @@ class InstagramDMService:
             "response_type": str(row["response_type"]),
             "duplicate": duplicate,
             "provider_message_id": row["provider_message_id"],
+            "owner_review_reason": row["owner_review_reason"],
             "external_action": False,
         }
+
+    def request_owner_review(self, outbox_id: int, reason: str) -> dict[str, object]:
+        normalized = str(reason or "").strip()
+        if not normalized:
+            raise ValueError("owner_review_reason_required")
+        row = self.database.one(
+            "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
+        )
+        if row is None:
+            raise KeyError("instagram_dm_outbox_not_found")
+        if row["status"] == "OWNER_REVIEW":
+            return self._outbox_result(row, duplicate=True)
+        if row["status"] != "DRAFTED":
+            raise ValueError("reply_not_reviewable")
+        now = utc_now()
+        with self.database.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE instagram_dm_outbox
+                SET status='OWNER_REVIEW', owner_review_reason=?, updated_at=?
+                WHERE id=?
+                """,
+                (normalized, now, outbox_id),
+            )
+            connection.execute(
+                """
+                UPDATE instagram_dm_conversations
+                SET status='OWNER_REVIEW', updated_at=?
+                WHERE id=(SELECT conversation_id FROM instagram_dm_outbox WHERE id=?)
+                """,
+                (now, outbox_id),
+            )
+        return self._outbox_result(
+            self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
+            duplicate=False,
+        )
+
+    def approve_reply(self, outbox_id: int) -> dict[str, object]:
+        row = self.database.one(
+            "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
+        )
+        if row is None:
+            raise KeyError("instagram_dm_outbox_not_found")
+        if row["status"] == "APPROVED":
+            return self._outbox_result(row, duplicate=True)
+        if row["status"] not in {"DRAFTED", "OWNER_REVIEW"}:
+            raise ValueError("reply_not_approvable")
+        now = utc_now()
+        with self.database.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE instagram_dm_outbox
+                SET status='APPROVED', approved_at=?, last_error=NULL, updated_at=?
+                WHERE id=?
+                """,
+                (now, now, outbox_id),
+            )
+            connection.execute(
+                """
+                UPDATE instagram_dm_conversations
+                SET status='REPLY_APPROVED', updated_at=?
+                WHERE id=(SELECT conversation_id FROM instagram_dm_outbox WHERE id=?)
+                """,
+                (now, outbox_id),
+            )
+        return self._outbox_result(
+            self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
+            duplicate=False,
+        )
+
+    def cancel_reply(self, outbox_id: int) -> dict[str, object]:
+        row = self.database.one(
+            "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
+        )
+        if row is None:
+            raise KeyError("instagram_dm_outbox_not_found")
+        if row["status"] == "CANCELLED":
+            return self._outbox_result(row, duplicate=True)
+        if row["status"] in {"SENT", "DELIVERED", "SEND_PENDING"}:
+            raise ValueError("reply_cannot_be_cancelled_after_send_started")
+        now = utc_now()
+        with self.database.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE instagram_dm_outbox
+                SET status='CANCELLED', cancelled_at=?, updated_at=? WHERE id=?
+                """,
+                (now, now, outbox_id),
+            )
+            connection.execute(
+                """
+                UPDATE instagram_dm_conversations
+                SET status='OPEN', updated_at=?
+                WHERE id=(SELECT conversation_id FROM instagram_dm_outbox WHERE id=?)
+                """,
+                (now, outbox_id),
+            )
+        return self._outbox_result(
+            self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
+            duplicate=False,
+        )
 
     @staticmethod
     def _within_reply_window(value: str) -> bool:
@@ -645,22 +797,38 @@ class InstagramDMService:
         if row is None:
             raise KeyError("instagram_dm_outbox_not_found")
         status = str(row["status"])
-        if status in {"ACKNOWLEDGED", "DELIVERED"}:
+        if status in {"SENT", "DELIVERED", "CANCELLED", "FAILED"}:
             return self._outbox_result(row, duplicate=True)
-        if status == "UNKNOWN":
+        if status in {"SEND_PENDING", "RECONCILE_REQUIRED"}:
+            if status == "SEND_PENDING":
+                self._mark_outbox(
+                    outbox_id,
+                    "RECONCILE_REQUIRED",
+                    "send_started_without_confirmed_provider_receipt",
+                )
+                row = self.database.one(
+                    "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
+                )
             return {
                 **self._outbox_result(row, duplicate=True),
                 "reason": "reconcile_required_before_retry",
             }
+        if status in {"DRAFTED", "OWNER_REVIEW"}:
+            return {
+                **self._outbox_result(row, duplicate=True),
+                "reason": "reply_approval_required",
+            }
+        if status != "APPROVED":
+            raise ValueError("reply_status_not_dispatchable")
         if not row["provider_verified"]:
             raise ValueError("provider_verified_inbound_required")
         if row["conversation_status"] == "NEEDS_HUMAN":
             raise ValueError("human_handoff_conversation_cannot_auto_reply")
         if not self._within_reply_window(str(row["last_received_at"])):
-            self._mark_outbox(outbox_id, "EXPIRED", "instagram_24h_reply_window_closed")
+            self._mark_outbox(outbox_id, "FAILED", "instagram_24h_reply_window_closed")
             raise ValueError("instagram_24h_reply_window_closed")
         if self.provider is None or not self.provider.auto_reply_enabled:
-            self._mark_outbox(outbox_id, "WAITING_PROVIDER", "provider_or_auto_reply_not_ready")
+            self._mark_outbox(outbox_id, "FAILED", "provider_or_auto_reply_not_ready")
             return {
                 **self._outbox_result(
                     self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
@@ -668,12 +836,34 @@ class InstagramDMService:
                 ),
                 "reason": "provider_or_auto_reply_not_ready",
             }
+
+        # Claim the approved reply before touching the provider. A second
+        # execution can never issue a second send from this point onward.
+        now = utc_now()
+        with self.database.transaction() as connection:
+            claimed = connection.execute(
+                """
+                UPDATE instagram_dm_outbox
+                SET status='SEND_PENDING', attempt_count=attempt_count+1,
+                    last_error=NULL, updated_at=?
+                WHERE id=? AND status='APPROVED'
+                """,
+                (now, outbox_id),
+            )
+            if claimed.rowcount != 1:
+                current = connection.execute(
+                    "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
+                ).fetchone()
+                return {
+                    **self._outbox_result(current, duplicate=True),
+                    "reason": "reply_dispatch_already_claimed",
+                }
         try:
             provider_message_id = self.provider.send_message(
                 str(row["persona"]), str(row["external_user_id"]), str(row["reply_text"])
             )
         except InstagramDMProviderConnectionError as error:
-            self._mark_outbox(outbox_id, "UNKNOWN", str(error), increment=True)
+            self._mark_outbox(outbox_id, "RECONCILE_REQUIRED", str(error))
             return {
                 **self._outbox_result(
                     self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
@@ -682,7 +872,7 @@ class InstagramDMService:
                 "reason": str(error),
             }
         except InstagramDMProviderError as error:
-            self._mark_outbox(outbox_id, "FAILED", str(error), increment=True)
+            self._mark_outbox(outbox_id, "FAILED", str(error))
             return {
                 **self._outbox_result(
                     self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
@@ -695,7 +885,7 @@ class InstagramDMService:
             connection.execute(
                 """
                 UPDATE instagram_dm_outbox
-                SET status='ACKNOWLEDGED', provider_message_id=?, attempt_count=attempt_count+1,
+                SET status='SENT', provider_message_id=?,
                     last_error=NULL, sent_at=?, updated_at=? WHERE id=?
                 """,
                 (provider_message_id, now, now, outbox_id),
@@ -747,23 +937,32 @@ class InstagramDMService:
             str(row["provider_message_id"]),
         )
         if found is None:
+            self._mark_outbox(
+                outbox_id, "RECONCILE_REQUIRED", "provider_reconciliation_uncertain"
+            )
             return {**self._outbox_result(row, duplicate=False), "reconciled": None}
         now = utc_now()
-        next_status = "DELIVERED" if found else "FAILED_RECONCILE"
+        next_status = "DELIVERED" if found else "RECONCILE_REQUIRED"
         with self.database.transaction() as connection:
             connection.execute(
                 """
-                UPDATE instagram_dm_outbox SET status=?, reconciled_at=?, updated_at=? WHERE id=?
+                UPDATE instagram_dm_outbox
+                SET status=?, reconciled_at=?,
+                    last_error=CASE WHEN ? THEN NULL ELSE 'provider_message_not_yet_confirmed' END,
+                    updated_at=? WHERE id=?
                 """,
-                (next_status, now, now, outbox_id),
+                (next_status, now, 1 if found else 0, now, outbox_id),
             )
         updated = self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,))
         return {**self._outbox_result(updated, duplicate=False), "reconciled": found}
 
     def process_event(self, event_id: int, *, dispatch: bool) -> dict[str, object]:
         queued = self.queue_reply(event_id)
-        if queued.get("status") == "NEEDS_HUMAN" or not dispatch:
+        if queued.get("status") in {"NEEDS_HUMAN", "OWNER_REVIEW"} or not dispatch:
             return queued
+        approved = self.approve_reply(int(queued["outbox_id"]))
+        if approved["status"] != "APPROVED":
+            return approved
         return self.dispatch_reply(int(queued["outbox_id"]))
 
     def record_delivery(self, provider_message_id: str) -> dict[str, object]:
@@ -773,6 +972,13 @@ class InstagramDMService:
         )
         if row is None:
             return {"matched": False, "external_action": False}
+        if row["status"] not in {"SENT", "RECONCILE_REQUIRED", "DELIVERED"}:
+            return {
+                "matched": False,
+                "outbox_id": int(row["id"]),
+                "reason": "delivery_not_valid_for_reply_state",
+                "external_action": False,
+            }
         if row["status"] != "DELIVERED":
             now = utc_now()
             with self.database.transaction() as connection:
@@ -785,10 +991,130 @@ class InstagramDMService:
                 )
         return {"matched": True, "outbox_id": int(row["id"]), "external_action": False}
 
+    def set_payment_state(
+        self,
+        sales_event_id: int,
+        status: str,
+        *,
+        expected_amount: float | None = None,
+        expected_currency: str | None = None,
+    ) -> dict[str, object]:
+        """Update non-confirmed payment truth without creating revenue."""
+        normalized = str(status or "").strip().upper()
+        if normalized not in PAYMENT_STATUSES:
+            raise ValueError("instagram_dm_payment_status_invalid")
+        if normalized == "CONFIRMED":
+            raise ValueError("confirmed_payment_requires_revenue_event")
+        if expected_amount is not None and float(expected_amount) < 0:
+            raise ValueError("expected_amount_must_be_non_negative")
+        currency = str(expected_currency or "").strip().upper() or None
+        if expected_amount is not None and currency is None:
+            raise ValueError("expected_currency_required")
+        existing = self.database.one(
+            "SELECT id, revenue_event_id FROM instagram_dm_sales_events WHERE id=?",
+            (sales_event_id,),
+        )
+        if existing is None:
+            raise KeyError("instagram_dm_sales_event_not_found")
+        if existing["revenue_event_id"] is not None:
+            raise ValueError("confirmed_payment_cannot_be_downgraded")
+        with self.database.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE instagram_dm_sales_events
+                SET payment_status=?, status=?, expected_amount=?, expected_currency=?
+                WHERE id=?
+                """,
+                (
+                    normalized,
+                    "OPEN" if normalized == "OPEN" else normalized,
+                    expected_amount,
+                    currency,
+                    sales_event_id,
+                ),
+            )
+        return self.payment_state(sales_event_id)
+
+    def confirm_payment_from_revenue(
+        self, sales_event_id: int, revenue_event_id: int
+    ) -> dict[str, object]:
+        """Bind a DM sales signal to one verified row in the existing ledger."""
+        sales = self.database.one(
+            """
+            SELECT s.id, s.revenue_event_id, c.creator_id
+            FROM instagram_dm_sales_events s
+            JOIN instagram_dm_conversations c ON c.id=s.conversation_id
+            WHERE s.id=?
+            """,
+            (sales_event_id,),
+        )
+        if sales is None:
+            raise KeyError("instagram_dm_sales_event_not_found")
+        revenue = self.database.one(
+            "SELECT id, creator_id, amount, currency FROM revenue_events WHERE id=?",
+            (revenue_event_id,),
+        )
+        if revenue is None:
+            raise ValueError("verified_revenue_event_required")
+        if int(revenue["creator_id"]) != int(sales["creator_id"]):
+            raise ValueError("revenue_event_persona_mismatch")
+        if float(revenue["amount"]) <= 0:
+            raise ValueError("positive_revenue_event_required")
+        if sales["revenue_event_id"] is not None:
+            if int(sales["revenue_event_id"]) == int(revenue_event_id):
+                return self.payment_state(sales_event_id, duplicate=True)
+            raise ValueError("dm_sale_already_bound_to_revenue")
+        duplicate = self.database.one(
+            "SELECT id FROM instagram_dm_sales_events WHERE revenue_event_id=? AND id<>?",
+            (revenue_event_id, sales_event_id),
+        )
+        if duplicate is not None:
+            raise ValueError("revenue_event_already_attributed")
+        with self.database.transaction() as connection:
+            connection.execute(
+                """
+                UPDATE instagram_dm_sales_events
+                SET payment_status='CONFIRMED', status='CONFIRMED', revenue_event_id=?
+                WHERE id=? AND revenue_event_id IS NULL
+                """,
+                (revenue_event_id, sales_event_id),
+            )
+        return self.payment_state(sales_event_id)
+
+    def payment_state(
+        self, sales_event_id: int, *, duplicate: bool = False
+    ) -> dict[str, object]:
+        row = self.database.one(
+            """
+            SELECT s.id, s.payment_status, s.expected_amount, s.expected_currency,
+                   s.offer_ref, s.revenue_event_id,
+                   r.amount AS confirmed_revenue, r.currency AS confirmed_currency
+            FROM instagram_dm_sales_events s
+            LEFT JOIN revenue_events r ON r.id=s.revenue_event_id
+            WHERE s.id=?
+            """,
+            (sales_event_id,),
+        )
+        if row is None:
+            raise KeyError("instagram_dm_sales_event_not_found")
+        return {
+            "sales_event_id": int(row["id"]),
+            "payment_status": str(row["payment_status"]),
+            "expected_amount": row["expected_amount"],
+            "expected_currency": row["expected_currency"],
+            "offer_ref": row["offer_ref"],
+            "revenue_event_id": row["revenue_event_id"],
+            "confirmed_revenue": row["confirmed_revenue"],
+            "confirmed_currency": row["confirmed_currency"],
+            "duplicate": duplicate,
+            "external_action": False,
+        }
+
     def process_webhook(self, raw_body: bytes, signature: str | None) -> dict[str, object]:
         if self.provider is None or not self.provider.verify_signature(raw_body, signature):
             raise ValueError("instagram_webhook_signature_invalid")
         results: list[dict[str, object]] = []
+        rejected = 0
         for event in self.provider.parse_webhook(raw_body):
             if event.get("kind") == "OUTBOUND_ECHO":
                 results.append(self.record_delivery(str(event["provider_message_id"])))
@@ -798,7 +1124,14 @@ class InstagramDMService:
                         event["payload"], provider_verified=True, auto_process=True
                     )
                 )
-        return {"accepted": True, "events": len(results), "results": results}
+            else:
+                rejected += 1
+        return {
+            "accepted": True,
+            "events": len(results),
+            "rejected": rejected,
+            "results": results,
+        }
 
     def sync_provider(self, persona: str | None = None) -> dict[str, object]:
         if self.provider is None:
@@ -881,15 +1214,52 @@ class InstagramDMService:
         }
         rows = self.database.all(
             """
-            SELECT e.id, e.intent, e.status, e.handoff_reason, e.received_at,
-                   e.provider_verified, cr.slug AS persona, cr.display_name,
+            WITH latest_event AS (
+                SELECT e.* FROM instagram_dm_events e
+                WHERE e.id=(SELECT e2.id FROM instagram_dm_events e2
+                            WHERE e2.conversation_id=e.conversation_id
+                            ORDER BY e2.received_at DESC, e2.id DESC LIMIT 1)
+            ), latest_reply AS (
+                SELECT o.* FROM instagram_dm_outbox o
+                WHERE o.id=(SELECT o2.id FROM instagram_dm_outbox o2
+                            WHERE o2.conversation_id=o.conversation_id
+                            ORDER BY o2.id DESC LIMIT 1)
+            ), sales AS (
+                SELECT s.conversation_id,
+                       COUNT(*) AS sales_signal_count,
+                       MAX(s.offer_ref) AS offer_ref,
+                       MAX(CASE s.payment_status
+                           WHEN 'CONFIRMED' THEN 5 WHEN 'OPEN' THEN 4
+                           WHEN 'UNKNOWN' THEN 3 WHEN 'FAILED_OR_NOT_RECEIVED' THEN 2
+                           ELSE 1 END) AS payment_rank,
+                       SUM(CASE WHEN s.payment_status='OPEN' THEN s.expected_amount END)
+                           AS expected_open_amount,
+                       MAX(CASE WHEN s.payment_status='OPEN' THEN s.expected_currency END)
+                           AS expected_currency,
+                       SUM(CASE WHEN s.payment_status='CONFIRMED' THEN r.amount END)
+                           AS confirmed_revenue,
+                       MAX(CASE WHEN s.payment_status='CONFIRMED' THEN r.currency END)
+                           AS confirmed_currency
+                FROM instagram_dm_sales_events s
+                LEFT JOIN revenue_events r ON r.id=s.revenue_event_id
+                GROUP BY s.conversation_id
+            )
+            SELECT c.id AS conversation_id, c.external_conversation_id,
+                   c.last_intent, c.status, c.handoff_reason,
+                   c.last_received_at, c.last_outbound_at,
+                   cr.slug AS persona, cr.display_name,
+                   e.id AS event_id, e.provider_verified,
                    o.id AS outbox_id, o.status AS reply_status,
-                   o.response_type, o.sent_at, o.reconciled_at
-            FROM instagram_dm_events e
-            JOIN instagram_dm_conversations c ON c.id=e.conversation_id
+                   o.response_type, o.owner_review_reason, o.sent_at, o.reconciled_at,
+                   COALESCE(s.sales_signal_count, 0) AS sales_signal_count,
+                   s.offer_ref, s.payment_rank, s.expected_open_amount,
+                   s.expected_currency, s.confirmed_revenue, s.confirmed_currency
+            FROM instagram_dm_conversations c
             LEFT JOIN creators cr ON cr.id=c.creator_id
-            LEFT JOIN instagram_dm_outbox o ON o.trigger_event_id=e.id
-            ORDER BY e.received_at DESC, e.id DESC
+            LEFT JOIN latest_event e ON e.conversation_id=c.id
+            LEFT JOIN latest_reply o ON o.conversation_id=c.id
+            LEFT JOIN sales s ON s.conversation_id=c.id
+            ORDER BY c.last_received_at DESC, c.id DESC
             LIMIT ?
             """,
             (limit,),
@@ -913,6 +1283,102 @@ class InstagramDMService:
             "provider": "unconfigured", "webhook_ready": False,
             "auto_reply_enabled": False, "personas": {},
         }
+        payment_name = {
+            5: "CONFIRMED", 4: "OPEN", 3: "UNKNOWN",
+            2: "FAILED_OR_NOT_RECEIVED", 1: "NOT_APPLICABLE",
+        }
+        items: list[dict[str, object]] = []
+        for row in rows:
+            reply_status = str(row["reply_status"] or "") or None
+            payment_status = payment_name.get(int(row["payment_rank"] or 1), "NOT_APPLICABLE")
+            owner_review = bool(
+                row["status"] == "NEEDS_HUMAN" or reply_status == "OWNER_REVIEW"
+            )
+            reconciliation = (
+                "REQUIRED" if reply_status == "RECONCILE_REQUIRED"
+                else "COMPLETE" if reply_status == "DELIVERED"
+                else "NOT_REQUIRED"
+            )
+            if owner_review:
+                next_action = "OWNER_REVIEW"
+            elif reply_status == "DRAFTED":
+                next_action = "APPROVE_OR_CHANGE"
+            elif reply_status == "APPROVED":
+                next_action = "DISPATCH"
+            elif reply_status == "RECONCILE_REQUIRED":
+                next_action = "RECONCILE"
+            elif reply_status in {"SENT", "DELIVERED"}:
+                next_action = "WAIT_OR_FOLLOW_UP"
+            else:
+                next_action = "PREPARE_REPLY"
+            items.append({
+                "id": int(row["event_id"] or 0),
+                "conversation_id": int(row["conversation_id"]),
+                "conversation_ref": str(row["external_conversation_id"]),
+                "persona": str(row["persona"] or "UNKNOWN"),
+                "display_name": str(row["display_name"] or "Nicht zugeordnet"),
+                "intent": str(row["last_intent"]),
+                "status": str(row["status"]),
+                "sales_signal": bool(row["sales_signal_count"]),
+                "sales_signal_count": int(row["sales_signal_count"]),
+                "reply_status": reply_status,
+                "outbox_id": row["outbox_id"],
+                "response_type": row["response_type"],
+                "owner_review": owner_review,
+                "owner_review_reason": row["owner_review_reason"] or row["handoff_reason"],
+                "known_offer": row["offer_ref"],
+                "payment_status": payment_status,
+                "confirmed_revenue": row["confirmed_revenue"],
+                "confirmed_currency": row["confirmed_currency"],
+                "expected_open_amount": row["expected_open_amount"],
+                "expected_currency": row["expected_currency"],
+                "last_contact": str(row["last_received_at"]),
+                "last_outbound_at": row["last_outbound_at"],
+                "next_action": next_action,
+                "handoff_reason": row["handoff_reason"],
+                "reconciliation_state": reconciliation,
+                "provider_verified": bool(row["provider_verified"]),
+                "sent_at": row["sent_at"],
+                "reconciled_at": row["reconciled_at"],
+            })
+
+        confirmed_revenue_rows = self.database.all(
+            """
+            SELECT r.currency, SUM(r.amount) AS amount
+            FROM instagram_dm_sales_events s
+            JOIN revenue_events r ON r.id=s.revenue_event_id
+            WHERE s.payment_status='CONFIRMED'
+            GROUP BY r.currency ORDER BY r.currency
+            """
+        )
+        confirmed_revenue_by_currency = {
+            str(row["currency"]): float(row["amount"])
+            for row in confirmed_revenue_rows
+        }
+        confirmed_dm_revenue = (
+            next(iter(confirmed_revenue_by_currency.values()))
+            if len(confirmed_revenue_by_currency) == 1 else None
+        )
+        owner_reviews = int(self.database.scalar(
+            """
+            SELECT COUNT(*) FROM instagram_dm_conversations c
+            WHERE c.status='NEEDS_HUMAN'
+               OR EXISTS (
+                   SELECT 1 FROM instagram_dm_outbox o
+                   WHERE o.conversation_id=c.id AND o.status='OWNER_REVIEW'
+               )
+            """
+        ) or 0)
+        failures = int(self.database.scalar(
+            """
+            SELECT COUNT(*) FROM instagram_dm_conversations c
+            WHERE c.status='NEEDS_HUMAN'
+               OR EXISTS (
+                   SELECT 1 FROM instagram_dm_outbox o
+                   WHERE o.conversation_id=c.id AND o.status='FAILED'
+               )
+            """
+        ) or 0)
         return {
             "schema": "zippoworkz-instagram-dm-p1-v1",
             "mode": "PROVIDER_VERIFIED_AUTONOMY_P1",
@@ -927,10 +1393,26 @@ class InstagramDMService:
                 "events": int(
                     self.database.scalar("SELECT COUNT(*) FROM instagram_dm_events") or 0
                 ),
-                "queued": outbox_counts.get("QUEUED", 0),
-                "acknowledged": outbox_counts.get("ACKNOWLEDGED", 0),
+                "open_conversations": sum(
+                    count for status, count in conversation_counts.items()
+                    if status not in {"CLOSED", "ARCHIVED"}
+                ),
+                "owner_reviews": owner_reviews,
+                "replies_pending": sum(outbox_counts.get(status, 0) for status in (
+                    "DRAFTED", "OWNER_REVIEW", "APPROVED", "SEND_PENDING"
+                )),
+                "replies_sent": outbox_counts.get("SENT", 0) + outbox_counts.get("DELIVERED", 0),
+                "replies_reconcile": outbox_counts.get("RECONCILE_REQUIRED", 0),
+                "open_payments": int(self.database.scalar(
+                    "SELECT COUNT(*) FROM instagram_dm_sales_events WHERE payment_status='OPEN'"
+                ) or 0),
+                "confirmed_dm_revenue": confirmed_dm_revenue,
+                "confirmed_dm_revenue_by_currency": confirmed_revenue_by_currency,
+                "failures_needs_human": failures,
+                "queued": outbox_counts.get("DRAFTED", 0),
+                "acknowledged": outbox_counts.get("SENT", 0),
                 "delivered": outbox_counts.get("DELIVERED", 0),
-                "uncertain": outbox_counts.get("UNKNOWN", 0),
+                "uncertain": outbox_counts.get("RECONCILE_REQUIRED", 0),
                 "custom_requests": int(self.database.scalar(
                     "SELECT COUNT(*) FROM instagram_dm_custom_requests"
                 ) or 0),
@@ -939,22 +1421,5 @@ class InstagramDMService:
                 ) or 0),
             },
             "by_intent": intent_counts,
-            "items": [
-                {
-                    "id": int(row["id"]),
-                    "persona": str(row["persona"] or "UNKNOWN"),
-                    "display_name": str(row["display_name"] or "Nicht zugeordnet"),
-                    "intent": str(row["intent"]),
-                    "status": str(row["status"]),
-                    "received_at": str(row["received_at"]),
-                    "handoff_reason": row["handoff_reason"],
-                    "provider_verified": bool(row["provider_verified"]),
-                    "outbox_id": row["outbox_id"],
-                    "reply_status": row["reply_status"],
-                    "response_type": row["response_type"],
-                    "sent_at": row["sent_at"],
-                    "reconciled_at": row["reconciled_at"],
-                }
-                for row in rows
-            ],
+            "items": items,
         }

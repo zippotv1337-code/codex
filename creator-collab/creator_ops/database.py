@@ -685,7 +685,10 @@ CREATE TABLE IF NOT EXISTS instagram_dm_outbox (
     provider_message_id TEXT,
     attempt_count INTEGER NOT NULL DEFAULT 0,
     last_error TEXT,
+    owner_review_reason TEXT,
     created_at TEXT NOT NULL,
+    approved_at TEXT,
+    cancelled_at TEXT,
     sent_at TEXT,
     reconciled_at TEXT,
     updated_at TEXT NOT NULL,
@@ -723,6 +726,11 @@ CREATE TABLE IF NOT EXISTS instagram_dm_sales_events (
     status TEXT NOT NULL,
     amount REAL,
     currency TEXT,
+    offer_ref TEXT,
+    payment_status TEXT NOT NULL DEFAULT 'NOT_APPLICABLE',
+    expected_amount REAL,
+    expected_currency TEXT,
+    revenue_event_id INTEGER REFERENCES revenue_events(id),
     created_at TEXT NOT NULL,
     UNIQUE (trigger_event_id, event_type)
 );
@@ -757,6 +765,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_outbox_provider_message_id
     WHERE provider_message_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_instagram_dm_sales_status
     ON instagram_dm_sales_events(status, created_at DESC);
+
+-- Reviewed DM-P1 names are compatibility projections over the established
+-- canonical storage. They add no second ledger and cannot diverge.
+CREATE VIEW IF NOT EXISTS instagram_dm_reply_actions AS
+    SELECT * FROM instagram_dm_outbox;
+CREATE VIEW IF NOT EXISTS instagram_dm_sales AS
+    SELECT * FROM instagram_dm_sales_events;
 
 CREATE TABLE IF NOT EXISTS evening_batches (
     id INTEGER PRIMARY KEY,
@@ -816,6 +831,18 @@ COLUMN_MIGRATIONS = {
         ("provider_verified", "INTEGER NOT NULL DEFAULT 0"),
         ("processed_at", "TEXT"),
         ("direction", "TEXT NOT NULL DEFAULT 'INBOUND'"),
+    ),
+    "instagram_dm_outbox": (
+        ("owner_review_reason", "TEXT"),
+        ("approved_at", "TEXT"),
+        ("cancelled_at", "TEXT"),
+    ),
+    "instagram_dm_sales_events": (
+        ("offer_ref", "TEXT"),
+        ("payment_status", "TEXT NOT NULL DEFAULT 'NOT_APPLICABLE'"),
+        ("expected_amount", "REAL"),
+        ("expected_currency", "TEXT"),
+        ("revenue_event_id", "INTEGER REFERENCES revenue_events(id)"),
     ),
 }
 
@@ -1017,6 +1044,52 @@ class CreatorDatabase:
             )
               AND provider='mock-draft'
               AND status!='PUBLISHED'
+            """
+        )
+
+        # DM-P1 replaces the early prototype labels with the reviewed reply
+        # state machine. No uncertain provider write is ever turned back into
+        # a sendable state by this migration.
+        connection.execute(
+            """
+            UPDATE instagram_dm_outbox
+            SET status = CASE status
+                WHEN 'QUEUED' THEN 'DRAFTED'
+                WHEN 'ACKNOWLEDGED' THEN 'SENT'
+                WHEN 'UNKNOWN' THEN 'RECONCILE_REQUIRED'
+                WHEN 'WAITING_PROVIDER' THEN 'FAILED'
+                WHEN 'EXPIRED' THEN 'FAILED'
+                WHEN 'FAILED_RECONCILE' THEN 'RECONCILE_REQUIRED'
+                ELSE status
+            END
+            WHERE status IN (
+                'QUEUED', 'ACKNOWLEDGED', 'UNKNOWN', 'WAITING_PROVIDER',
+                'EXPIRED', 'FAILED_RECONCILE'
+            )
+            """
+        )
+        connection.execute(
+            """
+            UPDATE instagram_dm_sales_events
+            SET expected_amount=COALESCE(expected_amount, amount),
+                expected_currency=COALESCE(expected_currency, currency),
+                payment_status=CASE
+                    WHEN event_type IN ('INTENT', 'CUSTOM_REQUEST') THEN 'OPEN'
+                    ELSE COALESCE(NULLIF(payment_status, ''), 'NOT_APPLICABLE')
+                END
+            """
+        )
+        connection.execute(
+            """
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_sales_revenue_event
+            ON instagram_dm_sales_events(revenue_event_id)
+            WHERE revenue_event_id IS NOT NULL
+            """
+        )
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_instagram_dm_sales_payment_status
+            ON instagram_dm_sales_events(payment_status, created_at DESC)
             """
         )
 

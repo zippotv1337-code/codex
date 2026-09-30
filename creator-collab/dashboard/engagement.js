@@ -26,17 +26,36 @@ function dmCard(item) {
   const reason = item.handoff_reason
     ? `<p><b>Handoff-Grund:</b> ${esc(item.handoff_reason)}</p>`
     : '<p><b>Handoff:</b> nicht erforderlich</p>';
+  const amount = (value, currency) => value == null ? '—' : `${esc(value)} ${esc(currency || '')}`.trim();
+  const actions = [];
+  if (item.outbox_id && ['DRAFTED', 'OWNER_REVIEW'].includes(item.reply_status)) {
+    actions.push(`<button class="secondary dm-action" data-action="approve" data-outbox="${esc(item.outbox_id)}">APPROVE</button>`);
+    actions.push(`<button class="secondary dm-action" data-action="cancel" data-outbox="${esc(item.outbox_id)}">CANCEL</button>`);
+  }
+  if (item.outbox_id && item.reply_status === 'APPROVED') {
+    actions.push(`<button class="secondary dm-action" data-action="dispatch" data-outbox="${esc(item.outbox_id)}">SEND</button>`);
+  }
+  if (item.outbox_id && ['SENT', 'RECONCILE_REQUIRED'].includes(item.reply_status)) {
+    actions.push(`<button class="secondary dm-action" data-action="reconcile" data-outbox="${esc(item.outbox_id)}">RECONCILE</button>`);
+  }
   return `<article class="archive-card engagement-card dm-card" data-status="${esc(item.status)}"><div>
     <p class="card-kicker">${esc(item.display_name)} · ${esc(item.persona)}</p>
     <h2>${esc(item.intent)}</h2>
     <p><span class="status-pill">${esc(item.status)}</span></p>
     ${reason}
-    <p><b>Eingang:</b> ${esc(item.received_at)}</p>
+    <p><b>Conversation:</b> ${esc(item.conversation_ref)}</p>
+    <p><b>Letzter Kontakt:</b> ${esc(item.last_contact)}</p>
     <p><b>Provider:</b> ${item.provider_verified ? 'verifiziert' : 'lokaler Test/Import'}</p>
     <p><b>Antwort:</b> ${esc(item.reply_status || 'noch nicht angelegt')}</p>
-    ${item.outbox_id && ['ACKNOWLEDGED', 'UNKNOWN'].includes(item.reply_status)
-      ? `<button class="secondary dm-reconcile" data-outbox="${esc(item.outbox_id)}">Provider-Status prüfen</button>`
-      : ''}
+    <p><b>Owner Review:</b> ${item.owner_review ? `JA · ${esc(item.owner_review_reason)}` : 'NEIN'}</p>
+    <p><b>Sales Signal:</b> ${item.sales_signal ? `JA (${esc(item.sales_signal_count)})` : 'NEIN'}</p>
+    <p><b>Offer/Product:</b> ${esc(item.known_offer)}</p>
+    <p><b>Payment:</b> ${esc(item.payment_status)}</p>
+    <p><b>Erwartet/offen:</b> ${amount(item.expected_open_amount, item.expected_currency)}</p>
+    <p><b>Bestätigter Umsatz:</b> ${amount(item.confirmed_revenue, item.confirmed_currency)}</p>
+    <p><b>Reconciliation:</b> ${esc(item.reconciliation_state)}</p>
+    <p><b>Nächste Aktion:</b> ${esc(item.next_action)}</p>
+    <div class="action-row">${actions.join('')}</div>
   </div></article>`;
 }
 
@@ -87,12 +106,13 @@ if (messagesView) {
         <button id="dm-sync" class="secondary">Provider jetzt lesen</button>
       </section>
       <section class="dm-summary" aria-label="DM-Übersicht">
-        <div><strong>${esc(counts.open || 0)}</strong><span>Offen</span></div>
-        <div><strong>${esc(counts.needs_human || 0)}</strong><span>Needs Human</span></div>
-        <div><strong>${esc(counts.delivered || 0)}</strong><span>Zugestellt</span></div>
-        <div><strong>${esc(counts.custom_requests || 0)}</strong><span>Custom Requests</span></div>
+        <div><strong>${esc(counts.open_conversations || 0)}</strong><span>Open Conversations</span></div>
+        <div><strong>${esc(counts.owner_reviews || 0)}</strong><span>Owner Reviews</span></div>
         <div><strong>${esc(counts.sales_signals || 0)}</strong><span>Sales-Signale</span></div>
-        <div><strong>${esc(counts.uncertain || 0)}</strong><span>Reconcile nötig</span></div>
+        <div><strong>${esc(counts.replies_pending || 0)} / ${esc(counts.replies_sent || 0)} / ${esc(counts.replies_reconcile || 0)}</strong><span>Pending / Sent / Reconcile</span></div>
+        <div><strong>${esc(counts.open_payments || 0)}</strong><span>Open Payments</span></div>
+        <div><strong>${esc(counts.confirmed_dm_revenue ?? '—')}</strong><span>Confirmed DM Revenue</span></div>
+        <div><strong>${esc(counts.failures_needs_human || 0)}</strong><span>Failures / Needs Human</span></div>
       </section>
       <section class="archive-grid">${cards}</section>`;
       document.querySelector('#dm-sync')?.addEventListener('click', async event => {
@@ -105,11 +125,11 @@ if (messagesView) {
           event.currentTarget.textContent = error.message;
         }
       });
-      document.querySelectorAll('.dm-reconcile').forEach(button => {
+      document.querySelectorAll('.dm-action').forEach(button => {
         button.addEventListener('click', async () => {
           button.disabled = true;
           try {
-            await postJson(`/api/instagram-dm/${button.dataset.outbox}/reply/reconcile`);
+            await postJson(`/api/instagram-dm/${button.dataset.outbox}/reply/${button.dataset.action}`);
             location.reload();
           } catch (error) {
             button.disabled = false;

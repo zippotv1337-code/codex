@@ -184,20 +184,31 @@ class MetaInstagramDMProvider:
             raise InstagramDMProviderError("instagram_webhook_json_invalid") from error
         if not isinstance(payload, dict) or payload.get("object") != "instagram":
             raise InstagramDMProviderError("instagram_webhook_object_invalid")
+        entries = payload.get("entry")
+        if not isinstance(entries, list):
+            raise InstagramDMProviderError("instagram_webhook_entries_invalid")
         normalized: list[dict[str, object]] = []
-        for entry in payload.get("entry", []):
+        for entry in entries:
             if not isinstance(entry, dict):
+                normalized.append({"kind": "UNSUPPORTED", "reason": "entry_invalid"})
                 continue
             target_id = str(entry.get("id") or "")
             persona = self._persona_for_account(target_id)
-            for message_event in entry.get("messaging", []):
+            messaging = entry.get("messaging")
+            if not isinstance(messaging, list):
+                normalized.append({"kind": "UNSUPPORTED", "reason": "messaging_invalid"})
+                continue
+            for message_event in messaging:
                 if not isinstance(message_event, dict):
+                    normalized.append({"kind": "UNSUPPORTED", "reason": "event_invalid"})
                     continue
                 message = message_event.get("message")
                 if not isinstance(message, dict):
+                    normalized.append({"kind": "UNSUPPORTED", "reason": "message_unsupported"})
                     continue
                 mid = str(message.get("mid") or "").strip()
                 if not mid:
+                    normalized.append({"kind": "UNSUPPORTED", "reason": "message_id_missing"})
                     continue
                 if message.get("is_echo"):
                     normalized.append(
@@ -212,6 +223,11 @@ class MetaInstagramDMProvider:
                 sender = message_event.get("sender")
                 sender_id = str(sender.get("id") or "") if isinstance(sender, dict) else ""
                 if not sender_id:
+                    normalized.append({"kind": "UNSUPPORTED", "reason": "sender_id_missing"})
+                    continue
+                text = message.get("text")
+                if not isinstance(text, str) or not text.strip():
+                    normalized.append({"kind": "UNSUPPORTED", "reason": "non_text_message"})
                     continue
                 normalized.append(
                     {
@@ -223,7 +239,7 @@ class MetaInstagramDMProvider:
                             "conversation_id": sender_id,
                             "sender_id": sender_id,
                             "target_persona": persona or "",
-                            "text": str(message.get("text") or ""),
+                            "text": text,
                             "received_at": message_event.get("timestamp"),
                         },
                     }
@@ -293,6 +309,8 @@ class MetaInstagramDMProvider:
         account = self._accounts.get(persona)
         if account is None:
             raise InstagramDMProviderError("instagram_dm_persona_credentials_missing")
+        if not isinstance(text, str) or not text.strip() or len(text.encode("utf-8")) > 1000:
+            raise InstagramDMProviderError("instagram_message_text_invalid")
         try:
             result = self._transport(persona).post(
                 f"{account.account_id}/messages",

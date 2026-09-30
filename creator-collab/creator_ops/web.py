@@ -655,12 +655,61 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                 and parts[:2] == ["api", "instagram-dm"]
                 and parts[3] == "reply"
             ):
+                if not self.auth.enabled:
+                    self._json(
+                        {"error": "password_protected_dashboard_required_for_dm_owner_action"},
+                        HTTPStatus.FORBIDDEN,
+                    )
+                    return
                 outbox_id = int(parts[2])
+                payload = self._read_json()
+                if parts[4] == "owner-review":
+                    reason = payload.get("reason") if isinstance(payload, dict) else None
+                    self._json(
+                        self.instagram_dm.request_owner_review(outbox_id, str(reason or ""))
+                    )
+                    return
+                if parts[4] == "approve":
+                    self._json(self.instagram_dm.approve_reply(outbox_id))
+                    return
+                if parts[4] == "cancel":
+                    self._json(self.instagram_dm.cancel_reply(outbox_id))
+                    return
                 if parts[4] == "dispatch":
                     self._json(self.instagram_dm.dispatch_reply(outbox_id))
                     return
                 if parts[4] == "reconcile":
                     self._json(self.instagram_dm.reconcile_reply(outbox_id))
+                    return
+            if (
+                len(parts) == 5
+                and parts[:2] == ["api", "instagram-dm-sales"]
+                and parts[3] == "payment"
+            ):
+                if not self.auth.enabled:
+                    self._json(
+                        {"error": "password_protected_dashboard_required_for_dm_owner_action"},
+                        HTTPStatus.FORBIDDEN,
+                    )
+                    return
+                sales_event_id = int(parts[2])
+                payload = self._read_json()
+                if parts[4] == "confirm":
+                    self._json(
+                        self.instagram_dm.confirm_payment_from_revenue(
+                            sales_event_id, int(payload["revenue_event_id"])
+                        )
+                    )
+                    return
+                if parts[4] == "status":
+                    self._json(
+                        self.instagram_dm.set_payment_state(
+                            sales_event_id,
+                            str(payload.get("status") or ""),
+                            expected_amount=payload.get("expected_amount"),
+                            expected_currency=payload.get("expected_currency"),
+                        )
+                    )
                     return
 
             if len(parts) == 4 and parts[:2] == ["api", "reviews"] and parts[3] == "approve":

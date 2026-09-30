@@ -7,8 +7,11 @@ import tempfile
 import threading
 import unittest
 from datetime import UTC, datetime, timedelta
+from http.cookiejar import CookieJar
 from pathlib import Path
-from urllib.request import Request, urlopen
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
 
 from creator_ops.cli import build_pipeline
 from creator_ops.instagram_dm import InstagramDMService
@@ -16,7 +19,10 @@ from creator_ops.instagram_dm_provider import (
     InstagramDMProviderConnectionError,
     MetaInstagramDMProvider,
 )
-from creator_ops.web import create_server
+from creator_ops.web import CSRF_COOKIE, create_server
+
+
+PASSWORD = "test-only-correct-horse-battery-staple"
 
 
 class FakeProvider:
@@ -123,7 +129,7 @@ class InstagramDMP1Tests(unittest.TestCase):
         first = service.ingest(
             self.payload(), provider_verified=True, auto_process=True
         )
-        self.assertEqual(first["processing"]["status"], "ACKNOWLEDGED")
+        self.assertEqual(first["processing"]["status"], "SENT")
         self.assertTrue(first["processing"]["external_action"])
         self.assertEqual(len(provider.sent), 1)
 
@@ -148,7 +154,7 @@ class InstagramDMP1Tests(unittest.TestCase):
         result = service.ingest(
             self.payload(), provider_verified=True, auto_process=True
         )
-        self.assertEqual(result["processing"]["status"], "UNKNOWN")
+        self.assertEqual(result["processing"]["status"], "RECONCILE_REQUIRED")
         outbox_id = int(result["processing"]["outbox_id"])
         second = service.dispatch_reply(outbox_id)
         self.assertEqual(second["reason"], "reconcile_required_before_retry")
@@ -174,6 +180,7 @@ class InstagramDMP1Tests(unittest.TestCase):
         service = InstagramDMService(self.pipeline.db, provider=provider)
         ingested = service.ingest(self.payload())
         queued = service.queue_reply(int(ingested["event_id"]))
+        service.approve_reply(int(queued["outbox_id"]))
         with self.assertRaisesRegex(ValueError, "provider_verified_inbound_required"):
             service.dispatch_reply(int(queued["outbox_id"]))
         self.assertEqual(provider.sent, [])
@@ -185,6 +192,7 @@ class InstagramDMP1Tests(unittest.TestCase):
         payload["received_at"] = (datetime.now(UTC) - timedelta(hours=25)).isoformat()
         result = service.ingest(payload, provider_verified=True)
         queued = service.queue_reply(int(result["event_id"]))
+        service.approve_reply(int(queued["outbox_id"]))
         with self.assertRaisesRegex(ValueError, "instagram_24h_reply_window_closed"):
             service.dispatch_reply(int(queued["outbox_id"]))
         self.assertEqual(provider.sent, [])
@@ -247,17 +255,188 @@ class InstagramDMP1Tests(unittest.TestCase):
             provider_verified=True,
             auto_process=True,
         )
-        self.assertEqual(custom["processing"]["status"], "ACKNOWLEDGED")
-        self.assertEqual(support["processing"]["status"], "ACKNOWLEDGED")
+        self.assertEqual(custom["processing"]["status"], "OWNER_REVIEW")
+        self.assertEqual(support["processing"]["status"], "SENT")
         dashboard = service.dashboard()
         self.assertEqual(dashboard["counts"]["custom_requests"], 1)
-        self.assertEqual(dashboard["counts"]["sales_signals"], 1)
+        self.assertEqual(dashboard["counts"]["sales_signals"], 2)
         self.assertEqual(
             self.pipeline.db.scalar(
                 "SELECT COUNT(*) FROM instagram_dm_sales_events WHERE amount IS NOT NULL"
             ),
             0,
         )
+
+    def test_safe_draft_owner_review_approval_cancel_and_exactly_once(self) -> None:
+        provider = FakeProvider()
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        safe = service.ingest(self.payload(), provider_verified=True)
+        draft = service.queue_reply(int(safe["event_id"]))
+        self.assertEqual(draft["status"], "DRAFTED")
+        review = service.request_owner_review(int(draft["outbox_id"]), "tone_check")
+        self.assertEqual(review["status"], "OWNER_REVIEW")
+        approved = service.approve_reply(int(draft["outbox_id"]))
+        self.assertEqual(approved["status"], "APPROVED")
+        sent = service.dispatch_reply(int(draft["outbox_id"]))
+        self.assertEqual(sent["status"], "SENT")
+        duplicate = service.dispatch_reply(int(draft["outbox_id"]))
+        self.assertTrue(duplicate["duplicate"])
+        self.assertEqual(len(provider.sent), 1)
+
+        second = service.ingest(
+            {**self.payload(event_id="cancel-1"), "conversation_id": "thread-cancel"},
+            provider_verified=True,
+        )
+        second_draft = service.queue_reply(int(second["event_id"]))
+        cancelled = service.cancel_reply(int(second_draft["outbox_id"]))
+        self.assertEqual(cancelled["status"], "CANCELLED")
+
+    def test_payment_truth_requires_existing_revenue_and_prevents_double_count(self) -> None:
+        service = InstagramDMService(self.pipeline.db, provider=FakeProvider())
+        result = service.ingest(
+            self.payload(event_id="sale-1", text="Wie kann ich dich unterstützen?"),
+            provider_verified=True,
+        )
+        service.queue_reply(int(result["event_id"]))
+        sale_id = int(self.pipeline.db.scalar("SELECT id FROM instagram_dm_sales_events"))
+        open_state = service.set_payment_state(
+            sale_id, "OPEN", expected_amount=49.0, expected_currency="EUR"
+        )
+        self.assertEqual(open_state["payment_status"], "OPEN")
+        self.assertIsNone(open_state["confirmed_revenue"])
+        open_dashboard = service.dashboard()
+        self.assertEqual(open_dashboard["items"][0]["expected_open_amount"], 49.0)
+        self.assertIsNone(open_dashboard["counts"]["confirmed_dm_revenue"])
+        with self.assertRaisesRegex(ValueError, "confirmed_payment_requires_revenue_event"):
+            service.set_payment_state(sale_id, "CONFIRMED")
+        with self.assertRaisesRegex(ValueError, "verified_revenue_event_required"):
+            service.confirm_payment_from_revenue(sale_id, 9999)
+
+        creator_id = int(self.pipeline.db.scalar("SELECT id FROM creators WHERE slug='leona-voss'"))
+        with self.pipeline.db.transaction() as connection:
+            revenue_id = int(connection.execute(
+                """INSERT INTO revenue_events
+                   (creator_id, content_id, amount, currency, source, occurred_at)
+                   VALUES (?, NULL, 49, 'EUR', 'verified-payment-provider', ?)""",
+                (creator_id, datetime.now(UTC).isoformat()),
+            ).lastrowid)
+        confirmed = service.confirm_payment_from_revenue(sale_id, revenue_id)
+        self.assertEqual(confirmed["payment_status"], "CONFIRMED")
+        self.assertEqual(confirmed["confirmed_revenue"], 49.0)
+        confirmed_dashboard = service.dashboard()
+        self.assertEqual(confirmed_dashboard["counts"]["confirmed_dm_revenue"], 49.0)
+        self.assertEqual(
+            confirmed_dashboard["counts"]["confirmed_dm_revenue_by_currency"],
+            {"EUR": 49.0},
+        )
+        self.assertTrue(
+            service.confirm_payment_from_revenue(sale_id, revenue_id)["duplicate"]
+        )
+        self.assertEqual(
+            self.pipeline.db.scalar("SELECT COUNT(*) FROM revenue_events"), 1
+        )
+
+        second = service.ingest(
+            {
+                **self.payload(event_id="sale-2", text="Wie kann ich dich unterstützen?"),
+                "conversation_id": "thread-sale-2",
+                "sender_id": "igsid-user-2",
+            },
+            provider_verified=True,
+        )
+        service.queue_reply(int(second["event_id"]))
+        second_sale_id = int(self.pipeline.db.scalar(
+            "SELECT MAX(id) FROM instagram_dm_sales_events"
+        ))
+        with self.assertRaisesRegex(ValueError, "revenue_event_already_attributed"):
+            service.confirm_payment_from_revenue(second_sale_id, revenue_id)
+
+    def test_malformed_and_unsupported_webhook_events_do_not_persist(self) -> None:
+        transport = FakeTransport()
+        provider = MetaInstagramDMProvider(
+            accounts={"leona-voss": ("1784", "not-returned")},
+            graph_version="v24.0",
+            graph_host="graph.instagram.com",
+            app_secret="test-secret",
+            verify_token="verify-token",
+            auto_reply_enabled=True,
+            transport_factory=lambda persona: transport,
+        )
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        raw = json.dumps({
+            "object": "instagram",
+            "entry": [{"id": "1784", "messaging": [{"message": {"mid": "x", "attachments": []}}]}],
+        }).encode()
+        signature = "sha256=" + hmac.new(b"test-secret", raw, hashlib.sha256).hexdigest()
+        result = service.process_webhook(raw, signature)
+        self.assertEqual(result["events"], 0)
+        self.assertEqual(result["rejected"], 1)
+        self.assertEqual(self.pipeline.db.scalar("SELECT COUNT(*) FROM instagram_dm_events"), 0)
+        with self.assertRaisesRegex(ValueError, "instagram_webhook_signature_invalid"):
+            service.process_webhook(raw, "sha256=wrong")
+
+    def test_owner_reply_action_requires_auth_and_csrf(self) -> None:
+        provider = FakeProvider()
+        server = create_server(
+            self.root / "auth.db",
+            port=0,
+            asset_root=self.root,
+            auth_password=PASSWORD,
+            instagram_dm_provider=provider,
+        )
+        service = server.RequestHandlerClass.instagram_dm
+        inbound = service.ingest(self.payload(event_id="auth-1"), provider_verified=True)
+        draft = service.queue_reply(int(inbound["event_id"]))
+        outbox_id = int(draft["outbox_id"])
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            base = f"http://127.0.0.1:{server.server_port}"
+            unauthenticated = Request(
+                f"{base}/api/instagram-dm/{outbox_id}/reply/approve",
+                data=b"{}",
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with self.assertRaises(HTTPError) as raised:
+                urlopen(unauthenticated, timeout=5)
+            self.assertEqual(raised.exception.code, 401)
+
+            jar = CookieJar()
+            opener = build_opener(HTTPCookieProcessor(jar))
+            login = Request(
+                f"{base}/login",
+                data=urlencode({"password": PASSWORD}).encode("ascii"),
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                method="POST",
+            )
+            with opener.open(login, timeout=5):
+                pass
+            cookies = {cookie.name: cookie.value for cookie in jar}
+            missing_csrf = Request(
+                f"{base}/api/instagram-dm/{outbox_id}/reply/approve",
+                data=b"{}",
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with self.assertRaises(HTTPError) as raised:
+                opener.open(missing_csrf, timeout=5)
+            self.assertEqual(raised.exception.code, 403)
+            authorized = Request(
+                f"{base}/api/instagram-dm/{outbox_id}/reply/approve",
+                data=b"{}",
+                headers={
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": cookies[CSRF_COOKIE],
+                },
+                method="POST",
+            )
+            with opener.open(authorized, timeout=5) as response:
+                self.assertEqual(json.load(response)["status"], "APPROVED")
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
 
     def test_public_webhook_is_signature_gated_and_provider_verified(self) -> None:
         provider = FakeProvider()
