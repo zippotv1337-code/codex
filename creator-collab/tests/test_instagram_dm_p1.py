@@ -454,6 +454,130 @@ class InstagramDMP1Tests(unittest.TestCase):
             <= sales_view_columns
         )
 
+    def polled(
+        self, event_id: str, *, hours_ago: float, conversation_id: str = "thread-1",
+        persona: str = "leona-voss", **extra: object,
+    ) -> dict[str, object]:
+        return {
+            **self.payload(event_id=event_id),
+            "conversation_id": conversation_id,
+            "target_persona": persona,
+            "received_at": (datetime.now(UTC) - timedelta(hours=hours_ago)).isoformat(),
+            **extra,
+        }
+
+    def test_sync_survives_stale_and_malformed_messages(self) -> None:
+        provider = FakeProvider()
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        provider.polled["leona-voss"] = [
+            self.polled("stale", hours_ago=30),
+            {**self.polled("broken", hours_ago=1, conversation_id="t-x"), "text": 7},
+        ]
+        provider.polled["mara-field"] = [
+            self.polled("mara-1", hours_ago=1, conversation_id="t-m", persona="mara-field"),
+        ]
+        result = service.sync_provider()
+        leona = result["personas"]["leona-voss"]
+        self.assertEqual((leona["status"], leona["ingested"], leona["rejected"]), ("SYNCED", 1, 1))
+        self.assertEqual(result["personas"]["mara-field"]["replies_sent"], 1)
+        self.assertEqual([sent[0] for sent in provider.sent], ["mara-field"])
+        self.assertEqual(
+            self.pipeline.db.scalar("SELECT COUNT(*) FROM instagram_dm_provider_sync"), 2
+        )
+        # The stale message stays visible but never produces a sendable reply.
+        self.assertEqual(self.pipeline.db.scalar(
+            """SELECT COUNT(*) FROM instagram_dm_outbox o
+               JOIN instagram_dm_events e ON e.id=o.trigger_event_id
+               WHERE e.external_event_id='stale'"""
+        ), 0)
+
+    def test_poll_batch_replies_once_per_conversation_turn(self) -> None:
+        for order in ("newest_first", "oldest_first"):
+            with self.subTest(order=order):
+                provider = FakeProvider()
+                pipeline = build_pipeline(self.root / f"{order}.db")
+                pipeline.initialize()
+                service = InstagramDMService(pipeline.db, provider=provider)
+                batch = [
+                    self.polled(f"{order}-3", hours_ago=0.01),
+                    self.polled(f"{order}-2", hours_ago=0.02),
+                    self.polled(f"{order}-1", hours_ago=0.03),
+                ]
+                if order == "oldest_first":
+                    batch.reverse()
+                provider.polled["leona-voss"] = batch
+                result = service.sync_provider("leona-voss")
+                self.assertEqual(result["personas"]["leona-voss"]["ingested"], 3)
+                self.assertEqual(len(provider.sent), 1)
+                self.assertEqual(pipeline.db.scalar(
+                    """SELECT e.external_event_id FROM instagram_dm_outbox o
+                       JOIN instagram_dm_events e ON e.id=o.trigger_event_id"""
+                ), f"{order}-3")
+                conversation = pipeline.db.one(
+                    "SELECT last_received_at FROM instagram_dm_conversations"
+                )
+                newest = pipeline.db.scalar(
+                    "SELECT MAX(received_at) FROM instagram_dm_events"
+                )
+                self.assertEqual(conversation["last_received_at"], newest)
+
+                # Replayed poll: nothing new, nothing sent again.
+                service.sync_provider("leona-voss")
+                self.assertEqual(len(provider.sent), 1)
+                # A genuine follow-up after the reply is a new turn.
+                with pipeline.db.transaction() as connection:
+                    connection.execute(
+                        "UPDATE instagram_dm_conversations SET last_outbound_at=?",
+                        ((datetime.now(UTC) - timedelta(seconds=30))
+                         .isoformat(timespec="seconds"),),
+                    )
+                provider.polled["leona-voss"] = [
+                    self.polled(f"{order}-4", hours_ago=0.005), *batch
+                ]
+                service.sync_provider("leona-voss")
+                self.assertEqual(len(provider.sent), 2)
+
+    def test_thread_already_answered_by_account_is_not_auto_replied(self) -> None:
+        provider = FakeProvider()
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        provider.polled["leona-voss"] = [
+            self.polled("answered", hours_ago=0.5, provider_answered=True)
+        ]
+        service.sync_provider("leona-voss")
+        self.assertEqual(provider.sent, [])
+        self.assertEqual(
+            self.pipeline.db.scalar("SELECT COUNT(*) FROM instagram_dm_events"), 1
+        )
+
+        transport = FakeTransport()
+        now = datetime.now(UTC)
+        messages = [
+            {"id": "own-late", "from": {"id": "1784"}, "message": "Hi",
+             "created_time": now.strftime("%Y-%m-%dT%H:%M:%S+0000")},
+            {"id": "in-early", "from": {"id": "igsid-user"}, "message": "Hallo",
+             "created_time": (now - timedelta(minutes=5)).strftime("%Y-%m-%dT%H:%M:%S+0000")},
+        ]
+        transport.get = lambda path, params: (  # type: ignore[method-assign]
+            transport.gets.append((path, params)) or (
+                {"data": [{"id": "thread-1"}]} if path.endswith("/conversations")
+                else {"messages": {"data": messages}}
+            )
+        )
+        meta = MetaInstagramDMProvider(
+            accounts={"leona-voss": ("1784", "not-returned")},
+            graph_version="v24.0",
+            graph_host="graph.instagram.com",
+            transport_factory=lambda persona: transport,
+        )
+        polled = meta.poll("leona-voss")
+        self.assertEqual([item["message_id"] for item in polled], ["in-early"])
+        self.assertTrue(polled[0]["provider_answered"])
+        self.assertIn("messages.limit(20)", transport.gets[1][1]["fields"])
+        messages[0]["created_time"] = (now - timedelta(minutes=10)).strftime(
+            "%Y-%m-%dT%H:%M:%S+0000"
+        )
+        self.assertFalse(meta.poll("leona-voss")[0]["provider_answered"])
+
     def test_webhook_igsid_is_not_used_as_provider_conversation_id(self) -> None:
         transport = FakeTransport()
         provider = MetaInstagramDMProvider(

@@ -442,16 +442,22 @@ class InstagramDMService:
                 next_status = "NEEDS_HUMAN" if was_handoff or needs_human else "OPEN"
                 next_reason = conversation["handoff_reason"] if was_handoff else handoff_reason
                 next_creator = conversation["creator_id"] or creator_id
+                # Providers return history newest-first. An older message
+                # must never move the conversation's reply window backwards.
                 connection.execute(
                     """
                     UPDATE instagram_dm_conversations
-                    SET external_user_id=?, creator_id=?, last_intent=?, status=?,
-                        handoff_reason=?, last_received_at=?, updated_at=?
+                    SET external_user_id=?, creator_id=?,
+                        last_intent=CASE WHEN ? >= last_received_at
+                            THEN ? ELSE last_intent END,
+                        status=?, handoff_reason=?,
+                        last_received_at=MAX(last_received_at, ?), updated_at=?
                     WHERE id=?
                     """,
                     (
                         event.external_user_id,
                         next_creator,
+                        event.received_at,
                         stored_intent,
                         next_status,
                         next_reason,
@@ -499,8 +505,49 @@ class InstagramDMService:
             "external_action": False,
         }
         if auto_process and provider_verified and status == "OPEN":
-            result["processing"] = self.process_event(event_id, dispatch=True)
+            result["processing"] = self.auto_process_event(event_id)
         return result
+
+    def auto_process_event(
+        self, event_id: int, *, provider_answered: bool = False
+    ) -> dict[str, object]:
+        """Reply at most once per conversation turn and never abort a batch.
+
+        Only the newest inbound message of a conversation is answered, and
+        only while nobody has answered it yet. Every refusal is local and
+        leaves no provider write behind.
+        """
+        row = self.database.one(
+            """
+            SELECT e.id, e.received_at, c.last_outbound_at,
+                   (SELECT e2.id FROM instagram_dm_events e2
+                    WHERE e2.conversation_id=e.conversation_id
+                      AND e2.direction='INBOUND'
+                    ORDER BY e2.received_at DESC, e2.id DESC LIMIT 1) AS newest_id
+            FROM instagram_dm_events e
+            JOIN instagram_dm_conversations c ON c.id=e.conversation_id
+            WHERE e.id=?
+            """,
+            (event_id,),
+        )
+        if row is None:
+            raise KeyError("instagram_dm_event_not_found")
+        reason = None
+        if int(row["newest_id"]) != event_id:
+            reason = "superseded_by_newer_inbound"
+        elif provider_answered:
+            reason = "already_answered_in_provider_thread"
+        elif row["last_outbound_at"] and str(row["last_outbound_at"]) >= str(row["received_at"]):
+            reason = "already_answered"
+        elif not self._within_reply_window(str(row["received_at"])):
+            reason = "instagram_24h_reply_window_closed"
+        if reason is not None:
+            return {"event_id": event_id, "status": "SKIPPED", "reason": reason, "external_action": False}
+        try:
+            return self.process_event(event_id, dispatch=True)
+        except ValueError as error:
+            # Raised only before a provider write was claimed.
+            return {"event_id": event_id, "status": "NOT_DISPATCHED", "reason": str(error), "external_action": False}
 
     @staticmethod
     def _reply_text(persona: str, intent: str, link: str | None = None) -> str:
@@ -1136,17 +1183,25 @@ class InstagramDMService:
             raise ValueError("instagram_webhook_signature_invalid")
         results: list[dict[str, object]] = []
         rejected = 0
+        new_inbound: list[dict[str, object]] = []
         for event in self.provider.parse_webhook(raw_body):
             if event.get("kind") == "OUTBOUND_ECHO":
                 results.append(self.record_delivery(str(event["provider_message_id"])))
             elif event.get("kind") == "INBOUND":
-                results.append(
-                    self.ingest(
-                        event["payload"], provider_verified=True, auto_process=True
-                    )
-                )
+                try:
+                    result = self.ingest(event["payload"], provider_verified=True)
+                except InboundValidationError:
+                    rejected += 1
+                    continue
+                results.append(result)
+                if not result["duplicate"] and result["status"] == "OPEN":
+                    new_inbound.append(result)
             else:
                 rejected += 1
+        # Store the whole batch first so only the newest message per
+        # conversation can trigger a reply.
+        for result in new_inbound:
+            result["processing"] = self.auto_process_event(int(result["event_id"]))
         return {
             "accepted": True,
             "events": len(results),
@@ -1167,15 +1222,33 @@ class InstagramDMService:
             started = utc_now()
             seen = 0
             ingested = 0
+            rejected = 0
+            replies_sent = 0
             try:
                 events = self.provider.poll(slug)
                 seen = len(events)
+                new_inbound: list[tuple[int, bool]] = []
                 for payload in events:
-                    result = self.ingest(
-                        payload, provider_verified=True, auto_process=True
-                    )
+                    try:
+                        result = self.ingest(payload, provider_verified=True)
+                    except InboundValidationError:
+                        rejected += 1
+                        continue
                     if not result["duplicate"]:
                         ingested += 1
+                        if result["status"] == "OPEN":
+                            new_inbound.append((
+                                int(result["event_id"]),
+                                bool(payload.get("provider_answered")),
+                            ))
+                # Store the whole batch first so only the newest message per
+                # conversation can trigger a reply.
+                for event_id, answered in new_inbound:
+                    processed = self.auto_process_event(
+                        event_id, provider_answered=answered
+                    )
+                    if processed.get("status") == "SENT":
+                        replies_sent += 1
                 status = "SYNCED"
                 error = None
             except (InstagramDMProviderError, InstagramDMProviderConnectionError) as provider_error:
@@ -1208,7 +1281,10 @@ class InstagramDMService:
                         "UPDATE instagram_dm_conversations SET last_provider_sync_at=? WHERE creator_id=?",
                         (now, creator["id"]),
                     )
-            results[slug] = {"status": status, "seen": seen, "ingested": ingested, "error": error}
+            results[slug] = {
+                "status": status, "seen": seen, "ingested": ingested,
+                "rejected": rejected, "replies_sent": replies_sent, "error": error,
+            }
         return {"status": "COMPLETE", "personas": results, "external_action": False}
 
     def dashboard(self, *, limit: int = 50) -> dict[str, object]:

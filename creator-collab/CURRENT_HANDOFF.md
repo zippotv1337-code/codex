@@ -1,5 +1,17 @@
 # Aktueller Handoff
 
+## AKTUELL — DM-P1 Autopilot-Sync gehärtet (Branch, nicht deployed), 30. September 2026
+
+- Branch `codex/20260929-instagram-dm-p1`, Basis `origin/main` `7ca2512`. Kein Merge, kein Deployment, kein echter Send.
+- Behobene, per Test reproduzierte Defekte im 5-Minuten-`instagram-dm-sync`:
+  eine Inbound-Nachricht älter als 24 h brach den gesamten Sync mit `ValueError` ab (andere Persona nicht synchronisiert, kein `provider_sync`-Readback);
+  mehrere Nachrichten derselben Konversation in einem Poll erzeugten je eine eigene Bot-Antwort;
+  ältere Nachrichten konnten `last_received_at` (Grundlage des 24h-Fensters) zurücksetzen;
+  bereits im Provider-Thread beantwortete Nachrichten (z. B. manuelle Owner-Antwort) wurden erneut beantwortet.
+- Jetzt: pro Konversationszug höchstens eine Antwort auf die neueste Inbound-Nachricht; veraltete/beantwortete/fehlerhafte Einträge werden sichtbar gespeichert bzw. verworfen, ohne Provider-Write.
+- Offiziell gegen Meta-Doku geprüft: Poll nutzt das dokumentierte 20-Nachrichten-Detaillimit (vorher 25).
+- Evidence: `sessions/2026-09-30-claude-dm-p1-finalization.md`. Live-Runtime läuft weiter auf dem alten Stand, bis Owner/Review Merge und Rollout freigibt.
+
 ## AKTUELL — Mara „Samstag im Hofladen“ offiziell live, 30. September 2026
 
 - Ein neues Mara-Dreiercarousel wurde mit der bestehenden Identitätsreferenz

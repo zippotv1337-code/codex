@@ -6,6 +6,7 @@ import json
 import re
 import tomllib
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Callable, Protocol
 
@@ -258,6 +259,20 @@ class MetaInstagramDMProvider:
         data = payload.get("data", [])
         return [item for item in data if isinstance(item, dict)] if isinstance(data, list) else []
 
+    @staticmethod
+    def _sender_id(message: dict[str, object]) -> str:
+        sender = message.get("from")
+        return str(sender.get("id") or "") if isinstance(sender, dict) else ""
+
+    @staticmethod
+    def _created_at(message: dict[str, object]) -> datetime | None:
+        value = message.get("created_time")
+        try:
+            parsed = datetime.fromisoformat(str(value))
+        except ValueError:
+            return None
+        return parsed if parsed.tzinfo is not None else None
+
     def poll(self, persona: str) -> list[dict[str, object]]:
         account = self._accounts.get(persona)
         if account is None:
@@ -277,21 +292,36 @@ class MetaInstagramDMProvider:
                 conversation_id = str(conversation.get("id") or "")
                 if not conversation_id:
                     continue
+                # Meta only returns details for the 20 most recent messages
+                # of a conversation; older ones answer with an error.
                 details = transport.get(
                     conversation_id,
                     {
-                        "fields": "messages.limit(25){id,from,to,message,created_time}",
+                        "fields": "messages.limit(20){id,from,to,message,created_time}",
                     },
                 )
-                messages = details.get("messages", {}) if isinstance(details, dict) else {}
-                for message in self._data(messages):
-                    sender = message.get("from")
-                    sender_id = str(sender.get("id") or "") if isinstance(sender, dict) else ""
+                messages = self._data(
+                    details.get("messages", {}) if isinstance(details, dict) else {}
+                )
+                own_times = [
+                    self._created_at(message)
+                    for message in messages
+                    if self._sender_id(message) == account.account_id
+                ]
+                for message in messages:
+                    sender_id = self._sender_id(message)
                     if not sender_id or sender_id == account.account_id:
                         continue
                     message_id = str(message.get("id") or "")
                     if not message_id:
                         continue
+                    created = self._created_at(message)
+                    # Any own message at or after this one means the thread
+                    # was already answered. Unparseable times fail closed.
+                    answered = any(
+                        own is None or created is None or own >= created
+                        for own in own_times
+                    )
                     inbound.append(
                         {
                             "provider": self.provider,
@@ -302,6 +332,7 @@ class MetaInstagramDMProvider:
                             "target_persona": persona,
                             "text": str(message.get("message") or ""),
                             "received_at": message.get("created_time"),
+                            "provider_answered": answered,
                         }
                     )
             return inbound
