@@ -1,5 +1,9 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Instagram DM P1 kontrolliert deployed — 30. September 2026
+
+Der geprüfte DM-P1-Main-Stand ist im operativen Creator-Ops-Checkout aktiv. Vor dem Rollout wurde ein secret-freies Meilenstein-Backup einschließlich isoliertem Restore-/Rollback-Proof erstellt. Die kanonische operative Datenbank migrierte kontrolliert von Schema 7 auf Schema 8; Integrity, Foreign Keys, Basis-Counts und Compatibility Views sind bestätigt. Runtime, Passwort-Auth, CSRF und `Messages & Sales` sind gesund. Der offizielle Provider-Read synchronisiert Leona und Mara, aktuell ohne Inbox-Ereignisse. Der Bot bleibt bis zur echten Meta-Webhook-Readiness bewusst mit `auto_reply_enabled=false`: Meta-App-Secret, Verify-Token und ein vorhandener öffentlicher HTTPS-Callback fehlen. Daher ist die interne Deployment-Stufe belegt, aber `BOT_LIVE_VERIFIED` noch nicht erreicht und es wurde keine DM gesendet.
+
 ## Instagram DM P1 (29. September 2026)
 
 Der Branch `codex/20260929-instagram-dm-p1` erweitert die bestehende DM-P0-Basis um provider-verifizierten Read, signierten Webhook, genau-einmal Outbox, 24-Stunden-Antwortfenster, Delivery-Reconciliation sowie `Messages & Sales` im vorhandenen Dashboard. Beide konfigurierten Instagram-Konten wurden read-only beim Provider verifiziert; aktuell lagen keine Inbox-Ereignisse vor. Der kritische Schema/Auth/Messaging-Core-Delta bleibt bis zum vorgesehenen Review separat und ist nicht nach `main` gemergt.

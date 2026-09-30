@@ -1,5 +1,15 @@
 # Aktueller Handoff
 
+## AKTUELL — DM-P1 kontrolliert deployed, Live-Webhook-Gate offen, 30. September 2026
+
+- `origin/main` und der operative Checkout stehen auf dem geprüften DM-P1-Stand `b7ccbcad42983ec57a9c74c99ccc991de00422d7`.
+- Vor dem Rollout wurde das validierte, secret-freie Meilenstein-Backup `C:\Zippoworkz\Backups\PreDeploy_DM_P1_20260930_143109\Backup_Meilenstein_20260930-1431.zip` erstellt; SHA256 `adb8887db044570f5ced417d52d033f618586cd365565e7ee7678100fe989a3b`. Isolierter Restore, Mutation und bytegleicher Rollback sind bewiesen.
+- Die operative DB wurde kontrolliert von Schema 7 auf Schema 8 migriert. `integrity_check=ok`, Foreign Keys 0, Creator/Content/Asset/Publication-Counts unverändert und alle DM-P1-Tabellen/Views vorhanden.
+- Die Runtime auf `127.0.0.1:4180` läuft unter dem vorhandenen Supervisor. Health, Passwort-Auth, CSRF und `zippoworkz-instagram-dm-p1-v1` sind zurückgelesen.
+- Offizieller Provider-Read ist für Leona und Mara `SYNCED`; beide Konten lieferten 0 Ereignisse. Es wurde keine Nachricht gesendet und kein Live-Erfolg erfunden.
+- `auto_reply_enabled=false` bleibt fail-closed. Webhook-Readiness ist blockiert, weil korrektes `META_APP_SECRET`, `META_DM_WEBHOOK_VERIFY_TOKEN` und ein bestehender öffentlicher HTTPS-Callback fehlen. Keine Tunnel-/Firewall-/Cloudflare-Änderung wurde vorgenommen.
+- Finalstatus: `DM_P1_DEPLOYED_INTERNAL_CHECKS_GREEN`, aber ausdrücklich `BOT_LIVE_VERIFIED=NO`.
+
 ## AKTUELL — PR #2 auf aktuellen Main gebracht, 29. September 2026
 
 - `origin/main` wurde per normalem Merge in `codex/20260929-instagram-dm-p1` übernommen; kein Rebase, Force-Push oder History-Rewrite.
