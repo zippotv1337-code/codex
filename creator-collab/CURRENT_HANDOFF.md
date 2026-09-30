@@ -1,5 +1,17 @@
 # Aktueller Handoff
 
+## AKTUELL — Instagram-DM-Autopilot aktiv, Inbound-Livebeleg ausstehend, 30. September 2026
+
+- Leona und Mara sind über den offiziellen Meta-Graph-Adapter korrekt auf `leonavoss.ai` und `mara.field.ai` aufgelöst; beide Konto-Credentials liegen zusätzlich DPAPI-geschützt im lokalen Secret Broker und sind ausschließlich für `creator-ops-meta` freigegeben.
+- Der zuvor defekte Secret-Broker-DPAPI-Aufruf wurde lokal korrigiert und per verschlüsseltem Write/Readback bewiesen. Kein Secret wurde in Git, DB, Journal oder Log geschrieben.
+- Beide Instagram-Konten wurden erfolgreich und per API-Readback für das Meta-Webhook-Feld `messages` abonniert.
+- `auto_reply_enabled=true`; der vorhandene 5-Minuten-Standalone-Scheduler führt jetzt `instagram-dm-sync` aus. Sichere provider-verifizierte Inbounds werden genau einmal verarbeitet; Review-/Hard-Block-Fälle bleiben im Dashboard, unsichere Writes bleiben `RECONCILE_REQUIRED` und werden nicht blind wiederholt.
+- Laufender Readback: `send_enabled=true`, beide Personas `read_ready=true` und `write_ready=true`, Provider-Sync für beide `SYNCED`, operative DB Schema 8, `integrity_check=ok`, Foreign Keys 0.
+- Die vom Owner manuell gesendeten Abgleichstexte waren Outbound-Nachrichten. Meta liefert weiterhin 0 API-sichtbare Inbound-Konversationen; deshalb konnte noch keine Empfänger-IGSID eingelesen und keine echte Bot-Antwort gesendet werden. Es wurde kein Fake-Receipt erzeugt.
+- Signierter Push-Webhook bleibt separat unvollständig: Verify-Token liegt sicher im Broker, aber `META_APP_SECRET` und ein bestehender öffentlicher HTTPS-Callback fehlen. Der Polling-Autopilot ist davon unabhängig aktiv.
+- Verifikation: fokussiert 28 Tests plus 22 Subtests, vollständige Suite 218 Tests plus 22 Subtests, Dashboard 7/7, Compile, Secret-Scan über 393 getrackte Dateien und `git diff --check` grün.
+- Exakter Live-Fortsetzungspunkt: Eine neue Nachricht muss nach der bestätigten App-Subscription von einem externen Instagram-Konto an Leona oder Mara eingehen. Der Scheduler übernimmt dann ohne neue allgemeine Freigabe; danach Provider-ID, Outbox-Status und Reconcile/Delivery zurücklesen.
+
 ## AKTUELL — DM-P1 kontrolliert deployed, Live-Webhook-Gate offen, 30. September 2026
 
 - `origin/main` und der operative Checkout stehen auf dem geprüften DM-P1-Stand `b7ccbcad42983ec57a9c74c99ccc991de00422d7`.

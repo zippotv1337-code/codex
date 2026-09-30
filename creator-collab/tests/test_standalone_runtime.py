@@ -74,6 +74,7 @@ class StandaloneRuntimeTests(unittest.TestCase):
         self.assertIn("MultipleInstances IgnoreNew", installer)
         self.assertIn("publish-dispatch-due", scheduler)
         self.assertIn("instagram-insights-sync", scheduler)
+        self.assertIn("instagram-dm-sync", scheduler)
         self.assertNotIn("while ($true)", scheduler.lower())
         self.assertIn("runtimeConfig.MaximumRestarts", watchdog)
         self.assertIn("restart circuit open", watchdog)

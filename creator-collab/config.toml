@@ -38,7 +38,7 @@ live_enabled = true
 provider = "meta-graph"
 provider_read_enabled = true
 webhook_enabled = true
-auto_reply_enabled = false
+auto_reply_enabled = true
 reply_window_hours = 24
 
 [capabilities]

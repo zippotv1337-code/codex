@@ -13,6 +13,7 @@ from .database import CreatorDatabase
 from .fiverr import FiverrAutomationService
 from .external_readiness import ExternalReadinessService
 from .instagram_dm import InstagramDMService
+from .instagram_dm_provider import MetaInstagramDMProvider
 from .short_factory import ShortFactoryService
 
 
@@ -233,7 +234,13 @@ class CurrentStateService:
         fiverr_status = FiverrAutomationService(self.database).status("zippoworkz")
         external = ExternalReadinessService(self.root, config_path).snapshot()
         short_factory = ShortFactoryService(self.database).dashboard()
-        instagram_dm = InstagramDMService(self.database).dashboard(limit=10)
+        dm_provider = None
+        dm_config = config.get("instagram_dm", {})
+        if isinstance(dm_config, dict) and dm_config.get("provider") == "meta-graph":
+            dm_provider = MetaInstagramDMProvider.from_runtime(self.root, config_path)
+        instagram_dm = InstagramDMService(
+            self.database, provider=dm_provider
+        ).dashboard(limit=10)
         if instagram_dm["counts"]["needs_human"]:
             blockers["instagram_dm_needs_human"] = instagram_dm["counts"]["needs_human"]
 

@@ -76,6 +76,11 @@ try {
   # unsupported provider metrics remain UNKNOWN instead of becoming zero.
   Invoke-CreatorOpsStep -CommandArgs @('instagram-insights-sync')
 
+  # DM sync uses the official Meta adapter. Safe inbound messages are handled
+  # exactly once; uncertain writes remain RECONCILE_REQUIRED and are never
+  # blindly retried. Human-review and hard-block cases stay in the dashboard.
+  Invoke-CreatorOpsStep -CommandArgs @('instagram-dm-sync')
+
   $berlin = [TimeZoneInfo]::FindSystemTimeZoneById('W. Europe Standard Time')
   $localNow = [TimeZoneInfo]::ConvertTime([DateTimeOffset]::UtcNow, $berlin)
   if ($localNow.Hour -eq $runtimeConfig.MorningHour -and $localNow.Minute -ge $runtimeConfig.MorningMinute) {

@@ -15,6 +15,8 @@ from .evening import EveningRunCoordinator
 from .exporting import ExportBackupService
 from .external_readiness import ExternalReadinessService
 from .instagram_insights import MetaInstagramInsightsService
+from .instagram_dm import InstagramDMService
+from .instagram_dm_provider import MetaInstagramDMProvider
 from .fiverr import FiverrAutomationService, FiverrGigSnapshot
 from .pipeline import VerticalPipeline
 from .reconcile import ManualInstagramService
@@ -147,6 +149,10 @@ def parser() -> argparse.ArgumentParser:
     subcommands.add_parser(
         "instagram-insights-sync",
         help="Capture due official Instagram insights without publishing",
+    )
+    subcommands.add_parser(
+        "instagram-dm-sync",
+        help="Poll official Instagram conversations and process safe replies idempotently",
     )
     checkpoint = subcommands.add_parser("checkpoint", help="Write an atomic autopilot savegame")
     checkpoint.add_argument("--out", type=Path, default=ROOT / "AUTOPILOT_CHECKPOINT.md")
@@ -385,6 +391,15 @@ def main() -> int:
         print(
             json.dumps(
                 MetaInstagramInsightsService(pipeline.db, ROOT).sync_due(),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    elif args.command == "instagram-dm-sync":
+        provider = MetaInstagramDMProvider.from_runtime(ROOT, args.config)
+        print(
+            json.dumps(
+                InstagramDMService(pipeline.db, provider=provider).sync_provider(),
                 ensure_ascii=False,
                 indent=2,
             )

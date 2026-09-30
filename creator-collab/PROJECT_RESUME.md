@@ -1,5 +1,24 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Instagram-DM-Autopilot aktiviert — 30. September 2026
+
+DM-P1 arbeitet im bestehenden Creator-Ops-Kern jetzt als autonomer Polling-
+Operator. Beide offiziellen Meta-Konten sind für `messages` abonniert, die
+vorhandenen Konto-Credentials sind zusätzlich DPAPI-geschützt im lokalen
+Secret Broker hinterlegt und der 5-Minuten-Scheduler führt den idempotenten
+DM-Sync aus. `auto_reply_enabled=true`; sichere provider-verifizierte
+Inbounds können genau einmal beantwortet werden, während Human-Review,
+Hard-Block und `RECONCILE_REQUIRED` fail-closed bleiben. Current State zeigt
+Schema 8, `PROVIDER_VERIFIED_AUTONOMY_P1` und `send_enabled=true`.
+
+Noch nicht als Live-Proof belegt ist eine tatsächlich eingegangene Nachricht:
+Die bisherigen manuellen Abgleichstexte waren Outbound-Nachrichten, und Meta
+liefert weiterhin null API-sichtbare Inbound-Konversationen. Daher wurde noch
+keine Bot-Antwort gesendet. Der signierte Push-Webhook benötigt zusätzlich
+das Meta-App-Secret und einen vorhandenen öffentlichen HTTPS-Callback;
+Polling und Reply-Core laufen davon unabhängig. Nachweis:
+`sessions/2026-09-30-1537-codex-dm-autopilot-activation.md`.
+
 ## Instagram DM P1 kontrolliert deployed — 30. September 2026
 
 Der geprüfte DM-P1-Main-Stand ist im operativen Creator-Ops-Checkout aktiv. Vor dem Rollout wurde ein secret-freies Meilenstein-Backup einschließlich isoliertem Restore-/Rollback-Proof erstellt. Die kanonische operative Datenbank migrierte kontrolliert von Schema 7 auf Schema 8; Integrity, Foreign Keys, Basis-Counts und Compatibility Views sind bestätigt. Runtime, Passwort-Auth, CSRF und `Messages & Sales` sind gesund. Der offizielle Provider-Read synchronisiert Leona und Mara, aktuell ohne Inbox-Ereignisse. Der Bot bleibt bis zur echten Meta-Webhook-Readiness bewusst mit `auto_reply_enabled=false`: Meta-App-Secret, Verify-Token und ein vorhandener öffentlicher HTTPS-Callback fehlen. Daher ist die interne Deployment-Stufe belegt, aber `BOT_LIVE_VERIFIED` noch nicht erreicht und es wurde keine DM gesendet.
