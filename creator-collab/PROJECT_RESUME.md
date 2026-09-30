@@ -1,5 +1,21 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Mara „Samstag im Hofladen“ live — 30. September 2026
+
+Ein neues Mara-Dreiercarousel wurde mit ihrer bestehenden Identitätsreferenz
+erzeugt, als `AI_GENERATED`, `SFW` und `PUBLIC_SFW` registriert und offiziell
+über Meta veröffentlicht. Die Slides zeigen Mara beim Tragen einer Apfelkiste,
+beim Sortieren im Hofladen und bei einer candid Pause mit Apfel und Kaffee.
+Der öffentliche Beleg ist https://www.instagram.com/p/Dd65Tc6ln4J/; Meta
+bestätigte Media-ID `18102000500127897`, Typ `CAROUSEL_ALBUM` und Username
+`mara.field.ai`.
+
+Das Paket wurde genau einmal dispatcht und vollständig zurückgelesen. VPS ist
+nach dem zeitlich begrenzten Owner-requested Local-AI-Publish wieder Primary,
+Local AI wieder Standby. Creator Ops enthält jetzt acht offizielle
+Meta-Publikationen. Für diesen Post folgen erst nach Fälligkeit die realen
+24h-/72h-/168h-Insights.
+
 ## Leona „Kiezabend“ live — 30. September 2026
 
 Ein neues Leona-Dreiercarousel wurde mit der bestehenden Identitätsreferenz

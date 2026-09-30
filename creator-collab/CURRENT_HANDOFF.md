@@ -1,5 +1,31 @@
 # Aktueller Handoff
 
+## AKTUELL — Mara „Samstag im Hofladen“ offiziell live, 30. September 2026
+
+- Ein neues Mara-Dreiercarousel wurde mit der bestehenden Identitätsreferenz
+  erzeugt und visuell auf Identität, Outfit, Hände, Gegenstände, Licht,
+  Dubletten und PUBLIC_SFW geprüft.
+- Die drei verschiedenen Szenen zeigen Apfelkisten-Transport,
+  Hofladen-Arbeit und eine candid Pause; sie wiederholen weder Maras
+  Werkstatt-, Küchenfenster- noch Feldrand-Paket.
+- Öffentliche commit-gepinnte JPEGs und der Paketvertrag liegen unter
+  `assets/meta-public/2026-09-30/mara-hofladen-samstag/` beziehungsweise
+  `docs/CONTENT_PACKAGE_MARA_HOFLADEN_2026-09-30.md`.
+- Der offizielle Meta-Preflight bestätigte das Konto `mara.field.ai`, drei
+  HTTPS/JPEG-Assets, native KI-Kennzeichnung und freie Quote. Nach dem
+  Owner-requested kontrollierten Local-AI-Publish wurde VPS wieder als
+  Publishing-Primary gesetzt.
+- Live-Beleg: https://www.instagram.com/p/Dd65Tc6ln4J/ — Meta Media-ID
+  `18102000500127897`, Typ `CAROUSEL_ALBUM`, Username `mara.field.ai`.
+- Creator Ops: Content, Publication, Queue und die drei Top-Assets sind
+  `PUBLISHED`; genau ein Dispatch-Versuch, kein Fehler und kein unklarer
+  externer Zustand.
+- Verifikation: 35 fokussierte Tests grün, Secret-Scan grün,
+  `integrity_check=ok`, Foreign Keys 0. Pre-Publish-Backup:
+  `backups/creator-ops-backup-pre-mara-hofladen-20260930.db`.
+- Current State: acht offizielle Meta-Publikationen; als Nächstes ausschließlich
+  echte 24h-/72h-/168h-Insights erfassen.
+
 ## AKTUELL — Leona „Kiezabend“ offiziell live, 30. September 2026
 
 - Ein neues, mit der bestehenden Leona-Identitätsreferenz erzeugtes
