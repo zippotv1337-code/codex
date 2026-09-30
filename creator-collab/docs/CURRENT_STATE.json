@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-30T13:37:26+00:00",
+  "generated_at": "2026-09-30T16:58:15+00:00",
   "state_contract": {
     "schema": "zippoworkz-current-state-v1",
     "role": "DERIVED_SECRET_FREE_SNAPSHOT",
@@ -59,12 +59,12 @@
     }
   ],
   "content": {
-    "total": 6,
+    "total": 7,
     "by_status": {
-      "PUBLISHED": 6
+      "PUBLISHED": 7
     },
     "by_stage": {
-      "ALLTAG": 6
+      "ALLTAG": 7
     },
     "review_required": 0,
     "mix_target_percent": {
@@ -75,14 +75,14 @@
     "next_recommended_stage": "TEASER"
   },
   "assets": {
-    "total": 30,
-    "real": 26,
-    "mock": 4,
+    "total": 35,
+    "real": 29,
+    "mock": 6,
     "by_safety": {
-      "SFW": 30
+      "SFW": 35
     },
     "by_visibility": {
-      "PUBLIC_SFW": 30
+      "PUBLIC_SFW": 35
     }
   },
   "reserve": {
@@ -92,11 +92,11 @@
   },
   "publications": {
     "owner_confirmed_native": 0,
-    "official_meta_graph": 6,
+    "official_meta_graph": 7,
     "mock": 0,
     "manual_analytics_events": 6,
     "local_queue": {
-      "PUBLISHED": 6
+      "PUBLISHED": 7
     },
     "instagram_channel_real_live": true,
     "meta_graph_automation_proof": "proven_live"
@@ -284,7 +284,7 @@
         "status": "SYNCED",
         "messages_seen": 0,
         "messages_ingested": 0,
-        "last_success_at": "2026-09-30T13:36:49+00:00",
+        "last_success_at": "2026-09-30T16:56:44+00:00",
         "last_error": null
       },
       {
@@ -292,7 +292,7 @@
         "status": "SYNCED",
         "messages_seen": 0,
         "messages_ingested": 0,
-        "last_success_at": "2026-09-30T13:36:52+00:00",
+        "last_success_at": "2026-09-30T16:56:46+00:00",
         "last_error": null
       }
     ],
@@ -334,11 +334,11 @@
   },
   "tests": {
     "status": "passed",
-    "passed": 218,
+    "passed": 35,
     "failed": 0
   },
   "blockers": {
-    "mock_assets_remaining": 4
+    "mock_assets_remaining": 6
   },
   "owner_decisions": {
     "source": "ZIPPOWORKZ_OWNER_POLICY.md v1.2",

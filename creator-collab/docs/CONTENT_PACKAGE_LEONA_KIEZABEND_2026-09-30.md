@@ -1,9 +1,13 @@
 # Leona Voss — Kiezabend
 
-Status: `OWNER_PUBLISH_APPROVED`  
-Format: Instagram carousel, three images  
-Safety: `SFW / PUBLIC_SFW`  
-Rights: `AI_GENERATED`  
+Status: `OWNER_PUBLISH_APPROVED`
+
+Format: Instagram carousel, three images
+
+Safety: `SFW / PUBLIC_SFW`
+
+Rights: `AI_GENERATED`
+
 Native Instagram AI disclosure: required
 
 ## Carousel order

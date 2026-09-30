@@ -1,5 +1,21 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Leona „Kiezabend“ live — 30. September 2026
+
+Ein neues Leona-Dreiercarousel wurde mit der bestehenden Identitätsreferenz
+erzeugt, visuell auf Identität, Pose, Hände, Licht und PUBLIC_SFW geprüft und
+über den offiziellen Meta-Graph-Adapter veröffentlicht. Die drei Szenen zeigen
+Marktspaziergang, Plattenladen und Café zur blauen Stunde. Der öffentliche
+Beleg ist https://www.instagram.com/p/Dd60HksABlS/; Meta bestätigte Media-ID
+`18115859356816589`, Typ `CAROUSEL_ALBUM` und Username `leonavoss.ai`.
+
+Die Multi-Node-Sperre stoppte den ersten lokalen Claim vor jedem Provider-
+Write. Nach Owner-Anweisung wurde die Publishing-Authority kontrolliert und
+nur für den Versand auf Local AI umgestellt; nach dem bestätigten Readback ist
+VPS wieder Primary und Local AI Standby. Creator Ops enthält jetzt sieben
+offizielle Meta-Publikationen. Die nächsten echten Lernpunkte sind die fälligen
+24h-/72h-/168h-Insights des neuen Posts.
+
 ## Instagram-DM-Autopilot aktiviert — 30. September 2026
 
 DM-P1 arbeitet im bestehenden Creator-Ops-Kern jetzt als autonomer Polling-

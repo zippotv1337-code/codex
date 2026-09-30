@@ -1,5 +1,32 @@
 # Aktueller Handoff
 
+## AKTUELL — Leona „Kiezabend“ offiziell live, 30. September 2026
+
+- Ein neues, mit der bestehenden Leona-Identitätsreferenz erzeugtes
+  Drei-Slide-Paket wurde visuell geprüft, als `AI_GENERATED`, `SFW` und
+  `PUBLIC_SFW` registriert und mit drei unterschiedlichen Szenen kuratiert.
+- Öffentliche, commit-gepinnte JPEGs und der Paketvertrag liegen unter
+  `assets/meta-public/2026-09-30/leona-kiezabend/` beziehungsweise
+  `docs/CONTENT_PACKAGE_LEONA_KIEZABEND_2026-09-30.md`.
+- Der offizielle Meta-Preflight bestätigte drei HTTPS/JPEG-Assets, das richtige
+  Konto `leonavoss.ai`, native KI-Kennzeichnung und freie Publish-Quote.
+- Der erste lokale Dispatch wurde vor jedem Meta-Schreibzugriff durch die
+  fehlende Multi-Node-Publishing-Authority blockiert. Nach der aktuellen
+  Owner-Anweisung wurde ein kontrolliertes, zeitlich begrenztes Failover auf
+  `ZIPPOWORKZ-LOCALAI` durchgeführt; danach erfolgte genau ein Provider-Write.
+  Anschließend wurde `ZIPPOWORKZ-VPS` wieder als Primary gesetzt.
+- Live-Beleg: https://www.instagram.com/p/Dd60HksABlS/ — Meta Media-ID
+  `18115859356816589`, Typ `CAROUSEL_ALBUM`, Username `leonavoss.ai`.
+- Creator Ops: Content, Publication, Queue und die drei Top-Assets sind
+  `PUBLISHED`; kein Fehler, kein unklarer externer Zustand. Der Queue-Zähler
+  zeigt zwei Claims, davon war nur einer ein Meta-Schreibversuch; der erste
+  endete lokal mit `publishing_authority_missing`.
+- Verifikation: 35 fokussierte Tests grün, Secret-Scan grün,
+  `integrity_check=ok`, Foreign Keys 0. Pre-Publish-Backup:
+  `backups/creator-ops-backup-pre-leona-kiezabend-20260930.db`.
+- Nächster operativer Schritt: echte 24h-/72h-/168h-Insights erfassen; vor
+  24 Stunden keine Werte erfinden.
+
 ## AKTUELL — Instagram-DM-Autopilot aktiv, Inbound-Livebeleg ausstehend, 30. September 2026
 
 - Leona und Mara sind über den offiziellen Meta-Graph-Adapter korrekt auf `leonavoss.ai` und `mara.field.ai` aufgelöst; beide Konto-Credentials liegen zusätzlich DPAPI-geschützt im lokalen Secret Broker und sind ausschließlich für `creator-ops-meta` freigegeben.
