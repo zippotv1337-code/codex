@@ -1,5 +1,23 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Instagram-DM-Bot: Hardening-Branch, Live-Proof offen — 1. Oktober 2026
+
+Die bestehende DM-P1-Lane wird auf `codex/20261001-dm-bot-hardening` gezielt
+gehärtet, ohne den operativen Checkout umzubauen. Schema 9 ergänzt auf demselben
+SQLite-Kern ein datensparsames Operation-Eventlog; die Migration Schema 8→9
+ist zweimal idempotent auf einer isolierten Kopie der operativen Datenbank
+mit unveränderten Basiscounts, `integrity_check=ok` und Foreign Keys 0 geprüft.
+Die laufende operative DB bleibt Schema 8. Beide offiziellen Meta-Konten
+lassen sich per ID und Username korrekt lesen, aber ihre Konversationslisten
+liefern weiterhin 0 API-sichtbare Inbounds. Ein vollständiger echter DM-
+Roundtrip ist daher **nicht** bewiesen (`BOT_WORKS=NO`); Unit-Tests und
+Readiness dürfen das nicht ersetzen. Der lokale Branch-Testblock nach zwei
+gezielten Review-Fixes ist grün: 258 Python-Tests plus 36 Subtests und
+8 Dashboard-/Node-Tests. Der Secret-Scan des gezielt gestagten Code-/Teststands
+fand bei 410 geprüften Dateien keinen Leak; Dokumentations-Staging und
+Commit-Readback folgen. Der Abschluss-/Commitstand dieses Branches steht im
+aktuellen Sitzungsjournal.
+
 ## Mara „Samstag im Hofladen“ live — 30. September 2026
 
 Ein neues Mara-Dreiercarousel wurde mit ihrer bestehenden Identitätsreferenz

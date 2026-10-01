@@ -82,6 +82,36 @@ test('Instagram DM P1 view exposes Messages & Sales truth and guarded actions', 
   assert.doesNotMatch(source, /\/api\/instagram-dm\/send/);
 });
 
+test('DM Bot Health renders per-persona evidence, live job counts and escapes errors', () => {
+  const source = readFileSync(join(__dirname, '../dashboard/engagement.js'), 'utf8');
+  const context = vm.createContext({document:{querySelector(){return {innerHTML:''};}}});
+  vm.runInContext(source.slice(0, source.indexOf('const messagesView')), context);
+  context.health = {
+    bot_online:'WEB_RUNTIME_ONLINE', dm_mode:'PROVIDER_VERIFIED_AUTONOMY_P1', database:'ok',
+    send_enabled:true, auto_reply_enabled:true, checked_at:'2026-10-01T10:00:00Z',
+    provider:{name:'test-meta',status:'ERROR'}, queue:'DB_OUTBOX_READABLE',
+    worker:{mode:'INLINE_WEBHOOK_AND_ON_DEMAND',dedicated_worker:false},
+    personas:[
+      {persona:'leona-voss',account:'leonavoss.ai',read_ready:true,write_ready:true,sync_status:'SYNCED',last_sync_success_at:'2026-10-01T09:00:00Z'},
+      {persona:'mara-field',account:'mara.field.ai',read_ready:true,write_ready:true,sync_status:'ERROR',last_sync_error:'<script>bad</script>'},
+    ],
+    jobs:{active:2,retry:1,blocked:3,needs_owner:4,failed:5},
+    last_action:{action:'PROVIDER_SYNC',result:'ERROR',persona:'mara-field',timestamp:'2026-10-01T10:00:00Z'},
+    last_successful_message:null,
+    last_error:{persona:'mara-field',timestamp:'2026-10-01T10:00:00Z',code:'<script>bad</script>'},
+  };
+  const html = vm.runInContext('botHealthTemplate(health)', context);
+  assert.match(html, /Leona/);
+  assert.match(html, /Mara/);
+  assert.match(html, /BLOCKED \/ Abgleich/);
+  assert.match(html, /Retry-Jobs/);
+  assert.match(html, /kein eigener DM-Worker/);
+  assert.match(html, /konfiguriert/);
+  assert.match(html, /Letzte erfolgreiche Nachricht:<\/b> Noch keine bestätigt/);
+  assert.doesNotMatch(html, /<script>bad<\/script>/);
+  assert.match(html, /&lt;script&gt;bad&lt;\/script&gt;/);
+});
+
 for (const ready of [false, true]) {
   test(`story editor ${ready ? 'accepts current backend' : 'blocks writes until old backend restarts'}`, async () => {
     const buttons = [{disabled:false}];

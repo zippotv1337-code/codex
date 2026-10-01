@@ -78,6 +78,20 @@ class MetaGraphTransport(Protocol):
 class MetaGraphError(RuntimeError):
     """Sanitized Graph API failure that never includes tokens or response bodies."""
 
+    def __init__(
+        self, code: str, *, http_status: int | None = None,
+        graph_code: int | None = None, graph_subcode: int | None = None,
+        request_id: str | None = None,
+    ) -> None:
+        super().__init__(code)
+        self.http_status = http_status
+        self.graph_code = graph_code
+        self.graph_subcode = graph_subcode
+        self.request_id = (
+            request_id if request_id and re.fullmatch(r"[A-Za-z0-9_-]{6,80}", request_id)
+            else None
+        )
+
 
 @dataclass(frozen=True)
 class PublicAssetProbeResult:
@@ -222,8 +236,40 @@ class UrllibMetaGraphTransport:
         error = payload.get("error")
         if isinstance(error, dict):
             code = error.get("code", "unknown")
-            raise MetaGraphError(f"meta_graph_error_code_{code}")
+            numeric_code = int(code) if str(code).isdigit() else None
+            subcode = error.get("error_subcode")
+            numeric_subcode = int(subcode) if str(subcode).isdigit() else None
+            raise MetaGraphError(
+                f"meta_graph_error_code_{numeric_code if numeric_code is not None else 'unknown'}",
+                graph_code=numeric_code, graph_subcode=numeric_subcode,
+            )
         return payload
+
+    @staticmethod
+    def _http_error(error: urllib.error.HTTPError) -> MetaGraphError:
+        """Extract only numeric diagnostics and a safe trace ID, never body text."""
+        graph_code = None
+        graph_subcode = None
+        try:
+            payload = json.loads(error.read(4096).decode("utf-8"))
+            detail = payload.get("error") if isinstance(payload, dict) else None
+            if isinstance(detail, dict):
+                code = detail.get("code")
+                subcode = detail.get("error_subcode")
+                graph_code = int(code) if str(code).isdigit() else None
+                graph_subcode = int(subcode) if str(subcode).isdigit() else None
+        except (OSError, UnicodeDecodeError, ValueError, TypeError):
+            pass
+        headers = error.headers
+        request_id = (
+            headers.get("x-fb-request-id") or headers.get("x-fb-trace-id")
+            if headers is not None else None
+        )
+        return MetaGraphError(
+            f"meta_graph_http_{error.code}", http_status=error.code,
+            graph_code=graph_code, graph_subcode=graph_subcode,
+            request_id=request_id,
+        )
 
     def post(self, path: str, data: dict[str, str]) -> dict[str, object]:
         payload = dict(data)
@@ -237,7 +283,7 @@ class UrllibMetaGraphTransport:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 return self._decode(response)
         except urllib.error.HTTPError as error:
-            raise MetaGraphError(f"meta_graph_http_{error.code}") from error
+            raise self._http_error(error) from error
         except urllib.error.URLError as error:
             raise ConnectionError("meta_graph_unreachable") from error
 
@@ -249,7 +295,7 @@ class UrllibMetaGraphTransport:
             with urllib.request.urlopen(url, timeout=self.timeout) as response:
                 return self._decode(response)
         except urllib.error.HTTPError as error:
-            raise MetaGraphError(f"meta_graph_http_{error.code}") from error
+            raise self._http_error(error) from error
         except urllib.error.URLError as error:
             raise ConnectionError("meta_graph_unreachable") from error
 

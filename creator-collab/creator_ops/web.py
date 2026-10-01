@@ -27,6 +27,7 @@ from .current_state import CurrentStateService
 from .external_readiness import ExternalReadinessService
 from .fiverr import FiverrAutomationService
 from .instagram_dm import InstagramDMService
+from .dm_health import bot_health_snapshot
 from .instagram_dm_provider import InstagramDMProvider, MetaInstagramDMProvider
 from .instagram_insights import MetaInstagramInsightsService
 from .operations_audit import OperationsAuditService
@@ -542,6 +543,8 @@ small{{display:block;margin-top:18px;color:#81796e;line-height:1.45}}
                         limit=int(query.get("limit", ["50"])[0])
                     )
                 )
+            elif parsed.path == "/api/instagram-dm/health":
+                self._json(bot_health_snapshot(self.instagram_dm))
             elif parsed.path == "/api/stories":
                 self._json({"items": StoryReserveService(self.service).packages(), "execution": "owner-review-only", "review_schema": "story-review-v1"})
             elif parsed.path == "/api/collections":

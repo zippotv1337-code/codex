@@ -1,5 +1,15 @@
 # Aktueller Handoff
 
+## AKTUELL — DM-Bot-Hardening und Live-Verifikation, 1. Oktober 2026
+
+- Neuer Arbeitsbranch `codex/20261001-dm-bot-hardening` im separaten Worktree `C:\Zippoworkz\Workspace\codex_dm_bot_hardening_20261001`; bestehende operative Runtime in `codex_ingest` unverändert auf Schema 8. Schema 9 ist hier nur auf isolierter DB-Kopie geprüft, **nicht deployed**.
+- Die DB-Kopie bestand Schema 8→9 samt zweitem idempotentem `initialize()`: Quellhash unverändert, Basiscounts unverändert, Integrity `ok`, Foreign Keys 0 und neue Eventlog-Spalten vorhanden.
+- Beide offiziellen Meta-Konten wurden read-only per Account-ID und Username korrekt zugeordnet. Die Konversationsliste lieferte bei Leona und Mara HTTP 200, aber jeweils **0 sichtbare Konversationen**; ein abschließender erneuter read-only Poll bestätigte weiterhin Leona 0/Mara 0. Der Engpass liegt schon am Provider-Listing, nicht erst an lokalen Cursorn oder DB-Persistenz.
+- Im geprüften Runtime-Kontext ist der Webhook-Verify-Token vorhanden, das App-Secret aber nicht; signierter Push ist somit nicht bereit. Polling bleibt ein eigenständiger Read-Pfad.
+- Es gibt weiterhin **keinen** echten provider-verifizierten DM-Eingang, Bot-Send-Receipt oder vollständigen Roundtrip. `BOT_WORKS=NO`. Ein einzelner kontrollierter Inbound von einem nicht automatisierten Owner-/Testkonto an Leona ist angefragt; kein Fremdkontakt wurde für Tests angesprochen.
+- Der gemeldete Mara-Ausfall ist aus den geprüften Publikations-/DM-Records nicht eindeutig rekonstruierbar. Das Branch-Eventlog soll künftige Provider-/Jobfehler ohne Nachrichtentext oder Secrets diagnostizierbar machen.
+- Zwei Review-Funde wurden zusätzlich minimal behoben und getestet: veralteter `SEND_PENDING`-Claim bei Konkurrenz sowie Graph-400/403-Throttle-Metadaten für begrenztes Retry. Die finale Python-Suite besteht mit **258 passed, 36 subtests passed**; Dashboard/Node **8/8**, Python-Compile, JavaScript-Syntax und `git diff --check` grün. Secret-Scan nach gezieltem Code-/Test-Staging: `SECRET LEAK CHECK: OK (410 files checked)`; erneuter Scan nach Dokumentations-Staging und Commit-Readback folgen. Journal: `sessions/2026-10-01-1240-codex-dm-hardening-live-verification.md`. Kein Claude-Review behauptet, da hier keine direkte Claude-Integration verfügbar war.
+
 ## AKTUELL — DM-P1 Autopilot-Sync gehärtet (Branch, nicht deployed), 30. September 2026
 
 - Branch `codex/20260929-instagram-dm-p1`, Basis `origin/main` `7ca2512`. Kein Merge, kein Deployment, kein echter Send.

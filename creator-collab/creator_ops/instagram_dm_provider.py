@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import json
 import re
+import time
 import tomllib
 from dataclasses import dataclass
 from datetime import datetime
@@ -19,9 +20,34 @@ PERSONA_SECRET_NAMES = {
     "mara-field": ("META_IG_USER_ID_MARA_FIELD", "META_ACCESS_TOKEN_MARA_FIELD"),
 }
 
+_READ_ATTEMPTS = 3
+_READ_BACKOFF_SECONDS = 0.25
+_TRANSIENT_GRAPH_CODES = {4, 17, 32, 613}
+
 
 class InstagramDMProviderError(RuntimeError):
     """Sanitized provider failure. It never contains tokens or response bodies."""
+
+    def __init__(
+        self, code: str, *, http_status: int | None = None,
+        graph_code: int | None = None, graph_subcode: int | None = None,
+        request_id: str | None = None,
+    ) -> None:
+        super().__init__(code)
+        self.http_status = http_status
+        self.graph_code = graph_code
+        self.graph_subcode = graph_subcode
+        self.request_id = request_id
+
+    @classmethod
+    def from_graph_error(cls, error: MetaGraphError) -> "InstagramDMProviderError":
+        """Keep safe numeric Graph diagnostics through the provider boundary."""
+        return cls(
+            str(error), http_status=error.http_status,
+            graph_code=error.graph_code,
+            graph_subcode=error.graph_subcode,
+            request_id=error.request_id,
+        )
 
 
 class InstagramDMProviderConnectionError(InstagramDMProviderError):
@@ -129,9 +155,7 @@ class MetaInstagramDMProvider:
         return project_root
 
     def _transport(self, persona: str) -> MetaGraphTransport:
-        account = self._accounts.get(persona)
-        if account is None:
-            raise InstagramDMProviderError("instagram_dm_persona_credentials_missing")
+        account = self._account(persona)
         if self._transport_factory is not None:
             return self._transport_factory(persona)
         return UrllibMetaGraphTransport(
@@ -140,18 +164,72 @@ class MetaInstagramDMProvider:
             graph_host=self.graph_host,
         )
 
+    def _account_mapping_valid(self, persona: str) -> bool:
+        account = self._accounts.get(persona)
+        return bool(
+            persona in PERSONA_SECRET_NAMES
+            and account is not None
+            and sum(
+                hmac.compare_digest(candidate.account_id, account.account_id)
+                for candidate in self._accounts.values()
+            ) == 1
+        )
+
+    def _account(self, persona: str) -> _Account:
+        account = self._accounts.get(persona)
+        if account is None or persona not in PERSONA_SECRET_NAMES:
+            raise InstagramDMProviderError("instagram_dm_persona_credentials_missing")
+        if not self._account_mapping_valid(persona):
+            raise InstagramDMProviderError("instagram_dm_account_mapping_ambiguous")
+        return account
+
+    def account_id_for(self, persona: str) -> str | None:
+        """Return the non-secret account ID only for an unambiguous mapping."""
+        account = self._accounts.get(persona)
+        return account.account_id if account and self._account_mapping_valid(persona) else None
+
     def _persona_for_account(self, account_id: str) -> str | None:
-        for persona, account in self._accounts.items():
-            if hmac.compare_digest(account.account_id, account_id):
-                return persona
-        return None
+        matches = [
+            persona for persona, account in self._accounts.items()
+            if hmac.compare_digest(account.account_id, account_id)
+        ]
+        return matches[0] if len(matches) == 1 and matches[0] in PERSONA_SECRET_NAMES else None
+
+    @staticmethod
+    def _transient_read_error(error: ConnectionError | MetaGraphError) -> bool:
+        if isinstance(error, ConnectionError):
+            return True
+        if error.graph_code in _TRANSIENT_GRAPH_CODES:
+            return True
+        code = str(error)
+        http_match = re.fullmatch(r"meta_graph_http_(\d{3})", code)
+        if http_match:
+            status = int(http_match.group(1))
+            return status in {408, 429} or 500 <= status <= 599
+        graph_match = re.fullmatch(r"meta_graph_error_code_(\d+)", code)
+        return bool(graph_match and int(graph_match.group(1)) in _TRANSIENT_GRAPH_CODES)
+
+    @classmethod
+    def _get_with_retry(
+        cls, transport: MetaGraphTransport, path: str, params: dict[str, str]
+    ) -> dict[str, object]:
+        """Retry bounded, read-only Graph requests without repeating a write."""
+        for attempt in range(_READ_ATTEMPTS):
+            try:
+                return transport.get(path, params)
+            except (ConnectionError, MetaGraphError) as error:
+                if attempt + 1 == _READ_ATTEMPTS or not cls._transient_read_error(error):
+                    raise
+                time.sleep(_READ_BACKOFF_SECONDS * (2 ** attempt))
+        raise AssertionError("instagram_dm_read_retry_exhausted")
 
     def readiness(self) -> dict[str, object]:
         personas = {
             persona: {
                 "configured": persona in self._accounts,
-                "read_ready": persona in self._accounts,
-                "write_ready": persona in self._accounts,
+                "account_mapping_valid": self._account_mapping_valid(persona),
+                "read_ready": self._account_mapping_valid(persona),
+                "write_ready": self._account_mapping_valid(persona),
             }
             for persona in PERSONA_SECRET_NAMES
         }
@@ -195,6 +273,9 @@ class MetaInstagramDMProvider:
                 continue
             target_id = str(entry.get("id") or "")
             persona = self._persona_for_account(target_id)
+            if persona is None:
+                normalized.append({"kind": "UNSUPPORTED", "reason": "target_account_unmapped"})
+                continue
             messaging = entry.get("messaging")
             if not isinstance(messaging, list):
                 normalized.append({"kind": "UNSUPPORTED", "reason": "messaging_invalid"})
@@ -242,7 +323,7 @@ class MetaInstagramDMProvider:
                             # stable local reference and fail closed during
                             # reconciliation until Meta's exact thread lookup
                             # contract is independently verified.
-                            "conversation_id": f"webhook-igsid:{sender_id}",
+                            "conversation_id": f"webhook-igsid:{target_id}:{sender_id}",
                             "sender_id": sender_id,
                             "target_persona": persona or "",
                             "text": text,
@@ -274,12 +355,11 @@ class MetaInstagramDMProvider:
         return parsed if parsed.tzinfo is not None else None
 
     def poll(self, persona: str) -> list[dict[str, object]]:
-        account = self._accounts.get(persona)
-        if account is None:
-            raise InstagramDMProviderError("instagram_dm_persona_credentials_missing")
+        account = self._account(persona)
         transport = self._transport(persona)
         try:
-            conversations = transport.get(
+            conversations = self._get_with_retry(
+                transport,
                 f"{account.account_id}/conversations",
                 {
                     "platform": "instagram",
@@ -294,7 +374,8 @@ class MetaInstagramDMProvider:
                     continue
                 # Meta only returns details for the 20 most recent messages
                 # of a conversation; older ones answer with an error.
-                details = transport.get(
+                details = self._get_with_retry(
+                    transport,
                     conversation_id,
                     {
                         "fields": "messages.limit(20){id,from,to,message,created_time}",
@@ -339,12 +420,10 @@ class MetaInstagramDMProvider:
         except ConnectionError as error:
             raise InstagramDMProviderConnectionError("meta_graph_unreachable") from error
         except MetaGraphError as error:
-            raise InstagramDMProviderError(str(error)) from error
+            raise InstagramDMProviderError.from_graph_error(error) from error
 
     def send_message(self, persona: str, recipient_id: str, text: str) -> str:
-        account = self._accounts.get(persona)
-        if account is None:
-            raise InstagramDMProviderError("instagram_dm_persona_credentials_missing")
+        account = self._account(persona)
         if not isinstance(text, str) or not text.strip() or len(text.encode("utf-8")) > 1000:
             raise InstagramDMProviderError("instagram_message_text_invalid")
         try:
@@ -358,7 +437,7 @@ class MetaInstagramDMProvider:
         except ConnectionError as error:
             raise InstagramDMProviderConnectionError("meta_graph_write_uncertain") from error
         except MetaGraphError as error:
-            raise InstagramDMProviderError(str(error)) from error
+            raise InstagramDMProviderError.from_graph_error(error) from error
         message_id = str(result.get("message_id") or result.get("id") or "").strip()
         if not message_id:
             raise InstagramDMProviderConnectionError("meta_graph_message_id_missing")
@@ -375,7 +454,7 @@ class MetaInstagramDMProvider:
         except ConnectionError:
             return None
         except MetaGraphError as error:
-            raise InstagramDMProviderError(str(error)) from error
+            raise InstagramDMProviderError.from_graph_error(error) from error
         messages = result.get("messages", {}) if isinstance(result, dict) else {}
         ids = {str(item.get("id")) for item in self._data(messages) if item.get("id")}
         return provider_message_id in ids

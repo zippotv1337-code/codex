@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import hashlib
+import time
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any, Mapping, Protocol
@@ -12,6 +13,7 @@ from .instagram_dm_provider import (
     InstagramDMProviderConnectionError,
     InstagramDMProviderError,
 )
+from .instagram_dm_eventlog import record_bot_event
 
 
 INTENT_CLASSES = (
@@ -37,6 +39,7 @@ REPLY_STATUSES = (
     "DRAFTED",
     "OWNER_REVIEW",
     "APPROVED",
+    "RETRYING",
     "SEND_PENDING",
     "SENT",
     "DELIVERED",
@@ -58,6 +61,17 @@ SALES_INTENTS = {
     "PAYPAL_INTENT",
     "MERCH_INTENT",
 }
+_RATE_LIMIT_GRAPH_CODES = {4, 17, 32, 613}
+_RETRYABLE_REJECTION_CODES = {"meta_graph_http_429", "meta_graph_rate_limited"}
+
+
+def _safe_diagnostic_code(value: object) -> str | None:
+    if value is None:
+        return None
+    code = str(value).strip().lower()
+    if len(code) <= 96 and re.fullmatch(r"[a-z][a-z0-9]*(?:_[a-z0-9]+)+", code):
+        return code
+    return "redacted_error"
 
 
 class InboundValidationError(ValueError):
@@ -283,6 +297,23 @@ class InstagramDMService:
         self.safety = DMSafetyPolicy()
         self.provider = provider
 
+    def _record_operation(
+        self, *, persona: str | None, action: str, result: str,
+        job_id: int | None = None, retry_count: int = 0,
+        error_code: str | None = None, provider_error: Exception | None = None,
+    ) -> None:
+        account_id_for = getattr(self.provider, "account_id_for", None)
+        account_id = account_id_for(persona) if callable(account_id_for) and persona else None
+        cause = getattr(provider_error, "__cause__", None)
+        request_id = getattr(cause, "request_id", None)
+        record_bot_event(
+            self.database, persona=persona, account_id=account_id,
+            action=action, job_id=job_id, result=result,
+            provider_request_id=request_id,
+            retry_count=retry_count, error_code=_safe_diagnostic_code(error_code),
+            error_summary=_safe_diagnostic_code(error_code),
+        )
+
     @staticmethod
     def _normalized_handle(value: str | None) -> str | None:
         return value.lower().removeprefix("@") if value else None
@@ -345,6 +376,7 @@ class InstagramDMService:
         auto_process: bool = False,
     ) -> dict[str, object]:
         event = self.normalizer.normalize(payload)
+        creator_id, persona, persona_error = self._resolve_persona(event)
         existing = self.database.one(
             """
             SELECT e.id, e.conversation_id, e.intent, e.status, e.handoff_reason,
@@ -368,9 +400,10 @@ class InstagramDMService:
             ),
         )
         if existing is not None:
+            if persona_error or (persona and existing["persona"] and existing["persona"] != persona):
+                raise InboundValidationError("duplicate_event_persona_mismatch")
             return self._existing_result(existing)
 
-        creator_id, persona, persona_error = self._resolve_persona(event)
         intent = self.classifier.classify(event.text)
         safety = self.safety.evaluate(event.text, intent)
         handoff_reason = persona_error or safety.reason
@@ -404,6 +437,8 @@ class InstagramDMService:
                 ),
             ).fetchone()
             if duplicate is not None:
+                if persona_error or (persona and duplicate["persona"] and duplicate["persona"] != persona):
+                    raise InboundValidationError("duplicate_event_persona_mismatch")
                 return self._existing_result(duplicate)
 
             conversation = connection.execute(
@@ -438,6 +473,18 @@ class InstagramDMService:
                 conversation_id = int(cursor.lastrowid)
             else:
                 conversation_id = int(conversation["id"])
+                # A provider thread reference must never be allowed to move
+                # between personas. In particular, an older webhook-only
+                # sender reference can collide when one user writes to both
+                # project accounts. Do not persist or reply under the wrong
+                # account; a newly account-scoped webhook reference will be
+                # created separately by the provider adapter.
+                if (
+                    creator_id is not None
+                    and conversation["creator_id"] is not None
+                    and int(conversation["creator_id"]) != creator_id
+                ):
+                    raise InboundValidationError("conversation_persona_mismatch")
                 was_handoff = conversation["status"] == "NEEDS_HUMAN"
                 next_status = "NEEDS_HUMAN" if was_handoff or needs_human else "OPEN"
                 next_reason = conversation["handoff_reason"] if was_handoff else handoff_reason
@@ -850,14 +897,35 @@ class InstagramDMService:
             return self._outbox_result(row, duplicate=True)
         if status in {"SEND_PENDING", "RECONCILE_REQUIRED"}:
             if status == "SEND_PENDING":
-                self._mark_outbox(
-                    outbox_id,
-                    "RECONCILE_REQUIRED",
-                    "send_started_without_confirmed_provider_receipt",
-                )
-                row = self.database.one(
-                    "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
-                )
+                # A concurrent request is not proof of a lost receipt. Only
+                # an abandoned claim may be moved to reconciliation.
+                try:
+                    claimed_at = datetime.fromisoformat(str(row["updated_at"]).replace("Z", "+00:00"))
+                    if claimed_at.tzinfo is None:
+                        claimed_at = claimed_at.replace(tzinfo=UTC)
+                    fresh = datetime.now(UTC) - claimed_at < timedelta(minutes=2)
+                except ValueError:
+                    fresh = False
+                if fresh:
+                    return {**self._outbox_result(row, duplicate=True), "reason": "reply_dispatch_in_flight"}
+                with self.database.transaction() as connection:
+                    changed = connection.execute(
+                        """UPDATE instagram_dm_outbox
+                           SET status='RECONCILE_REQUIRED', last_error=?, updated_at=?
+                           WHERE id=? AND status='SEND_PENDING' AND updated_at=?""",
+                        (
+                            "send_started_without_confirmed_provider_receipt",
+                            utc_now(), outbox_id, row["updated_at"],
+                        ),
+                    ).rowcount
+                    row = connection.execute(
+                        "SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)
+                    ).fetchone()
+                if not changed:
+                    return {
+                        **self._outbox_result(row, duplicate=True),
+                        "reason": "reply_dispatch_state_changed",
+                    }
             return {
                 **self._outbox_result(row, duplicate=True),
                 "reason": "reconcile_required_before_retry",
@@ -867,7 +935,12 @@ class InstagramDMService:
                 **self._outbox_result(row, duplicate=True),
                 "reason": "reply_approval_required",
             }
-        if status != "APPROVED":
+        if status == "RETRYING" and (
+            str(row["last_error"]) not in _RETRYABLE_REJECTION_CODES
+            or int(row["attempt_count"]) >= 3
+        ):
+            return {**self._outbox_result(row, duplicate=True), "reason": "retry_not_safe_or_exhausted"}
+        if status not in {"APPROVED", "RETRYING"}:
             raise ValueError("reply_status_not_dispatchable")
         if not row["provider_verified"]:
             raise ValueError("provider_verified_inbound_required")
@@ -886,8 +959,8 @@ class InstagramDMService:
                 "reason": "provider_or_auto_reply_not_ready",
             }
 
-        # Claim the approved reply before touching the provider. A second
-        # execution can never issue a second send from this point onward.
+        # Each provider attempt is preceded by one atomic claim. A crash in
+        # SEND_PENDING is uncertain and must be reconciled, never re-sent.
         now = utc_now()
         with self.database.transaction() as connection:
             claimed = connection.execute(
@@ -895,9 +968,9 @@ class InstagramDMService:
                 UPDATE instagram_dm_outbox
                 SET status='SEND_PENDING', attempt_count=attempt_count+1,
                     last_error=NULL, updated_at=?
-                WHERE id=? AND status='APPROVED'
+                WHERE id=? AND status=?
                 """,
-                (now, outbox_id),
+                (now, outbox_id, status),
             )
             if claimed.rowcount != 1:
                 current = connection.execute(
@@ -907,28 +980,74 @@ class InstagramDMService:
                     **self._outbox_result(current, duplicate=True),
                     "reason": "reply_dispatch_already_claimed",
                 }
-        try:
-            provider_message_id = self.provider.send_message(
-                str(row["persona"]), str(row["external_user_id"]), str(row["reply_text"])
-            )
-        except InstagramDMProviderConnectionError as error:
-            self._mark_outbox(outbox_id, "RECONCILE_REQUIRED", str(error))
-            return {
-                **self._outbox_result(
-                    self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
-                    duplicate=False,
-                ),
-                "reason": str(error),
-            }
-        except InstagramDMProviderError as error:
-            self._mark_outbox(outbox_id, "FAILED", str(error))
-            return {
-                **self._outbox_result(
-                    self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)),
-                    duplicate=False,
-                ),
-                "reason": str(error),
-            }
+        attempts = int(row["attempt_count"]) + 1
+        persona = str(row["persona"])
+        self._record_operation(persona=persona, action="DISPATCH_REPLY", result="STARTED", job_id=outbox_id, retry_count=attempts - 1)
+        while True:
+            try:
+                provider_message_id = self.provider.send_message(
+                    persona, str(row["external_user_id"]), str(row["reply_text"])
+                )
+                break
+            except InstagramDMProviderConnectionError as error:
+                code = "meta_graph_write_uncertain"
+                self._mark_outbox(outbox_id, "RECONCILE_REQUIRED", code)
+                self._record_operation(persona=persona, action="DISPATCH_REPLY", result="RECONCILE_REQUIRED", job_id=outbox_id, retry_count=attempts - 1, error_code=code, provider_error=error)
+                return {**self._outbox_result(self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)), duplicate=False), "reason": code}
+            except InstagramDMProviderError as error:
+                code = _safe_diagnostic_code(error) or "redacted_error"
+                graph_code = getattr(error, "graph_code", None)
+                http_status = getattr(error, "http_status", None)
+                definite_throttle = (
+                    code == "meta_graph_http_429"
+                    or graph_code in _RATE_LIMIT_GRAPH_CODES
+                    and (http_status in {400, 403, 429} or code.startswith("meta_graph_error_code_"))
+                )
+                rejection_code = (
+                    "meta_graph_http_429" if code == "meta_graph_http_429"
+                    else "meta_graph_rate_limited"
+                )
+                if definite_throttle and attempts < 3:
+                    # A structured Graph throttle response definitively
+                    # rejected this write. Unknown outcomes never retry.
+                    self._mark_outbox(outbox_id, "RETRYING", rejection_code)
+                    self._record_operation(persona=persona, action="DISPATCH_REPLY", result="RETRYING", job_id=outbox_id, retry_count=attempts, error_code=rejection_code, provider_error=error)
+                    time.sleep(0.25 * (2 ** (attempts - 1)))
+                    with self.database.transaction() as connection:
+                        claimed = connection.execute(
+                            """UPDATE instagram_dm_outbox
+                               SET status='SEND_PENDING', attempt_count=attempt_count+1,
+                                   last_error=NULL, updated_at=?
+                               WHERE id=? AND status='RETRYING' AND last_error=?""",
+                            (utc_now(), outbox_id, rejection_code),
+                        )
+                        if claimed.rowcount != 1:
+                            current = connection.execute("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)).fetchone()
+                            return {**self._outbox_result(current, duplicate=True), "reason": "reply_dispatch_already_claimed"}
+                    attempts += 1
+                    continue
+                uncertain = code.startswith("meta_graph_http_5") or code in {"meta_graph_message_id_missing"}
+                next_status = "RECONCILE_REQUIRED" if uncertain else "FAILED"
+                result = (
+                    "RECONCILE_REQUIRED" if uncertain else
+                    "FAILED" if definite_throttle else
+                    "NEEDS_OWNER" if code in {
+                        "meta_graph_http_401", "meta_graph_http_403",
+                        "instagram_dm_persona_credentials_missing",
+                    } else "FAILED"
+                )
+                if definite_throttle:
+                    code = f"{rejection_code}_retry_exhausted"
+                self._mark_outbox(outbox_id, next_status, code)
+                self._record_operation(persona=persona, action="DISPATCH_REPLY", result=result, job_id=outbox_id, retry_count=attempts - 1, error_code=code, provider_error=error)
+                return {**self._outbox_result(self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)), duplicate=False), "reason": code}
+            except Exception:
+                # An unexpected adapter failure after a write claim has an
+                # unknown external outcome. Never convert it into a retry.
+                code = "provider_write_exception_uncertain"
+                self._mark_outbox(outbox_id, "RECONCILE_REQUIRED", code)
+                self._record_operation(persona=persona, action="DISPATCH_REPLY", result="RECONCILE_REQUIRED", job_id=outbox_id, retry_count=attempts - 1, error_code=code)
+                return {**self._outbox_result(self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,)), duplicate=False), "reason": code}
         now = utc_now()
         with self.database.transaction() as connection:
             connection.execute(
@@ -947,6 +1066,7 @@ class InstagramDMService:
                 (now, now, row["conversation_id"]),
             )
         sent = self.database.one("SELECT * FROM instagram_dm_outbox WHERE id=?", (outbox_id,))
+        self._record_operation(persona=persona, action="DISPATCH_REPLY", result="SUCCESS", job_id=outbox_id, retry_count=attempts - 1)
         return {**self._outbox_result(sent, duplicate=False), "external_action": True}
 
     def _mark_outbox(
@@ -960,7 +1080,7 @@ class InstagramDMService:
                     attempt_count=attempt_count + ?, updated_at=?
                 WHERE id=?
                 """,
-                (status, error, 1 if increment else 0, utc_now(), outbox_id),
+                (status, _safe_diagnostic_code(error), 1 if increment else 0, utc_now(), outbox_id),
             )
 
     def reconcile_reply(self, outbox_id: int) -> dict[str, object]:
@@ -1220,10 +1340,12 @@ class InstagramDMService:
                 results[slug] = {"status": "UNKNOWN_PERSONA"}
                 continue
             started = utc_now()
+            self._record_operation(persona=slug, action="PROVIDER_SYNC", result="STARTED")
             seen = 0
             ingested = 0
             rejected = 0
             replies_sent = 0
+            caught_provider_error: Exception | None = None
             try:
                 events = self.provider.poll(slug)
                 seen = len(events)
@@ -1231,8 +1353,12 @@ class InstagramDMService:
                 for payload in events:
                     try:
                         result = self.ingest(payload, provider_verified=True)
-                    except InboundValidationError:
+                    except InboundValidationError as error:
                         rejected += 1
+                        self._record_operation(
+                            persona=slug, action="INGEST_INBOUND", result="BLOCKED",
+                            error_code=str(error),
+                        )
                         continue
                     if not result["duplicate"]:
                         ingested += 1
@@ -1249,11 +1375,39 @@ class InstagramDMService:
                     )
                     if processed.get("status") == "SENT":
                         replies_sent += 1
+                # A persisted 429 means Meta explicitly rejected the prior
+                # attempt. It may be resumed once without duplicating a
+                # successful send. Stale in-flight claims are never retried.
+                pending = self.database.all(
+                    """SELECT o.id, o.status, o.updated_at
+                       FROM instagram_dm_outbox o
+                       JOIN instagram_dm_conversations c ON c.id=o.conversation_id
+                       WHERE c.creator_id=? AND o.status IN ('RETRYING','SEND_PENDING')
+                       ORDER BY o.id LIMIT 25""",
+                    (creator["id"],),
+                )
+                for pending_row in pending:
+                    try:
+                        retried = self.dispatch_reply(int(pending_row["id"]))
+                    except ValueError as retry_error:
+                        self._record_operation(
+                            persona=slug, action="RETRY_REPLY", result="BLOCKED",
+                            job_id=int(pending_row["id"]), error_code=str(retry_error),
+                        )
+                        continue
+                    if retried.get("status") == "SENT":
+                        replies_sent += 1
                 status = "SYNCED"
                 error = None
             except (InstagramDMProviderError, InstagramDMProviderConnectionError) as provider_error:
                 status = "ERROR"
-                error = str(provider_error)
+                error = _safe_diagnostic_code(provider_error)
+                caught_provider_error = provider_error
+            except Exception:
+                # Keep the other persona's read lane available. A DB failure
+                # will still surface when the status row is written below.
+                status = "ERROR"
+                error = "provider_sync_exception"
             now = utc_now()
             with self.database.transaction() as connection:
                 connection.execute(
@@ -1285,6 +1439,11 @@ class InstagramDMService:
                 "status": status, "seen": seen, "ingested": ingested,
                 "rejected": rejected, "replies_sent": replies_sent, "error": error,
             }
+            self._record_operation(
+                persona=slug, action="PROVIDER_SYNC",
+                result="SUCCESS" if status == "SYNCED" else "FAILED",
+                error_code=error, provider_error=caught_provider_error,
+            )
         return {"status": "COMPLETE", "personas": results, "external_action": False}
 
     def dashboard(self, *, limit: int = 50) -> dict[str, object]:
@@ -1376,6 +1535,8 @@ class InstagramDMService:
             JOIN creators cr ON cr.id=s.creator_id ORDER BY cr.slug
             """
         )]
+        for sync in provider_sync:
+            sync["last_error"] = _safe_diagnostic_code(sync["last_error"])
         readiness = self.provider.readiness() if self.provider is not None else {
             "provider": "unconfigured", "webhook_ready": False,
             "auto_reply_enabled": False, "personas": {},

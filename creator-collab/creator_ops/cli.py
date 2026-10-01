@@ -17,6 +17,7 @@ from .external_readiness import ExternalReadinessService
 from .instagram_insights import MetaInstagramInsightsService
 from .instagram_dm import InstagramDMService
 from .instagram_dm_provider import MetaInstagramDMProvider
+from .dm_health import bot_smoke_test
 from .fiverr import FiverrAutomationService, FiverrGigSnapshot
 from .pipeline import VerticalPipeline
 from .reconcile import ManualInstagramService
@@ -154,6 +155,11 @@ def parser() -> argparse.ArgumentParser:
         "instagram-dm-sync",
         help="Poll official Instagram conversations and process safe replies idempotently",
     )
+    dm_smoke = subcommands.add_parser(
+        "instagram-dm-smoke",
+        help="Read-only DM DB/provider smoke; no ingestion and no sends",
+    )
+    dm_smoke.add_argument("--offline", action="store_true", help="Skip provider GET probe")
     checkpoint = subcommands.add_parser("checkpoint", help="Write an atomic autopilot savegame")
     checkpoint.add_argument("--out", type=Path, default=ROOT / "AUTOPILOT_CHECKPOINT.md")
     checkpoint.add_argument("--last-completed", required=True)
@@ -292,6 +298,17 @@ def parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     args = parser().parse_args()
+    if args.command == "instagram-dm-smoke":
+        if not args.db.is_file():
+            print(json.dumps({"database": "ERROR", "reason": "database_missing"}))
+            return 1
+        provider = MetaInstagramDMProvider.from_runtime(ROOT, args.config)
+        report = bot_smoke_test(
+            InstagramDMService(CreatorDatabase(args.db), provider=provider),
+            probe_provider=not args.offline,
+        )
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 0 if report["database"] == "OK" else 1
     if (
         args.command == "demo"
         and args.db.resolve() == CANONICAL_OPERATIONAL_DB.resolve()

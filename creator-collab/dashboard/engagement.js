@@ -59,6 +59,78 @@ function dmCard(item) {
   </div></article>`;
 }
 
+function botHealthTemplate(health) {
+  const jobs = health.jobs || {};
+  const provider = health.provider || {};
+  const state = (value, ready = 'bereit') => value === true ? ready : value === false ? 'nicht bereit' : 'unbekannt';
+  const badge = (label, value, tone) => `<span class="dm-health-badge ${tone}"><b>${esc(label)}</b> ${esc(value)}</span>`;
+  const readinessTone = value => value === true ? 'config' : value === false ? 'bad' : 'warn';
+  const providerStatus = {
+    LAST_SYNCED: 'Zuletzt synchronisiert', ERROR: 'Fehler beim letzten Sync',
+    NOT_CONFIGURED: 'Nicht konfiguriert', PARTIAL_CONFIG: 'Persona-Konfiguration unvollständig',
+    UNKNOWN: 'Noch nicht verifiziert',
+  }[provider.status] || provider.status || 'Unbekannt';
+  const providerTone = provider.status === 'LAST_SYNCED' ? 'ok' : provider.status === 'ERROR' ? 'bad' : 'warn';
+  const personaCards = (health.personas || []).map(item => {
+    const syncTone = item.sync_status === 'SYNCED' ? 'ok' : item.sync_status === 'ERROR' ? 'bad' : 'warn';
+    return `<div class="dm-health-persona">
+      <h3>${esc(item.persona === 'leona-voss' ? 'Leona' : item.persona === 'mara-field' ? 'Mara' : item.persona)}</h3>
+      <p>${esc(item.account || 'Konto unbekannt')}</p>
+      <div class="dm-health-badges">
+        ${badge('Read', state(item.read_ready, 'konfiguriert'), readinessTone(item.read_ready))}
+        ${badge('Write', state(item.write_ready, 'konfiguriert'), readinessTone(item.write_ready))}
+        ${badge('Sync', item.sync_status || 'UNKNOWN', syncTone)}
+      </div>
+      <small>Letzter erfolgreicher Provider-Read: ${esc(item.last_sync_success_at || 'noch keiner')}</small>
+      ${item.last_sync_error ? `<small class="dm-health-error">Letzter Sync-Fehler: ${esc(item.last_sync_error)}</small>` : ''}
+    </div>`;
+  }).join('');
+  const action = health.last_action;
+  const sent = health.last_successful_message;
+  const error = health.last_error;
+  const worker = health.worker || {};
+  return `<section class="dm-bot-health" aria-label="Bot-Status">
+    <div class="dm-health-heading"><div><p class="nav-label">BOT HEALTH · LIVE BACKEND</p><h2>Instagram-DM-Bot</h2></div>
+      ${badge('Bot', health.bot_online === 'WEB_RUNTIME_ONLINE' ? 'Web-Laufzeit erreichbar' : 'Status unbekannt', health.bot_online === 'WEB_RUNTIME_ONLINE' ? 'config' : 'warn')}
+    </div>
+    <div class="dm-health-badges">
+      ${badge('DM mode', health.dm_mode || 'UNKNOWN', 'config')}
+      ${badge('Send', state(health.send_enabled, 'aktiv'), health.send_enabled === true ? 'ok' : health.send_enabled === false ? 'bad' : 'warn')}
+      ${badge('Auto-Reply', state(health.auto_reply_enabled, 'aktiv'), health.auto_reply_enabled === true ? 'ok' : health.auto_reply_enabled === false ? 'bad' : 'warn')}
+      ${badge('Provider', `${provider.name || 'unbekannt'} · ${providerStatus}`, providerTone)}
+      ${badge('DB', health.database || 'unbekannt', health.database === 'ok' ? 'ok' : 'bad')}
+      ${badge('Queue', health.queue || 'unbekannt', health.queue === 'DB_OUTBOX_READABLE' ? 'ok' : 'warn')}
+    </div>
+    <div class="dm-health-personas">${personaCards || '<p>Keine Persona-Readiness verfügbar.</p>'}</div>
+    <div class="dm-health-jobs">
+      <div><strong>${esc(jobs.active ?? '—')}</strong><span>Aktive Jobs</span></div>
+      <div><strong>${esc(jobs.retry ?? '—')}</strong><span>Retry-Jobs</span></div>
+      <div><strong>${esc(jobs.blocked ?? '—')}</strong><span>BLOCKED / Abgleich</span></div>
+      <div><strong>${esc(jobs.needs_owner ?? '—')}</strong><span>NEEDS_OWNER</span></div>
+      <div><strong>${esc(jobs.failed ?? '—')}</strong><span>FAILED</span></div>
+    </div>
+    <div class="dm-health-detail">
+      <p><b>Letzte Bot-Aktion:</b> ${action ? `${esc(action.action)} · ${esc(action.result)} · ${esc(action.persona)} · ${esc(action.timestamp)}${action.job_id ? ` · Job ${esc(action.job_id)}` : ''}` : 'Noch keine erfasst'}</p>
+      <p><b>Letzte erfolgreiche Nachricht:</b> ${sent ? `${esc(sent.persona)} · ${esc(sent.timestamp)} · Job ${esc(sent.job_id)} (${esc(sent.status)})` : 'Noch keine bestätigt'}</p>
+      <p><b>Letzter Fehler:</b> ${error ? `${esc(error.persona)} · ${esc(error.timestamp)} · ${esc(error.code)}` : 'Keiner gespeichert'}</p>
+      <p><b>DM-Ausführung:</b> ${worker.mode === 'INLINE_WEBHOOK_AND_ON_DEMAND' && worker.dedicated_worker === false ? 'Inline per Webhook oder manuellem Sync · kein eigener DM-Worker' : 'Unbekannt'}</p>
+      <small>Read/Write zeigen die Provider-Konfiguration. Ein erfolgreicher Sync bestätigt den letzten Read; ein Live-Write wird erst durch eine gesendete Nachricht belegt. Stand: ${esc(health.checked_at)}</small>
+    </div>
+  </section>`;
+}
+
+async function loadBotHealth() {
+  const node = document.querySelector('#dm-bot-health');
+  if (!node) return;
+  try {
+    const response = await fetch('/api/instagram-dm/health', {headers: {Accept: 'application/json'}});
+    if (!response.ok) throw new Error('Bot-Status nicht erreichbar');
+    node.innerHTML = botHealthTemplate(await response.json());
+  } catch (_) {
+    node.innerHTML = '<section class="dm-bot-health"><div class="dm-health-heading"><h2>Instagram-DM-Bot</h2><span class="dm-health-badge bad"><b>Bot</b> STATUS NICHT VERFÜGBAR</span></div><p>Der Live-Status konnte nicht geladen werden. Verbindung und Backend prüfen.</p></section>';
+  }
+}
+
 function cookie(name) {
   const prefix = `${name}=`;
   return document.cookie.split(';').map(value => value.trim())
@@ -83,14 +155,14 @@ async function postJson(url, payload = {}) {
 const messagesView = new URLSearchParams(location.search).get('view') === 'messages';
 document.querySelector('h1').textContent = messagesView ? 'Nachrichten' : 'Kommentare';
 document.querySelector('.intro').textContent = messagesView
-  ? 'Provider-verifizierte Instagram-DMs, sichere Antworten und Sales-Signale in einem Arbeitsbereich.'
+  ? 'Instagram-DMs, sichere Antworten und Sales-Signale in einem Arbeitsbereich.'
   : 'Kommentartexte und vorhandene Hinweise zu deinen Beiträgen.';
 
 if (messagesView) {
-  document.querySelector('.mode').innerHTML = '<span></span> PROVIDER VERIFIED · P1';
+  document.querySelector('.mode').innerHTML = '<span></span> DM-STATUS WIRD GELADEN';
   fetch('/api/instagram-dm', {headers: {Accept: 'application/json'}})
     .then(response => {
-      if (!response.ok) throw new Error('DM-P0-Daten konnten nicht geladen werden');
+      if (!response.ok) throw new Error('DM-Daten konnten nicht geladen werden');
       return response.json();
     })
     .then(payload => {
@@ -99,10 +171,12 @@ if (messagesView) {
         ? payload.items.map(dmCard).join('')
         : '<div class="empty">Noch keine lokal erfassten Inbound-DMs.</div>';
       const readiness = payload.provider || {};
-      root.innerHTML = `<section class="dm-readonly-banner">
+      document.querySelector('.mode').innerHTML = `<span></span> ${esc(payload.mode || 'DM-STATUS UNBEKANNT')}`;
+      root.innerHTML = `<div id="dm-bot-health" aria-live="polite">Bot-Status wird geladen …</div>
+      <section class="dm-readonly-banner">
         <p class="nav-label">INSTAGRAM · MESSAGES & SALES</p>
         <h2>${payload.send_enabled ? 'AUTONOMER SICHERER ANTWORTPFAD' : 'PROVIDER NOCH NICHT SCHREIBBEREIT'}</h2>
-        <p>Webhook: ${readiness.webhook_ready ? 'bereit' : 'nicht vollständig konfiguriert'} · Auto-Reply: ${payload.send_enabled ? 'aktiv' : 'inaktiv'}.</p>
+        <p>Webhook-Credentials: ${readiness.webhook_ready ? 'vorhanden' : 'nicht vollständig konfiguriert'} · Auto-Reply: ${payload.send_enabled ? 'aktiv' : 'inaktiv'}.</p>
         <button id="dm-sync" class="secondary">Provider jetzt lesen</button>
       </section>
       <section class="dm-summary" aria-label="DM-Übersicht">
@@ -115,6 +189,7 @@ if (messagesView) {
         <div><strong>${esc(counts.failures_needs_human || 0)}</strong><span>Failures / Needs Human</span></div>
       </section>
       <section class="archive-grid">${cards}</section>`;
+      loadBotHealth();
       document.querySelector('#dm-sync')?.addEventListener('click', async event => {
         event.currentTarget.disabled = true;
         try {
@@ -141,6 +216,7 @@ if (messagesView) {
     .catch(error => {
       root.innerHTML = `<div class="error">${esc(error.message)}</div>`;
     });
+  setInterval(loadBotHealth, 30_000);
 } else {
   fetch('/api/engagement?status=PROPOSED')
     .then(response => {

@@ -57,7 +57,7 @@ class InstagramDMP0Tests(unittest.TestCase):
         }
 
     def test_schema_is_additive_and_both_personas_resolve_exactly(self) -> None:
-        self.assertEqual(SCHEMA_VERSION, 8)
+        self.assertEqual(SCHEMA_VERSION, 9)
         leona = self.service.ingest(self.payload())
         mara = self.service.ingest(
             self.payload(

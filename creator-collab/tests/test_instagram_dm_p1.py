@@ -610,7 +610,7 @@ class InstagramDMP1Tests(unittest.TestCase):
         conversation_ref = self.pipeline.db.scalar(
             "SELECT external_conversation_id FROM instagram_dm_conversations"
         )
-        self.assertEqual(conversation_ref, "webhook-igsid:igsid-user")
+        self.assertEqual(conversation_ref, "webhook-igsid:1784:igsid-user")
         gets_before = len(transport.gets)
         reconciled = service.reconcile_reply(outbox_id)
         self.assertIsNone(reconciled["reconciled"])

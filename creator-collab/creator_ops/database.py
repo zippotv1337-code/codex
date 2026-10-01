@@ -707,6 +707,26 @@ CREATE TABLE IF NOT EXISTS instagram_dm_provider_sync (
     updated_at TEXT NOT NULL
 );
 
+-- Operational diagnostics only. The inbound/event and outbox tables remain
+-- the canonical message ledger; no message text or provider payload lives here.
+CREATE TABLE IF NOT EXISTS instagram_dm_operation_events (
+    id INTEGER PRIMARY KEY,
+    timestamp TEXT NOT NULL,
+    persona TEXT NOT NULL,
+    account_id TEXT,
+    action TEXT NOT NULL,
+    job_id TEXT,
+    provider TEXT NOT NULL,
+    provider_request_id TEXT,
+    result TEXT NOT NULL CHECK (result IN (
+        'STARTED', 'SUCCESS', 'RETRYING', 'BLOCKED', 'FAILED',
+        'NEEDS_OWNER', 'RECONCILE_REQUIRED', 'SKIPPED'
+    )),
+    retry_count INTEGER NOT NULL DEFAULT 0 CHECK (retry_count >= 0),
+    error_code TEXT,
+    error_summary TEXT
+);
+
 CREATE TABLE IF NOT EXISTS instagram_dm_custom_requests (
     id INTEGER PRIMARY KEY,
     conversation_id INTEGER NOT NULL REFERENCES instagram_dm_conversations(id),
@@ -763,6 +783,13 @@ CREATE INDEX IF NOT EXISTS idx_instagram_dm_outbox_status
 CREATE UNIQUE INDEX IF NOT EXISTS idx_instagram_dm_outbox_provider_message_id
     ON instagram_dm_outbox(provider_message_id)
     WHERE provider_message_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_operation_events_persona_time
+    ON instagram_dm_operation_events(persona, timestamp DESC, id DESC);
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_operation_events_job_time
+    ON instagram_dm_operation_events(job_id, timestamp DESC, id DESC)
+    WHERE job_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_instagram_dm_operation_events_result_time
+    ON instagram_dm_operation_events(result, timestamp DESC, id DESC);
 CREATE INDEX IF NOT EXISTS idx_instagram_dm_sales_status
     ON instagram_dm_sales_events(status, created_at DESC);
 
@@ -798,7 +825,7 @@ CREATE TABLE IF NOT EXISTS export_jobs (
 """
 
 
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 
 COLUMN_MIGRATIONS = {
     "content_items": (
@@ -1282,6 +1309,7 @@ class CreatorDatabase:
             "instagram_dm_events",
             "instagram_dm_outbox",
             "instagram_dm_provider_sync",
+            "instagram_dm_operation_events",
             "instagram_dm_custom_requests",
             "instagram_dm_sales_events",
             "instagram_dm_approved_links",
