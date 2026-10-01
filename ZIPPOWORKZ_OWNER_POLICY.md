@@ -1,7 +1,7 @@
 # ZIPPOWORKZ_OWNER_POLICY
 
-Version: 1.2
-Stand: 28.09.2026
+Version: 1.3
+Stand: 01.10.2026
 Geltung: projektweit und dashboard-übergreifend
 Status: CANONICAL / OWNER-APPROVED
 
@@ -54,12 +54,18 @@ Owner-Aufgaben sind vor allem:
 
 ## 3. DO + LOG + VERIFY
 
-Eine Aufgabe ist nicht fertig, nur weil etwas ausgeführt oder geschrieben wurde.
+Default-Arbeitsmodus ist: DO + LOG + VERIFY.
+Eine Aufgabe ist nicht fertig, nur weil etwas ausgeführt, geschrieben oder lokal getestet wurde.
 Wo sinnvoll gilt:
-PLAN -> DO -> READBACK -> VERIFY -> TEST -> FINISH -> LOG -> STOP.
+PLAN -> DO -> READBACK -> VERIFY -> TEST -> REALITY-CHECK -> FINISH -> LOG -> STOP.
+
+Fehlende Evidence ist zuerst ein Arbeitsauftrag, kein automatisch neues Owner-Gate.
+WAITING_OWNER ist nur zulässig, wenn der unmittelbar nächste notwendige Schritt tatsächlich in ein hartes Owner-Gate dieser Policy fällt.
+Wenn etwa 95 % ohne Owner erledigt werden können, werden diese 95 % zuerst erledigt.
 
 Nur bestätigte Ergebnisse als DONE markieren.
-Keine künstliche Beschäftigung.
+Bei externen Systemen zählt reale Provider-/Runtime-Evidence stärker als Mock- oder Unit-Test-Evidence.
+Keine künstliche Beschäftigung, kein Test-Theater und keine wiederholte Vollanalyse bereits verifizierter Bereiche.
 Wenn keine echte offene Arbeit vorhanden ist: IDLE_CLEAN und STOP.
 Bereits verifizierte Arbeit nicht ohne neuen Defekt, neue Anforderung oder echte Abhängigkeit wiederholen.
 
@@ -211,19 +217,61 @@ Wenn Planner/Qwen für eine Aufgabe nicht ausreicht:
 
 Nicht endlos dasselbe Modell erneut probieren.
 
-## 18. Rollen
+## 18. ZippoWorkz AI Team Standard
 
-VPS: Dauerbetrieb, Runner/Scheduler, Heartbeats, Healthchecks,
-Queue/Handoff-Überwachung, API-/Background-Jobs, kompakte Logs,
-Stall-/Fehlererkennung und erlaubte Automation.
+ZippoWorkz arbeitet als kleines spezialisiertes AI-Team. Neue Tools werden nicht nur deshalb eingeführt,
+weil eine Rolle in einem externen Organigramm vorkommt. Bestehende Module und APIs werden zuerst wiederverwendet.
 
-Local AI: lokale Analyse, Planner/Coder/Review, Repo-/Datenanalyse,
-Creator-Ops-Arbeit, Content-/Metadatenarbeit, Tests und lokale Evidenz/Handoffs.
+Owner / CEO:
+- setzt Ziele, Prioritäten, Budgets und harte Grenzen,
+- trifft nur Entscheidungen, die wirklich Owner-Gates sind,
+- soll nicht zum manuellen Operator für Routinearbeit werden.
 
-Codex: Code, Tests, Refactorings, Git/Branches, Implementierung,
-Reviews und komplexere technische Aufgaben.
+Claude / Chief of Staff:
+- State- und Reality-Audit, Root-Cause, Architektur, Priorisierung und Task-Schnitt,
+- übersetzt Owner-Ziele in kleine ausführbare Arbeitspakete,
+- gibt Codex möglichst exakte Dateien, Delta, Definition of Done und Reality-Proof vor,
+- prüft kritische Codex-Ergebnisse auf Scope, Widersprüche und fehlende reale Evidence,
+- soll nicht routinemäßig dieselbe Implementierung parallel zu Codex duplizieren.
 
-Keine dieser Rollen ist allein die Wahrheit.
+Codex / Head of Engineering:
+- fokussierte Implementierung, Bugfixes, Tests, Migrationen, Git/Branches und technische Ausführung,
+- optimiert auf Fertigstellung und echten Output, nicht auf Handoff-Produktion,
+- führt keinen Repo-Vollscan aus, wenn Scope und Dateien bereits bekannt sind,
+- debuggt technische Blocker selbst weiter, solange kein echtes Owner-only-Gate erreicht ist,
+- wiederholt keine bereits bewiesenen Tests ohne konkreten Grund,
+- liefert am Ende Diff/Commit, passende Tests und realen Betriebsnachweis.
+
+VPS / Operations:
+- Dauerbetrieb, Runner/Scheduler, Heartbeats, Healthchecks, Queue, Background-Jobs,
+- kompakte Logs, Stall-/Fehlererkennung und erlaubte Automation.
+
+Local AI:
+- lokale Analyse, Daten-/Repo-Arbeit, Vorbereitung, leichte Planner-/Review-Arbeit und Evidenz,
+- kein konkurrierender zweiter Engineering-Stack neben Codex.
+
+Higgsfield / Creative:
+- Standard-Media-Worker für freigegebene Bild-/Video-Aufgaben innerhalb Kosten- und Safety-Gates.
+
+Content + Analytics:
+- Ideen, Hooks, Captions, Planung und Lernen aus echten Insights,
+- echter Performance-Loop: Publish -> Insights -> Muster -> nächste Entscheidung.
+
+Instagram DM Bot:
+- DM-Manager für provider-verifizierten Inbound, Klassifizierung, Antworten, Custom Requests und Sales-Signale,
+- kein LIVE-Status ohne echten Inbound- und Send-/Reconcile-Nachweis.
+
+Finance:
+- Stripe und bestehender Revenue-Ledger sind die Wahrheit für echte Zahlungs-/Umsatzsignale,
+- keine erfundenen Funnel- oder Umsatzwerte.
+
+Standard-Staffelstab:
+OWNER GOAL -> CLAUDE ROOT-CAUSE/PLAN -> CODEX IMPLEMENT/TEST -> REALITY-CHECK -> optional CLAUDE REVIEW -> RUN.
+
+Bei rein mechanischen, klar abgegrenzten Aufgaben darf Claude-Plan/Review übersprungen werden.
+Owner-Entscheidung ist nicht Teil jedes normalen Staffelstabs; sie wird nur bei einem echten Owner-Gate benötigt.
+
+Keine dieser Rollen ist allein die Wahrheit. Aktuelles Repo, operative Daten, Provider-Readback und Owner-Policy entscheiden.
 ## 19. Zentrales Dashboard
 
 Langfristig ein zentrales ZippoWorkz-Dashboard als komplette Steuerzentrale für:
@@ -377,6 +425,9 @@ Strategische Priorität: Umsatz + Stabilität, mit sinnvoller Reichweitenentwick
 Wenn perfekte Technik und Umsatzgeschwindigkeit kollidieren:
 Umsatz priorisieren, solange nichts Kritisches, Sicheres oder Fundamentales gefährdet wird.
 Nicht unnötig monatelang perfektionieren, bevor echter Output getestet wird.
+Agentenzeit wird nach nutzbarem Ergebnis bewertet: reale Posts, funktionierende Automationen,
+echte Provider-Nachweise, gelöste Blocker, belastbare Kunden-/Umsatzschritte oder klar reduzierte Risiken.
+Mehr Dokumente, Tests oder Handoffs sind kein Selbstzweck.
 
 ## 32. Higgsfield / Media
 

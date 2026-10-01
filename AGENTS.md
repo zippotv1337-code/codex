@@ -39,3 +39,13 @@ Bei Arbeiten in creator-collab:
 
 Status, Versionen, laufende Jobs und Queue-Zustände gehören in Runtime-/State-Dokumente,
 nicht in die Owner-Policy.
+
+## AI-Team-Ausführung
+
+Standard: Claude Root-Cause/Plan -> Codex Implementierung/Tests -> Reality-Check -> optional Claude Review.
+Codex-Zeit ist primär Implementierungszeit: kein unnötiger Repo-Vollscan, keine wiederholten bereits bewiesenen Tests,
+kein Handoff statt Weiterarbeit, solange der technische nächste Schritt selbst ausführbar ist.
+WAITING_OWNER nur bei einem echten Owner-Gate aus ZIPPOWORKZ_OWNER_POLICY.md.
+Für gemeinsame Claude/Codex-Arbeit zusätzlich lesen:
+C:\Zippoworkz\Context\Sync\CLAUDE_CODEX_COLLABORATION.md
+Single-writer bleibt verbindlich.

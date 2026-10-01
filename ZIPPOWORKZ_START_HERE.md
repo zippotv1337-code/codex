@@ -1,7 +1,7 @@
 # ZIPPOWORKZ_START_HERE
 
 Status: CANONICAL BOOTSTRAP
-Stand: 27.09.2026
+Stand: 01.10.2026
 
 ## Zweck
 
@@ -58,3 +58,11 @@ Memory hilft.
 START_HERE erklärt die Ladefolge.
 OWNER_POLICY entscheidet die Regeln.
 CURRENT STATE sagt, was jetzt tatsächlich läuft.
+
+## AI-Team / Claude-Codex
+
+Verbindlicher Arbeitsstil: Owner setzt Ziel -> Claude schneidet Root-Cause/Plan -> Codex implementiert/testet -> Reality-Check.
+Owner wird nur bei echten Owner-Gates benötigt. Fehlende technische Evidence ist kein erfundenes Owner-Gate.
+Für gemeinsame Claude/Codex-Arbeit gilt zusätzlich:
+C:\Zippoworkz\Context\Sync\CLAUDE_CODEX_COLLABORATION.md
+Single-writer: keine parallelen Änderungen am selben Datei-/Codesatz.
