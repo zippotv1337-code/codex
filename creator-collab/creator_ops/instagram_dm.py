@@ -503,13 +503,40 @@ class InstagramDMService:
             "handoff_reason": handoff_reason,
             "send_enabled": bool(self.provider and self.provider.auto_reply_enabled),
             "external_action": False,
+            # The text itself is never stored; only this check uses it.
+            "bot_reply_echo": status == "OPEN" and self._is_project_bot_reply(event.text),
         }
         if auto_process and provider_verified and status == "OPEN":
-            result["processing"] = self.auto_process_event(event_id)
+            result["processing"] = self.auto_process_event(
+                event_id, bot_reply_echo=bool(result["bot_reply_echo"])
+            )
         return result
 
+    def _is_project_bot_reply(self, text: str) -> bool:
+        """True when the text is a reply our bots already sent (Leona <-> Mara).
+
+        Answering it would make both personas reply to each other on every
+        scheduler sync.
+        """
+        if not text:
+            return False
+        return bool(self.database.scalar(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM instagram_dm_outbox
+                WHERE reply_text=?
+                  AND status IN ('SEND_PENDING', 'SENT', 'DELIVERED', 'RECONCILE_REQUIRED')
+            )
+            """,
+            (text,),
+        ))
+
     def auto_process_event(
-        self, event_id: int, *, provider_answered: bool = False
+        self,
+        event_id: int,
+        *,
+        provider_answered: bool = False,
+        bot_reply_echo: bool = False,
     ) -> dict[str, object]:
         """Reply at most once per conversation turn and never abort a batch.
 
@@ -537,6 +564,8 @@ class InstagramDMService:
             reason = "superseded_by_newer_inbound"
         elif provider_answered:
             reason = "already_answered_in_provider_thread"
+        elif bot_reply_echo:
+            reason = "project_bot_reply_not_auto_answered"
         elif row["last_outbound_at"] and str(row["last_outbound_at"]) >= str(row["received_at"]):
             reason = "already_answered"
         elif not self._within_reply_window(str(row["received_at"])):
@@ -1201,7 +1230,10 @@ class InstagramDMService:
         # Store the whole batch first so only the newest message per
         # conversation can trigger a reply.
         for result in new_inbound:
-            result["processing"] = self.auto_process_event(int(result["event_id"]))
+            result["processing"] = self.auto_process_event(
+                int(result["event_id"]),
+                bot_reply_echo=bool(result.get("bot_reply_echo")),
+            )
         return {
             "accepted": True,
             "events": len(results),
@@ -1227,7 +1259,7 @@ class InstagramDMService:
             try:
                 events = self.provider.poll(slug)
                 seen = len(events)
-                new_inbound: list[tuple[int, bool]] = []
+                new_inbound: list[tuple[int, bool, bool]] = []
                 for payload in events:
                     try:
                         result = self.ingest(payload, provider_verified=True)
@@ -1240,12 +1272,13 @@ class InstagramDMService:
                             new_inbound.append((
                                 int(result["event_id"]),
                                 bool(payload.get("provider_answered")),
+                                bool(result.get("bot_reply_echo")),
                             ))
                 # Store the whole batch first so only the newest message per
                 # conversation can trigger a reply.
-                for event_id, answered in new_inbound:
+                for event_id, answered, echo in new_inbound:
                     processed = self.auto_process_event(
-                        event_id, provider_answered=answered
+                        event_id, provider_answered=answered, bot_reply_echo=echo
                     )
                     if processed.get("status") == "SENT":
                         replies_sent += 1

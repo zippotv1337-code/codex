@@ -609,6 +609,56 @@ class InstagramDMP1Tests(unittest.TestCase):
         )
         self.assertFalse(meta.poll("leona-voss")[0]["provider_answered"])
 
+    def test_project_persona_bot_replies_are_never_auto_answered(self) -> None:
+        provider = FakeProvider()
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        # Someone writes from Mara's account to Leona: Leona answers once.
+        provider.polled["leona-voss"] = [
+            self.polled("from-mara", hours_ago=0.1, conversation_id="t-l", text="Hallo Leona!")
+        ]
+        service.sync_provider("leona-voss")
+        self.assertEqual(len(provider.sent), 1)
+        bot_reply = provider.sent[0][2]
+
+        # Mara's inbox now shows Leona's bot reply. Answering it would make
+        # both bots reply to each other on every scheduler sync.
+        provider.polled["mara-field"] = [
+            self.polled("leona-bot-1", hours_ago=0.01, conversation_id="t-m",
+                        persona="mara-field", text=bot_reply)
+        ]
+        synced = service.sync_provider("mara-field")["personas"]["mara-field"]
+        self.assertEqual((synced["ingested"], synced["replies_sent"]), (1, 0))
+
+        webhook = json.dumps([{"kind": "INBOUND", "payload": self.polled(
+            "leona-bot-2", hours_ago=0.005, conversation_id="t-m2",
+            persona="mara-field", text=bot_reply,
+        )}]).encode()
+        processed = service.process_webhook(webhook, "valid")
+        self.assertEqual(
+            processed["results"][0]["processing"]["reason"],
+            "project_bot_reply_not_auto_answered",
+        )
+        direct = service.ingest(
+            self.polled("leona-bot-3", hours_ago=0.004, conversation_id="t-m3",
+                        persona="mara-field", text=bot_reply),
+            provider_verified=True,
+            auto_process=True,
+        )
+        self.assertEqual(direct["processing"]["status"], "SKIPPED")
+        self.assertEqual(len(provider.sent), 1)
+        # The echo stays visible; only the automatic answer is withheld.
+        self.assertEqual(
+            self.pipeline.db.scalar("SELECT COUNT(*) FROM instagram_dm_events"), 4
+        )
+
+        # A real person writing to Mara is still answered.
+        provider.polled["mara-field"] = [
+            self.polled("human-1", hours_ago=0.002, conversation_id="t-h",
+                        persona="mara-field", text="Hallo Mara!")
+        ]
+        service.sync_provider("mara-field")
+        self.assertEqual(len(provider.sent), 2)
+
     def test_webhook_igsid_is_not_used_as_provider_conversation_id(self) -> None:
         transport = FakeTransport()
         provider = MetaInstagramDMProvider(
