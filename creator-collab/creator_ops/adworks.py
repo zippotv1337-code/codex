@@ -79,6 +79,11 @@ class AdWorksService:
                         deliverables_json=excluded.deliverables_json,
                         exclusions_json=excluded.exclusions_json,
                         updated_at=excluded.updated_at
+                    WHERE product_packs.tier IS NOT excluded.tier
+                       OR product_packs.name IS NOT excluded.name
+                       OR product_packs.summary IS NOT excluded.summary
+                       OR product_packs.deliverables_json IS NOT excluded.deliverables_json
+                       OR product_packs.exclusions_json IS NOT excluded.exclusions_json
                     """,
                     (
                         pack["pack_key"], pack["tier"], pack["name"], pack["summary"],

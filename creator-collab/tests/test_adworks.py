@@ -40,6 +40,35 @@ class AdWorksTests(unittest.TestCase):
         self.assertTrue(all(p["price_eur"] is None for p in packs))
         self.assertTrue(all(not p["owner_approved"] for p in packs))
 
+    def test_catalog_seed_does_not_touch_unchanged_rows_on_restart(self) -> None:
+        self.service.seed_catalog()
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                "UPDATE product_packs SET updated_at = ? WHERE pack_key = ?",
+                ("2000-01-01T00:00:00Z", "creator-sfw-basic"),
+            )
+        self.service.seed_catalog()
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT updated_at FROM product_packs WHERE pack_key = ?",
+                ("creator-sfw-basic",),
+            ),
+            "2000-01-01T00:00:00Z",
+        )
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                "UPDATE product_packs SET name = ? WHERE pack_key = ?",
+                ("outdated", "creator-sfw-basic"),
+            )
+        self.service.seed_catalog()
+        self.assertNotEqual(
+            self.pipeline.db.scalar(
+                "SELECT name FROM product_packs WHERE pack_key = ?",
+                ("creator-sfw-basic",),
+            ),
+            "outdated",
+        )
+
     def test_dry_run_is_traceable_idempotent_and_separate_from_real_revenue(self) -> None:
         first = self.service.dry_run()
         second = self.service.dry_run()
