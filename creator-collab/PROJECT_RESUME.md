@@ -13,10 +13,11 @@ liefern weiterhin 0 API-sichtbare Inbounds. Ein vollständiger echter DM-
 Roundtrip ist daher **nicht** bewiesen (`BOT_WORKS=NO`); Unit-Tests und
 Readiness dürfen das nicht ersetzen. Der lokale Branch-Testblock nach zwei
 gezielten Review-Fixes ist grün: 258 Python-Tests plus 36 Subtests und
-8 Dashboard-/Node-Tests. Der Secret-Scan des gezielt gestagten Code-/Teststands
-fand bei 410 geprüften Dateien keinen Leak; Dokumentations-Staging und
-Commit-Readback folgen. Der Abschluss-/Commitstand dieses Branches steht im
-aktuellen Sitzungsjournal.
+8 Dashboard-/Node-Tests. Der Secret-Scan des gezielt gestagten Stands
+fand bei 411 geprüften Dateien keinen Leak. Code-Commit
+`d380cb4541ab8d010004ed26471cbf3a03615d6a` ist auf dem Remote-Arbeitsbranch
+bestätigt; kein Merge oder Deployment. Der Abschlussstand steht im aktuellen
+Sitzungsjournal.
 
 ## Mara „Samstag im Hofladen“ live — 30. September 2026
 

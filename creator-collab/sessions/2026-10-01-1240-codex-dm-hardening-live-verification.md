@@ -1,6 +1,6 @@
 # Sitzungsjournal
 
-- Datum/Zeit: 2026-10-01 12:40 Europe/Berlin (Abschluss des lokalen Testblocks; Commit-Readback folgt)
+- Datum/Zeit: 2026-10-01 12:40 Europe/Berlin (lokaler Testblock; Commit- und Remote-Readback später ergänzt)
 - Agent: `Codex`
 - Ziel der Sitzung: Bestehenden Instagram-DM-P1-Bot gezielt härten, Schema 8→9 isoliert prüfen und den echten Leona-/Mara-Live-Roundtrip nachweisen, soweit ein kontrollierter Test-Inbound sichtbar wird.
 
@@ -26,7 +26,8 @@
 - Provider-Identität und Konversationslisten: Leona und Mara jeweils HTTP 200; beide `conversation_count=0`.
 - Ein abschließender erneuter read-only Provider-Poll nach den lokalen Fixes bestätigte weiterhin Leona 0 und Mara 0; es wurde dadurch weder eine Inbound-Row noch ein Bot-Send erzeugt.
 - `META_DM_WEBHOOK_VERIFY_TOKEN` ist vorhanden; `META_APP_SECRET` ist im geprüften Runtime-Kontext nicht vorhanden. Signierter Push-Webhook ist daher nicht als bereit zu melden. Polling ist davon unabhängig.
-- Finale vollständige Python-Suite nach den Review-Fixes: **258 passed, 36 subtests passed** in 97,94 Sekunden. Dashboard/Node: **8/8**. Python-Compile, JavaScript-Syntax und `git diff --check` grün. Secret-Scan nach gezieltem Staging der Code-/Testdateien: `SECRET LEAK CHECK: OK (410 files checked)`; nach Staging dieser Dokumente wird er erneut ausgeführt. Commit-Hash folgt; aus lokalen Tests folgt kein Live-DM-Proof.
+- Finale vollständige Python-Suite nach den Review-Fixes: **258 passed, 36 subtests passed** in 97,94 Sekunden. Dashboard/Node: **8/8**. Python-Compile, JavaScript-Syntax und `git diff --check` grün. Erneuter Secret-Scan nach gezieltem Staging einschließlich Dokumentation: `SECRET LEAK CHECK: OK (411 files checked)`. Aus lokalen Tests folgt kein Live-DM-Proof.
+- Code-Commit `d380cb4541ab8d010004ed26471cbf3a03615d6a` auf `codex/20261001-dm-bot-hardening` ist erstellt, gepusht und mit `git ls-remote` zurückgelesen. Main und operative Runtime blieben unverändert.
 - `BOT_WORKS=NO`: kein echter provider-verifizierter Inbound, keine persistierte Test-Konversation und kein bestätigter Bot-Reply-Receipt.
 
 ## Entscheidungen
@@ -40,17 +41,17 @@
 
 - Der konkrete Grund für 0 Meta-sichtbare Konversationen ist noch nicht providerseitig bewiesen. Konto-Mapping ist korrekt; App-Zugriff/Rollen oder die Erzeugung eines neuen echten Inbounds sind als Hypothesen zu prüfen, nicht als Tatsachen auszugeben.
 - Das kontrollierte Owner-/Test-Inbound-Signal fehlt noch. Ohne dieses gibt es keinen sicheren echten Provider-Send und keinen `BOT_WORKS=YES`-Beleg.
-- Secret-Scan nach zusätzlichem Dokumentations-Staging erneut ausführen und Commit-Hash nachtragen.
+- Für diesen Branch steht nur der Live-Roundtrip und das separate Claude-Review aus; der lokale Test-/Secret-/Commit-Block ist abgeschlossen.
 
 ## GOAL UPDATES
 
 | Goal ID | Before | After | Evidence | Next |
 |---|---|---|---|---|
 | Instagram DM P1 live | nicht bewiesen | nicht bewiesen | beide Graph-Listen HTTP 200, 0 Konversationen; kein Receipt | kontrollierten Test-Inbound lesen, einmal antworten, extern und lokal reconciliieren |
-| Bot Hardening P1 | offen | Branch implementiert, Abschlussprüfung läuft | isolierter Schema-9-Proof und fokussierte Änderungen | finalen Testblock, Secret-Scan und Diff prüfen |
+| Bot Hardening P1 | offen | Branch implementiert und geprüft, nicht deployed | Schema-9-Kopierprobe, 258 Python-Tests, 8 Node-Tests, Secret-Scan und Remote-Commit | Claude-Review und kontrolliertes Deployment nach Owner-Gate |
 
 ## Nächster Agent
 
-1. Dokumentation gezielt stagen, Secret-Scan wiederholen, committen und den Hash nachtragen; kein Merge/Deployment als erledigt melden.
-2. Nach neuem Owner-/Test-Inbound Provider-Liste erneut read-only prüfen; nur den eindeutig zugeordneten Testfall einmal durch den vorhandenen Bot-Pfad senden und Receipt/DB-Lifecycle prüfen.
-3. Bei weiter 0 Konversationen Meta-App-Zugriff/Tester-Rolle/Message-Permission und neuen Inbound gezielt mit Provider-Evidence klären; keine Blind-Sends.
+1. Nach neuem Owner-/Test-Inbound Provider-Liste erneut read-only prüfen; nur den eindeutig zugeordneten Testfall einmal durch den vorhandenen Bot-Pfad senden und Receipt/DB-Lifecycle prüfen.
+2. Bei weiter 0 Konversationen Meta-App-Zugriff/Tester-Rolle/Message-Permission und neuen Inbound gezielt mit Provider-Evidence klären; keine Blind-Sends.
+3. Kritischen Schema-/Messaging-Branch separat durch Claude prüfen und erst nach nötiger Owner-Freigabe kontrolliert mergen/deployen.
