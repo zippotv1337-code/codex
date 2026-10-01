@@ -1,5 +1,17 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Instagram-DM-Diagnose — 1. Oktober 2026
+
+`instagram-dm-diagnose` ergänzt eine wiederverwendbare, secret-freie GET-only-
+Diagnose ohne DB- oder Send-Seiteneffekte. Optionale Persona-Auswahl:
+`--persona leona-voss|mara-field`; ohne Auswahl werden beide geprüft.
+Credential-Readiness ist ausdrücklich nur Konfigurationsnachweis, kein Beweis
+realer Inbox-Sichtbarkeit. Ungültige Conversations-/Message-Datenlisten werden
+fail-closed abgewiesen; gültige leere Listen bleiben erlaubt. Live-Evidence und
+offene externe Messaging-Frage stehen im aktuellen Handoff. Frühere Aussagen,
+die die Owner-Testnachrichten ausschließlich als Outbound einordneten, sind
+durch den aktuellen Owner-Bericht über echte Inbounds überholt.
+
 ## Mara „Samstag im Hofladen“ live — 30. September 2026
 
 Ein neues Mara-Dreiercarousel wurde mit ihrer bestehenden Identitätsreferenz

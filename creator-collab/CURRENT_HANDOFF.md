@@ -1,5 +1,28 @@
 # Aktueller Handoff
 
+## AKTUELL — DM Auth-Diagnose, 1. Oktober 2026 (Arbeitsbranch)
+
+- `instagram-dm-diagnose [--persona leona-voss|mara-field]` führt ausschließlich
+  Identity-/Conversations-GETs aus, ohne DB-Initialisierung, Sync oder Send.
+  Credentials, Call-Erfolg, ID-/Username-Abgleich und Form/Anzahl der ersten
+  Conversations-Seite werden getrennt und ohne IDs, Tokens oder Nachrichten ausgegeben.
+- Live-Readback mit bestehenden DPAPI-Credentials: Leona `leonavoss.ai` und
+  Mara `mara.field.ai` jeweils Credentials vorhanden, Identity-GET erfolgreich,
+  ID-/Username-Match wahr, Conversations-GET erfolgreich, gültige `data: []`,
+  Count 0, Paging nicht vorhanden. Kein POST, kein Deployment, kein Main-Merge.
+- `read_ready`/`write_ready` bleiben kompatibel, werden aber ausdrücklich durch
+  `credentials_present` und `*_ready_basis=credentials_present_only` eingeordnet.
+  Fehlende/fehlerhafte Conversations-/Message-Datenlisten schlagen fail-closed fehl.
+- Korrektur historischer Evidence: Der Owner bestätigt echte eingehende DMs an
+  beide Accounts. Frühere Aussagen „nur Outbound“ und „Inbox-Read verifiziert“
+  sind deshalb keine aktuelle Erklärung bzw. kein Nachweis realer Inbox-Sichtbarkeit.
+- Externe offene Evidence: wirksamer Messaging-Zugriff der vorhandenen App/Tokens
+  auf diese echten Inbounds. Fehlende Berechtigung ist eine Hypothese, kein
+  bewiesener Meta-Fehler. Aktuelle Permission-/Error-Code-Verträge bleiben wegen
+  des im Audit gemeldeten Meta-Doku-HTTP-429 unbestätigt. Webhook ist nicht Teil
+  dieses Polling-Diagnoseauftrags. Token-/Consent-Änderungen nicht durchgeführt.
+- Details/Tests: `sessions/2026-10-01-codex-dm-auth-diagnose.md`.
+
 ## AKTUELL — DM-P1 Autopilot-Sync gehärtet (Branch, nicht deployed), 30. September 2026
 
 - Branch `codex/20260929-instagram-dm-p1`, Basis `origin/main` `7ca2512`. Kein Merge, kein Deployment, kein echter Send.

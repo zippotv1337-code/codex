@@ -16,7 +16,7 @@ from .exporting import ExportBackupService
 from .external_readiness import ExternalReadinessService
 from .instagram_insights import MetaInstagramInsightsService
 from .instagram_dm import InstagramDMService
-from .instagram_dm_provider import MetaInstagramDMProvider
+from .instagram_dm_provider import MetaInstagramDMProvider, PERSONA_SECRET_NAMES
 from .fiverr import FiverrAutomationService, FiverrGigSnapshot
 from .pipeline import VerticalPipeline
 from .reconcile import ManualInstagramService
@@ -154,6 +154,11 @@ def parser() -> argparse.ArgumentParser:
         "instagram-dm-sync",
         help="Poll official Instagram conversations and process safe replies idempotently",
     )
+    diagnose = subcommands.add_parser(
+        "instagram-dm-diagnose",
+        help="Read-only identity/conversation facts; no inbox visibility proof from an empty page",
+    )
+    diagnose.add_argument("--persona", choices=tuple(PERSONA_SECRET_NAMES))
     checkpoint = subcommands.add_parser("checkpoint", help="Write an atomic autopilot savegame")
     checkpoint.add_argument("--out", type=Path, default=ROOT / "AUTOPILOT_CHECKPOINT.md")
     checkpoint.add_argument("--last-completed", required=True)
@@ -292,6 +297,11 @@ def parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     args = parser().parse_args()
+    if args.command == "instagram-dm-diagnose":
+        provider = MetaInstagramDMProvider.from_runtime(ROOT, args.config)
+        personas = [args.persona] if args.persona else PERSONA_SECRET_NAMES
+        print(json.dumps([provider.diagnose(persona) for persona in personas], indent=2))
+        return 0
     if (
         args.command == "demo"
         and args.db.resolve() == CANONICAL_OPERATIONAL_DB.resolve()

@@ -147,11 +147,15 @@ class MetaInstagramDMProvider:
         return None
 
     def readiness(self) -> dict[str, object]:
+        # Compatibility flags describe configuration, never live inbox/send proof.
         personas = {
             persona: {
                 "configured": persona in self._accounts,
                 "read_ready": persona in self._accounts,
                 "write_ready": persona in self._accounts,
+                "credentials_present": persona in self._accounts,
+                "read_ready_basis": "credentials_present_only",
+                "write_ready_basis": "credentials_present_only",
             }
             for persona in PERSONA_SECRET_NAMES
         }
@@ -163,6 +167,71 @@ class MetaInstagramDMProvider:
             "webhook_ready": bool(self.app_secret and self.verify_token),
             "auto_reply_enabled": self.auto_reply_enabled,
         }
+
+    def diagnose(self, persona: str) -> dict[str, object]:
+        """Two read-only probes; an empty API page does not prove inbox visibility.
+
+        No message detail reads, pagination, DB access, sync or sends occur here.
+        Counts describe only the returned page, not the entire inbox.
+        """
+        if persona not in PERSONA_SECRET_NAMES:
+            raise ValueError("instagram_dm_persona_unknown")
+        personas = json.loads(
+            (Path(__file__).resolve().parents[1] / "config" / "personas.json")
+            .read_text(encoding="utf-8")
+        )
+        account = self._accounts.get(persona)
+        result: dict[str, object] = {
+            "persona": persona,
+            "credentials_present": account is not None,
+            "identity_call_ok": False,
+            "account_id_match": False,
+            "username": None,
+            "expected_username": personas[persona]["instagram_handle"],
+            "expected_username_match": False,
+            "conversations_call_ok": False,
+            "response_has_data_list": False,
+            "conversation_count": None,
+            "paging_present": False,
+        }
+        if account is None:
+            return result
+        transport = self._transport(persona)
+        for stage, path, params in (
+            ("identity", "me", {"fields": "user_id,username"}),
+            ("conversations", f"{account.account_id}/conversations",
+             {"platform": "instagram", "fields": "id,updated_time,participants", "limit": "25"}),
+        ):
+            try:
+                payload = transport.get(path, params)
+                result[f"{stage}_call_ok"] = True
+                if stage == "identity":
+                    if isinstance(payload, dict):
+                        result["account_id_match"] = str(payload.get("user_id") or "") == account.account_id
+                        username = payload.get("username")
+                        # Only the public handle is eligible for output.
+                        if (isinstance(username, str)
+                                and re.fullmatch(r"[A-Za-z0-9_.]{1,30}", username)
+                                and account.access_token not in username):
+                            result["username"] = username
+                            result["expected_username_match"] = username == result["expected_username"]
+                else:
+                    result["paging_present"] = isinstance(payload, dict) and "paging" in payload
+                    result["response_has_data_list"] = isinstance(payload, dict) and isinstance(payload.get("data"), list)
+                    data = self._data(payload)
+                    result["conversation_count"] = len(data)
+            except MetaGraphError as error:
+                # Only existing transport codes; never forward arbitrary exception text.
+                code = str(error)
+                result[f"{stage}_error"] = (
+                    code if re.fullmatch(r"meta_graph_(?:http_[0-9]{3}|error_code_(?:[0-9]{1,10}|unknown)|invalid_response)", code)
+                    else "meta_graph_error"
+                )
+            except (ConnectionError, TimeoutError):
+                result[f"{stage}_error"] = "meta_graph_unreachable"
+            except (ValueError, InstagramDMProviderError):
+                result[f"{stage}_error"] = "meta_graph_invalid_response"
+        return result
 
     def verify_challenge(self, mode: str, token: str, challenge: str) -> str:
         if mode != "subscribe" or not challenge:
@@ -254,10 +323,12 @@ class MetaInstagramDMProvider:
 
     @staticmethod
     def _data(payload: object) -> list[dict[str, object]]:
-        if not isinstance(payload, dict):
-            return []
-        data = payload.get("data", [])
-        return [item for item in data if isinstance(item, dict)] if isinstance(data, list) else []
+        if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+            raise InstagramDMProviderError("instagram_dm_response_data_invalid")
+        data = payload["data"]
+        if any(not isinstance(item, dict) for item in data):
+            raise InstagramDMProviderError("instagram_dm_response_data_invalid")
+        return data
 
     @staticmethod
     def _sender_id(message: dict[str, object]) -> str:
