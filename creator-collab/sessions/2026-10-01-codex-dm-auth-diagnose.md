@@ -51,3 +51,18 @@ erfunden. Webhook bleibt außerhalb des Scopes. Falls später Token-/Consent-
 - Python compileall für creator_ops/tests grün; Secret-Scan über 406 getrackte
   Dateien einschließlich neuer Tests/Journal grün; Git-Diff-Check grün.
 - Keine gesonderten Dashboard-/JavaScript-Tests, da kein Dashboard geändert.
+
+## Review-Nachtrag auf 228f0ac
+
+- Nur die zwei ausdrücklich beauftragten Nachbesserungen: Poll behandelt ein
+  fehlendes `messages` in einer Dict-Threadantwort als leer; vorhandene ungültige
+  Message-Strukturen bleiben Fehler. Top-Level- und Reconcile-Semantik unverändert.
+- Fokustests entsprechend erweitert; ein Service-Test prüft persona-isolierten
+  Poll-Fehler, persistierten ERROR/last_error, Fortsetzung der zweiten Persona
+  und keine Outbox-/Send-Seiteneffekte.
+- 55 DM-/Provider-/Service-Tests plus 24 Subtests bestanden (55,32 Sekunden).
+  Geänderte Python-Dateien kompiliert; Diff-Check grün. Keine Full Suite und keine
+  Live-Aufrufe wiederholt. Keine Dashboard-/Schema-/sonstigen Dokumentänderungen.
+- Neuer Commit/Push blockiert: `git add` kann den gemeinsamen Worktree-Index
+  außerhalb des beschreibbaren Workspace nicht sperren (Permission denied).
+  Die aktuelle Ausführungsrichtlinie erlaubt keine Rechte-Eskalation.

@@ -1,5 +1,17 @@
 # Aktueller Handoff
 
+## Review-Nachtrag — DM-Diagnose, 1. Oktober 2026
+
+- Kleiner Delta auf `228f0ac`: Poll überspringt Dict-Threadantworten ohne
+  `messages`; vorhandene fehlerhafte Message-Listen, Conversations-Validierung
+  und Reconciliation bleiben fail-closed.
+- Ein neuer Service-Test bestätigt persona-isolierte Poll-Fehler mit gespeichertem
+  ERROR/last_error, Fortsetzung für die zweite Persona und ohne Outbox/Send.
+- Betroffene DM-Tests: 55 bestanden plus 24 Subtests; Compile und Diff-Check grün.
+  Full Suite ausdrücklich nicht wiederholt; keine neuen Live-Aufrufe.
+- Commit/Push noch offen: Sandbox verweigert den gemeinsamen Git-Index außerhalb
+  dieses Workspace; Rechte-Eskalation ist in dieser Sitzung deaktiviert.
+
 ## AKTUELL — DM Auth-Diagnose, 1. Oktober 2026 (Arbeitsbranch)
 
 - `instagram-dm-diagnose [--persona leona-voss|mara-field]` führt ausschließlich

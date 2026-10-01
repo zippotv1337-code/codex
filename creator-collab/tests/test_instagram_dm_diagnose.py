@@ -62,7 +62,11 @@ def test_malformed_conversations_fail_closed(payload):
         adapter.poll("leona-voss")
 
 
-@pytest.mark.parametrize("payload", [{}, {"messages": {}}, {"messages": {"data": None}}])
+@pytest.mark.parametrize("payload", [
+    None, [], {"messages": None}, {"messages": {}},
+    {"messages": {"data": None}}, {"messages": {"data": {}}},
+    {"messages": {"data": ["bad"]}},
+])
 def test_malformed_message_lists_fail_closed(payload):
     adapter, transport = provider()
     transport.get.side_effect = [{"data": [{"id": "thread"}]}, payload]
@@ -71,6 +75,22 @@ def test_malformed_message_lists_fail_closed(payload):
     transport.get.side_effect = [payload]
     with pytest.raises(InstagramDMProviderError, match="response_data_invalid"):
         adapter.reconcile_message("leona-voss", "thread", "message")
+
+
+def test_absent_messages_skips_thread_but_reconciliation_stays_strict():
+    adapter, transport = provider()
+    transport.get.side_effect = [
+        {"data": [{"id": "empty-thread"}, {"id": "next-thread"}]},
+        {},
+        {"messages": {"data": [{
+            "id": "inbound", "from": {"id": "sender"}, "message": "hello",
+            "created_time": "2026-10-01T10:00:00+00:00",
+        }]}},
+    ]
+    assert [item["message_id"] for item in adapter.poll("leona-voss")] == ["inbound"]
+    transport.get.side_effect = [{}]
+    with pytest.raises(InstagramDMProviderError, match="response_data_invalid"):
+        adapter.reconcile_message("leona-voss", "empty-thread", "message")
 
 
 def test_valid_empty_poll_and_message_lists():

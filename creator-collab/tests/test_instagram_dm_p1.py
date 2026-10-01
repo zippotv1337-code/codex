@@ -6,6 +6,7 @@ import json
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 from datetime import UTC, datetime, timedelta
 from http.cookiejar import CookieJar
 from pathlib import Path
@@ -17,6 +18,7 @@ from creator_ops.cli import build_pipeline
 from creator_ops.instagram_dm import InstagramDMService
 from creator_ops.instagram_dm_provider import (
     InstagramDMProviderConnectionError,
+    InstagramDMProviderError,
     MetaInstagramDMProvider,
 )
 from creator_ops.web import CSRF_COOKIE, create_server
@@ -103,6 +105,35 @@ class FakeTransport:
 
 
 class InstagramDMP1Tests(unittest.TestCase):
+    def test_poll_error_is_recorded_per_persona_without_send_or_outbox(self) -> None:
+        provider = FakeProvider()
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        error = "instagram_dm_response_data_invalid"
+        with patch.object(provider, "poll", side_effect=[InstagramDMProviderError(error), []]) as poll:
+            result = service.sync_provider()
+        self.assertEqual([call.args[0] for call in poll.call_args_list], ["leona-voss", "mara-field"])
+        self.assertEqual(result["personas"]["leona-voss"], {
+            "status": "ERROR", "seen": 0, "ingested": 0,
+            "rejected": 0, "replies_sent": 0, "error": error,
+        })
+        self.assertEqual(result["personas"]["mara-field"]["status"], "SYNCED")
+        self.assertFalse(result["external_action"])
+        self.assertEqual(provider.sent, [])
+        for table in ("instagram_dm_outbox", "instagram_dm_events", "instagram_dm_conversations"):
+            self.assertEqual(self.pipeline.db.scalar(f"SELECT COUNT(*) FROM {table}"), 0)
+        rows = {row["slug"]: row for row in self.pipeline.db.all(
+            "SELECT c.slug, s.* FROM instagram_dm_provider_sync s "
+            "JOIN creators c ON c.id=s.creator_id"
+        )}
+        self.assertEqual(rows["leona-voss"]["status"], "ERROR")
+        self.assertEqual(rows["leona-voss"]["last_error"], error)
+        self.assertIsNone(rows["leona-voss"]["last_success_at"])
+        self.assertEqual(rows["leona-voss"]["messages_seen"], 0)
+        self.assertEqual(rows["leona-voss"]["messages_ingested"], 0)
+        self.assertEqual(rows["mara-field"]["status"], "SYNCED")
+        self.assertIsNone(rows["mara-field"]["last_error"])
+        self.assertIsNotNone(rows["mara-field"]["last_success_at"])
+
     def setUp(self) -> None:
         self.tempdir = tempfile.TemporaryDirectory()
         self.root = Path(self.tempdir.name)

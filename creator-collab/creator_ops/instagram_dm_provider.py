@@ -371,6 +371,8 @@ class MetaInstagramDMProvider:
                         "fields": "messages.limit(20){id,from,to,message,created_time}",
                     },
                 )
+                if isinstance(details, dict) and "messages" not in details:
+                    continue
                 messages = self._data(
                     details.get("messages", {}) if isinstance(details, dict) else {}
                 )
