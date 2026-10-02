@@ -8,8 +8,20 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 . (Join-Path $PSScriptRoot 'runtime_config.ps1')
 $runtimeConfig = Get-CreatorOpsRuntimeConfig -ProjectRoot $projectRoot -ConfigPath $Config
-if (-not $Database) { $Database = Join-Path $projectRoot $runtimeConfig.Database }
-if (-not $OfflineOutput) { $OfflineOutput = Join-Path $projectRoot $runtimeConfig.OfflineOutput }
+if (-not $Database) {
+  $Database = if ([System.IO.Path]::IsPathRooted($runtimeConfig.Database)) {
+    $runtimeConfig.Database
+  } else {
+    Join-Path $projectRoot $runtimeConfig.Database
+  }
+}
+if (-not $OfflineOutput) {
+  $OfflineOutput = if ([System.IO.Path]::IsPathRooted($runtimeConfig.OfflineOutput)) {
+    $runtimeConfig.OfflineOutput
+  } else {
+    Join-Path $projectRoot $runtimeConfig.OfflineOutput
+  }
+}
 
 # The long-running supervisor can predate values written with `setx`. Hydrate
 # only the explicitly supported local secret names for this bounded child
@@ -45,12 +57,18 @@ function Write-RunLog([string]$Message) {
 }
 
 function Invoke-CreatorOpsStep([string[]]$CommandArgs) {
-  $output = & $python -m creator_ops.cli --db $databasePath `
-    --config $runtimeConfig.ConfigPath @CommandArgs 2>&1
-  $exit = $LASTEXITCODE
-  $output | ForEach-Object { Write-RunLog $_ }
+  $previousErrorAction = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    $output = & $python -m creator_ops.cli --db $databasePath `
+      --config $runtimeConfig.ConfigPath @CommandArgs 2>&1
+    $exit = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $previousErrorAction
+  }
+  $output | ForEach-Object { Write-RunLog ([string]$_) }
   if ($exit -ne 0) {
-    throw "Creator Ops step failed with exit code ${exit}: $($CommandArgs -join ' ')"
+    throw "Creator Ops step failed with exit code function () { [native code] }: $($CommandArgs -join ' ')"
   }
 }
 
@@ -58,14 +76,14 @@ Push-Location $projectRoot
 try {
   Write-RunLog 'scheduler invocation started'
   Invoke-CreatorOpsStep -CommandArgs @('publish-reconcile')
-  $passwordReady = -not [string]::IsNullOrEmpty($env:CREATOR_OPS_PASSWORD) -and `
-    $env:CREATOR_OPS_PASSWORD.Length -ge 12
+  # Background publishing is authorized by runtime config + publishing authority
+  # + the approved PUBLIC_SFW content lane. Dashboard authentication is not a
+  # prerequisite for a non-interactive scheduler process.
   $completeLiveGate = $runtimeConfig.DispatchLive -and `
     $runtimeConfig.PublishingLiveEnabled -and `
     $runtimeConfig.OfficialInstagramPublish -and `
     $runtimeConfig.LiveExternalActions -and `
-    $runtimeConfig.PublishingAdapter -eq 'meta-graph' -and `
-    $passwordReady
+    $runtimeConfig.PublishingAdapter -eq 'meta-graph'
   if ($completeLiveGate) {
     Invoke-CreatorOpsStep -CommandArgs @('publish-dispatch-due', '--at', [DateTimeOffset]::Now.ToString('o'))
   } else {

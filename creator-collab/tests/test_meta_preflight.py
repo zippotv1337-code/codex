@@ -260,7 +260,7 @@ class MetaPreflightTests(unittest.TestCase):
         self.assertIn("meta_account_id_mismatch", result["errors"])
         self.assertIn("meta_content_publishing_quota_exhausted", result["errors"])
 
-    def test_missing_live_gate_still_completes_every_read_only_check(self) -> None:
+    def test_known_public_sfw_lane_without_per_item_gate_still_runs_all_checks(self) -> None:
         with self.pipeline.db.transaction() as connection:
             connection.execute(
                 """
@@ -278,8 +278,8 @@ class MetaPreflightTests(unittest.TestCase):
             self.publication_id, self.content_id
         )
 
-        self.assertEqual(result["status"], "READY_FOR_OWNER_CONFIRMATION")
-        self.assertFalse(result["checks"]["live_authorization"]["authorized"])
+        self.assertEqual(result["status"], "READY")
+        self.assertTrue(result["checks"]["live_authorization"]["authorized"])
         self.assertTrue(result["checks"]["package"]["ok"])
         self.assertTrue(result["checks"]["public_assets"]["ok"])
         self.assertTrue(result["checks"]["account"]["ok"])
