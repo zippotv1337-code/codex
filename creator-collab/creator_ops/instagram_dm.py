@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any, Mapping, Protocol
 
+from .authority import live_publish_error
 from .database import CreatorDatabase, utc_now
 from .instagram_dm_provider import (
     InstagramDMProvider,
@@ -914,6 +915,18 @@ class InstagramDMService:
                 ),
                 "reason": "provider_or_auto_reply_not_ready",
             }
+        # Only the active node may write to Instagram; a standby node holding the
+        # same credentials would otherwise answer the same inbound a second time.
+        authority_error = live_publish_error()
+        if authority_error:
+            raise ValueError(f"instagram_dm_send_blocked_{authority_error}")
+        bind_identity = getattr(self.provider, "bind_identity", None)
+        if callable(bind_identity):
+            try:
+                bind_identity(str(row["persona"]))
+            except InstagramDMProviderError as error:
+                # Raised before any claim or provider write; the reply stays APPROVED.
+                raise ValueError(str(error)) from error
 
         # Claim the approved reply before touching the provider. A second
         # execution can never issue a second send from this point onward.

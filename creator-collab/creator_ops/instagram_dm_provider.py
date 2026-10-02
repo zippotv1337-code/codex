@@ -19,6 +19,24 @@ PERSONA_SECRET_NAMES = {
     "mara-field": ("META_IG_USER_ID_MARA_FIELD", "META_ACCESS_TOKEN_MARA_FIELD"),
 }
 
+_SAFE_GRAPH_CODE = re.compile(
+    r"meta_graph_(?:http_[0-9]{3}|error_code_(?:[0-9]{1,10}|unknown)|invalid_response)"
+)
+
+
+def _expected_handle(persona: str) -> str:
+    personas = json.loads(
+        (Path(__file__).resolve().parents[1] / "config" / "personas.json")
+        .read_text(encoding="utf-8")
+    )
+    return str(personas[persona]["instagram_handle"])
+
+
+def _safe_graph_code(error: MetaGraphError) -> str:
+    # Only existing transport codes; never forward arbitrary exception text.
+    code = str(error)
+    return code if _SAFE_GRAPH_CODE.fullmatch(code) else "meta_graph_error"
+
 
 class InstagramDMProviderError(RuntimeError):
     """Sanitized provider failure. It never contains tokens or response bodies."""
@@ -88,6 +106,7 @@ class MetaInstagramDMProvider:
             if values[0] and values[1]
         }
         self._transport_factory = transport_factory
+        self._bound_personas: set[str] = set()
 
     @classmethod
     def from_runtime(
@@ -146,6 +165,34 @@ class MetaInstagramDMProvider:
                 return persona
         return None
 
+    def bind_identity(self, persona: str) -> None:
+        """Fail closed unless the token belongs to the configured IG professional account.
+
+        Meta: `/me` field `user_id` is the IG_ID that webhooks (`entry.id`) and
+        conversations use for the business; `id` is only an app-scoped ID. Own
+        messages are recognised by the configured ID, so it must be `user_id`.
+        One identity GET per persona and provider instance.
+        """
+        account = self._accounts.get(persona)
+        if account is None:
+            raise InstagramDMProviderError("instagram_dm_persona_credentials_missing")
+        if persona in self._bound_personas:
+            return
+        try:
+            identity = self._transport(persona).get("me", {"fields": "user_id,username"})
+        except (ConnectionError, TimeoutError) as error:
+            raise InstagramDMProviderConnectionError("meta_graph_unreachable") from error
+        except MetaGraphError as error:
+            raise InstagramDMProviderError(_safe_graph_code(error)) from error
+        if not isinstance(identity, dict):
+            raise InstagramDMProviderError("instagram_dm_identity_invalid")
+        user_id = str(identity.get("user_id") or "")
+        if not user_id or not hmac.compare_digest(user_id, account.account_id):
+            raise InstagramDMProviderError("instagram_dm_account_id_not_ig_id")
+        if identity.get("username") != _expected_handle(persona):
+            raise InstagramDMProviderError("instagram_dm_account_username_mismatch")
+        self._bound_personas.add(persona)
+
     def readiness(self) -> dict[str, object]:
         # Compatibility flags describe configuration, never live inbox/send proof.
         personas = {
@@ -176,18 +223,15 @@ class MetaInstagramDMProvider:
         """
         if persona not in PERSONA_SECRET_NAMES:
             raise ValueError("instagram_dm_persona_unknown")
-        personas = json.loads(
-            (Path(__file__).resolve().parents[1] / "config" / "personas.json")
-            .read_text(encoding="utf-8")
-        )
         account = self._accounts.get(persona)
         result: dict[str, object] = {
             "persona": persona,
             "credentials_present": account is not None,
             "identity_call_ok": False,
             "account_id_match": False,
+            "configured_id_kind": None,
             "username": None,
-            "expected_username": personas[persona]["instagram_handle"],
+            "expected_username": _expected_handle(persona),
             "expected_username_match": False,
             "conversations_call_ok": False,
             "response_has_data_list": False,
@@ -207,10 +251,20 @@ class MetaInstagramDMProvider:
                 result[f"{stage}_call_ok"] = True
                 if stage == "identity":
                     if isinstance(payload, dict):
-                        identity_id = str(payload.get("id") or "")
-                        result["account_id_match"] = bool(identity_id) and hmac.compare_digest(
-                            identity_id, account.account_id
+                        # The configured ID must be the IG_ID (`user_id`), see bind_identity.
+                        user_id = str(payload.get("user_id") or "")
+                        app_scoped_id = str(payload.get("id") or "")
+                        result["account_id_match"] = bool(user_id) and hmac.compare_digest(
+                            user_id, account.account_id
                         )
+                        if result["account_id_match"]:
+                            result["configured_id_kind"] = "ig_professional_account_id"
+                        elif app_scoped_id and hmac.compare_digest(
+                            app_scoped_id, account.account_id
+                        ):
+                            result["configured_id_kind"] = "app_scoped_id"
+                        else:
+                            result["configured_id_kind"] = "unknown"
                         username = payload.get("username")
                         # Only the public handle is eligible for output.
                         if (isinstance(username, str)
@@ -224,12 +278,7 @@ class MetaInstagramDMProvider:
                     data = self._data(payload)
                     result["conversation_count"] = len(data)
             except MetaGraphError as error:
-                # Only existing transport codes; never forward arbitrary exception text.
-                code = str(error)
-                result[f"{stage}_error"] = (
-                    code if re.fullmatch(r"meta_graph_(?:http_[0-9]{3}|error_code_(?:[0-9]{1,10}|unknown)|invalid_response)", code)
-                    else "meta_graph_error"
-                )
+                result[f"{stage}_error"] = _safe_graph_code(error)
             except (ConnectionError, TimeoutError):
                 result[f"{stage}_error"] = "meta_graph_unreachable"
             except (ValueError, InstagramDMProviderError):
@@ -351,6 +400,7 @@ class MetaInstagramDMProvider:
         account = self._accounts.get(persona)
         if account is None:
             raise InstagramDMProviderError("instagram_dm_persona_credentials_missing")
+        self.bind_identity(persona)
         transport = self._transport(persona)
         try:
             conversations = transport.get(

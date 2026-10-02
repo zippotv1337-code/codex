@@ -3,10 +3,11 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import os
 import tempfile
 import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from datetime import UTC, datetime, timedelta
 from http.cookiejar import CookieJar
 from pathlib import Path
@@ -81,6 +82,8 @@ class FakeTransport:
 
     def get(self, path: str, params: dict[str, str]) -> dict[str, object]:
         self.gets.append((path, params))
+        if path == "me":
+            return {"user_id": "1784", "username": "leonavoss.ai"}
         if path.endswith("/conversations"):
             return {"data": [{"id": "thread-1"}]}
         if path == "thread-1" and "message,created_time" in params.get("fields", ""):
@@ -137,11 +140,62 @@ class InstagramDMP1Tests(unittest.TestCase):
     def setUp(self) -> None:
         self.tempdir = tempfile.TemporaryDirectory()
         self.root = Path(self.tempdir.name)
+        # Node authority is read from this empty root, never from the real machine.
+        self.authority_root = patch.dict(os.environ, {"ZIPPOWORKZ_ROOT": str(self.root)})
+        self.authority_root.start()
         self.pipeline = build_pipeline(self.root / "review.db")
         self.pipeline.initialize()
 
     def tearDown(self) -> None:
+        self.authority_root.stop()
         self.tempdir.cleanup()
+
+    def write_node(self, machine_id: str, active_node: str) -> None:
+        (self.root / "MACHINE_ID.json").write_text(
+            json.dumps({"machine_id": machine_id}), encoding="utf-8"
+        )
+        authority = self.root / "Context" / "Owner" / "PUBLISHING_AUTHORITY.json"
+        authority.parent.mkdir(parents=True, exist_ok=True)
+        authority.write_text(json.dumps({"active_node": active_node}), encoding="utf-8")
+
+    def test_standby_node_never_sends_and_keeps_reply_approved(self) -> None:
+        self.write_node("ZIPPOWORKZ-LOCALAI", "ZIPPOWORKZ-VPS")
+        provider = FakeProvider()
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        result = service.ingest(self.payload(), provider_verified=True, auto_process=True)
+        self.assertEqual(result["processing"]["status"], "NOT_DISPATCHED")
+        self.assertEqual(
+            result["processing"]["reason"],
+            "instagram_dm_send_blocked_publishing_standby_node",
+        )
+        self.assertFalse(result["processing"]["external_action"])
+        self.assertEqual(provider.sent, [])
+        outbox = self.pipeline.db.one("SELECT status, attempt_count FROM instagram_dm_outbox")
+        self.assertEqual(outbox["status"], "APPROVED")
+        self.assertEqual(outbox["attempt_count"], 0)
+
+    def test_active_node_sends_exactly_once(self) -> None:
+        self.write_node("ZIPPOWORKZ-VPS", "ZIPPOWORKZ-VPS")
+        provider = FakeProvider()
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        result = service.ingest(self.payload(), provider_verified=True, auto_process=True)
+        self.assertEqual(result["processing"]["status"], "SENT")
+        self.assertEqual(len(provider.sent), 1)
+
+    def test_identity_preflight_failure_blocks_send_before_claim(self) -> None:
+        provider = FakeProvider()
+        provider.bind_identity = Mock(  # type: ignore[attr-defined]
+            side_effect=InstagramDMProviderError("instagram_dm_account_id_not_ig_id")
+        )
+        service = InstagramDMService(self.pipeline.db, provider=provider)
+        result = service.ingest(self.payload(), provider_verified=True, auto_process=True)
+        self.assertEqual(result["processing"]["status"], "NOT_DISPATCHED")
+        self.assertEqual(result["processing"]["reason"], "instagram_dm_account_id_not_ig_id")
+        provider.bind_identity.assert_called_once_with("leona-voss")
+        self.assertEqual(provider.sent, [])
+        outbox = self.pipeline.db.one("SELECT status, attempt_count FROM instagram_dm_outbox")
+        self.assertEqual(outbox["status"], "APPROVED")
+        self.assertEqual(outbox["attempt_count"], 0)
 
     @staticmethod
     def payload(
@@ -590,7 +644,8 @@ class InstagramDMP1Tests(unittest.TestCase):
         ]
         transport.get = lambda path, params: (  # type: ignore[method-assign]
             transport.gets.append((path, params)) or (
-                {"data": [{"id": "thread-1"}]} if path.endswith("/conversations")
+                {"user_id": "1784", "username": "leonavoss.ai"} if path == "me"
+                else {"data": [{"id": "thread-1"}]} if path.endswith("/conversations")
                 else {"messages": {"data": messages}}
             )
         )
@@ -603,7 +658,8 @@ class InstagramDMP1Tests(unittest.TestCase):
         polled = meta.poll("leona-voss")
         self.assertEqual([item["message_id"] for item in polled], ["in-early"])
         self.assertTrue(polled[0]["provider_answered"])
-        self.assertIn("messages.limit(20)", transport.gets[1][1]["fields"])
+        self.assertEqual(transport.gets[0][0], "me")
+        self.assertIn("messages.limit(20)", transport.gets[2][1]["fields"])
         messages[0]["created_time"] = (now - timedelta(minutes=10)).strftime(
             "%Y-%m-%dT%H:%M:%S+0000"
         )

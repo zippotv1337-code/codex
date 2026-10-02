@@ -4,15 +4,22 @@ from unittest.mock import Mock, patch
 import pytest
 
 from creator_ops.cli import main
-from creator_ops.instagram_dm_provider import InstagramDMProviderError, MetaInstagramDMProvider
+from creator_ops.instagram_dm_provider import (
+    InstagramDMProviderConnectionError,
+    InstagramDMProviderError,
+    MetaInstagramDMProvider,
+)
 from creator_ops.publishing import MetaGraphError
+
+# Answer to the identity GET that poll() needs once per provider instance.
+BOUND = {"user_id": "account-id", "username": "leonavoss.ai"}
 
 
 def provider(identity=None, conversations=None):
     transport = Mock()
     transport.get.side_effect = [
         identity if identity is not None else {
-            "id": "account-id", "user_id": "different-user-id", "username": "leonavoss.ai"
+            "id": "different-app-scoped-id", "user_id": "account-id", "username": "leonavoss.ai"
         },
         conversations if conversations is not None else {"data": []},
     ]
@@ -30,6 +37,7 @@ def test_identity_and_empty_page_are_only_read_facts():
     assert result == {
         "persona": "leona-voss", "credentials_present": True,
         "identity_call_ok": True, "account_id_match": True,
+        "configured_id_kind": "ig_professional_account_id",
         "username": "leonavoss.ai", "expected_username": "leonavoss.ai",
         "expected_username_match": True, "conversations_call_ok": True,
         "response_has_data_list": True, "conversation_count": 0, "paging_present": False,
@@ -42,20 +50,28 @@ def test_identity_and_empty_page_are_only_read_facts():
     )
     transport.post.assert_not_called()
     assert "account-id" not in json.dumps(result)
-    assert "different-user-id" not in json.dumps(result)
+    assert "different-app-scoped-id" not in json.dumps(result)
 
 
-@pytest.mark.parametrize("identity,id_match,user_match", [
-    ({"id": "account-id", "user_id": "different-user-id", "username": "leonavoss.ai"}, True, True),
-    ({"id": "other-id", "user_id": "account-id", "username": "leonavoss.ai"}, False, True),
-    ({"user_id": "account-id", "username": "leonavoss.ai"}, False, True),
-    ({"id": "", "user_id": "account-id", "username": "leonavoss.ai"}, False, True),
-    ({"id": "account-id", "username": "other.account"}, True, False),
+# Meta: `user_id` is the IG professional account ID (IG_ID); `id` is app-scoped.
+@pytest.mark.parametrize("identity,id_match,kind,user_match", [
+    ({"id": "other-id", "user_id": "account-id", "username": "leonavoss.ai"},
+     True, "ig_professional_account_id", True),
+    ({"user_id": "account-id", "username": "leonavoss.ai"},
+     True, "ig_professional_account_id", True),
+    ({"id": "account-id", "user_id": "different-user-id", "username": "leonavoss.ai"},
+     False, "app_scoped_id", True),
+    ({"id": "account-id", "username": "leonavoss.ai"}, False, "app_scoped_id", True),
+    ({"id": "", "user_id": "", "username": "leonavoss.ai"}, False, "unknown", True),
+    ({"id": "x", "user_id": "y", "username": "leonavoss.ai"}, False, "unknown", True),
+    ({"user_id": "account-id", "username": "other.account"},
+     True, "ig_professional_account_id", False),
 ])
-def test_identity_mismatches(identity, id_match, user_match):
+def test_identity_mismatches(identity, id_match, kind, user_match):
     adapter, _ = provider(identity)
     result = adapter.diagnose("leona-voss")
     assert result["account_id_match"] is id_match
+    assert result["configured_id_kind"] == kind
     assert result["expected_username_match"] is user_match
 
 
@@ -69,7 +85,7 @@ def test_two_read_only_gets_per_configured_persona():
     for persona, (account_id, _) in accounts.items():
         transport = Mock()
         transport.get.side_effect = [
-            {"id": account_id, "user_id": f"other-{persona}", "username": handles[persona]},
+            {"id": f"other-{persona}", "user_id": account_id, "username": handles[persona]},
             {"data": []},
         ]
         transports[persona] = transport
@@ -102,7 +118,7 @@ def test_malformed_conversations_fail_closed(payload):
     assert result["conversations_call_ok"] is True
     assert result["conversation_count"] is None
     assert result["conversations_error"] == "meta_graph_invalid_response"
-    transport.get.side_effect = [payload]
+    transport.get.side_effect = [BOUND, payload]
     with pytest.raises(InstagramDMProviderError, match="response_data_invalid"):
         adapter.poll("leona-voss")
 
@@ -114,7 +130,7 @@ def test_malformed_conversations_fail_closed(payload):
 ])
 def test_malformed_message_lists_fail_closed(payload):
     adapter, transport = provider()
-    transport.get.side_effect = [{"data": [{"id": "thread"}]}, payload]
+    transport.get.side_effect = [BOUND, {"data": [{"id": "thread"}]}, payload]
     with pytest.raises(InstagramDMProviderError, match="response_data_invalid"):
         adapter.poll("leona-voss")
     transport.get.side_effect = [payload]
@@ -125,6 +141,7 @@ def test_malformed_message_lists_fail_closed(payload):
 def test_absent_messages_skips_thread_but_reconciliation_stays_strict():
     adapter, transport = provider()
     transport.get.side_effect = [
+        BOUND,
         {"data": [{"id": "empty-thread"}, {"id": "next-thread"}]},
         {},
         {"messages": {"data": [{
@@ -140,10 +157,54 @@ def test_absent_messages_skips_thread_but_reconciliation_stays_strict():
 
 def test_valid_empty_poll_and_message_lists():
     adapter, transport = provider()
-    transport.get.side_effect = [{"data": []}]
+    transport.get.side_effect = [BOUND, {"data": []}]
     assert adapter.poll("leona-voss") == []
+    # The identity is bound once per instance; the second poll skips it.
     transport.get.side_effect = [{"data": [{"id": "thread"}]}, {"messages": {"data": []}}]
     assert adapter.poll("leona-voss") == []
+    assert [call.args[0] for call in transport.get.call_args_list] == [
+        "me", "account-id/conversations", "account-id/conversations", "thread",
+    ]
+
+
+def test_poll_fails_closed_when_configured_id_is_app_scoped():
+    adapter, transport = provider()
+    transport.get.side_effect = [
+        {"user_id": "real-ig-id", "username": "leonavoss.ai"}, {"data": []},
+    ]
+    with pytest.raises(InstagramDMProviderError, match="^instagram_dm_account_id_not_ig_id$"):
+        adapter.poll("leona-voss")
+    assert transport.get.call_count == 1
+    assert transport.get.call_args.args == ("me", {"fields": "user_id,username"})
+    transport.post.assert_not_called()
+
+
+@pytest.mark.parametrize("identity,error", [
+    ({"user_id": "account-id", "username": "mara.field.ai"}, "instagram_dm_account_username_mismatch"),
+    ({"username": "leonavoss.ai"}, "instagram_dm_account_id_not_ig_id"),
+    (["not", "a", "dict"], "instagram_dm_identity_invalid"),
+])
+def test_poll_identity_mismatch_never_reads_conversations(identity, error):
+    adapter, transport = provider()
+    transport.get.side_effect = [identity, {"data": []}]
+    with pytest.raises(InstagramDMProviderError, match=f"^{error}$"):
+        adapter.poll("leona-voss")
+    assert transport.get.call_count == 1
+    transport.post.assert_not_called()
+
+
+def test_identity_errors_are_sanitized_and_not_cached():
+    adapter, transport = provider()
+    transport.get.side_effect = [ConnectionError("test-secret-value RAW BODY")]
+    with pytest.raises(InstagramDMProviderConnectionError, match="^meta_graph_unreachable$"):
+        adapter.poll("leona-voss")
+    transport.get.side_effect = [MetaGraphError("meta_graph_error_code_test-secret-value RAW BODY")]
+    with pytest.raises(InstagramDMProviderError, match="^meta_graph_error$"):
+        adapter.poll("leona-voss")
+    # A failed check is retried on the next poll instead of being remembered.
+    transport.get.side_effect = [BOUND, {"data": []}]
+    assert adapter.poll("leona-voss") == []
+    transport.post.assert_not_called()
 
 
 @pytest.mark.parametrize("error,expected", [
@@ -172,7 +233,7 @@ def test_nonempty_page_does_not_expose_ids_text_or_paging_values():
     result = adapter.diagnose("leona-voss")
     assert result["conversation_count"] == 1
     assert result["paging_present"] is True
-    for private in ("account-id", "different-user-id", "private-id", "private-text",
+    for private in ("account-id", "different-app-scoped-id", "private-id", "private-text",
                     "test-secret-value", "https://private.example/next"):
         assert private not in json.dumps(result)
 
