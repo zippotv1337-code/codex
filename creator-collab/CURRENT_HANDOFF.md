@@ -1,6 +1,31 @@
 # Aktueller Handoff
 
-## AKTUELL — Instagram-DM-Diagnose-ID korrigiert, 2. Oktober 2026
+## AKTUELL — DM-Bot: IG_ID-Bindung, Single-Sender, Reconcile, 2. Oktober 2026 (Claude)
+
+- **VPS-Runtime-Korrektur:** Auf `ZIPPOWORKZ-VPS` (aktiver Node) gibt es kein
+  `Workspace\codex_deploy`. Web, Scheduler, Watchdog und Autostart laufen aus
+  `Workspace\deploy_dm_p1_b7ccbcad` (detached b785ce4 plus lokale Änderungen),
+  DB `Workspace\codex_ingest\creator-collab\data\review_dashboard.db` (Schema 8).
+  Der Single-Source-Abschnitt unten beschreibt einen anderen Host
+  (vermutlich LocalAI), der ebenfalls DM-Sync mit Auto-Reply betreibt.
+- **IDs (Meta-Doku):** `/me.user_id` ist die IG_ID (Webhook `entry.id`,
+  Conversations); `id` ist app-scoped. Die VPS-Konfiguration nutzt korrekt
+  `user_id`. Die b84572f-Diagnoseregel (`id`) ist revidiert.
+- **main c89265c, auf dem VPS deployed** (nur die zwei DM-Module, file-level):
+  Identity-Bindung vor jedem Poll (fail-closed), DM-Sends nur auf dem aktiven
+  Node, read-only Reconcile SENT → DELIVERED 1–15 min nach Send.
+  269 Tests plus 24 Subtests, Dashboard 7/7. Live: beide Personas `SYNCED`,
+  `account_id_match=true`, weiterhin 0 Conversations.
+- Task „Zippoworkz Instagram DM Poll“ (`_tmp`, zweiter Sender) deaktiviert.
+  Branch `vps/runtime-snapshot-20261002` sichert unversionierte
+  VPS-Publishing-Änderungen; nicht mergen (Owner-Gate Publishing-Kern).
+- **`BOT_WORKS=NO`.** Einziger harter Blocker: ein frischer Inbound von einer
+  Persona-Session (Owner: eine DM `mara.field.ai` → `leonavoss.ai`, nicht
+  erneut senden). Vorher den `codex_deploy`-Host auf main ≥ c89265c bringen.
+  Details: `sessions/2026-10-02-1235-claude-dm-identity-single-sender.md` und
+  `C:\Zippoworkz\Handoff\VPS\CLAUDE_DM_BOT_FINAL_20261002.md`.
+
+## Instagram-DM-Diagnose-ID korrigiert, 2. Oktober 2026 (durch den Abschnitt oben revidiert)
 
 - Der read-only Diagnosepfad vergleicht die konfigurierte Instagram-Konto-ID
   jetzt ausschließlich mit `GET /me`-Feld `id`; `user_id` bleibt ein

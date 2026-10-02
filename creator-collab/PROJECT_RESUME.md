@@ -1,6 +1,19 @@
 # Projekt-Résumé: Virtual Creators Germany
 
-## Instagram-DM-Diagnose-ID — 2. Oktober 2026
+## Instagram-DM: IG_ID-Bindung und Single-Sender — 2. Oktober 2026
+
+Die konfigurierte Instagram-Konto-ID muss laut Meta-Doku die IG_ID
+(`/me.user_id`) sein; `id` ist app-scoped. Die Diagnose prüft wieder `user_id`
+und meldet `configured_id_kind`. Vor jedem Poll bindet der Provider Token,
+IG_ID und Handle fail-closed. DM-Antworten sendet nur der aktive Node laut
+`PUBLISHING_AUTHORITY.json`. Gesendete Antworten werden 1–15 min nach dem Send
+automatisch und read-only bis DELIVERED abgeglichen, nie erneut gesendet. Auf
+dem VPS deployed (main c89265c); die VPS-Runtime ist weiterhin
+`deploy_dm_p1_b7ccbcad` mit der `codex_ingest`-DB, nicht `codex_deploy`.
+`BOT_WORKS=NO` bis zu einem frischen Persona-zu-Persona-Inbound.
+Details: `sessions/2026-10-02-1235-claude-dm-identity-single-sender.md`.
+
+## Instagram-DM-Diagnose-ID — 2. Oktober 2026 (revidiert, siehe oben)
 
 Die Diagnose verwendet für `account_id_match` jetzt die Meta-Identity-`id`
 statt `user_id`. Ein fehlendes oder abweichendes `id` bleibt fail-closed.
