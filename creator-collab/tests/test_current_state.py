@@ -59,6 +59,12 @@ class CurrentStateTests(unittest.TestCase):
             self.assertRegex(policy_source["sha256"], r"^[0-9a-f]{64}$")
             self.assertFalse(stored["owner_decisions"]["authoritative"])
             self.assertEqual(
+                stored["owner_decisions"]["source"],
+                "ZIPPOWORKZ_OWNER_POLICY.md v1.2",
+            )
+            self.assertEqual(stored["node_authority"]["machine_id"], "UNKNOWN")
+            self.assertFalse(stored["node_authority"]["is_active_node"])
+            self.assertEqual(
                 stored["owner_decisions"]["source_sha256"],
                 policy_source["sha256"],
             )

@@ -69,6 +69,61 @@ class CurrentStateService:
         )
         return result
 
+    def _node_authority(self) -> dict[str, object]:
+        result: dict[str, object] = {
+            "machine_id": "UNKNOWN",
+            "role": "UNKNOWN",
+            "authoritative": False,
+            "active_node": "UNKNOWN",
+            "standby_nodes": [],
+            "is_active_node": False,
+            "source": "NOT_FOUND",
+        }
+        zippoworkz_root = None
+        for candidate in (self.root, *self.root.parents):
+            if (candidate / "MACHINE_ID.json").is_file():
+                zippoworkz_root = candidate
+                break
+        if zippoworkz_root is None:
+            return result
+        try:
+            machine = json.loads(
+                (zippoworkz_root / "MACHINE_ID.json").read_text(encoding="utf-8-sig")
+            )
+            result.update(
+                {
+                    "machine_id": str(machine.get("machine_id") or "UNKNOWN"),
+                    "role": str(machine.get("role") or "UNKNOWN"),
+                    "authoritative": bool(machine.get("authoritative")),
+                }
+            )
+        except (OSError, ValueError, TypeError):
+            pass
+        authority_path = (
+            zippoworkz_root / "Context" / "Owner" / "PUBLISHING_AUTHORITY.json"
+        )
+        if not authority_path.is_file():
+            return result
+        try:
+            authority = json.loads(authority_path.read_text(encoding="utf-8-sig"))
+            active = str(authority.get("active_node") or "UNKNOWN")
+            standby = [str(value) for value in (authority.get("standby_nodes") or [])]
+            result.update(
+                {
+                    "active_node": active,
+                    "standby_nodes": standby,
+                    "is_active_node": result["machine_id"] == active,
+                    "failover_mode": authority.get("failover_mode"),
+                    "updated_at": authority.get("updated_at"),
+                    "source": str(authority_path.relative_to(zippoworkz_root)).replace(
+                        "\\", "/"
+                    ),
+                }
+            )
+        except (OSError, ValueError, TypeError):
+            pass
+        return result
+
     def _remote(self, include_url: bool) -> dict[str, object]:
         path = self.root / "data" / "REMOTE_ACCESS_CURRENT.txt"
         result: dict[str, object] = {"active": False, "started_at": None}
@@ -103,6 +158,7 @@ class CurrentStateService:
             "database", "data/review_dashboard.db"
         )
         owner_policy = self._owner_policy_provenance()
+        node_authority = self._node_authority()
         operations = config.get("operations", {})
         creators = [
             dict(row)
@@ -271,6 +327,7 @@ class CurrentStateService:
             "app_version": self._app_version(),
             "schema_version": self.database.schema_version(),
             "git": self._git(),
+            "node_authority": node_authority,
             "personas": creators,
             "content": {
                 "total": sum(status_counts.values()),
@@ -342,7 +399,7 @@ class CurrentStateService:
             "tests": tests,
             "blockers": dict(blockers),
             "owner_decisions": {
-                "source": "ZIPPOWORKZ_OWNER_POLICY.md v1.2",
+                "source": f"ZIPPOWORKZ_OWNER_POLICY.md v{owner_policy['version']}",
                 "authoritative": False,
                 "role": "DERIVED_COMPATIBILITY_SUMMARY",
                 "source_sha256": owner_policy["sha256"],
