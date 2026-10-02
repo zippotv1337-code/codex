@@ -1,5 +1,45 @@
 # Aktueller Handoff
 
+## AKTUELL — Single Source of Truth / Runtime, 2. Oktober 2026
+
+- Der operative Checkout ist jetzt ausschließlich
+  `C:\Zippoworkz\Workspace\codex_deploy` auf `main`; der getestete Code-Stand
+  ist `39ccc62` vor diesem Dokumentations-Commit. Web, Supervisor, Watchdog
+  und Scheduler verwenden denselben Checkout. Die drei Windows-Wartungs-Tasks
+  und der Autostart zeigen ebenfalls dorthin. Die bisherigen Task-Trigger
+  wurden unverändert gelassen; Weekly/Monthly prüfen täglich und überspringen
+  einen bereits vorhandenen Wochen-/Monatsstand.
+- Die einzige aktive operative DB wurde aus dem alten Runtime-Checkout in den
+  neuen Pfad verschoben: `creator-collab/data/review_dashboard.db`, Schema 8.
+  `integrity_check=ok`, Foreign Keys 0; 8 Publications, 50 Assets und weiterhin
+  0 DM-Events/Conversations/Replies. Beim ersten Start verursachte ein
+  Katalog-No-op nur `product_packs.updated_at`-Änderungen; der Fehler ist auf
+  Main behoben. Der gesicherte Vor-Cutover-Stand wurde vor dem finalen Start
+  wiederhergestellt. Danach sind alle Tabelleninhalte mit dem Backup gleich;
+  SQLite-Dateibytes dürfen sich durch Initialisierung ändern.
+- `origin/main` enthält jetzt auch den Claude-mitverfassten Echo-Guard gegen
+  Leona/Mara-Bot-Antwortschleifen, den read-only DM-Diagnosebefehl und die
+  fail-closed Provider-Poll-Fixes. Das separate DM-Hardening mit Schema 9 ist
+  als einziger aktiver Engineering-Branch erhalten, aber bewusst nicht in die
+  Schema-8-Runtime gemergt oder deployt; sein Start würde die operative DB
+  automatisch migrieren.
+- Verifiziert: 254 Python-Tests plus 24 Subtests, 7 Dashboard-Tests,
+  Compilecheck, Secret-Scan über 408 Git-Dateien und Diff-Check grün.
+  `/api/health` meldet `ok`/DB `ok`; kontrollierter Scheduler- und Watchdog-Lauf
+  beendeten sich mit Exit 0. Leona und Mara liefern per offiziellen read-only
+  Provider-GETs jeweils eine gültige leere Conversations-Seite. Der aktuelle
+  Diagnose-Readback meldet passende Handles, aber `account_id_match=false`
+  bei beiden; das widerspricht älterer Diagnose-Evidence und bleibt offen.
+  Ein echter Inbound→Reply→Delivery-Roundtrip ist nicht belegt: `BOT_WORKS=NO`.
+- Die fünf alten Review-Worktrees sind archiviert; die einzigen uncommitteten
+  DM-P1-Dokumente und das Journal wurden separat hash-geprüft gesichert. Das
+  ehemalige `codex_ingest` ist nun Git-Administrationsarchiv, kein Runtime-Pfad.
+  Der genaue Evidence-Bericht liegt unter
+  `C:\Zippoworkz\Handoff\VPS\ZIPPOWORKZ_CONSOLIDATION_FINAL.md`.
+
+Die folgenden Abschnitte bleiben historische Evidence und überschreiben
+diesen aktuellen Runtime-Readback nicht.
+
 ## Review-Nachtrag — DM-Diagnose, 1. Oktober 2026
 
 - Kleiner Delta auf `228f0ac`: Poll überspringt Dict-Threadantworten ohne

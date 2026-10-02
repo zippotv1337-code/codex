@@ -1,5 +1,29 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## ZippoWorkz Single-Source-Konsolidierung — 2. Oktober 2026
+
+`origin/main` ist die einzige Produktcode-Wahrheit. Der eine operative
+Deployment-Checkout liegt unter `C:\Zippoworkz\Workspace\codex_deploy` und
+benutzt die bestehende Schema-8-DB im dortigen `creator-collab/data/`-Ordner.
+Web, Supervisor, Scheduler, Watchdog, drei Windows-Wartungs-Tasks und Autostart
+sind darauf ausgerichtet. Alte Review-Worktrees und der frühere Runtime-/Git-
+Hauptcheckout sind nach Sicherung archiviert; ein DM-Schema-9-Hardening-Branch
+bleibt als einziger aktiver Engineering-Stand separat, nicht deployed.
+
+Main bewahrt den Claude-Echo-Guard gegen Bot-zu-Bot-DM-Schleifen und den
+read-only Meta-Diagnosepfad. Wartungs-Healthcheck/Backup-Aufrufe verwenden
+jetzt die kanonische Konfiguration; unveränderte Produktkatalog-Zeilen werden
+beim Start nicht mehr mit einem neuen Zeitstempel überschrieben. Nach dem
+finalen Runtime-Start: 254 Python-Tests plus 24 Subtests, 7 Dashboard-Tests,
+DB-Integrity `ok`, Foreign Keys 0, `/api/health=ok`, Scheduler/Watchdog Exit 0.
+Beide Meta-GETs sind erreichbar und liefern derzeit null sichtbare
+Conversations; `BOT_WORKS=NO` bis zu einem echten Roundtrip. Der aktuelle
+ID-Abgleich in der Diagnose ist für beide Personas `false`, obwohl die Handles
+passen; ältere gegenteilige Readbacks gelten nicht als aktueller Beleg.
+
+Details: `sessions/2026-10-02-0718-codex-single-source.md` und
+`C:\Zippoworkz\Handoff\VPS\ZIPPOWORKZ_CONSOLIDATION_FINAL.md`.
+
 ## Instagram-DM-Diagnose — 1. Oktober 2026
 
 `instagram-dm-diagnose` ergänzt eine wiederverwendbare, secret-freie GET-only-
