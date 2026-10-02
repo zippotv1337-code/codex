@@ -47,7 +47,9 @@
   zeigen auf Deployment. Kontrollierter Scheduler und Watchdog: Exit 0.
 - Operative DB nach Cutover: Schema 8, Integrity `ok`, FK 0, 8 Publications,
   50 Assets, 0 DM-Inbound/Conversations/Outbox. Gegen das Pre-Cutover-Backup
-  keine Tabellen- oder Count-Abweichungen beim ersten finalen Start.
+  beim ersten finalen Start keine Tabellenabweichungen. Nach dem kontrollierten
+  Scheduler-Lauf änderte sich nur `instagram_dm_provider_sync` (erwarteter
+  Sync-Status/Zeitstempel); alle Tabellen-Counts blieben gleich.
 - Leona und Mara: read-only Identity-/Conversations-GET erfolgreich, Handles
   passend, gültige erste Seite mit je 0 Conversations. `account_id_match` ist
   aktuell bei beiden `false`; keine Schlussfolgerung zur Ursache ohne Beleg.

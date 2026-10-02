@@ -15,7 +15,9 @@
   0 DM-Events/Conversations/Replies. Beim ersten Start verursachte ein
   Katalog-No-op nur `product_packs.updated_at`-Änderungen; der Fehler ist auf
   Main behoben. Der gesicherte Vor-Cutover-Stand wurde vor dem finalen Start
-  wiederhergestellt. Danach sind alle Tabelleninhalte mit dem Backup gleich;
+  wiederhergestellt. Vor dem Scheduler waren die Tabelleninhalte gleich;
+  nach dem kontrollierten Lauf änderte sich nur der erwartete Betriebsstatus
+  in `instagram_dm_provider_sync`. Schema und alle Tabellen-Counts blieben gleich;
   SQLite-Dateibytes dürfen sich durch Initialisierung ändern.
 - `origin/main` enthält jetzt auch den Claude-mitverfassten Echo-Guard gegen
   Leona/Mara-Bot-Antwortschleifen, den read-only DM-Diagnosebefehl und die
