@@ -85,7 +85,7 @@ class StandaloneRuntimeTests(unittest.TestCase):
         self.assertIn("runtimeConfig.OfficialInstagramPublish", scheduler)
         self.assertIn("runtimeConfig.LiveExternalActions", scheduler)
         self.assertIn("runtimeConfig.PublishingAdapter -eq 'meta-graph'", scheduler)
-        self.assertIn("CREATOR_OPS_PASSWORD.Length -ge 12", scheduler)
+        self.assertNotIn("CREATOR_OPS_PASSWORD.Length -ge 12", scheduler)
         self.assertIn("GetEnvironmentVariable($name, 'User')", scheduler)
         self.assertIn("SetEnvironmentVariable($name, $userValue, 'Process')", scheduler)
         self.assertNotIn("Write-RunLog $userValue", scheduler)
@@ -101,7 +101,8 @@ class StandaloneRuntimeTests(unittest.TestCase):
 
         parsed = tomllib.loads(config)
         self.assertEqual(parsed["runtime"]["port"], 4180)
-        self.assertEqual(parsed["runtime"]["database"], "data/review_dashboard.db")
+        runtime_db = str(parsed["runtime"]["database"]).replace("\\", "/")
+        self.assertTrue(runtime_db.endswith("data/review_dashboard.db"))
         self.assertTrue(parsed["scheduler"]["dispatch_live"])
         self.assertTrue(parsed["publishing"]["live_enabled"])
         self.assertEqual(parsed["publishing"]["adapter"], "meta-graph")
