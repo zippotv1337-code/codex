@@ -1269,6 +1269,7 @@ class InstagramDMService:
             ingested = 0
             rejected = 0
             replies_sent = 0
+            replies_delivered = 0
             try:
                 events = self.provider.poll(slug)
                 seen = len(events)
@@ -1295,6 +1296,7 @@ class InstagramDMService:
                     )
                     if processed.get("status") == "SENT":
                         replies_sent += 1
+                replies_delivered = self._reconcile_sent_replies(int(creator["id"]))
                 status = "SYNCED"
                 error = None
             except (InstagramDMProviderError, InstagramDMProviderConnectionError) as provider_error:
@@ -1329,9 +1331,49 @@ class InstagramDMService:
                     )
             results[slug] = {
                 "status": status, "seen": seen, "ingested": ingested,
-                "rejected": rejected, "replies_sent": replies_sent, "error": error,
+                "rejected": rejected, "replies_sent": replies_sent,
+                "replies_delivered": replies_delivered, "error": error,
             }
-        return {"status": "COMPLETE", "personas": results, "external_action": False}
+        return {
+            "status": "COMPLETE",
+            "personas": results,
+            "external_action": any(
+                isinstance(item, dict) and item.get("replies_sent") for item in results.values()
+            ),
+        }
+
+    def _reconcile_sent_replies(self, creator_id: int) -> int:
+        """Confirm earlier sends in the provider thread; read-only, never resends.
+
+        Replies younger than a minute wait for the next sync so one reconcile
+        normally settles them. Only rows with a provider message ID qualify.
+        """
+        now = datetime.now(UTC)
+        rows = self.database.all(
+            """
+            SELECT o.id FROM instagram_dm_outbox o
+            JOIN instagram_dm_conversations c ON c.id=o.conversation_id
+            WHERE c.creator_id=? AND o.status IN ('SENT', 'RECONCILE_REQUIRED')
+              AND o.provider_message_id IS NOT NULL
+              AND o.sent_at <= ? AND o.sent_at >= ?
+              AND c.external_conversation_id NOT LIKE 'webhook-igsid:%'
+            ORDER BY o.id LIMIT 20
+            """,
+            (
+                creator_id,
+                (now - timedelta(minutes=1)).isoformat(timespec="seconds"),
+                (now - timedelta(days=7)).isoformat(timespec="seconds"),
+            ),
+        )
+        delivered = 0
+        for row in rows:
+            try:
+                result = self.reconcile_reply(int(row["id"]))
+            except InstagramDMProviderError:
+                continue
+            if result.get("status") == "DELIVERED":
+                delivered += 1
+        return delivered
 
     def dashboard(self, *, limit: int = 50) -> dict[str, object]:
         limit = min(max(int(limit), 1), 100)
