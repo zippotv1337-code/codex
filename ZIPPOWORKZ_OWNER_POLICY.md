@@ -1,7 +1,7 @@
 # ZIPPOWORKZ_OWNER_POLICY
 
-Version: 1.3
-Stand: 01.10.2026
+Version: 1.4
+Stand: 02.10.2026
 Geltung: projektweit und dashboard-übergreifend
 Status: CANONICAL / OWNER-APPROVED
 
@@ -497,8 +497,23 @@ so weit wie möglich autonom fertigstellen und nur das letzte echte Gate zum Own
 
 ## 40. Work / Codex / neue Chats
 
-Jeder neue ZippoWorkz-Chat, Work-Run, Codex-Run, Local-AI-Run und VPS-Run
-soll diese Datei als gemeinsame Owner-Basis behandeln.
+Jeder neue ZippoWorkz-Chat, Work-Run, Codex-Run, Claude-Run, Local-AI-Run und VPS-Run
+verwendet dieselbe Owner-Policy.
+
+Token-sparender Standard:
+- zuerst nur Policy-Header/Version und ZIPPOWORKZ_AGENT_BRIEF.md laden,
+- wenn Brief-Version und Policy-Version übereinstimmen, gilt der Brief als abgeleitete operative Kurzfassung,
+- danach nur den aktuellen Task, relevante Runtime-Evidence und direkt betroffene Dateien/Diffs laden,
+- ZIPPOWORKZ_COMMAND_LAYER.md nur bei Bedarf bzw. für Agenten-Orchestrierung verwenden,
+- keine historischen Handoffs/Journals pauschal vollständig laden.
+
+Die vollständige Owner-Policy muss zusätzlich gelesen werden, wenn mindestens eines gilt:
+- Policy/Agent-Brief wird geändert,
+- Owner-Gate, Kosten, Auth, Security, Secrets, Identität/KYC/OTP oder rechtliche Bindung ist betroffen,
+- neue externe Lane, schwer reversible Aktion oder unklare Berechtigung,
+- Agent Brief und Policy-Version stimmen nicht überein,
+- es gibt einen Regelkonflikt oder die Kurzfassung reicht für die Entscheidung nicht aus,
+- der Owner verlangt ausdrücklich Vollprüfung.
 
 Komponentenspezifische Rollen dürfen diese Policy ergänzen, aber nicht widersprechen.
 Wenn ein altes Dokument widerspricht, gewinnt diese Policy,
@@ -509,9 +524,12 @@ sofern keine neuere ausdrückliche Owner-Entscheidung existiert.
 Bei echter Owner-Regeländerung:
 1. diese Datei ändern,
 2. Version erhöhen,
-3. Änderung knapp im Git-Commit dokumentieren,
-4. alle Komponenten verwenden danach dieselbe neue Version.
+3. ZIPPOWORKZ_AGENT_BRIEF.md auf dieselbe Policy-Version aktualisieren,
+4. Änderung knapp im Git-Commit dokumentieren,
+5. alle Komponenten verwenden danach dieselbe neue Version.
 
+ZIPPOWORKZ_AGENT_BRIEF.md ist nur eine abgeleitete Kurzfassung und darf keine neuen Rechte/Gates erfinden.
+Bei Versions-Mismatch oder Konflikt muss die vollständige Owner-Policy geladen werden.
 Keine separaten Owner-Policies pro VPS, Local AI, Codex oder Creator Ops erzeugen.
 Das Dashboard soll später anzeigen, welche Policy-Version die Komponenten geladen haben.
 
@@ -610,6 +628,50 @@ soll sie als Verbesserungspunkt markiert und möglichst vereinfacht werden.
 Ziel:
 Der Owner entscheidet; das System arbeitet.
 
-## 50. Schlussregel
+## 50. Agent Brief / Kontext-Effizienz
+
+ZIPPOWORKZ_AGENT_BRIEF.md ist die kurze Startbasis für normale Runs.
+Ziel ist weniger Tokenverbrauch ohne Verlust von Owner-Gates oder Betriebswahrheit.
+
+Standard:
+- keine vollständigen Repo-/Journal-/Handoff-Scans bei bekanntem Scope,
+- maximal die direkt relevante Current-State-/Handoff-Quelle laden,
+- bekannte unveränderte Fakten nicht erneut in Prompts kopieren,
+- Diffs, IDs, Counts und Pfade statt vollständiger Datei-/Log-Dumps weitergeben,
+- Kontext aus derselben Session wiederverwenden statt neu einlesen,
+- Claude soll Codex nur das kleinste ausführbare Delta übergeben,
+- Codex soll vorhandenen Scope umsetzen statt ihn erneut breit herzuleiten.
+
+## 51. ZippoWorkz Command Layer
+
+ZIPPOWORKZ_COMMAND_LAYER.md definiert kurze interne Arbeitsmodi wie /rootcause, /verify,
+/debug, /implement, /reality, /optimize und /compact.
+
+Diese Commands sind keine versteckten Produktbefehle und erweitern keine Rechte.
+Sie sind standardisierte Kurzformen für Arbeitsweisen innerhalb dieser Policy.
+Ein Command darf niemals Owner-Gates, Safety, Plattformregeln oder Kostenregeln umgehen.
+
+## 52. Kompakte Agentenkommunikation
+
+Default ist direkt, evidenzbasiert und kurz.
+
+Claude-Plan für normale Aufgaben:
+ROOT_CAUSE / DELTA / FILES / DONE / GATE
+in der Regel höchstens 12 kurze Zeilen.
+
+Codex-Abschluss für normale Aufgaben:
+STATUS / CHANGED / TESTS / REALITY / COMMIT / NEXT
+in der Regel höchstens 12 kurze Zeilen.
+
+Bei Blocker:
+BLOCKER / WHY / OWNER_ACTION
+nur die tatsächlich nötige Owner-Aktion nennen.
+
+Keine Wiederholung des kompletten Auftrags.
+Keine langen Tool-Ausgaben in Handoffs, wenn Counts/Pfade/Hashes reichen.
+Zwischenmeldungen nur bei Start, echtem Phasenwechsel, Blocker oder Abschluss.
+Details nur dann ausführlicher, wenn Risiko/Komplexität es erfordert oder der Owner sie anfordert.
+
+## 53. Schlussregel
 
 Ein Owner -> eine gemeinsame Policy -> ein ZippoWorkz -> mehrere spezialisierte ausführende Systeme.

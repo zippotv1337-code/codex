@@ -1,7 +1,7 @@
 # ZIPPOWORKZ_START_HERE
 
 Status: CANONICAL BOOTSTRAP
-Stand: 01.10.2026
+Stand: 02.10.2026
 
 ## Zweck
 
@@ -12,15 +12,20 @@ Chat-Memory ist hilfreich, aber niemals die alleinige Projektwahrheit.
 
 ## Verbindliche Lade-Reihenfolge
 
-1. ZIPPOWORKZ_OWNER_POLICY.md vollständig lesen.
-2. C:\Zippoworkz\Context\Sync\CURRENT_TRUTH.md lesen, wenn vorhanden. Das ist ein abgeleiteter Runtime-Snapshot und ersetzt niemals neuere Live-/Provider-Evidence.
-3. Aktuellen Projekt-/Runtime-Status lesen, soweit für die Aufgabe relevant.
-4. Bei creator-collab:
-   - creator-collab/PROJECT_RESUME.md
-   - creator-collab/CURRENT_HANDOFF.md
-   - neuestes Sitzungsjournal
-5. Nur danach aufgabenbezogene Detaildateien laden.
+Token-sparender Normalfall:
+1. Header/Version von ZIPPOWORKZ_OWNER_POLICY.md prüfen.
+2. ZIPPOWORKZ_AGENT_BRIEF.md lesen.
+3. aktuellen Task und nur relevante Runtime-Evidence lesen.
+4. direkt betroffene Dateien/Diffs laden.
+5. ZIPPOWORKZ_COMMAND_LAYER.md für Arbeitsmodus/Übergabe verwenden.
 6. Delta-Ingest / gezielte Reads bevorzugen, keinen unnötigen Vollscan.
+
+Nicht automatisch PROJECT_RESUME + CURRENT_HANDOFF + Journal gemeinsam laden.
+Eine relevante Current-State-/Handoff-Quelle reicht im Normalfall.
+
+Volle ZIPPOWORKZ_OWNER_POLICY.md zusätzlich lesen bei:
+Policy-Änderung; Owner-Gate; Auth/Security/Secrets/Kosten/Identität/Legal;
+neuer externer Lane oder schwer reversibler Aktion; Versions-Mismatch; Regelkonflikt.
 
 ## Konfliktregel
 

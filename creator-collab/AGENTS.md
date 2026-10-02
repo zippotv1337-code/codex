@@ -5,11 +5,15 @@ Sie ist keine eigene Owner-Policy und darf der zentralen Policy nicht widersprec
 
 ## Sitzungsstart
 
+Token-sparender Normalfall:
 1. ../ZIPPOWORKZ_START_HERE.md lesen.
-2. ../ZIPPOWORKZ_OWNER_POLICY.md lesen.
-3. PROJECT_RESUME.md lesen.
-4. CURRENT_HANDOFF.md lesen.
-5. neuestes Sitzungsjournal lesen.
+2. Policy-Version prüfen und ../ZIPPOWORKZ_AGENT_BRIEF.md lesen.
+3. aktuellen Task und genau die relevante Runtime-/Handoff-Quelle lesen.
+4. direkt betroffene Dateien/Diffs lesen.
+5. ../ZIPPOWORKZ_COMMAND_LAYER.md bei Agentenübergaben verwenden.
+
+Nicht automatisch PROJECT_RESUME, CURRENT_HANDOFF und Journal gemeinsam laden.
+Volle Owner-Policy nur bei den Full-Policy-Triggern aus START_HERE.
 
 Aktuelle ausdrückliche Owner-Anweisungen haben Vorrang vor historischen Plänen.
 Bereits verifizierte Arbeit nicht ohne neue Anforderung oder reproduzierbaren Defekt wiederholen.
