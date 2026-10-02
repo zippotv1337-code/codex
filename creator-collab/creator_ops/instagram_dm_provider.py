@@ -198,7 +198,7 @@ class MetaInstagramDMProvider:
             return result
         transport = self._transport(persona)
         for stage, path, params in (
-            ("identity", "me", {"fields": "user_id,username"}),
+            ("identity", "me", {"fields": "id,user_id,username"}),
             ("conversations", f"{account.account_id}/conversations",
              {"platform": "instagram", "fields": "id,updated_time,participants", "limit": "25"}),
         ):
@@ -207,7 +207,10 @@ class MetaInstagramDMProvider:
                 result[f"{stage}_call_ok"] = True
                 if stage == "identity":
                     if isinstance(payload, dict):
-                        result["account_id_match"] = str(payload.get("user_id") or "") == account.account_id
+                        identity_id = str(payload.get("id") or "")
+                        result["account_id_match"] = bool(identity_id) and hmac.compare_digest(
+                            identity_id, account.account_id
+                        )
                         username = payload.get("username")
                         # Only the public handle is eligible for output.
                         if (isinstance(username, str)

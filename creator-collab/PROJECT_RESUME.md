@@ -1,5 +1,14 @@
 # Projekt-Résumé: Virtual Creators Germany
 
+## Instagram-DM-Diagnose-ID — 2. Oktober 2026
+
+Die Diagnose verwendet für `account_id_match` jetzt die Meta-Identity-`id`
+statt `user_id`. Ein fehlendes oder abweichendes `id` bleibt fail-closed.
+Read-only CLI-GETs bestätigen für Leona und Mara einen passenden ID-/Handle-
+Abgleich bei weiterhin gültigen leeren Conversations-Seiten. Das korrigiert
+den Diagnosefehler, beweist aber keinen DM-Live-Roundtrip (`BOT_WORKS=NO`).
+Tests und Evidence: `sessions/2026-10-02-0743-codex-dm-diagnose-id.md`.
+
 ## ZippoWorkz Single-Source-Konsolidierung — 2. Oktober 2026
 
 `origin/main` ist die einzige Produktcode-Wahrheit. Der eine operative
@@ -18,8 +27,8 @@ finalen Runtime-Start: 254 Python-Tests plus 24 Subtests, 7 Dashboard-Tests,
 DB-Integrity `ok`, Foreign Keys 0, `/api/health=ok`, Scheduler/Watchdog Exit 0.
 Beide Meta-GETs sind erreichbar und liefern derzeit null sichtbare
 Conversations; `BOT_WORKS=NO` bis zu einem echten Roundtrip. Der aktuelle
-ID-Abgleich in der Diagnose ist für beide Personas `false`, obwohl die Handles
-passen; ältere gegenteilige Readbacks gelten nicht als aktueller Beleg.
+ID-Abgleich war vor der obigen gezielten Korrektur für beide Personas
+fälschlich `false`; dieser Absatz dokumentiert den damaligen Cutover-Stand.
 
 Details: `sessions/2026-10-02-0718-codex-single-source.md` und
 `C:\Zippoworkz\Handoff\VPS\ZIPPOWORKZ_CONSOLIDATION_FINAL.md`.

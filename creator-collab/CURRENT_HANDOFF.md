@@ -1,5 +1,21 @@
 # Aktueller Handoff
 
+## AKTUELL — Instagram-DM-Diagnose-ID korrigiert, 2. Oktober 2026
+
+- Der read-only Diagnosepfad vergleicht die konfigurierte Instagram-Konto-ID
+  jetzt ausschließlich mit `GET /me`-Feld `id`; `user_id` bleibt ein
+  angefordertes, aber nicht für diesen Vergleich verwendetes Feld. Fehlendes
+  `id` ist weiterhin ein Mismatch. Der `/conversations`-Pfad blieb unverändert.
+- CLI-Readback aus dem aktualisierten Checkout: Leona und Mara haben jeweils
+  `identity_call_ok=true`, `account_id_match=true`, passenden Handle und
+  `conversations_call_ok=true`, aber nur eine gültige leere `data: []`-Seite.
+  Es wurden ausschließlich GETs ausgeführt, keine DB- oder Runtime-Änderung,
+  kein Send und keine Meta-Dashboard-Aktion.
+- Fokussiert: 59 Tests plus 24 Subtests grün; komplette Python-Suite:
+  257 Tests plus 24 Subtests grün. Die fehlende Inbox-Sichtbarkeit bleibt
+  separat offen. `BOT_WORKS=NO` bis zu einem echten Inbound→Reply→Delivery-
+  Nachweis. Details: `sessions/2026-10-02-0743-codex-dm-diagnose-id.md`.
+
 ## AKTUELL — Single Source of Truth / Runtime, 2. Oktober 2026
 
 - Der operative Checkout ist jetzt ausschließlich

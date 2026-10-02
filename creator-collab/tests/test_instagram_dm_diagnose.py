@@ -11,7 +11,9 @@ from creator_ops.publishing import MetaGraphError
 def provider(identity=None, conversations=None):
     transport = Mock()
     transport.get.side_effect = [
-        identity if identity is not None else {"user_id": "account-id", "username": "leonavoss.ai"},
+        identity if identity is not None else {
+            "id": "account-id", "user_id": "different-user-id", "username": "leonavoss.ai"
+        },
         conversations if conversations is not None else {"data": []},
     ]
     adapter = MetaInstagramDMProvider(
@@ -33,21 +35,64 @@ def test_identity_and_empty_page_are_only_read_facts():
         "response_has_data_list": True, "conversation_count": 0, "paging_present": False,
     }
     assert transport.get.call_count == 2
-    assert transport.get.call_args_list[0].args == ("me", {"fields": "user_id,username"})
+    assert transport.get.call_args_list[0].args == ("me", {"fields": "id,user_id,username"})
+    assert transport.get.call_args_list[1].args == (
+        "account-id/conversations",
+        {"platform": "instagram", "fields": "id,updated_time,participants", "limit": "25"},
+    )
     transport.post.assert_not_called()
     assert "account-id" not in json.dumps(result)
+    assert "different-user-id" not in json.dumps(result)
 
 
 @pytest.mark.parametrize("identity,id_match,user_match", [
-    ({"user_id": "wrong", "username": "leonavoss.ai"}, False, True),
-    ({"user_id": "account-id", "username": "other.account"}, True, False),
-    ({"id": "account-id", "username": "leonavoss.ai"}, False, True),
+    ({"id": "account-id", "user_id": "different-user-id", "username": "leonavoss.ai"}, True, True),
+    ({"id": "other-id", "user_id": "account-id", "username": "leonavoss.ai"}, False, True),
+    ({"user_id": "account-id", "username": "leonavoss.ai"}, False, True),
+    ({"id": "", "user_id": "account-id", "username": "leonavoss.ai"}, False, True),
+    ({"id": "account-id", "username": "other.account"}, True, False),
 ])
 def test_identity_mismatches(identity, id_match, user_match):
     adapter, _ = provider(identity)
     result = adapter.diagnose("leona-voss")
     assert result["account_id_match"] is id_match
     assert result["expected_username_match"] is user_match
+
+
+def test_two_read_only_gets_per_configured_persona():
+    accounts = {
+        "leona-voss": ("leona-id", "leona-test-secret"),
+        "mara-field": ("mara-id", "mara-test-secret"),
+    }
+    handles = {"leona-voss": "leonavoss.ai", "mara-field": "mara.field.ai"}
+    transports = {}
+    for persona, (account_id, _) in accounts.items():
+        transport = Mock()
+        transport.get.side_effect = [
+            {"id": account_id, "user_id": f"other-{persona}", "username": handles[persona]},
+            {"data": []},
+        ]
+        transports[persona] = transport
+    adapter = MetaInstagramDMProvider(
+        accounts=accounts,
+        graph_version="v24.0", graph_host="graph.instagram.com",
+        transport_factory=lambda persona: transports[persona],
+    )
+    for persona, (account_id, _) in accounts.items():
+        result = adapter.diagnose(persona)
+        assert result["account_id_match"] is True
+        assert result["expected_username_match"] is True
+        transport = transports[persona]
+        assert transport.get.call_count == 2
+        assert transport.get.call_args_list[0].args == ("me", {"fields": "id,user_id,username"})
+        assert transport.get.call_args_list[1].args == (
+            f"{account_id}/conversations",
+            {"platform": "instagram", "fields": "id,updated_time,participants", "limit": "25"},
+        )
+        transport.post.assert_not_called()
+        serialized = json.dumps(result)
+        assert account_id not in serialized
+        assert f"other-{persona}" not in serialized
 
 
 @pytest.mark.parametrize("payload", [{}, {"data": None}, {"data": {}}, [], {"data": ["bad"]}])
@@ -123,11 +168,12 @@ def test_errors_are_sanitized(error, expected):
 
 def test_nonempty_page_does_not_expose_ids_text_or_paging_values():
     adapter, _ = provider(conversations={"data": [{"id": "private-id", "message": "private-text"}],
-                                         "paging": {"next": "test-secret-value"}})
+                                         "paging": {"next": "https://private.example/next?token=test-secret-value"}})
     result = adapter.diagnose("leona-voss")
     assert result["conversation_count"] == 1
     assert result["paging_present"] is True
-    for private in ("private-id", "private-text", "test-secret-value"):
+    for private in ("account-id", "different-user-id", "private-id", "private-text",
+                    "test-secret-value", "https://private.example/next"):
         assert private not in json.dumps(result)
 
 
