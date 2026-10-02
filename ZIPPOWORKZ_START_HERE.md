@@ -13,13 +13,14 @@ Chat-Memory ist hilfreich, aber niemals die alleinige Projektwahrheit.
 ## Verbindliche Lade-Reihenfolge
 
 1. ZIPPOWORKZ_OWNER_POLICY.md vollständig lesen.
-2. Aktuellen Projekt-/Runtime-Status lesen, soweit für die Aufgabe relevant.
-3. Bei creator-collab:
+2. C:\Zippoworkz\Context\Sync\CURRENT_TRUTH.md lesen, wenn vorhanden. Das ist ein abgeleiteter Runtime-Snapshot und ersetzt niemals neuere Live-/Provider-Evidence.
+3. Aktuellen Projekt-/Runtime-Status lesen, soweit für die Aufgabe relevant.
+4. Bei creator-collab:
    - creator-collab/PROJECT_RESUME.md
    - creator-collab/CURRENT_HANDOFF.md
    - neuestes Sitzungsjournal
-4. Nur danach aufgabenbezogene Detaildateien laden.
-5. Delta-Ingest / gezielte Reads bevorzugen, keinen unnötigen Vollscan.
+5. Nur danach aufgabenbezogene Detaildateien laden.
+6. Delta-Ingest / gezielte Reads bevorzugen, keinen unnötigen Vollscan.
 
 ## Konfliktregel
 
