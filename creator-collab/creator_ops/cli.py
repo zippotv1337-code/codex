@@ -71,8 +71,10 @@ def build_publish_queue(
     settings = tomllib.loads(config_path.read_text(encoding="utf-8"))
     publishing = settings.get("publishing", {})
     enabled = live_publishing_requested(config_path)
-    password_ready = len(os.environ.get("CREATOR_OPS_PASSWORD", "")) >= 12
-    if enabled and password_ready and publishing.get("adapter") == "meta-graph":
+    # Background publishing is non-interactive. Its trust boundary is the
+    # runtime config, publishing authority and Secret Broker-backed Meta adapter;
+    # the dashboard password is only for dashboard authentication.
+    if enabled and publishing.get("adapter") == "meta-graph":
         adapter = MetaInstagramPublishingAdapter.from_environment(pipeline.db, ROOT)
     else:
         adapter = UnconfiguredInstagramAdapter()

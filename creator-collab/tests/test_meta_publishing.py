@@ -42,6 +42,17 @@ class FakeMetaTransport:
         self.gets.append((path, params))
         if params.get("fields") == "status_code":
             return {"status_code": "FINISHED"}
+        if params.get("fields") == "id,username,account_type":
+            username = (
+                "leonavoss.ai"
+                if path == "17841400000000001"
+                else "mara.field.ai"
+            )
+            return {
+                "id": path,
+                "username": username,
+                "account_type": "BUSINESS",
+            }
         return {
             "id": "18000000000000123",
             "permalink": "https://www.instagram.com/p/Confirmed123/",
@@ -429,7 +440,7 @@ class MetaPublishingTests(unittest.TestCase):
         self.assertIn("meta_account_not_configured", result.error)
         self.assertEqual(transport.posts, [])
 
-    def test_local_approval_alone_does_not_authorize_live_publish(self) -> None:
+    def test_local_approval_authorizes_known_public_sfw_creator_lane(self) -> None:
         self._write_manifest()
         with self.pipeline.db.transaction() as connection:
             connection.execute(
@@ -440,6 +451,48 @@ class MetaPublishingTests(unittest.TestCase):
 
         result = self._adapter(transport).publish(
             self.publication["id"], self.card["content_id"], "f" * 64
+        )
+
+        self.assertEqual(result.status, PUBLISHED)
+
+    def test_wrong_meta_username_blocks_before_any_publish_post(self) -> None:
+        self._write_manifest()
+        transport = FakeMetaTransport()
+        original_get = transport.get
+
+        def wrong_identity(path: str, params: dict[str, str]) -> dict[str, object]:
+            if params.get("fields") == "id,username,account_type":
+                return {
+                    "id": path,
+                    "username": "wrong.connected.account",
+                    "account_type": "BUSINESS",
+                }
+            return original_get(path, params)
+
+        transport.get = wrong_identity  # type: ignore[method-assign]
+        result = self._adapter(transport).publish(
+            self.publication["id"], self.card["content_id"], "1" * 64
+        )
+
+        self.assertEqual(result.status, BLOCKED_EXTERNAL_PUBLISHING)
+        self.assertEqual(result.error, "meta_account_username_mismatch")
+        self.assertEqual(transport.posts, [])
+
+    def test_explicit_revoke_blocks_known_creator_autopublish(self) -> None:
+        self._write_manifest()
+        with self.pipeline.db.transaction() as connection:
+            connection.execute(
+                """
+                INSERT INTO review_events(content_id, action, actor, note, created_at)
+                VALUES (?, 'OWNER_LIVE_PUBLISH_REVOKED_UI', 'owner-dashboard',
+                        'explicit revoke test', ?)
+                """,
+                (self.card["content_id"], datetime.now().astimezone().isoformat()),
+            )
+        transport = FakeMetaTransport()
+
+        result = self._adapter(transport).publish(
+            self.publication["id"], self.card["content_id"], "2" * 64
         )
 
         self.assertEqual(result.status, BLOCKED_EXTERNAL_PUBLISHING)
@@ -481,11 +534,11 @@ class MetaPublishingTests(unittest.TestCase):
                 encoding="utf-8",
             )
             enabled = build_publish_queue(self.pipeline, config)
-            self.assertIsInstance(enabled.adapter, UnconfiguredInstagramAdapter)
+            self.assertIsInstance(enabled.adapter, MetaInstagramPublishingAdapter)
 
             os.environ["CREATOR_OPS_PASSWORD"] = "correct horse battery staple"
-            enabled = build_publish_queue(self.pipeline, config)
-            self.assertIsInstance(enabled.adapter, MetaInstagramPublishingAdapter)
+            still_enabled = build_publish_queue(self.pipeline, config)
+            self.assertIsInstance(still_enabled.adapter, MetaInstagramPublishingAdapter)
 
     def test_queue_refuses_published_state_without_external_confirmation(self) -> None:
         service = PublishQueueService(self.pipeline.db, InvalidConfirmationAdapter())

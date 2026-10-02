@@ -265,6 +265,11 @@ class MetaInstagramPublishingAdapter:
 
     provider = "instagram-meta-graph"
     manifest_schema = "creator-ops-meta-publish-v1"
+    AUTO_PUBLISH_IDENTITIES = {
+        "leona-voss": "leonavoss.ai",
+        "mara-field": "mara.field.ai",
+    }
+    AUTO_PUBLISH_CREATORS = frozenset(AUTO_PUBLISH_IDENTITIES)
 
     def __init__(
         self,
@@ -467,6 +472,7 @@ class MetaInstagramPublishingAdapter:
             """
             SELECT v.caption, v.hashtags_json, p.ai_disclosure,
                    c.approved AS content_approved, c.status AS content_status,
+                   c.safety_class, c.visibility_scope, c.adult,
                    cr.slug AS creator_slug,
                    pa.public_handle AS expected_username,
                    (
@@ -497,6 +503,18 @@ class MetaInstagramPublishingAdapter:
             "SCHEDULED",
         }:
             raise ValueError("content_owner_approval_required")
+        creator_slug = str(publication["creator_slug"])
+        if creator_slug not in self.AUTO_PUBLISH_CREATORS:
+            raise ValueError("autopublish_creator_not_allowed")
+        configured_handle = str(publication["expected_username"] or "").strip().lstrip("@").casefold()
+        if configured_handle != self.AUTO_PUBLISH_IDENTITIES[creator_slug].casefold():
+            raise ValueError("autopublish_expected_handle_mismatch")
+        if (
+            publication["safety_class"] != "SFW"
+            or publication["visibility_scope"] != "PUBLIC_SFW"
+            or bool(publication["adult"])
+        ):
+            raise ValueError("autopublish_public_sfw_required")
         assets = self.database.all(
             """
             SELECT a.asset_id, COALESCE(plan.priority, 9999) AS priority
@@ -529,9 +547,12 @@ class MetaInstagramPublishingAdapter:
             raise ValueError("native_ai_disclosure_owner_confirmation_required")
         if not publication["ai_disclosure"]:
             raise ValueError("publication_ai_disclosure_required")
-        live_authorized = (
-            publication["live_gate_action"] == "OWNER_LIVE_PUBLISH_APPROVED_UI"
-        )
+        explicit_block = publication["live_gate_action"] in {
+            "OWNER_LIVE_PUBLISH_REVOKED_UI",
+            "OWNER_CHANGE_REQUESTED_UI",
+            "OWNER_REJECTED_UI",
+        }
+        live_authorized = not explicit_block
         if require_live_authorization and not live_authorized:
             raise ValueError("per_content_live_publish_owner_authorization_required")
         url_map = content_manifest.get("asset_urls", {})
@@ -817,6 +838,34 @@ class MetaInstagramPublishingAdapter:
         transport = self.transport or UrllibMetaGraphTransport(
             self.graph_version, access_token, graph_host=self.graph_host
         )
+
+        try:
+            identity = transport.get(
+                ig_user_id, {"fields": "id,username,account_type"}
+            )
+        except (ConnectionError, TimeoutError, MetaGraphError) as error:
+            return DispatchResult(
+                status=BLOCKED_EXTERNAL_PUBLISHING,
+                error=self._safe_graph_error(error),
+            )
+        returned_username = str(identity.get("username") or "").strip().lstrip("@").casefold()
+        expected_username = self.AUTO_PUBLISH_IDENTITIES[creator_slug].casefold()
+        account_type = str(identity.get("account_type") or "").upper()
+        if returned_username != expected_username:
+            return DispatchResult(
+                status=BLOCKED_EXTERNAL_PUBLISHING,
+                error="meta_account_username_mismatch",
+            )
+        if account_type not in {"BUSINESS", "MEDIA_CREATOR"}:
+            return DispatchResult(
+                status=BLOCKED_EXTERNAL_PUBLISHING,
+                error="meta_account_type_not_professional",
+            )
+        if not str(identity.get("id") or "").strip():
+            return DispatchResult(
+                status=BLOCKED_EXTERNAL_PUBLISHING,
+                error="meta_account_identity_missing",
+            )
 
         child_ids: list[str] = []
         try:

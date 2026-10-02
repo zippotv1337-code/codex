@@ -11,7 +11,7 @@ fiverr_gig_status = "ACTIVE_PUBLIC_VERIFIED_WRITE_READY_2026_09_21"
 [runtime]
 host = "127.0.0.1"
 port = 4180
-database = "data/review_dashboard.db"
+database = 'C:\Zippoworkz\Workspace\codex_ingest\creator-collab\data\review_dashboard.db'
 offline_output = "output/offline"
 health_path = "/api/health"
 
@@ -49,3 +49,4 @@ official_instagram_publish_adapter = true
 official_instagram_publish = true
 live_external_actions = true
 hard_dependency_on_gpt6 = false
+
