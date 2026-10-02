@@ -917,6 +917,8 @@ class InstagramDMService:
             }
         # Only the active node may write to Instagram; a standby node holding the
         # same credentials would otherwise answer the same inbound a second time.
+        # Blocked replies stay APPROVED and are deliberately never auto-resumed,
+        # so a later failover cannot send a stale duplicate; dispatch manually.
         authority_error = live_publish_error()
         if authority_error:
             raise ValueError(f"instagram_dm_send_blocked_{authority_error}")
@@ -1345,8 +1347,9 @@ class InstagramDMService:
     def _reconcile_sent_replies(self, creator_id: int) -> int:
         """Confirm earlier sends in the provider thread; read-only, never resends.
 
-        Replies younger than a minute wait for the next sync so one reconcile
-        normally settles them. Only rows with a provider message ID qualify.
+        Only replies sent 1-15 minutes ago with a provider message ID qualify,
+        which bounds automatic checks to about three 5-minute syncs. Whatever
+        stays unconfirmed remains RECONCILE_REQUIRED for the dashboard.
         """
         now = datetime.now(UTC)
         rows = self.database.all(
@@ -1357,19 +1360,25 @@ class InstagramDMService:
               AND o.provider_message_id IS NOT NULL
               AND o.sent_at <= ? AND o.sent_at >= ?
               AND c.external_conversation_id NOT LIKE 'webhook-igsid:%'
-            ORDER BY o.id LIMIT 20
+            ORDER BY o.id LIMIT 50
             """,
             (
                 creator_id,
                 (now - timedelta(minutes=1)).isoformat(timespec="seconds"),
-                (now - timedelta(days=7)).isoformat(timespec="seconds"),
+                (now - timedelta(minutes=15)).isoformat(timespec="seconds"),
             ),
         )
         delivered = 0
         for row in rows:
             try:
                 result = self.reconcile_reply(int(row["id"]))
-            except InstagramDMProviderError:
+            except InstagramDMProviderError as error:
+                code = str(error)
+                self._mark_outbox(
+                    int(row["id"]),
+                    "RECONCILE_REQUIRED",
+                    code if re.fullmatch(r"[a-z0-9_]{1,80}", code) else "provider_reconcile_error",
+                )
                 continue
             if result.get("status") == "DELIVERED":
                 delivered += 1

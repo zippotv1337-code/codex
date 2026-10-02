@@ -597,24 +597,32 @@ class InstagramDMP1Tests(unittest.TestCase):
             self.assertEqual(result["personas"]["leona-voss"]["replies_delivered"], 0)
             status = self.pipeline.db.scalar("SELECT status FROM instagram_dm_outbox")
             self.assertEqual(status, "RECONCILE_REQUIRED")
-        with patch.object(
-            provider, "reconcile_message",
-            side_effect=InstagramDMProviderError("meta_graph_http_500"),
+        for raised, recorded in (
+            ("meta_graph_http_500", "meta_graph_http_500"),
+            ("RAW BODY test-secret-value", "provider_reconcile_error"),
         ):
-            self.assertEqual(
-                service.sync_provider("leona-voss")["personas"]["leona-voss"]["status"], "SYNCED"
-            )
-        # A later confirmation settles it; a week-old reply is no longer polled.
+            with patch.object(
+                provider, "reconcile_message", side_effect=InstagramDMProviderError(raised),
+            ):
+                result = service.sync_provider("leona-voss")
+            self.assertEqual(result["personas"]["leona-voss"]["status"], "SYNCED")
+            row = self.pipeline.db.one("SELECT status, last_error FROM instagram_dm_outbox")
+            self.assertEqual((row["status"], row["last_error"]), ("RECONCILE_REQUIRED", recorded))
+        # A later confirmation settles it.
         self.assertEqual(
             service.sync_provider("leona-voss")["personas"]["leona-voss"]["replies_delivered"], 1
         )
         self.assertEqual(len(provider.sent), 1)
-        self.age_sent_replies(8 * 24 * 60)
+        # Automatic checks stop 15 minutes after the send (about three syncs).
+        self.age_sent_replies(20)
         with self.pipeline.db.transaction() as connection:
-            connection.execute("UPDATE instagram_dm_outbox SET status='SENT'")
+            connection.execute("UPDATE instagram_dm_outbox SET status='RECONCILE_REQUIRED'")
         with patch.object(provider, "reconcile_message") as check:
             service.sync_provider("leona-voss")
         check.assert_not_called()
+        self.assertEqual(
+            self.pipeline.db.scalar("SELECT status FROM instagram_dm_outbox"), "RECONCILE_REQUIRED"
+        )
 
     def test_sync_survives_stale_and_malformed_messages(self) -> None:
         provider = FakeProvider()
