@@ -719,9 +719,10 @@ class MetaInstagramPublishingAdapter:
         )
         try:
             identity = transport.get(
-                ig_user_id, {"fields": "id,username,account_type"}
+                "me", {"fields": "id,user_id,username,account_type"}
             )
-            returned_id = identity.get("id")
+            returned_id = identity.get("user_id")
+            app_scoped_id = identity.get("id")
             username = identity.get("username")
             account_type = str(identity.get("account_type", "")).upper()
             returned_username = (
@@ -737,6 +738,7 @@ class MetaInstagramPublishingAdapter:
             checks["account"] = {
                 "ok": account_ok,
                 "id": str(returned_id) if returned_id is not None else None,
+                "app_scoped_id": str(app_scoped_id) if app_scoped_id is not None else None,
                 "username": returned_username or None,
                 "expected_username": expected_username or None,
                 "id_matches": id_matches,
@@ -841,7 +843,7 @@ class MetaInstagramPublishingAdapter:
 
         try:
             identity = transport.get(
-                ig_user_id, {"fields": "id,username,account_type"}
+                "me", {"fields": "id,user_id,username,account_type"}
             )
         except (ConnectionError, TimeoutError, MetaGraphError) as error:
             return DispatchResult(
@@ -861,10 +863,16 @@ class MetaInstagramPublishingAdapter:
                 status=BLOCKED_EXTERNAL_PUBLISHING,
                 error="meta_account_type_not_professional",
             )
-        if not str(identity.get("id") or "").strip():
+        returned_ig_user_id = str(identity.get("user_id") or "").strip()
+        if not returned_ig_user_id:
             return DispatchResult(
                 status=BLOCKED_EXTERNAL_PUBLISHING,
                 error="meta_account_identity_missing",
+            )
+        if returned_ig_user_id != ig_user_id:
+            return DispatchResult(
+                status=BLOCKED_EXTERNAL_PUBLISHING,
+                error="meta_account_id_mismatch",
             )
 
         child_ids: list[str] = []
