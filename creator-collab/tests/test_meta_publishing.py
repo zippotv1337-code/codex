@@ -42,15 +42,11 @@ class FakeMetaTransport:
         self.gets.append((path, params))
         if params.get("fields") == "status_code":
             return {"status_code": "FINISHED"}
-        if params.get("fields") == "id,username,account_type":
-            username = (
-                "leonavoss.ai"
-                if path == "17841400000000001"
-                else "mara.field.ai"
-            )
+        if path == "me" and params.get("fields") == "id,user_id,username,account_type":
             return {
-                "id": path,
-                "username": username,
+                "id": "app-scoped-test-id",
+                "user_id": "17841400000000001",
+                "username": "leonavoss.ai",
                 "account_type": "BUSINESS",
             }
         return {
@@ -461,9 +457,10 @@ class MetaPublishingTests(unittest.TestCase):
         original_get = transport.get
 
         def wrong_identity(path: str, params: dict[str, str]) -> dict[str, object]:
-            if params.get("fields") == "id,username,account_type":
+            if path == "me" and params.get("fields") == "id,user_id,username,account_type":
                 return {
-                    "id": path,
+                    "id": "app-scoped-test-id",
+                    "user_id": self.account_ids[self.creator_slug],
                     "username": "wrong.connected.account",
                     "account_type": "BUSINESS",
                 }
@@ -476,6 +473,38 @@ class MetaPublishingTests(unittest.TestCase):
 
         self.assertEqual(result.status, BLOCKED_EXTERNAL_PUBLISHING)
         self.assertEqual(result.error, "meta_account_username_mismatch")
+        self.assertEqual(transport.posts, [])
+
+    def test_wrong_meta_user_id_blocks_before_any_publish_post(self) -> None:
+        self._write_manifest()
+        transport = FakeMetaTransport()
+        original_get = transport.get
+
+        def wrong_identity(path: str, params: dict[str, str]) -> dict[str, object]:
+            if path == "me" and params.get("fields") == "id,user_id,username,account_type":
+                return {"id": self.account_ids[self.creator_slug], "user_id": "17841499999999999", "username": "leonavoss.ai", "account_type": "BUSINESS"}
+            return original_get(path, params)
+
+        transport.get = wrong_identity  # type: ignore[method-assign]
+        result = self._adapter(transport).publish(self.publication["id"], self.card["content_id"], "3" * 64)
+        self.assertEqual(result.status, BLOCKED_EXTERNAL_PUBLISHING)
+        self.assertEqual(result.error, "meta_account_id_mismatch")
+        self.assertEqual(transport.posts, [])
+
+    def test_missing_meta_user_id_blocks_before_any_publish_post(self) -> None:
+        self._write_manifest()
+        transport = FakeMetaTransport()
+        original_get = transport.get
+
+        def missing_identity(path: str, params: dict[str, str]) -> dict[str, object]:
+            if path == "me" and params.get("fields") == "id,user_id,username,account_type":
+                return {"id": self.account_ids[self.creator_slug], "username": "leonavoss.ai", "account_type": "BUSINESS"}
+            return original_get(path, params)
+
+        transport.get = missing_identity  # type: ignore[method-assign]
+        result = self._adapter(transport).publish(self.publication["id"], self.card["content_id"], "4" * 64)
+        self.assertEqual(result.status, BLOCKED_EXTERNAL_PUBLISHING)
+        self.assertEqual(result.error, "meta_account_identity_missing")
         self.assertEqual(transport.posts, [])
 
     def test_explicit_revoke_blocks_known_creator_autopublish(self) -> None:

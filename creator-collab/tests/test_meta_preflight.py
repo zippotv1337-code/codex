@@ -80,7 +80,8 @@ class ReadOnlyMetaTransport:
                 ]
             }
         return {
-            "id": self.returned_id,
+            "id": "app-scoped-test-id",
+            "user_id": self.returned_id,
             "username": self.username,
             "account_type": "BUSINESS",
         }
@@ -214,7 +215,7 @@ class MetaPreflightTests(unittest.TestCase):
         self.assertEqual(
             transport.gets,
             [
-                (self.ig_user_id, {"fields": "id,username,account_type"}),
+                ("me", {"fields": "id,user_id,username,account_type"}),
                 (
                     f"{self.ig_user_id}/content_publishing_limit",
                     {"fields": "quota_usage,config"},
