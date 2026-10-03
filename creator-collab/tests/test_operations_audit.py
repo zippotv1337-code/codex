@@ -70,6 +70,33 @@ class OperationsAuditTests(unittest.TestCase):
             [action["lane"] for action in payload.get("next_actions", [])],
         )
 
+    def test_late_capture_marks_lower_missing_windows_as_missed_not_due(self) -> None:
+        result = self.pipeline.run("leona-voss", date(2026, 9, 1))
+        service = ManualInstagramService(self.pipeline.db)
+        publication = service.reconcile(
+            creator_slug="leona-voss",
+            content_id=result.content_id,
+            external_url="https://www.instagram.com/leonavoss.ai/p/AuditLate/",
+            published_at="2026-09-01T19:30:00+02:00",
+        )
+        service.append_analytics(publication["publication_id"], 24, reach=100, likes=10)
+
+        before = self.audit.snapshot(
+            now=datetime.fromisoformat("2026-09-09T20:00:00+02:00")
+        )
+        self.assertEqual(before["analytics"]["due_count"], 1)
+        self.assertEqual(before["analytics"]["due"][0]["due_windows_hours"], [168])
+
+        service.append_analytics(publication["publication_id"], 168, reach=140, likes=16)
+        after = self.audit.snapshot(
+            now=datetime.fromisoformat("2026-09-09T20:00:00+02:00")
+        )
+        self.assertEqual(after["analytics"]["due_count"], 0)
+        self.assertNotIn(
+            "analytics",
+            [action["lane"] for action in after.get("next_actions", [])],
+        )
+
     def test_confirmed_meta_publish_is_reported_as_controlled_proof(self) -> None:
         card = self.reviews.ensure_date(date(2026, 9, 8))[0]
         with self.pipeline.db.transaction() as connection:

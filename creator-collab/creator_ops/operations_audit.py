@@ -52,20 +52,28 @@ class OperationsAuditService:
         due: list[dict[str, object]] = []
         for row in rows:
             published = _as_datetime(str(row["published_at"])).astimezone(UTC)
-            missing_windows = []
-            for hours in ANALYTICS_WINDOWS:
-                if published + timedelta(hours=hours) > current_utc:
-                    continue
-                exists = self.database.scalar(
+            captured_windows = {
+                int(item["window_hours"])
+                for item in self.database.all(
                     """
-                    SELECT 1 FROM manual_analytics_events
-                    WHERE publication_id=? AND window_hours=?
-                    LIMIT 1
+                    SELECT DISTINCT window_hours FROM manual_analytics_events
+                    WHERE publication_id=?
                     """,
-                    (row["publication_id"], hours),
+                    (row["publication_id"],),
                 )
-                if not exists:
-                    missing_windows.append(hours)
+            }
+            highest_captured = max(captured_windows, default=0)
+            due_candidates = [
+                hours
+                for hours in ANALYTICS_WINDOWS
+                if published + timedelta(hours=hours) <= current_utc
+                and hours not in captured_windows
+                and hours > highest_captured
+            ]
+            # Match MetaInstagramInsightsService: one late cumulative read can only
+            # represent the highest currently-due window. Lower missing windows
+            # become MISSED/unknown rather than actionable work.
+            missing_windows = [max(due_candidates)] if due_candidates else []
             if missing_windows:
                 due.append(
                     {
