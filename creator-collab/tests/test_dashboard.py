@@ -73,6 +73,29 @@ class ReviewDashboardTests(unittest.TestCase):
         self.assertFalse(refreshed[0]["can_approve"])
         self.assertFalse(refreshed[1]["can_approve"])
 
+    def test_owner_rejected_card_leaves_needs_attention_but_history_remains(self) -> None:
+        cards = self.service.ensure_date(date(2026, 9, 4))
+        changed = cards[0]["content_id"]
+        rejected = cards[1]["content_id"]
+        self.service.record_owner_decision(changed, "change", "Bitte überarbeiten")
+        self.service.record_owner_decision(rejected, "reject", "Nicht weiterverwenden")
+
+        queue = self.service.review_queue()
+        attention_ids = {card["content_id"] for card in queue["needs_attention"]}
+        self.assertIn(changed, attention_ids)
+        self.assertNotIn(rejected, attention_ids)
+        self.assertEqual(
+            self.pipeline.db.scalar("SELECT status FROM content_items WHERE id=?", (rejected,)),
+            "BLOCKED",
+        )
+        self.assertEqual(
+            self.pipeline.db.scalar(
+                "SELECT COUNT(*) FROM review_events WHERE content_id=? AND action='OWNER_REJECTED_UI'",
+                (rejected,),
+            ),
+            1,
+        )
+
     def test_review_queue_spans_all_actionable_dates(self) -> None:
         self.service.ensure_date(date(2026, 9, 5))
         self.service.ensure_date(date(2026, 9, 6))

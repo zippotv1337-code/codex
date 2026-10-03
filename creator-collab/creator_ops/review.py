@@ -513,6 +513,14 @@ class ReviewDashboardService:
                 WHERE c.run_key LIKE 'review:%'
                   AND c.status IN ('READY_FOR_REVIEW','PARTIAL_READY','BLOCKED',
                                    'OWNER_APPROVED','SCHEDULED')
+                  AND NOT (
+                      c.status='BLOCKED'
+                      AND EXISTS (
+                          SELECT 1 FROM review_events rejected
+                          WHERE rejected.content_id=c.id
+                            AND rejected.action='OWNER_REJECTED_UI'
+                      )
+                  )
                 ORDER BY CASE c.status
                            WHEN 'READY_FOR_REVIEW' THEN 1
                            WHEN 'PARTIAL_READY' THEN 2
